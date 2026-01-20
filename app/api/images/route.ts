@@ -4,6 +4,20 @@ import { getImages, saveImage, deleteImage } from "@/lib/db";
 
 export const runtime = "nodejs";
 
+function isCloudinaryConfigured() {
+  return Boolean(
+    process.env.CLOUDINARY_CLOUD_NAME &&
+      process.env.CLOUDINARY_API_KEY &&
+      process.env.CLOUDINARY_API_SECRET
+  );
+}
+
+async function uploadToCloudinaryIfPossible(source: string): Promise<string> {
+  if (!isCloudinaryConfigured()) return source;
+  const upload = await cloudinary.uploader.upload(source, { folder: "kvl-gallery" });
+  return upload.secure_url;
+}
+
 /* =========================
    GET – fetch images
 ========================= */
@@ -42,14 +56,12 @@ export async function POST(request: NextRequest) {
         }
 
         try {
-          const upload = await cloudinary.uploader.upload(source, {
-            folder: "kvl-gallery",
-          });
+          const finalUrl = await uploadToCloudinaryIfPossible(source);
 
           const image = await saveImage({
             title,
             description: description || "",
-            imageUrl: upload.secure_url,
+            imageUrl: finalUrl,
             category,
             uploadedBy: uploadedBy || "admin",
             uploadedAt: new Date().toISOString(),
@@ -82,14 +94,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const upload = await cloudinary.uploader.upload(source, {
-      folder: "kvl-gallery",
-    });
+    const finalUrl = await uploadToCloudinaryIfPossible(source);
 
     const image = await saveImage({
       title,
       description: description || "",
-      imageUrl: upload.secure_url,
+      imageUrl: finalUrl,
       category,
       uploadedBy: uploadedBy || "admin",
       uploadedAt: new Date().toISOString(),
