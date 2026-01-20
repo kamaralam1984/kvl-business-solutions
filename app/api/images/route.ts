@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getImages, saveImage, deleteImage } from "@/lib/db";
 import cloudinary from "@/lib/cloudinary";
+import { getImages, saveImage, deleteImage } from "@/lib/db";
 
 export const runtime = "nodejs";
 
@@ -9,24 +9,7 @@ export const runtime = "nodejs";
 ========================= */
 export async function GET() {
   try {
-    let images = await getImages();
-
-    // fallback (safe to keep)
-    if (!images || images.length === 0) {
-      images = [
-        {
-          id: 1,
-          title: "Modern Control Room",
-          description: "CCTV & command center setup for smart facilities.",
-          imageUrl:
-            "https://images.unsplash.com/photo-1558002038-1055907df827?w=1200&q=75",
-          category: "CCTV Installation",
-          uploadedBy: "system",
-          uploadedAt: new Date().toISOString(),
-        },
-      ];
-    }
-
+    const images = await getImages();
     return NextResponse.json({ success: true, images });
   } catch (error) {
     console.error("GET images error:", error);
@@ -44,32 +27,28 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // ✅ BATCH UPLOAD
+    /* ========= BATCH UPLOAD ========= */
     if (Array.isArray(body.images)) {
       const savedImages = [];
       const errors = [];
 
       for (const img of body.images) {
-        const { title, description, imageBase64, category, uploadedBy } = img;
+        const { title, description, imageUrl, category, uploadedBy } = img;
 
-        if (!title || !imageBase64 || !category) {
-          errors.push({
-            image: title || "Unknown",
-            error: "Missing required fields",
-          });
+        if (!title || !imageUrl || !category) {
+          errors.push({ image: title || "Unknown", error: "Missing fields" });
           continue;
         }
 
         try {
-          // Upload to Cloudinary
-          const upload = await cloudinary.uploader.upload(imageBase64, {
+          const upload = await cloudinary.uploader.upload(imageUrl, {
             folder: "kvl-gallery",
           });
 
           const image = await saveImage({
             title,
             description: description || "",
-            imageUrl: upload.secure_url, // ✅ Cloudinary URL
+            imageUrl: upload.secure_url,
             category,
             uploadedBy: uploadedBy || "admin",
             uploadedAt: new Date().toISOString(),
@@ -78,10 +57,7 @@ export async function POST(request: NextRequest) {
           savedImages.push(image);
         } catch (err) {
           console.error("Batch upload failed:", err);
-          errors.push({
-            image: title || "Unknown",
-            error: "Upload failed",
-          });
+          errors.push({ image: title || "Unknown", error: "Upload failed" });
         }
       }
 
@@ -94,17 +70,17 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // ✅ SINGLE UPLOAD (backward compatible)
-    const { title, description, imageBase64, category, uploadedBy } = body;
+    /* ========= SINGLE UPLOAD ========= */
+    const { title, description, imageUrl, category, uploadedBy } = body;
 
-    if (!title || !imageBase64 || !category) {
+    if (!title || !imageUrl || !category) {
       return NextResponse.json(
         { success: false, error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    const upload = await cloudinary.uploader.upload(imageBase64, {
+    const upload = await cloudinary.uploader.upload(imageUrl, {
       folder: "kvl-gallery",
     });
 
@@ -133,7 +109,7 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const id = parseInt(searchParams.get("id") || "0");
+    const id = Number(searchParams.get("id"));
 
     if (!id) {
       return NextResponse.json(
@@ -144,14 +120,14 @@ export async function DELETE(request: NextRequest) {
 
     const deleted = await deleteImage(id);
 
-    if (deleted) {
-      return NextResponse.json({ success: true, message: "Image deleted" });
+    if (!deleted) {
+      return NextResponse.json(
+        { success: false, error: "Image not found" },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json(
-      { success: false, error: "Image not found" },
-      { status: 404 }
-    );
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error("DELETE image error:", error);
     return NextResponse.json(
