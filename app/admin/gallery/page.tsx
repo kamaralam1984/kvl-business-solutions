@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { FiPlus, FiTrash2, FiX, FiUpload, FiImage } from 'react-icons/fi'
+import { FiPlus, FiTrash2, FiUpload, FiImage } from 'react-icons/fi'
 
-interface Image {
-  id: number
+interface ImageItem {
+  _id?: string
+  id?: number
   title: string
   description: string
   imageUrl: string
@@ -13,14 +14,21 @@ interface Image {
   uploadedBy: string
 }
 
-const categories = ['All', 'Civil Work', 'CCTV Installation', 'Event Organizing', 'Software Development', 'GPS Tracking', 'Mechanical Work', 'Manpower Supply']
+const categories = [
+  'All',
+  'Civil Work',
+  'CCTV Installation',
+  'Event Organizing',
+  'Software Development',
+  'GPS Tracking',
+  'Mechanical Work',
+  'Manpower Supply',
+]
 
-// Compress image on the client so that:
-// - User can select files up to 10MB
-// - We save/send ~1MB (or less) per image to the server
+// ---------- helper: compress + base64 ----------
 async function compressImageToBase64(
   file: File,
-  maxSizeBytes = 1 * 1024 * 1024, // target ≈1MB
+  maxSizeBytes = 1 * 1024 * 1024,
   maxWidth = 1600,
   maxHeight = 1600
 ): Promise<string> {
@@ -32,7 +40,6 @@ async function compressImageToBase64(
         const canvas = document.createElement('canvas')
         let { width, height } = img
 
-        // Constrain dimensions while preserving aspect ratio
         if (width > maxWidth || height > maxHeight) {
           const ratio = Math.min(maxWidth / width, maxHeight / height)
           width = Math.round(width * ratio)
@@ -42,566 +49,247 @@ async function compressImageToBase64(
         canvas.width = width
         canvas.height = height
         const ctx = canvas.getContext('2d')
-        if (!ctx) {
-          reject(new Error('Canvas not supported'))
-          return
-        }
+        if (!ctx) return reject('Canvas error')
+
         ctx.drawImage(img, 0, 0, width, height)
 
         let quality = 0.8
         let dataUrl = canvas.toDataURL('image/jpeg', quality)
 
-        // Roughly convert base64 length to bytes (≈ 0.75 factor)
-        const withinLimit = () => dataUrl.length * 0.75 <= maxSizeBytes
-
-        while (!withinLimit() && quality > 0.4) {
+        while (dataUrl.length * 0.75 > maxSizeBytes && quality > 0.4) {
           quality -= 0.1
           dataUrl = canvas.toDataURL('image/jpeg', quality)
         }
 
         resolve(dataUrl)
       }
-      img.onerror = () => reject(new Error('Failed to load image for compression'))
+      img.onerror = reject
       img.src = reader.result as string
     }
-    reader.onerror = () => reject(new Error('Failed to read file'))
+    reader.onerror = reject
     reader.readAsDataURL(file)
   })
 }
 
+// ---------- PAGE ----------
 export default function GalleryPage() {
-  const [images, setImages] = useState<Image[]>([])
+  const [images, setImages] = useState<ImageItem[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [showModal, setShowModal] = useState(false)
   const [uploading, setUploading] = useState(false)
-  const [previewUrl, setPreviewUrl] = useState<string>('')
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    imageUrl: '',
+    imageBase64: '',
     category: 'Civil Work',
   })
+
   const [batchFiles, setBatchFiles] = useState<File[]>([])
   const [batchUploading, setBatchUploading] = useState(false)
-  const [uploadProgress, setUploadProgress] = useState<Record<string, 'pending' | 'uploading' | 'success' | 'error'>>({})
 
-  useEffect(() => {
-    fetchImages()
-  }, [])
-
+  // ---------- FETCH ----------
   const fetchImages = async () => {
     try {
-      const response = await fetch('/api/images')
-      const data = await response.json()
-      if (data.success) {
-        setImages(data.images)
-      }
-    } catch (error) {
-      console.error('Error fetching images:', error)
+      const res = await fetch('/api/images')
+      const data = await res.json()
+      if (data.success) setImages(data.images)
+    } catch (e) {
+      console.error(e)
     } finally {
       setLoading(false)
     }
   }
 
-  const handleImageUrlChange = (url: string) => {
-    setFormData({ ...formData, imageUrl: url })
-    setPreviewUrl(url)
-  }
+  useEffect(() => {
+    fetchImages()
+  }, [])
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  // ---------- FILE SELECT ----------
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) return
 
-    // Check if multiple files selected
     if (files.length > 1) {
-      const validFiles: File[] = []
-      const invalidFiles: string[] = []
-
-      Array.from(files).forEach((file) => {
-        if (!file.type.startsWith('image/')) {
-          invalidFiles.push(`${file.name} - Not an image`)
-          return
-        }
-        // Allow selection up to 10MB per file (we will compress before upload)
-        if (file.size > 10 * 1024 * 1024) {
-          invalidFiles.push(`${file.name} - Size exceeds 10MB`)
-          return
-        }
-        validFiles.push(file)
-      })
-
-      if (invalidFiles.length > 0) {
-        alert(`Invalid files:\n${invalidFiles.join('\n')}`)
-      }
-
-      if (validFiles.length > 0) {
-        setBatchFiles(validFiles)
-        // Initialize upload progress
-        const progress: Record<string, 'pending'> = {}
-        validFiles.forEach(file => {
-          progress[file.name] = 'pending'
-        })
-        setUploadProgress(progress)
-      }
-      return
-    }
-
-    // Single file upload (existing behavior)
-    const file = files[0]
-    if (!file) return
-
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      alert('Please select an image file')
+      setBatchFiles(Array.from(files))
       return
     }
 
     setUploading(true)
-
-    try {
-      // Compress to ≈1MB and convert to base64 before sending to server
-      const compressedBase64 = await compressImageToBase64(file)
-      setFormData({ ...formData, imageUrl: compressedBase64 })
-      setPreviewUrl(compressedBase64)
-      setUploading(false)
-    } catch (error) {
-      console.error('Error uploading file:', error)
-      alert('Error uploading file')
-      setUploading(false)
-    }
+    const base64 = await compressImageToBase64(files[0])
+    setFormData({ ...formData, imageBase64: base64 })
+    setUploading(false)
   }
 
-  const handleBatchUpload = async () => {
-    if (batchFiles.length === 0) return
-
-    setBatchUploading(true)
-    const imagesToUpload: any[] = []
-
-  // Compress and convert all files to base64 (~1MB each)
-    const readPromises = batchFiles.map((file) => {
-      return new Promise<void>((resolve, reject) => {
-        setUploadProgress(prev => ({ ...prev, [file.name]: 'uploading' }))
-
-        compressImageToBase64(file)
-          .then((base64String) => {
-            const fileName = file.name.replace(/\.[^/.]+$/, '') // Remove extension
-
-            imagesToUpload.push({
-              title: fileName.charAt(0).toUpperCase() + fileName.slice(1).replace(/[-_]/g, ' '),
-              description: formData.description || '',
-              imageUrl: base64String,
-              category: formData.category,
-              uploadedBy: 'admin',
-            })
-
-            setUploadProgress(prev => ({ ...prev, [file.name]: 'success' }))
-            resolve()
-          })
-          .catch(() => {
-            setUploadProgress(prev => ({ ...prev, [file.name]: 'error' }))
-            reject(new Error(`Failed to compress ${file.name}`))
-          })
-      })
-    })
-
-    try {
-      await Promise.all(readPromises)
-
-      // Upload all images at once
-      const response = await fetch('/api/images', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          images: imagesToUpload,
-        }),
-      })
-
-      const data = await response.json()
-      
-      if (data.success) {
-        const successCount = data.saved || imagesToUpload.length
-        const failCount = data.failed || 0
-        
-        if (failCount > 0) {
-          alert(`Upload complete!\n✓ ${successCount} images uploaded successfully\n✗ ${failCount} images failed`)
-        } else {
-          alert(`Successfully uploaded ${successCount} images!`)
-        }
-        
-        // Reset state
-        setBatchFiles([])
-        setUploadProgress({})
-        setFormData({ title: '', description: '', imageUrl: '', category: formData.category })
-        setShowModal(false)
-        fetchImages()
-      } else {
-        alert(data.error || 'Failed to upload images')
-      }
-    } catch (error) {
-      console.error('Error uploading files:', error)
-      alert('Error uploading files. Please try again.')
-    } finally {
-      setBatchUploading(false)
-    }
-  }
-
+  // ---------- SINGLE UPLOAD ----------
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!formData.title || !formData.imageUrl || !formData.category) {
+
+    if (!formData.title || !formData.imageBase64 || !formData.category) {
       alert('Please fill all required fields')
       return
     }
 
-    try {
-      const response = await fetch('/api/images', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          uploadedBy: 'admin',
-        }),
-      })
-      const data = await response.json()
-      if (data.success) {
-        setShowModal(false)
-        setFormData({ title: '', description: '', imageUrl: '', category: 'Civil Work' })
-        setPreviewUrl('')
-        fetchImages()
-        alert('Image added successfully!')
-      } else {
-        alert(data.error || 'Failed to add image')
-      }
-    } catch (error) {
-      console.error('Error adding image:', error)
-      alert('Error adding image. Please try again.')
+    const res = await fetch('/api/images', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: formData.title,
+        description: formData.description,
+        category: formData.category,
+        imageBase64: formData.imageBase64,
+        uploadedBy: 'admin',
+      }),
+    })
+
+    const data = await res.json()
+    if (data.success) {
+      alert('Image uploaded')
+      setShowModal(false)
+      setFormData({ title: '', description: '', imageBase64: '', category: 'Civil Work' })
+      fetchImages()
+    } else {
+      alert(data.error || 'Upload failed')
     }
   }
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this image?')) return
+  // ---------- BATCH UPLOAD ----------
+  const handleBatchUpload = async () => {
+    if (batchFiles.length === 0) return
 
-    try {
-      const response = await fetch(`/api/images?id=${id}`, {
-        method: 'DELETE',
+    setBatchUploading(true)
+
+    const imagesPayload = []
+    for (const file of batchFiles) {
+      const base64 = await compressImageToBase64(file)
+      imagesPayload.push({
+        title: file.name.replace(/\.[^/.]+$/, ''),
+        description: '',
+        category: formData.category,
+        imageBase64: base64,
+        uploadedBy: 'admin',
       })
-      const data = await response.json()
-      if (data.success) {
-        fetchImages()
-        alert('Image deleted successfully!')
-      } else {
-        alert(data.error || 'Failed to delete image')
-      }
-    } catch (error) {
-      console.error('Error deleting image:', error)
-      alert('Error deleting image. Please try again.')
     }
+
+    const res = await fetch('/api/images', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ images: imagesPayload }),
+    })
+
+    const data = await res.json()
+    if (data.success) {
+      alert(`Uploaded ${data.saved} images`)
+      setBatchFiles([])
+      setShowModal(false)
+      fetchImages()
+    } else {
+      alert('Batch upload failed')
+    }
+
+    setBatchUploading(false)
   }
 
-  const filteredImages = selectedCategory === 'All'
-    ? images
-    : images.filter(img => img.category === selectedCategory)
+  // ---------- DELETE ----------
+  const handleDelete = async (id?: number) => {
+    if (!id) return
+    if (!confirm('Delete image?')) return
 
+    const res = await fetch(`/api/images?id=${id}`, { method: 'DELETE' })
+    const data = await res.json()
+    if (data.success) fetchImages()
+  }
+
+  const filteredImages =
+    selectedCategory === 'All'
+      ? images
+      : images.filter((i) => i.category === selectedCategory)
+
+  // ---------- UI ----------
   return (
     <div>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h1 className="h3 fw-bold mb-2" style={{ color: '#0E0C1D' }}>Image Gallery</h1>
-          <p className="text-muted mb-0">Manage your project images</p>
-        </div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="btn d-inline-flex align-items-center gap-2 text-white border-0"
-          style={{
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            borderRadius: '10px',
-            padding: '10px 20px',
-          }}
-        >
-          <FiPlus />
-          Add Image
+      <div className="d-flex justify-content-between mb-3">
+        <h3>Gallery</h3>
+        <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+          <FiPlus /> Add Image
         </button>
       </div>
 
-      {/* Category Filter */}
-      <div className="d-flex flex-wrap gap-2 mb-4">
-        {categories.map((category) => (
+      {/* Filters */}
+      <div className="mb-3 d-flex gap-2 flex-wrap">
+        {categories.map((c) => (
           <button
-            key={category}
-            onClick={() => setSelectedCategory(category)}
-            className={`btn ${selectedCategory === category ? '' : 'btn-outline-primary'}`}
-            style={selectedCategory === category ? {
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              border: 'none',
-              color: 'white'
-            } : {
-              borderColor: '#667eea',
-              color: '#667eea'
-            }}
+            key={c}
+            className={`btn btn-sm ${selectedCategory === c ? 'btn-primary' : 'btn-outline-primary'}`}
+            onClick={() => setSelectedCategory(c)}
           >
-            {category}
+            {c}
           </button>
         ))}
       </div>
 
-      {/* Images Grid */}
+      {/* Grid */}
       {loading ? (
-        <div className="text-center py-5">
-          <div className="spinner-border text-primary" role="status" style={{ color: '#667eea' }}>
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      ) : filteredImages.length === 0 ? (
-        <div className="text-center py-5 bg-white rounded border">
-          <p className="text-muted mb-0">No images found</p>
-        </div>
+        <p>Loading...</p>
       ) : (
-        <div className="row g-4">
-          {filteredImages.map((image) => (
-            <div key={image.id} className="col-md-6 col-lg-4">
-              <div className="card border-0 shadow-sm h-100" style={{ borderRadius: '15px', overflow: 'hidden' }}>
-                <div className="position-relative d-flex align-items-center justify-content-center" style={{ minHeight: '300px', padding: '10px', backgroundColor: '#f8f9fa' }}>
-                  <img
-                    src={image.imageUrl}
-                    alt={image.category}
-                    className="w-100"
-                    style={{ 
-                      objectFit: 'contain',
-                      maxHeight: '300px',
-                      width: '100%',
-                      height: 'auto'
-                    }}
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x300?text=Image+Not+Found'
-                    }}
-                  />
-                  <button
-                    onClick={() => handleDelete(image.id)}
-                    className="position-absolute top-0 end-0 m-2 btn btn-danger btn-sm rounded-circle p-2 d-flex align-items-center justify-content-center"
-                    style={{ width: '36px', height: '36px' }}
-                  >
-                    <FiTrash2 />
-                  </button>
-                </div>
-                <div className="card-body p-2">
-                  <div className="d-flex justify-content-end align-items-center">
-                    <span 
-                      className="badge px-2 py-1"
-                      style={{
-                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                        color: 'white',
-                        fontSize: '0.75rem'
-                      }}
-                    >
-                      {image.category}
-                    </span>
-                  </div>
-                </div>
+        <div className="row g-3">
+          {filteredImages.map((img) => (
+            <div key={img._id || img.id} className="col-md-4">
+              <div className="card">
+                <img src={img.imageUrl} className="card-img-top" />
+                <button
+                  className="btn btn-danger btn-sm position-absolute top-0 end-0 m-2"
+                  onClick={() => handleDelete(img.id)}
+                >
+                  <FiTrash2 />
+                </button>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Add Image Modal */}
+      {/* MODAL */}
       {showModal && (
-        <div 
-          className="modal show d-block" 
-          style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1050 }}
-          onClick={() => setShowModal(false)}
-        >
-          <div 
-            className="modal-dialog modal-dialog-centered" 
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="modal-content border-0 shadow-lg" style={{ borderRadius: '15px' }}>
-              <div className="modal-header border-0 pb-0">
-                <h5 className="modal-title fw-bold" style={{ color: '#0E0C1D' }}>Add New Image</h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => {
-                    setShowModal(false)
-                    setPreviewUrl('')
-                    setBatchFiles([])
-                    setUploadProgress({})
-                    setFormData({ title: '', description: '', imageUrl: '', category: 'Civil Work' })
-                  }}
-                ></button>
-              </div>
+        <div className="modal show d-block" style={{ background: 'rgba(0,0,0,.5)' }}>
+          <div className="modal-dialog">
+            <div className="modal-content p-3">
               <form onSubmit={handleSubmit}>
-                <div className="modal-body">
-                  <div className="mb-3">
-                    <label className="form-label fw-semibold">Title *</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      required
-                      placeholder="Enter image title"
-                    />
-                  </div>
+                <input
+                  className="form-control mb-2"
+                  placeholder="Title"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                />
 
-                  <div className="mb-3">
-                    <label className="form-label fw-semibold">Image *</label>
-                    <div className="d-flex flex-column gap-2">
-                      <div>
-                        <label className="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2">
-                          <FiUpload />
-                          {uploading ? 'Processing...' : batchFiles.length > 0 ? `${batchFiles.length} Files Selected` : 'Upload Image File(s) (Multiple Selection Allowed)'}
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleFileUpload}
-                            className="d-none"
-                            disabled={uploading || batchUploading}
-                            multiple
-                          />
-                        </label>
-                        <small className="text-muted d-block mt-1">You can select multiple images at once (Max 10MB per file, saved as ~1MB each)</small>
-                      </div>
-                      
-                      {/* Batch Files Preview */}
-                      {batchFiles.length > 0 && (
-                        <div className="border rounded p-3 bg-light">
-                          <div className="d-flex justify-content-between align-items-center mb-2">
-                            <strong className="small">Selected Files ({batchFiles.length}):</strong>
-                            <button
-                              type="button"
-                              className="btn btn-sm btn-outline-danger"
-                              onClick={() => {
-                                setBatchFiles([])
-                                setUploadProgress({})
-                              }}
-                            >
-                              Clear All
-                            </button>
-                          </div>
-                          <div className="d-flex flex-column gap-2" style={{ maxHeight: '200px', overflowY: 'auto' }}>
-                            {batchFiles.map((file, index) => (
-                              <div
-                                key={index}
-                                className={`d-flex justify-content-between align-items-center p-2 rounded ${
-                                  uploadProgress[file.name] === 'success' ? 'bg-success bg-opacity-10' :
-                                  uploadProgress[file.name] === 'error' ? 'bg-danger bg-opacity-10' :
-                                  uploadProgress[file.name] === 'uploading' ? 'bg-primary bg-opacity-10' :
-                                  'bg-white'
-                                }`}
-                              >
-                                <div className="d-flex align-items-center gap-2 flex-grow-1" style={{ minWidth: 0 }}>
-                                  <FiImage className="flex-shrink-0" />
-                                  <span className="small text-truncate">{file.name}</span>
-                                  <span className="badge bg-secondary small">
-                                    {(file.size / 1024 / 1024).toFixed(2)} MB
-                                  </span>
-                                </div>
-                                <div className="flex-shrink-0">
-                                  {uploadProgress[file.name] === 'uploading' && (
-                                    <div className="spinner-border spinner-border-sm text-primary" role="status">
-                                      <span className="visually-hidden">Loading...</span>
-                                    </div>
-                                  )}
-                                  {uploadProgress[file.name] === 'success' && (
-                                    <span className="badge bg-success">✓</span>
-                                  )}
-                                  {uploadProgress[file.name] === 'error' && (
-                                    <span className="badge bg-danger">✗</span>
-                                  )}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                          <button
-                            type="button"
-                            onClick={handleBatchUpload}
-                            className="btn btn-primary w-100 mt-3"
-                            disabled={batchUploading}
-                            style={{
-                              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                              border: 'none',
-                            }}
-                          >
-                            {batchUploading ? 'Uploading...' : `Upload All ${batchFiles.length} Images`}
-                          </button>
-                        </div>
-                      )}
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  className="form-control mb-2"
+                  onChange={handleFileChange}
+                />
 
-                      <div className="text-center text-muted small">OR</div>
-                      <div>
-                        <input
-                          type="url"
-                          className="form-control"
-                          value={formData.imageUrl}
-                          onChange={(e) => handleImageUrlChange(e.target.value)}
-                          placeholder="Enter image URL (https://example.com/image.jpg)"
-                          disabled={batchFiles.length > 0}
-                        />
-                      </div>
-                    </div>
-                    {previewUrl && batchFiles.length === 0 && (
-                      <div className="mt-3">
-                        <img
-                          src={previewUrl}
-                          alt="Preview"
-                          className="img-fluid rounded border"
-                          style={{ maxHeight: '200px', objectFit: 'contain' }}
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = 'none'
-                          }}
-                        />
-                      </div>
-                    )}
-                  </div>
+                <select
+                  className="form-select mb-2"
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                >
+                  {categories.filter((c) => c !== 'All').map((c) => (
+                    <option key={c}>{c}</option>
+                  ))}
+                </select>
 
-                  <div className="mb-3">
-                    <label className="form-label fw-semibold">Category *</label>
-                    <select
-                      className="form-select"
-                      value={formData.category}
-                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                      required
-                    >
-                      {categories.filter(c => c !== 'All').map(cat => (
-                        <option key={cat} value={cat}>{cat}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="mb-3">
-                    <label className="form-label fw-semibold">Description</label>
-                    <textarea
-                      className="form-control"
-                      rows={3}
-                      value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                      placeholder="Enter image description (optional)"
-                    />
-                  </div>
-                </div>
-                <div className="modal-footer border-0 pt-0">
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={() => {
-                      setShowModal(false)
-                      setPreviewUrl('')
-                      setFormData({ title: '', description: '', imageUrl: '', category: 'Civil Work' })
-                    }}
-                  >
-                    Cancel
+                {batchFiles.length > 0 ? (
+                  <button type="button" className="btn btn-primary w-100" onClick={handleBatchUpload}>
+                    {batchUploading ? 'Uploading...' : `Upload ${batchFiles.length} Images`}
                   </button>
-                  <button
-                    type="submit"
-                    className="btn text-white border-0"
-                    style={{
-                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    }}
-                    disabled={uploading || batchUploading || (!formData.imageUrl && batchFiles.length === 0)}
-                  >
-                    {uploading ? 'Uploading...' : batchFiles.length > 0 ? 'Use URL Instead' : 'Add Image'}
+                ) : (
+                  <button type="submit" className="btn btn-success w-100">
+                    {uploading ? 'Processing...' : 'Upload Image'}
                   </button>
-                </div>
+                )}
               </form>
             </div>
           </div>

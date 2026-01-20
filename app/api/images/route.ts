@@ -1,82 +1,87 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getImages, saveImage, deleteImage } from '@/lib/db'
+import { NextRequest, NextResponse } from "next/server";
+import { getImages, saveImage, deleteImage } from "@/lib/db";
+import cloudinary from "@/lib/cloudinary";
 
+export const runtime = "nodejs";
+
+/* =========================
+   GET – fetch images
+========================= */
 export async function GET() {
   try {
-    let images = await getImages()
+    let images = await getImages();
 
-    // If no images are present in the file-based DB (common on fresh deploys),
-    // return a lightweight fallback set so the gallery is never empty in production.
+    // fallback (safe to keep)
     if (!images || images.length === 0) {
       images = [
         {
           id: 1,
-          title: 'Modern Control Room',
-          description: 'CCTV & command center setup for smart facilities.',
-          imageUrl: 'https://images.unsplash.com/photo-1558002038-1055907df827?w=1200&q=75',
-          category: 'CCTV Installation',
-          uploadedBy: 'system',
+          title: "Modern Control Room",
+          description: "CCTV & command center setup for smart facilities.",
+          imageUrl:
+            "https://images.unsplash.com/photo-1558002038-1055907df827?w=1200&q=75",
+          category: "CCTV Installation",
+          uploadedBy: "system",
           uploadedAt: new Date().toISOString(),
         },
-        {
-          id: 2,
-          title: 'Industrial Flooring',
-          description: 'High-durability civil work for heavy traffic areas.',
-          imageUrl: 'https://images.unsplash.com/photo-1503389152951-9f343605f61e?w=1200&q=75',
-          category: 'Civil Work',
-          uploadedBy: 'system',
-          uploadedAt: new Date().toISOString(),
-        },
-        {
-          id: 3,
-          title: 'Mechanical Assembly',
-          description: 'Precision mechanical fabrication and assembly.',
-          imageUrl: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=75',
-          category: 'Mechanical Work',
-          uploadedBy: 'system',
-          uploadedAt: new Date().toISOString(),
-        },
-      ]
+      ];
     }
 
-    return NextResponse.json({ success: true, images })
+    return NextResponse.json({ success: true, images });
   } catch (error) {
+    console.error("GET images error:", error);
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch images' },
+      { success: false, error: "Failed to fetch images" },
       { status: 500 }
-    )
+    );
   }
 }
 
+/* =========================
+   POST – upload image(s)
+========================= */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    
-    // Check if it's a batch upload (array of images)
+    const body = await request.json();
+
+    // ✅ BATCH UPLOAD
     if (Array.isArray(body.images)) {
-      const savedImages = []
-      const errors = []
+      const savedImages = [];
+      const errors = [];
 
       for (const img of body.images) {
-        const { title, description, imageUrl, category, uploadedBy } = img
+        const { title, description, imageBase64, category, uploadedBy } = img;
 
-        if (!title || !imageUrl || !category) {
-          errors.push({ image: title || 'Unknown', error: 'Missing required fields' })
-          continue
+        if (!title || !imageBase64 || !category) {
+          errors.push({
+            image: title || "Unknown",
+            error: "Missing required fields",
+          });
+          continue;
         }
 
         try {
+          // Upload to Cloudinary
+          const upload = await cloudinary.uploader.upload(imageBase64, {
+            folder: "kvl-gallery",
+          });
+
           const image = await saveImage({
             title,
-            description: description || '',
-            imageUrl,
+            description: description || "",
+            imageUrl: upload.secure_url, // ✅ Cloudinary URL
             category,
-            uploadedBy: uploadedBy || 'admin',
+            uploadedBy: uploadedBy || "admin",
             uploadedAt: new Date().toISOString(),
-          })
-          savedImages.push(image)
-        } catch (error) {
-          errors.push({ image: title || 'Unknown', error: 'Failed to save' })
+          });
+
+          savedImages.push(image);
+        } catch (err) {
+          console.error("Batch upload failed:", err);
+          errors.push({
+            image: title || "Unknown",
+            error: "Upload failed",
+          });
         }
       }
 
@@ -85,63 +90,73 @@ export async function POST(request: NextRequest) {
         images: savedImages,
         saved: savedImages.length,
         failed: errors.length,
-        errors: errors.length > 0 ? errors : undefined,
-      })
+        errors: errors.length ? errors : undefined,
+      });
     }
 
-    // Single image upload (backward compatible)
-    const { title, description, imageUrl, category, uploadedBy } = body
+    // ✅ SINGLE UPLOAD (backward compatible)
+    const { title, description, imageBase64, category, uploadedBy } = body;
 
-    if (!title || !imageUrl || !category) {
+    if (!title || !imageBase64 || !category) {
       return NextResponse.json(
-        { success: false, error: 'Missing required fields' },
+        { success: false, error: "Missing required fields" },
         { status: 400 }
-      )
+      );
     }
+
+    const upload = await cloudinary.uploader.upload(imageBase64, {
+      folder: "kvl-gallery",
+    });
 
     const image = await saveImage({
       title,
-      description: description || '',
-      imageUrl,
+      description: description || "",
+      imageUrl: upload.secure_url,
       category,
-      uploadedBy: uploadedBy || 'admin',
+      uploadedBy: uploadedBy || "admin",
       uploadedAt: new Date().toISOString(),
-    })
+    });
 
-    return NextResponse.json({ success: true, image })
+    return NextResponse.json({ success: true, image });
   } catch (error) {
+    console.error("POST image error:", error);
     return NextResponse.json(
-      { success: false, error: 'Failed to save image' },
+      { success: false, error: "Failed to save image" },
       { status: 500 }
-    )
+    );
   }
 }
 
+/* =========================
+   DELETE – remove image
+========================= */
 export async function DELETE(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
-    const id = parseInt(searchParams.get('id') || '0')
+    const { searchParams } = new URL(request.url);
+    const id = parseInt(searchParams.get("id") || "0");
 
     if (!id) {
       return NextResponse.json(
-        { success: false, error: 'Image ID required' },
+        { success: false, error: "Image ID required" },
         { status: 400 }
-      )
+      );
     }
 
-    const deleted = await deleteImage(id)
+    const deleted = await deleteImage(id);
+
     if (deleted) {
-      return NextResponse.json({ success: true, message: 'Image deleted' })
-    } else {
-      return NextResponse.json(
-        { success: false, error: 'Image not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ success: true, message: "Image deleted" });
     }
-  } catch (error) {
+
     return NextResponse.json(
-      { success: false, error: 'Failed to delete image' },
+      { success: false, error: "Image not found" },
+      { status: 404 }
+    );
+  } catch (error) {
+    console.error("DELETE image error:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to delete image" },
       { status: 500 }
-    )
+    );
   }
 }
