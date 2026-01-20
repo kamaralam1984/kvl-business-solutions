@@ -69,8 +69,9 @@ export default function GalleryPage() {
           invalidFiles.push(`${file.name} - Not an image`)
           return
         }
-        if (file.size > 10 * 1024 * 1024) {
-          invalidFiles.push(`${file.name} - Size exceeds 10MB`)
+        // Limit to 2MB per file to avoid exceeding server payload limits on deploy
+        if (file.size > 2 * 1024 * 1024) {
+          invalidFiles.push(`${file.name} - Size exceeds 2MB`)
           return
         }
         validFiles.push(file)
@@ -102,9 +103,9 @@ export default function GalleryPage() {
       return
     }
 
-    // Validate file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      alert('Image size should be less than 10MB')
+    // Validate file size (max 2MB to stay within server request limits)
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Image size should be less than 2MB (hosting limit)')
       return
     }
 

@@ -1,8 +1,10 @@
-// Simple file-based database for development
-// In production, replace with MongoDB, PostgreSQL, or MySQL
+// Database layer
+// - Uses MongoDB when MONGODB_URI is provided
+// - Falls back to simple file-based JSON DB otherwise (dev / no-db environments)
 
 import fs from 'fs'
 import path from 'path'
+import { getMongoDb, isMongoEnabled } from '@/lib/mongodb'
 
 // Data directory resolution:
 // - If DATA_DIR is set (e.g., to a persistent mount), use it.
@@ -32,19 +34,22 @@ const ensureFile = (file: string, initial: any) => {
 }
 
 // Ensure data directory and files exist (handles /tmp on serverless)
-ensureDir(dbPath)
-ensureFile(imagesFile, [])
-ensureFile(adminsFile, [
-  {
-    id: 1,
-    username: 'kamaralamjdu@gmail.com',
-    password: 'Admin@143', // In production, hash this
-    email: 'admin@kvlbusiness.com',
-    role: 'super_admin',
-    createdAt: new Date().toISOString(),
-  },
-])
-ensureFile(pagesFile, [])
+// Only needed for file-db fallback.
+if (!isMongoEnabled()) {
+  ensureDir(dbPath)
+  ensureFile(imagesFile, [])
+  ensureFile(adminsFile, [
+    {
+      id: 1,
+      username: 'kamaralamjdu@gmail.com',
+      password: 'Admin@143', // In production, hash this
+      email: 'admin@kvlbusiness.com',
+      role: 'super_admin',
+      createdAt: new Date().toISOString(),
+    },
+  ])
+  ensureFile(pagesFile, [])
+}
 
 export interface Image {
   id: number
@@ -65,8 +70,28 @@ export interface Admin {
   createdAt: string
 }
 
+async function getNextSequence(name: string): Promise<number> {
+  const db = await getMongoDb()
+  const res = await db
+    .collection<{ _id: string; seq: number }>('counters')
+    .findOneAndUpdate(
+      { _id: name },
+      { $inc: { seq: 1 } },
+      { upsert: true, returnDocument: 'after' }
+    )
+
+  // mongodb types can be strict here; handle null/undefined safely
+  const seq = (res as any)?.value?.seq
+  return typeof seq === 'number' ? seq : 1
+}
+
 // Image functions
-export function getImages(): Image[] {
+export async function getImages(): Promise<Image[]> {
+  if (isMongoEnabled()) {
+    const db = await getMongoDb()
+    return await db.collection<Image>('images').find({}).sort({ id: -1 }).toArray()
+  }
+
   try {
     const data = fs.readFileSync(imagesFile, 'utf-8')
     return JSON.parse(data)
@@ -75,8 +100,16 @@ export function getImages(): Image[] {
   }
 }
 
-export function saveImage(image: Omit<Image, 'id'>): Image {
-  const images = getImages()
+export async function saveImage(image: Omit<Image, 'id'>): Promise<Image> {
+  if (isMongoEnabled()) {
+    const db = await getMongoDb()
+    const id = await getNextSequence('images')
+    const newImage: Image = { ...image, id }
+    await db.collection<Image>('images').insertOne(newImage as any)
+    return newImage
+  }
+
+  const images = await getImages()
   const newImage: Image = {
     ...image,
     id: images.length > 0 ? Math.max(...images.map(i => i.id)) + 1 : 1,
@@ -86,15 +119,26 @@ export function saveImage(image: Omit<Image, 'id'>): Image {
   return newImage
 }
 
-export function deleteImage(id: number): boolean {
-  const images = getImages()
+export async function deleteImage(id: number): Promise<boolean> {
+  if (isMongoEnabled()) {
+    const db = await getMongoDb()
+    const res = await db.collection<Image>('images').deleteOne({ id })
+    return res.deletedCount === 1
+  }
+
+  const images = await getImages()
   const filtered = images.filter(img => img.id !== id)
   fs.writeFileSync(imagesFile, JSON.stringify(filtered, null, 2))
   return filtered.length < images.length
 }
 
 // Admin functions
-export function getAdmins(): Admin[] {
+export async function getAdmins(): Promise<Admin[]> {
+  if (isMongoEnabled()) {
+    const db = await getMongoDb()
+    return await db.collection<Admin>('admins').find({}).sort({ id: -1 }).toArray()
+  }
+
   try {
     const data = fs.readFileSync(adminsFile, 'utf-8')
     return JSON.parse(data)
@@ -103,13 +147,26 @@ export function getAdmins(): Admin[] {
   }
 }
 
-export function getAdminByUsername(username: string): Admin | null {
-  const admins = getAdmins()
+export async function getAdminByUsername(username: string): Promise<Admin | null> {
+  if (isMongoEnabled()) {
+    const db = await getMongoDb()
+    return await db.collection<Admin>('admins').findOne({ username })
+  }
+
+  const admins = await getAdmins()
   return admins.find(admin => admin.username === username) || null
 }
 
-export function createAdmin(admin: Omit<Admin, 'id' | 'createdAt'>): Admin {
-  const admins = getAdmins()
+export async function createAdmin(admin: Omit<Admin, 'id' | 'createdAt'>): Promise<Admin> {
+  if (isMongoEnabled()) {
+    const db = await getMongoDb()
+    const id = await getNextSequence('admins')
+    const newAdmin: Admin = { ...admin, id, createdAt: new Date().toISOString() }
+    await db.collection<Admin>('admins').insertOne(newAdmin as any)
+    return newAdmin
+  }
+
+  const admins = await getAdmins()
   const newAdmin: Admin = {
     ...admin,
     id: admins.length > 0 ? Math.max(...admins.map(a => a.id)) + 1 : 1,
@@ -120,8 +177,14 @@ export function createAdmin(admin: Omit<Admin, 'id' | 'createdAt'>): Admin {
   return newAdmin
 }
 
-export function deleteAdmin(id: number): boolean {
-  const admins = getAdmins()
+export async function deleteAdmin(id: number): Promise<boolean> {
+  if (isMongoEnabled()) {
+    const db = await getMongoDb()
+    const res = await db.collection<Admin>('admins').deleteOne({ id })
+    return res.deletedCount === 1
+  }
+
+  const admins = await getAdmins()
   const filtered = admins.filter(admin => admin.id !== id)
   fs.writeFileSync(adminsFile, JSON.stringify(filtered, null, 2))
   return filtered.length < admins.length
@@ -149,7 +212,12 @@ export interface Page {
   updatedBy: string
 }
 
-export function getPages(): Page[] {
+export async function getPages(): Promise<Page[]> {
+  if (isMongoEnabled()) {
+    const db = await getMongoDb()
+    return await db.collection<Page>('pages').find({}).sort({ updatedAt: -1 }).toArray()
+  }
+
   try {
     const data = fs.readFileSync(pagesFile, 'utf-8')
     return JSON.parse(data)
@@ -158,19 +226,32 @@ export function getPages(): Page[] {
   }
 }
 
-export function getPageByPath(path: string): Page | null {
-  const pages = getPages()
-  return pages.find(page => page.path === path) || null
+export async function getPageByPath(pathStr: string): Promise<Page | null> {
+  if (isMongoEnabled()) {
+    const db = await getMongoDb()
+    return await db.collection<Page>('pages').findOne({ path: pathStr })
+  }
+
+  const pages = await getPages()
+  return pages.find(page => page.path === pathStr) || null
 }
 
-export function savePage(page: Omit<Page, 'updatedAt' | 'updatedBy'> & { updatedBy: string }): Page {
-  const pages = getPages()
-  const existingIndex = pages.findIndex(p => p.id === page.id)
-  
+export async function savePage(
+  page: Omit<Page, 'updatedAt' | 'updatedBy'> & { updatedBy: string }
+): Promise<Page> {
   const pageToSave: Page = {
     ...page,
     updatedAt: new Date().toISOString(),
   }
+
+  if (isMongoEnabled()) {
+    const db = await getMongoDb()
+    await db.collection<Page>('pages').updateOne({ id: page.id }, { $set: pageToSave }, { upsert: true })
+    return pageToSave
+  }
+
+  const pages = await getPages()
+  const existingIndex = pages.findIndex(p => p.id === page.id)
 
   if (existingIndex >= 0) {
     pages[existingIndex] = pageToSave
@@ -182,8 +263,14 @@ export function savePage(page: Omit<Page, 'updatedAt' | 'updatedBy'> & { updated
   return pageToSave
 }
 
-export function deletePage(id: string): boolean {
-  const pages = getPages()
+export async function deletePage(id: string): Promise<boolean> {
+  if (isMongoEnabled()) {
+    const db = await getMongoDb()
+    const res = await db.collection<Page>('pages').deleteOne({ id })
+    return res.deletedCount === 1
+  }
+
+  const pages = await getPages()
   const filtered = pages.filter(page => page.id !== id)
   fs.writeFileSync(pagesFile, JSON.stringify(filtered, null, 2))
   return filtered.length < pages.length

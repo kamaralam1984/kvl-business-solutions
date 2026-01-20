@@ -3,7 +3,7 @@ import { getAdmins, createAdmin, getAdminByUsername } from '@/lib/db'
 
 export async function GET() {
   try {
-    const admins = getAdmins()
+    const admins = await getAdmins()
     // Don't send passwords
     const safeAdmins = admins.map(({ password, ...admin }) => admin)
     return NextResponse.json({ success: true, admins: safeAdmins })
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if username already exists
-    const existing = getAdminByUsername(username)
+    const existing = await getAdminByUsername(username)
     if (existing) {
       return NextResponse.json(
         { success: false, error: 'Username already exists' },
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const admin = createAdmin({
+    const admin = await createAdmin({
       username,
       password, // In production, hash this password
       email,

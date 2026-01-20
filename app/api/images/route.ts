@@ -3,7 +3,7 @@ import { getImages, saveImage, deleteImage } from '@/lib/db'
 
 export async function GET() {
   try {
-    let images = getImages()
+    let images = await getImages()
 
     // If no images are present in the file-based DB (common on fresh deploys),
     // return a lightweight fallback set so the gallery is never empty in production.
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
         }
 
         try {
-          const image = saveImage({
+          const image = await saveImage({
             title,
             description: description || '',
             imageUrl,
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const image = saveImage({
+    const image = await saveImage({
       title,
       description: description || '',
       imageUrl,
@@ -129,7 +129,7 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    const deleted = deleteImage(id)
+    const deleted = await deleteImage(id)
     if (deleted) {
       return NextResponse.json({ success: true, message: 'Image deleted' })
     } else {

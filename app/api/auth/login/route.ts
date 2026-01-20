@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const admin = getAdminByUsername(username)
+    const admin = await getAdminByUsername(username)
     
     if (!admin) {
       return NextResponse.json(

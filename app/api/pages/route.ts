@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     const path = searchParams.get('path')
 
     if (path) {
-      const page = getPageByPath(path)
+      const page = await getPageByPath(path)
       if (page) {
         return NextResponse.json({ success: true, page })
       } else {
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const pages = getPages()
+    const pages = await getPages()
     return NextResponse.json({ success: true, pages })
   } catch (error) {
     return NextResponse.json(
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const page = savePage({
+    const page = await savePage({
       id: id || `page-${Date.now()}`,
       path,
       title,
@@ -70,7 +70,7 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    const deleted = deletePage(id)
+    const deleted = await deletePage(id)
     if (deleted) {
       return NextResponse.json({ success: true, message: 'Page deleted' })
     } else {

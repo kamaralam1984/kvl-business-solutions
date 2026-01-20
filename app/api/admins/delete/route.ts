@@ -13,7 +13,7 @@ export async function DELETE(request: NextRequest) {
       )
     }
 
-    const deleted = deleteAdmin(id)
+    const deleted = await deleteAdmin(id)
     if (deleted) {
       return NextResponse.json({ success: true, message: 'Admin deleted' })
     } else {
