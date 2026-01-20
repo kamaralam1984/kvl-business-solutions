@@ -132,9 +132,14 @@ export default function AdminLogin() {
           </form>
 
           <div className="mt-6 pt-6 border-t border-gray-200">
-            <p className="text-xs text-gray-500 text-center">
-              Default credentials: admin / admin123
-            </p>
+            <div className="d-flex justify-content-between align-items-center">
+              <p className="text-xs text-gray-500 mb-0">
+                Use your admin credentials
+              </p>
+              <a href="/signup" className="text-xs fw-semibold text-decoration-none" style={{ color: '#0E0C1D' }}>
+                Create account
+              </a>
+            </div>
           </div>
         </div>
       </div>

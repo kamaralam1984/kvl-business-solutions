@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdmin, getAdminByUsername } from '@/lib/db'
+import { ensureMongoSuperAdmin } from '@/lib/seedAdmin'
 
 export async function POST(request: NextRequest) {
   try {
+    await ensureMongoSuperAdmin()
     const { username, password, email } = await request.json()
 
     if (!username || !password || !email) {

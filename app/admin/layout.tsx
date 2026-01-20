@@ -13,6 +13,7 @@ import {
   FiSettings, 
   FiBell,
   FiLogOut,
+  FiUser,
   FiMenu,
   FiX
 } from 'react-icons/fi'
@@ -37,9 +38,10 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [profileOpen, setProfileOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
-  const { isAuthenticated, logout, user } = useAuth()
+  const { isAuthenticated, logout, user, profile } = useAuth()
 
   useEffect(() => {
     if (!isAuthenticated && pathname !== '/admin/login') {
@@ -82,22 +84,43 @@ export default function AdminLayout({
               <FiBell className="text-xl" />
               <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
             </button>
-            <div className="flex items-center gap-3">
+            <div className="relative">
+              <button
+                onClick={() => setProfileOpen((v) => !v)}
+                className="flex items-center gap-3 hover:bg-gray-50 px-2 py-1 rounded-lg transition-colors"
+              >
               <div className="text-right hidden md:block">
-                <p className="text-sm font-semibold text-[#0E0C1D]">{user || 'Admin'}</p>
-                <p className="text-xs text-gray-500">Super Admin</p>
+                <p className="text-sm font-semibold text-[#0E0C1D]">{profile?.username || user || 'Admin'}</p>
+                <p className="text-xs text-gray-500">{profile?.role ? String(profile.role).replace('_', ' ') : 'Admin'}</p>
               </div>
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0E0C1D] to-[#1E3A5F] flex items-center justify-center text-white font-semibold shadow-md">
-                {user ? user.charAt(0).toUpperCase() : 'A'}
+                {(profile?.username || user) ? (profile?.username || user)!.charAt(0).toUpperCase() : 'A'}
               </div>
+              </button>
+
+              {profileOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden z-50">
+                  <Link
+                    href="/admin/profile"
+                    onClick={() => setProfileOpen(false)}
+                    className="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50"
+                  >
+                    <FiUser />
+                    Profile
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setProfileOpen(false)
+                      logout()
+                    }}
+                    className="w-full text-left flex items-center gap-2 px-4 py-3 text-sm text-red-600 hover:bg-red-50"
+                  >
+                    <FiLogOut />
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
-            <button 
-              onClick={logout}
-              className="text-gray-600 hover:text-red-600 flex items-center gap-2 transition-colors px-3 py-2 rounded-lg hover:bg-red-50"
-            >
-              <FiLogOut className="text-lg" />
-              <span className="hidden md:inline font-medium">Logout</span>
-            </button>
           </div>
         </div>
       </header>
