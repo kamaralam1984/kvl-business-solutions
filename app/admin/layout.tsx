@@ -4,18 +4,18 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
-import { 
-  FiLayout, 
-  FiUsers, 
-  FiMessageCircle, 
-  FiGlobe, 
-  FiUserX, 
-  FiSettings, 
+import {
+  FiLayout,
+  FiUsers,
+  FiMessageCircle,
+  FiGlobe,
+  FiUserX,
+  FiSettings,
   FiBell,
   FiLogOut,
   FiUser,
   FiMenu,
-  FiX
+  FiX,
 } from 'react-icons/fi'
 
 const menuItems = [
@@ -32,11 +32,7 @@ const menuItems = [
   { name: 'Settings', href: '/admin/settings', icon: FiSettings },
 ]
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [profileOpen, setProfileOpen] = useState(false)
   const pathname = usePathname()
@@ -49,118 +45,114 @@ export default function AdminLayout({
     }
   }, [isAuthenticated, pathname, router])
 
-  if (!isAuthenticated && pathname !== '/admin/login') {
-    return null
-  }
-
-  if (pathname === '/admin/login') {
-    return <>{children}</>
-  }
+  if (!isAuthenticated && pathname !== '/admin/login') return null
+  if (pathname === '/admin/login') return <>{children}</>
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Top Header */}
-      <header className="bg-white border-b border-gray-200 h-16 fixed top-0 left-0 right-0 z-50 shadow-sm">
-        <div className="flex items-center justify-between h-full px-6">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden text-gray-700 hover:text-[#0E0C1D] transition-colors"
-            >
-              {sidebarOpen ? <FiX className="text-xl" /> : <FiMenu className="text-xl" />}
-            </button>
-            <Link href="/admin" className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#0E0C1D] to-[#1E3A5F] rounded-lg flex items-center justify-center">
-                <span className="text-lg font-bold text-white">KVL</span>
-              </div>
-              <div className="hidden md:block">
-                <span className="text-xl font-semibold text-[#0E0C1D]">Business Solution</span>
-              </div>
-            </Link>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <button className="text-gray-600 hover:text-[#0E0C1D] relative transition-colors">
-              <FiBell className="text-xl" />
-              <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
-            <div className="relative">
-              <button
-                onClick={() => setProfileOpen((v) => !v)}
-                className="flex items-center gap-3 hover:bg-gray-50 px-2 py-1 rounded-lg transition-colors"
-              >
-              <div className="text-right hidden md:block">
-                <p className="text-sm font-semibold text-[#0E0C1D]">{profile?.username || user || 'Admin'}</p>
-                <p className="text-xs text-gray-500">{profile?.role ? String(profile.role).replace('_', ' ') : 'Admin'}</p>
-              </div>
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0E0C1D] to-[#1E3A5F] flex items-center justify-center text-white font-semibold shadow-md">
-                {(profile?.username || user) ? (profile?.username || user)!.charAt(0).toUpperCase() : 'A'}
-              </div>
-              </button>
+    <div className="admin-layout">
+      {/* ================= HEADER ================= */}
+      <header className="fixed top-0 left-0 right-0 h-16 z-50 flex items-center justify-between px-6 bg-white/70 backdrop-blur-xl border-b border-white/40 shadow-sm">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="lg:hidden text-gray-700"
+          >
+            {sidebarOpen ? <FiX size={22} /> : <FiMenu size={22} />}
+          </button>
 
-              {profileOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden z-50">
-                  <Link
-                    href="/admin/profile"
-                    onClick={() => setProfileOpen(false)}
-                    className="flex items-center gap-2 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50"
-                  >
-                    <FiUser />
-                    Profile
-                  </Link>
-                  <button
-                    onClick={() => {
-                      setProfileOpen(false)
-                      logout()
-                    }}
-                    className="w-full text-left flex items-center gap-2 px-4 py-3 text-sm text-red-600 hover:bg-red-50"
-                  >
-                    <FiLogOut />
-                    Logout
-                  </button>
-                </div>
-              )}
+          <Link href="/admin" className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl admin-btn flex items-center justify-center">
+              <span className="text-white font-bold">KVL</span>
             </div>
+            <span className="hidden md:block font-semibold text-lg">
+              Admin Panel
+            </span>
+          </Link>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <button className="relative text-gray-600 hover:text-black">
+            <FiBell size={20} />
+            <span className="absolute top-0 right-0 w-2 h-2 bg-pink-500 rounded-full" />
+          </button>
+
+          <div className="relative">
+            <button
+              onClick={() => setProfileOpen(!profileOpen)}
+              className="flex items-center gap-3 px-2 py-1 rounded-xl hover:bg-white/60"
+            >
+              <div className="text-right hidden md:block">
+                <p className="text-sm font-semibold">
+                  {profile?.username || user || 'Admin'}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {profile?.role || 'Administrator'}
+                </p>
+              </div>
+              <div className="w-10 h-10 rounded-full admin-btn flex items-center justify-center text-white font-bold">
+                {(profile?.username || user || 'A')[0].toUpperCase()}
+              </div>
+            </button>
+
+            {profileOpen && (
+              <div className="absolute right-0 mt-3 w-48 admin-card p-2">
+                <Link
+                  href="/admin/profile"
+                  className="admin-link"
+                  onClick={() => setProfileOpen(false)}
+                >
+                  <FiUser /> Profile
+                </Link>
+                <button
+                  onClick={() => {
+                    setProfileOpen(false)
+                    logout()
+                  }}
+                  className="admin-link text-red-600"
+                >
+                  <FiLogOut /> Logout
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </header>
 
-      <div className="flex pt-16">
-        {/* Left Sidebar */}
-        <aside className={`bg-white border-r border-gray-200 w-64 fixed left-0 top-16 bottom-0 transition-transform duration-200 shadow-sm ${
+      {/* ================= SIDEBAR ================= */}
+      <aside
+        className={`admin-sidebar fixed top-16 bottom-0 transition-transform duration-300 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0`}>
-          <nav className="p-4 space-y-2">
-            {menuItems.map((item) => {
-              const Icon = item.icon
-              const isActive = pathname === item.href || (item.href !== '/admin' && pathname?.startsWith(item.href))
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
-                    isActive
-                      ? 'bg-gradient-to-r from-[#0E0C1D] to-[#1E3A5F] text-white shadow-md'
-                      : 'text-gray-700 hover:bg-gray-50 hover:text-[#0E0C1D]'
-                  }`}
-                >
-                  <Icon className={`text-lg ${isActive ? 'text-white' : 'text-gray-500'}`} />
-                  <span className="font-medium">{item.name}</span>
-                </Link>
-              )
-            })}
-          </nav>
-        </aside>
+        } lg:translate-x-0`}
+      >
+        <nav className="mt-6">
+          {menuItems.map((item) => {
+            const Icon = item.icon
+            const active =
+              pathname === item.href ||
+              (item.href !== '/admin' && pathname.startsWith(item.href))
 
-        {/* Main Content */}
-        <main className={`flex-1 transition-all duration-200 ${
-          sidebarOpen ? 'lg:ml-64' : 'lg:ml-0'
-        }`}>
-          <div className="p-6">
-            {children}
-          </div>
-        </main>
-      </div>
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`admin-link ${active ? 'active' : ''}`}
+              >
+                <Icon size={18} />
+                {item.name}
+              </Link>
+            )
+          })}
+        </nav>
+      </aside>
+
+      {/* ================= CONTENT ================= */}
+      <main
+        className={`admin-content pt-20 transition-all duration-300 ${
+          sidebarOpen ? 'lg:ml-[260px]' : 'lg:ml-0'
+        }`}
+      >
+        {children}
+      </main>
     </div>
   )
 }
