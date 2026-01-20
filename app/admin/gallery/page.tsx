@@ -15,6 +15,60 @@ interface Image {
 
 const categories = ['All', 'Civil Work', 'CCTV Installation', 'Event Organizing', 'Software Development', 'GPS Tracking', 'Mechanical Work', 'Manpower Supply']
 
+// Compress image on the client so that:
+// - User can select files up to 10MB
+// - We save/send ~1MB (or less) per image to the server
+async function compressImageToBase64(
+  file: File,
+  maxSizeBytes = 1 * 1024 * 1024, // target ≈1MB
+  maxWidth = 1600,
+  maxHeight = 1600
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      const img = new Image()
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        let { width, height } = img
+
+        // Constrain dimensions while preserving aspect ratio
+        if (width > maxWidth || height > maxHeight) {
+          const ratio = Math.min(maxWidth / width, maxHeight / height)
+          width = Math.round(width * ratio)
+          height = Math.round(height * ratio)
+        }
+
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext('2d')
+        if (!ctx) {
+          reject(new Error('Canvas not supported'))
+          return
+        }
+        ctx.drawImage(img, 0, 0, width, height)
+
+        let quality = 0.8
+        let dataUrl = canvas.toDataURL('image/jpeg', quality)
+
+        // Roughly convert base64 length to bytes (≈ 0.75 factor)
+        const withinLimit = () => dataUrl.length * 0.75 <= maxSizeBytes
+
+        while (!withinLimit() && quality > 0.4) {
+          quality -= 0.1
+          dataUrl = canvas.toDataURL('image/jpeg', quality)
+        }
+
+        resolve(dataUrl)
+      }
+      img.onerror = () => reject(new Error('Failed to load image for compression'))
+      img.src = reader.result as string
+    }
+    reader.onerror = () => reject(new Error('Failed to read file'))
+    reader.readAsDataURL(file)
+  })
+}
+
 export default function GalleryPage() {
   const [images, setImages] = useState<Image[]>([])
   const [loading, setLoading] = useState(true)
@@ -69,9 +123,9 @@ export default function GalleryPage() {
           invalidFiles.push(`${file.name} - Not an image`)
           return
         }
-        // Limit to 2MB per file to avoid exceeding server payload limits on deploy
-        if (file.size > 2 * 1024 * 1024) {
-          invalidFiles.push(`${file.name} - Size exceeds 2MB`)
+        // Allow selection up to 10MB per file (we will compress before upload)
+        if (file.size > 10 * 1024 * 1024) {
+          invalidFiles.push(`${file.name} - Size exceeds 10MB`)
           return
         }
         validFiles.push(file)
@@ -103,28 +157,14 @@ export default function GalleryPage() {
       return
     }
 
-    // Validate file size (max 2MB to stay within server request limits)
-    if (file.size > 2 * 1024 * 1024) {
-      alert('Image size should be less than 2MB (hosting limit)')
-      return
-    }
-
     setUploading(true)
 
     try {
-      // Convert to base64 for now (in production, upload to cloud storage)
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        const base64String = reader.result as string
-        setFormData({ ...formData, imageUrl: base64String })
-        setPreviewUrl(base64String)
-        setUploading(false)
-      }
-      reader.onerror = () => {
-        alert('Error reading file')
-        setUploading(false)
-      }
-      reader.readAsDataURL(file)
+      // Compress to ≈1MB and convert to base64 before sending to server
+      const compressedBase64 = await compressImageToBase64(file)
+      setFormData({ ...formData, imageUrl: compressedBase64 })
+      setPreviewUrl(compressedBase64)
+      setUploading(false)
     } catch (error) {
       console.error('Error uploading file:', error)
       alert('Error uploading file')
@@ -138,32 +178,30 @@ export default function GalleryPage() {
     setBatchUploading(true)
     const imagesToUpload: any[] = []
 
-    // Convert all files to base64
+  // Compress and convert all files to base64 (~1MB each)
     const readPromises = batchFiles.map((file) => {
       return new Promise<void>((resolve, reject) => {
         setUploadProgress(prev => ({ ...prev, [file.name]: 'uploading' }))
-        
-        const reader = new FileReader()
-        reader.onloadend = () => {
-          const base64String = reader.result as string
-          const fileName = file.name.replace(/\.[^/.]+$/, '') // Remove extension
-          
-          imagesToUpload.push({
-            title: fileName.charAt(0).toUpperCase() + fileName.slice(1).replace(/[-_]/g, ' '),
-            description: formData.description || '',
-            imageUrl: base64String,
-            category: formData.category,
-            uploadedBy: 'admin',
+
+        compressImageToBase64(file)
+          .then((base64String) => {
+            const fileName = file.name.replace(/\.[^/.]+$/, '') // Remove extension
+
+            imagesToUpload.push({
+              title: fileName.charAt(0).toUpperCase() + fileName.slice(1).replace(/[-_]/g, ' '),
+              description: formData.description || '',
+              imageUrl: base64String,
+              category: formData.category,
+              uploadedBy: 'admin',
+            })
+
+            setUploadProgress(prev => ({ ...prev, [file.name]: 'success' }))
+            resolve()
           })
-          
-          setUploadProgress(prev => ({ ...prev, [file.name]: 'success' }))
-          resolve()
-        }
-        reader.onerror = () => {
-          setUploadProgress(prev => ({ ...prev, [file.name]: 'error' }))
-          reject(new Error(`Failed to read ${file.name}`))
-        }
-        reader.readAsDataURL(file)
+          .catch(() => {
+            setUploadProgress(prev => ({ ...prev, [file.name]: 'error' }))
+            reject(new Error(`Failed to compress ${file.name}`))
+          })
       })
     })
 
@@ -421,7 +459,7 @@ export default function GalleryPage() {
                             multiple
                           />
                         </label>
-                        <small className="text-muted d-block mt-1">You can select multiple images at once (Max 10MB per file)</small>
+                        <small className="text-muted d-block mt-1">You can select multiple images at once (Max 10MB per file, saved as ~1MB each)</small>
                       </div>
                       
                       {/* Batch Files Preview */}

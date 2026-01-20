@@ -121,14 +121,24 @@ export default function Navigation() {
                     </button>
                   </div>
                 ) : (
-                  <Link
-                    href="/user/login"
-                    className="btn btn-outline-secondary px-3 py-2 fw-semibold"
-                    style={{ borderRadius: '10px' }}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Login
-                  </Link>
+                  <div className="d-flex align-items-center gap-2">
+                    <Link
+                      href="/register"
+                      className="btn btn-outline-secondary px-3 py-2 fw-semibold"
+                      style={{ borderRadius: '10px' }}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Register
+                    </Link>
+                    <Link
+                      href="/user/login"
+                      className="btn btn-outline-secondary px-3 py-2 fw-semibold"
+                      style={{ borderRadius: '10px' }}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Login
+                    </Link>
+                  </div>
                 )}
               </li>
             )}

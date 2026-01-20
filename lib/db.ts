@@ -6,6 +6,8 @@ import fs from 'fs'
 import path from 'path'
 import { getMongoDb, isMongoEnabled } from '@/lib/mongodb'
 
+let mongoImagesWarned = false
+
 // Data directory resolution:
 // - If DATA_DIR is set (e.g., to a persistent mount), use it.
 // - On Vercel/readonly FS, fall back to /tmp which is writable at runtime.
@@ -88,25 +90,41 @@ async function getNextSequence(name: string): Promise<number> {
 // Image functions
 export async function getImages(): Promise<Image[]> {
   if (isMongoEnabled()) {
-    const db = await getMongoDb()
-    return await db.collection<Image>('images').find({}).sort({ id: -1 }).toArray()
+    try {
+      const db = await getMongoDb()
+      return await db.collection<Image>('images').find({}).sort({ id: -1 }).toArray()
+    } catch (e) {
+      // If Mongo connection fails locally, gracefully fall back to file DB
+      if (!mongoImagesWarned) {
+        mongoImagesWarned = true
+        console.error('Mongo getImages failed, falling back to file DB', e)
+      }
+    }
   }
 
   try {
     const data = fs.readFileSync(imagesFile, 'utf-8')
     return JSON.parse(data)
   } catch (error) {
+    console.error('File DB getImages failed', error)
     return []
   }
 }
 
 export async function saveImage(image: Omit<Image, 'id'>): Promise<Image> {
   if (isMongoEnabled()) {
-    const db = await getMongoDb()
-    const id = await getNextSequence('images')
-    const newImage: Image = { ...image, id }
-    await db.collection<Image>('images').insertOne(newImage as any)
-    return newImage
+    try {
+      const db = await getMongoDb()
+      const id = await getNextSequence('images')
+      const newImage: Image = { ...image, id }
+      await db.collection<Image>('images').insertOne(newImage as any)
+      return newImage
+    } catch (e) {
+      if (!mongoImagesWarned) {
+        mongoImagesWarned = true
+        console.error('Mongo saveImage failed, falling back to file DB', e)
+      }
+    }
   }
 
   const images = await getImages()
@@ -121,9 +139,16 @@ export async function saveImage(image: Omit<Image, 'id'>): Promise<Image> {
 
 export async function deleteImage(id: number): Promise<boolean> {
   if (isMongoEnabled()) {
-    const db = await getMongoDb()
-    const res = await db.collection<Image>('images').deleteOne({ id })
-    return res.deletedCount === 1
+    try {
+      const db = await getMongoDb()
+      const res = await db.collection<Image>('images').deleteOne({ id })
+      return res.deletedCount === 1
+    } catch (e) {
+      if (!mongoImagesWarned) {
+        mongoImagesWarned = true
+        console.error('Mongo deleteImage failed, falling back to file DB', e)
+      }
+    }
   }
 
   const images = await getImages()
