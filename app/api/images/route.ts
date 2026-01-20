@@ -3,7 +3,42 @@ import { getImages, saveImage, deleteImage } from '@/lib/db'
 
 export async function GET() {
   try {
-    const images = getImages()
+    let images = getImages()
+
+    // If no images are present in the file-based DB (common on fresh deploys),
+    // return a lightweight fallback set so the gallery is never empty in production.
+    if (!images || images.length === 0) {
+      images = [
+        {
+          id: 1,
+          title: 'Modern Control Room',
+          description: 'CCTV & command center setup for smart facilities.',
+          imageUrl: 'https://images.unsplash.com/photo-1558002038-1055907df827?w=1200&q=75',
+          category: 'CCTV Installation',
+          uploadedBy: 'system',
+          uploadedAt: new Date().toISOString(),
+        },
+        {
+          id: 2,
+          title: 'Industrial Flooring',
+          description: 'High-durability civil work for heavy traffic areas.',
+          imageUrl: 'https://images.unsplash.com/photo-1503389152951-9f343605f61e?w=1200&q=75',
+          category: 'Civil Work',
+          uploadedBy: 'system',
+          uploadedAt: new Date().toISOString(),
+        },
+        {
+          id: 3,
+          title: 'Mechanical Assembly',
+          description: 'Precision mechanical fabrication and assembly.',
+          imageUrl: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=75',
+          category: 'Mechanical Work',
+          uploadedBy: 'system',
+          uploadedAt: new Date().toISOString(),
+        },
+      ]
+    }
+
     return NextResponse.json({ success: true, images })
   } catch (error) {
     return NextResponse.json(

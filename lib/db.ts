@@ -4,37 +4,47 @@
 import fs from 'fs'
 import path from 'path'
 
-const dbPath = path.join(process.cwd(), 'data')
+// Data directory resolution:
+// - If DATA_DIR is set (e.g., to a persistent mount), use it.
+// - On Vercel/readonly FS, fall back to /tmp which is writable at runtime.
+// - Otherwise default to project ./data
+const resolveDataDir = () => {
+  if (process.env.DATA_DIR) return process.env.DATA_DIR
+  if (process.env.VERCEL) return '/tmp/kvl-data'
+  return path.join(process.cwd(), 'data')
+}
+
+const dbPath = resolveDataDir()
 const imagesFile = path.join(dbPath, 'images.json')
 const adminsFile = path.join(dbPath, 'admins.json')
 const pagesFile = path.join(dbPath, 'pages.json')
 
-// Ensure data directory exists
-if (!fs.existsSync(dbPath)) {
-  fs.mkdirSync(dbPath, { recursive: true })
+const ensureDir = (dir: string) => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true })
+  }
 }
 
-// Initialize files if they don't exist
-if (!fs.existsSync(imagesFile)) {
-  fs.writeFileSync(imagesFile, JSON.stringify([], null, 2))
+const ensureFile = (file: string, initial: any) => {
+  if (!fs.existsSync(file)) {
+    fs.writeFileSync(file, JSON.stringify(initial, null, 2))
+  }
 }
 
-if (!fs.existsSync(adminsFile)) {
-  fs.writeFileSync(adminsFile, JSON.stringify([
-    {
-      id: 1,
-      username: 'admin',
-      password: 'admin123', // In production, hash this
-      email: 'admin@kvlbusiness.com',
-      role: 'super_admin',
-      createdAt: new Date().toISOString()
-    }
-  ], null, 2))
-}
-
-if (!fs.existsSync(pagesFile)) {
-  fs.writeFileSync(pagesFile, JSON.stringify([], null, 2))
-}
+// Ensure data directory and files exist (handles /tmp on serverless)
+ensureDir(dbPath)
+ensureFile(imagesFile, [])
+ensureFile(adminsFile, [
+  {
+    id: 1,
+    username: 'kamaralamjdu@gmail.com',
+    password: 'Admin@143', // In production, hash this
+    email: 'admin@kvlbusiness.com',
+    role: 'super_admin',
+    createdAt: new Date().toISOString(),
+  },
+])
+ensureFile(pagesFile, [])
 
 export interface Image {
   id: number
