@@ -3,7 +3,7 @@ export default function AboutPage() {
     <main style={{ paddingTop: '100px', minHeight: '100vh', backgroundColor: '#fff' }}>
       <div className="bg-primary text-white py-5 mb-5">
         <div className="container text-center">
-          <h1 className="display-4 fw-bold mb-3">About KVL Business Solution</h1>
+          <h1 className="display-4 fw-bold mb-3">About KVL Business Solutions</h1>
           <p className="lead">Your Trusted Partner for Multi-Service Professional Solutions</p>
         </div>
       </div>
@@ -14,7 +14,7 @@ export default function AboutPage() {
             <div className="col-lg-6 mb-4 mb-lg-0">
               <h2 className="display-6 fw-bold mb-4" style={{ color: '#0E0C1D' }}>Our Mission</h2>
               <p className="lead text-muted mb-3">
-                At KVL Business Solution, our mission is to be the premier multi-service provider that empowers businesses, government departments, and institutions to achieve their objectives through integrated, innovative, and reliable solutions. We are committed to delivering excellence across every service category, from cutting-edge technology solutions to infrastructure development and human resource management.
+                At KVL Business Solutions, our mission is to be the premier multi-service provider that empowers businesses, government departments, and institutions to achieve their objectives through integrated, innovative, and reliable solutions. We are committed to delivering excellence across every service category, from cutting-edge technology solutions to infrastructure development and human resource management.
               </p>
               <p className="text-muted">
                 We strive to build long-term partnerships based on trust, transparency, and mutual growth. Our mission extends beyond project completion to ensuring sustainable success for our clients through continuous support, maintenance, and strategic guidance. We believe in creating value that transcends immediate deliverables, focusing on transformative outcomes that drive organizational growth and operational efficiency.
@@ -58,15 +58,15 @@ export default function AboutPage() {
             <div className="col-lg-10">
               <div className="card border-0 shadow">
                 <div className="card-body p-5">
-                  <h3 className="h4 fw-bold mb-4" style={{ color: '#0E0C1D' }}>Why KVL Business Solution is Reliable</h3>
+                  <h3 className="h4 fw-bold mb-4" style={{ color: '#0E0C1D' }}>Why KVL Business Solutions is Reliable</h3>
                   <p className="text-muted mb-3">
-                    With over 15 years of experience in the industry, KVL Business Solution has established itself as a reliable and trusted partner for organizations across various sectors. Our extensive portfolio includes successful projects for government departments, private companies, builders, factories, educational institutions, event organizers, and startups. This diverse experience has equipped us with deep insights into different industry requirements and challenges.
+                    With over 15 years of experience in the industry, KVL Business Solutions has established itself as a reliable and trusted partner for organizations across various sectors. Our extensive portfolio includes successful projects for government departments, private companies, builders, factories, educational institutions, event organizers, and startups. This diverse experience has equipped us with deep insights into different industry requirements and challenges.
                   </p>
                   <p className="text-muted mb-3">
                     Our reliability stems from our unwavering commitment to quality, timely delivery, and customer satisfaction. We maintain the highest standards in every project, regardless of size or complexity. Our team of experienced professionals brings together expertise from multiple domains, ensuring that every service is delivered with precision and excellence. We invest in continuous training and skill development, keeping our team updated with the latest technologies, methodologies, and industry best practices.
                   </p>
                   <p className="text-muted mb-0">
-                    What sets us apart is our integrated approach to business solutions. Rather than operating as separate service providers, we function as a unified organization where different service teams collaborate seamlessly. This enables us to offer comprehensive solutions that address multiple aspects of a client's needs simultaneously. Our proven track record, client testimonials, and repeat business relationships stand as testament to our reliability and commitment to excellence. When you choose KVL Business Solution, you're choosing a partner who values your success as much as you do.
+                    What sets us apart is our integrated approach to business solutions. Rather than operating as separate service providers, we function as a unified organization where different service teams collaborate seamlessly. This enables us to offer comprehensive solutions that address multiple aspects of a client's needs simultaneously. Our proven track record, client testimonials, and repeat business relationships stand as testament to our reliability and commitment to excellence. When you choose KVL Business Solutions, you're choosing a partner who values your success as much as you do.
                   </p>
                 </div>
               </div>

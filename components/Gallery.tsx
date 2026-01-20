@@ -42,7 +42,8 @@ export default function Gallery() {
       const response = await fetch('/api/images')
       const data = await response.json()
       if (data.success) {
-        setImages(data.images)
+        // Home gallery: show only first 8 images for performance; full gallery on /projects
+        setImages(data.images.slice(0, 8))
       }
     } catch (error) {
       console.error('Error fetching images:', error)
@@ -109,42 +110,51 @@ export default function Gallery() {
             {filteredImages.map((image) => (
               <div key={image.id} className="col-md-6 col-lg-3">
                 <div 
-                  className="card border-0 shadow-sm h-100 card-hover" 
-                  style={{ borderRadius: '15px', overflow: 'hidden', cursor: 'pointer' }}
+                  className="card border-0 shadow-sm card-hover" 
+                  style={{ borderRadius: '15px', overflow: 'visible', cursor: 'pointer', backgroundColor: '#f8f9fa' }}
                   onClick={() => setSelectedImage(image)}
                   data-bs-toggle="modal"
                   data-bs-target="#imageModal"
                 >
-                  <div className="position-relative overflow-hidden" style={{ height: '250px' }}>
+                  <div className="position-relative d-flex align-items-center justify-content-center" style={{ minHeight: '400px', padding: '15px' }}>
                     <img
                       src={image.imageUrl}
-                      alt={image.title}
-                      className="card-img-top w-100 h-100"
-                      style={{ objectFit: 'cover', transition: 'transform 0.3s ease' }}
+                      alt={image.category}
+                      className="w-100"
+                      loading="lazy"
+                      decoding="async"
+                      style={{ 
+                        objectFit: 'contain',
+                        width: '100%',
+                        height: 'auto',
+                        maxWidth: '100%',
+                        display: 'block',
+                        transition: 'transform 0.3s ease',
+                      } as React.CSSProperties}
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x300?text=Image+Not+Found'
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'scale(1.1)'
+                        e.currentTarget.style.transform = 'scale(1.05)'
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.transform = 'scale(1)'
                       }}
                     />
-                    <div className="position-absolute top-0 end-0 m-2">
+                    <div className="position-absolute top-0 end-0 m-2" style={{ zIndex: 10 }}>
                       <span 
                         className="badge px-3 py-2"
                         style={{ 
                           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                          color: 'white'
+                          color: 'white',
+                          fontSize: '0.75rem',
+                          fontWeight: '600',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
                         }}
                       >
                         {image.category}
                       </span>
                     </div>
-                  </div>
-                  <div className="card-body">
-                    <h6 className="card-title fw-bold" style={{ color: '#0E0C1D' }}>{image.title}</h6>
                   </div>
                 </div>
               </div>
@@ -176,36 +186,44 @@ export default function Gallery() {
           style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.9)' }}
           onClick={() => setSelectedImage(null)}
         >
-          <div className="modal-dialog modal-lg modal-dialog-centered">
-            <div className="modal-content border-0" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-header border-0">
-                <h5 className="modal-title fw-bold">{selectedImage.title}</h5>
+          <div className="modal-dialog modal-xl modal-dialog-centered">
+            <div className="modal-content border-0 bg-transparent" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header border-0 justify-content-end">
                 <button 
                   type="button" 
-                  className="btn-close" 
+                  className="btn-close btn-close-white" 
                   onClick={() => setSelectedImage(null)}
+                  style={{ fontSize: '1.5rem' }}
                 ></button>
               </div>
-              <div className="modal-body p-0">
+              <div className="modal-body p-0 d-flex align-items-center justify-content-center" style={{ minHeight: '90vh' }}>
                 <img
                   src={selectedImage.imageUrl}
-                  alt={selectedImage.title}
-                  className="img-fluid w-100"
-                  style={{ maxHeight: '70vh', objectFit: 'contain' }}
+                  alt={selectedImage.category}
+                  className="img-fluid"
+                  style={{ 
+                    maxHeight: '90vh',
+                    maxWidth: '100%',
+                    width: 'auto',
+                    height: 'auto',
+                    objectFit: 'contain',
+                    borderRadius: '10px',
+                    display: 'block'
+                  } as React.CSSProperties}
+                  loading="eager"
                 />
-                <div className="p-4">
+                <div className="position-absolute bottom-0 start-50 translate-middle-x mb-4">
                   <span 
-                    className="badge px-3 py-2 mb-3"
+                    className="badge px-4 py-2"
                     style={{ 
                       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                      color: 'white'
+                      color: 'white',
+                      fontSize: '0.9rem',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
                     }}
                   >
                     {selectedImage.category}
                   </span>
-                  {selectedImage.description && (
-                    <p className="text-muted mb-0">{selectedImage.description}</p>
-                  )}
                 </div>
               </div>
             </div>

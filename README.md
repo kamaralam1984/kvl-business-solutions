@@ -1,4 +1,4 @@
-# KVL Business Solution - Website
+# KVL Business Solutions - Website
 
 A modern, premium multi-service business website built with Next.js, React, and Tailwind CSS.
 
@@ -172,4 +172,4 @@ For issues or questions, contact the development team.
 
 ## License
 
-© 2024 KVL Business Solution. All rights reserved.
+© 2024 KVL Business Solutions. All rights reserved.

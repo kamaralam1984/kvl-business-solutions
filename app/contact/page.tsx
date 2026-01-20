@@ -217,7 +217,7 @@ export default function ContactPage() {
                   <div>
                     <h5 className="fw-semibold mb-2" style={{ color: '#0E0C1D' }}>Address</h5>
                     <p className="text-muted mb-0">
-                      KVL Business Solution<br />
+                      KVL Business Solutions<br />
                       Business District, Main Street<br />
                       City, State - 123456<br />
                       India

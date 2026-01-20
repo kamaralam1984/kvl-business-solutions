@@ -26,12 +26,12 @@ export default function AboutSection() {
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
               }}>
-                About KVL Business Solution
+                About KVL Business Solutions
               </h2>
             </div>
             <div className="mb-4">
               <p className="lead text-muted mb-3">
-                KVL Business Solution is a premier multi-service professional business organization that has established itself as a trusted partner for government departments, private companies, builders, factories, institutions, event organizers, and startups across the nation. With a comprehensive portfolio of services spanning technology, infrastructure, and human resources, we have positioned ourselves as a one-stop solution provider for diverse business needs.
+                KVL Business Solutions is a premier multi-service professional business organization that has established itself as a trusted partner for government departments, private companies, builders, factories, institutions, event organizers, and startups across the nation. With a comprehensive portfolio of services spanning technology, infrastructure, and human resources, we have positioned ourselves as a one-stop solution provider for diverse business needs.
               </p>
               <p className="text-muted mb-3">
                 Our company was founded on the principles of excellence, integrity, and customer-centricity. We understand that modern businesses require integrated solutions that can address multiple challenges simultaneously. Whether it's developing cutting-edge software applications, installing state-of-the-art surveillance systems, managing complex construction projects, or providing skilled manpower, we bring the same level of professionalism and expertise to every engagement.
@@ -70,7 +70,7 @@ export default function AboutSection() {
               ></div>
               <img
                 src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80"
-                alt="About KVL Business Solution"
+                alt="About KVL Business Solutions"
                 className="img-fluid rounded shadow-lg position-relative"
                 style={{ height: '500px', objectFit: 'cover', width: '100%', borderRadius: '20px', zIndex: 1 }}
               />

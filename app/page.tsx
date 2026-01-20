@@ -1,4 +1,4 @@
-import HeroSection from '@/components/HeroSection'
+import ImageSlider from '@/components/ImageSlider'
 import ServiceCards from '@/components/ServiceCards'
 import AboutSection from '@/components/AboutSection'
 import WhyChooseUs from '@/components/WhyChooseUs'
@@ -10,7 +10,7 @@ import CTASection from '@/components/CTASection'
 export default function Home() {
   return (
     <main style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
-      <HeroSection />
+      <ImageSlider />
       <ServiceCards />
       <AboutSection />
       <WhyChooseUs />

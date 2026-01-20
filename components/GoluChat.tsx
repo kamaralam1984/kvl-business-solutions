@@ -60,7 +60,7 @@ export default function GoluChat() {
       setTimeout(() => {
         setMessages([
           {
-            text: 'नमस्ते 🙏\nमैं GOLU, KVL Business Solution (BLN) Assistant हूँ।\nकृपया बताएं, आप किस सेवा में रुचि रखते हैं?',
+            text: 'नमस्ते 🙏\nमैं GOLU, KVL Business Solutions (BLN) Assistant हूँ।\nकृपया बताएं, आप किस सेवा में रुचि रखते हैं?',
             sender: 'golu',
             buttons: [
               'Software Development',
@@ -298,7 +298,7 @@ export default function GoluChat() {
           >
             <div>
               <h3 className="fw-bold mb-0" style={{ fontSize: '1.1rem' }}>GOLU AI Assistant</h3>
-              <p className="mb-0 small opacity-90">KVL Business Solution</p>
+              <p className="mb-0 small opacity-90">KVL Business Solutions</p>
             </div>
             <button
               onClick={() => {

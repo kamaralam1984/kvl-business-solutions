@@ -6,8 +6,8 @@ import GoluChat from '@/components/GoluChat'
 import { AuthProvider } from '@/contexts/AuthContext'
 
 export const metadata: Metadata = {
-  title: 'KVL Business Solution - Multi-Service Professional Business',
-  description: 'KVL Business Solution offers Software Development, CCTV Installation, GPS Tracking, Civil Work, Mechanical Work, Manpower Supply, and Event Organizing services.',
+  title: 'KVL Business Solutions - Multi-Service Professional Business',
+  description: 'KVL Business Solutions offers Software Development, CCTV Installation, GPS Tracking, Civil Work, Mechanical Work, Manpower Supply, and Event Organizing services.',
   keywords: 'business solutions, software development, CCTV installation, GPS tracking, civil work, mechanical work, manpower supply, event organizing',
 }
 

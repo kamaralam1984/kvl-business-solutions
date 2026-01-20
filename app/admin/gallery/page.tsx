@@ -321,12 +321,17 @@ export default function GalleryPage() {
           {filteredImages.map((image) => (
             <div key={image.id} className="col-md-6 col-lg-4">
               <div className="card border-0 shadow-sm h-100" style={{ borderRadius: '15px', overflow: 'hidden' }}>
-                <div className="position-relative" style={{ height: '250px', overflow: 'hidden' }}>
+                <div className="position-relative d-flex align-items-center justify-content-center" style={{ minHeight: '300px', padding: '10px', backgroundColor: '#f8f9fa' }}>
                   <img
                     src={image.imageUrl}
-                    alt={image.title}
-                    className="card-img-top w-100 h-100"
-                    style={{ objectFit: 'cover' }}
+                    alt={image.category}
+                    className="w-100"
+                    style={{ 
+                      objectFit: 'contain',
+                      maxHeight: '300px',
+                      width: '100%',
+                      height: 'auto'
+                    }}
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x300?text=Image+Not+Found'
                     }}
@@ -339,9 +344,8 @@ export default function GalleryPage() {
                     <FiTrash2 />
                   </button>
                 </div>
-                <div className="card-body">
-                  <div className="d-flex justify-content-between align-items-start mb-2">
-                    <h5 className="card-title fw-bold mb-0" style={{ color: '#0E0C1D' }}>{image.title}</h5>
+                <div className="card-body p-2">
+                  <div className="d-flex justify-content-end align-items-center">
                     <span 
                       className="badge px-2 py-1"
                       style={{
@@ -353,17 +357,6 @@ export default function GalleryPage() {
                       {image.category}
                     </span>
                   </div>
-                  {image.description && (
-                    <p className="card-text text-muted small mb-2" style={{ 
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden'
-                    }}>
-                      {image.description}
-                    </p>
-                  )}
-                  <p className="text-muted small mb-0">{new Date(image.uploadedAt).toLocaleDateString()}</p>
                 </div>
               </div>
             </div>

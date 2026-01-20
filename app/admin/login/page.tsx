@@ -48,7 +48,7 @@ export default function AdminLogin() {
               <span className="text-2xl font-bold text-[#0E0C1D]">KVL</span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">KVL Business Solution</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">KVL Business Solutions</h1>
           <p className="text-gray-300">Admin Dashboard</p>
         </div>
 

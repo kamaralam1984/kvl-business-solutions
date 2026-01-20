@@ -82,23 +82,30 @@ export default function ProjectsPage() {
             {filteredProjects.map((project) => (
               <div key={project.id} className="col-md-6 col-lg-4">
                 <div className="card border-0 shadow-sm h-100" style={{ cursor: 'pointer' }} onClick={() => setSelectedProject(project.id)}>
-                  <div className="position-relative overflow-hidden" style={{ height: '250px' }}>
+                  <div className="position-relative overflow-hidden" style={{ height: '300px' }}>
                     <img
                       src={project.imageUrl}
                       alt={project.title}
                       className="card-img-top w-100 h-100"
-                      style={{ objectFit: 'cover' }}
+                      loading="lazy"
+                      decoding="async"
+                      style={{ 
+                        objectFit: 'cover',
+                        transition: 'transform 0.3s ease'
+                      } as React.CSSProperties}
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x300?text=Image+Not+Found'
                       }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'scale(1.05)'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'scale(1)'
+                      }}
                     />
-                    <div className="position-absolute top-0 end-0 m-2">
-                      <span className="badge bg-primary">{project.category}</span>
-                    </div>
                   </div>
                   <div className="card-body">
-                    <h5 className="card-title fw-bold" style={{ color: '#0E0C1D' }}>{project.title}</h5>
-                    <p className="card-text text-muted small">{project.description}</p>
+                    <span className="badge bg-primary mb-2">{project.category}</span>
                   </div>
                 </div>
               </div>
@@ -109,30 +116,32 @@ export default function ProjectsPage() {
 
       {/* Modal for Project Details */}
       {selectedProject && (
-        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }} tabIndex={-1} onClick={() => setSelectedProject(null)}>
-          <div className="modal-dialog modal-lg modal-dialog-centered" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-content">
+        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.9)' }} tabIndex={-1} onClick={() => setSelectedProject(null)}>
+          <div className="modal-dialog modal-xl modal-dialog-centered" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-content border-0 bg-transparent">
               {(() => {
                 const project = projects.find(p => p.id === selectedProject)
                 if (!project) return null
                 return (
                   <>
-                    <div className="modal-header">
-                      <h5 className="modal-title fw-bold">{project.title}</h5>
-                      <button type="button" className="btn-close" onClick={() => setSelectedProject(null)}></button>
+                    <div className="modal-header border-0 justify-content-end">
+                      <button type="button" className="btn-close btn-close-white" onClick={() => setSelectedProject(null)}></button>
                     </div>
-                    <div className="modal-body">
+                    <div className="modal-body p-0">
                       <img
                         src={project.imageUrl}
                         alt={project.title}
-                        className="img-fluid rounded mb-3"
-                        style={{ width: '100%', height: '400px', objectFit: 'cover' }}
+                        className="img-fluid w-100"
+                        loading="eager"
+                        style={{ 
+                          maxHeight: '85vh', 
+                          objectFit: 'contain',
+                          borderRadius: '10px'
+                        } as React.CSSProperties}
                       />
-                      <span className="badge bg-primary mb-3">{project.category}</span>
-                      <p className="text-muted">{project.description}</p>
-                    </div>
-                    <div className="modal-footer">
-                      <button type="button" className="btn btn-secondary" onClick={() => setSelectedProject(null)}>Close</button>
+                      <div className="p-3 text-center">
+                        <span className="badge bg-primary px-3 py-2">{project.category}</span>
+                      </div>
                     </div>
                   </>
                 )
