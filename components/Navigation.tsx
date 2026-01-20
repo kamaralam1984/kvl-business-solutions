@@ -3,10 +3,12 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { FiMenu, FiX } from 'react-icons/fi'
+import { useUserAuth } from '@/contexts/UserAuthContext'
 
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const { user, loading, logout } = useUserAuth()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -95,6 +97,41 @@ export default function Navigation() {
                 </Link>
               </li>
             ))}
+            {!loading && (
+              <li className="nav-item ms-2">
+                {user ? (
+                  <div className="d-flex align-items-center gap-2">
+                    <Link
+                      href="/user/profile"
+                      className="btn btn-outline-secondary px-3 py-2 fw-semibold"
+                      style={{ borderRadius: '10px' }}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {user.name}
+                    </Link>
+                    <button
+                      className="btn btn-outline-danger px-3 py-2 fw-semibold"
+                      style={{ borderRadius: '10px' }}
+                      onClick={() => {
+                        setIsMobileMenuOpen(false)
+                        logout()
+                      }}
+                    >
+                      Logout
+                    </button>
+                  </div>
+                ) : (
+                  <Link
+                    href="/user/login"
+                    className="btn btn-outline-secondary px-3 py-2 fw-semibold"
+                    style={{ borderRadius: '10px' }}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Login
+                  </Link>
+                )}
+              </li>
+            )}
             <li className="nav-item ms-3">
               <Link
                 href="/contact"

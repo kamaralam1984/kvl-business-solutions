@@ -4,6 +4,7 @@ import Navigation from '@/components/Navigation'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import GoluChat from '@/components/GoluChat'
 import { AuthProvider } from '@/contexts/AuthContext'
+import { UserAuthProvider } from '@/contexts/UserAuthContext'
 
 export const metadata: Metadata = {
   title: 'KVL Business Solutions - Multi-Service Professional Business',
@@ -23,10 +24,12 @@ export default function RootLayout({
       </head>
       <body>
         <AuthProvider>
-          <Navigation />
-          {children}
-          <WhatsAppButton />
-          <GoluChat />
+          <UserAuthProvider>
+            <Navigation />
+            {children}
+            <WhatsAppButton />
+            <GoluChat />
+          </UserAuthProvider>
         </AuthProvider>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <script
