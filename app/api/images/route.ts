@@ -33,15 +33,16 @@ export async function POST(request: NextRequest) {
       const errors = [];
 
       for (const img of body.images) {
-        const { title, description, imageUrl, category, uploadedBy } = img;
+        const { title, description, imageUrl, imageBase64, category, uploadedBy } = img as any;
+        const source = imageBase64 || imageUrl;
 
-        if (!title || !imageUrl || !category) {
+        if (!title || !source || !category) {
           errors.push({ image: title || "Unknown", error: "Missing fields" });
           continue;
         }
 
         try {
-          const upload = await cloudinary.uploader.upload(imageUrl, {
+          const upload = await cloudinary.uploader.upload(source, {
             folder: "kvl-gallery",
           });
 
@@ -71,16 +72,17 @@ export async function POST(request: NextRequest) {
     }
 
     /* ========= SINGLE UPLOAD ========= */
-    const { title, description, imageUrl, category, uploadedBy } = body;
+    const { title, description, imageUrl, imageBase64, category, uploadedBy } = body as any;
+    const source = imageBase64 || imageUrl;
 
-    if (!title || !imageUrl || !category) {
+    if (!title || !source || !category) {
       return NextResponse.json(
         { success: false, error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    const upload = await cloudinary.uploader.upload(imageUrl, {
+    const upload = await cloudinary.uploader.upload(source, {
       folder: "kvl-gallery",
     });
 
