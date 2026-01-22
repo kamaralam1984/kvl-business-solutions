@@ -1,27 +1,43 @@
-import { MongoClient, Db } from 'mongodb'
+import { MongoClient, Db } from "mongodb";
 
-const uri = process.env.MONGODB_URI
-const dbName = process.env.MONGODB_DB || 'kvl_business_solutions'
+/**
+ * MongoDB connection helper
+ * - Works on Vercel + local
+ * - Prevents multiple connections
+ */
 
-let cachedClient: MongoClient | null = null
-let cachedDb: Db | null = null
+const uri = process.env.MONGODB_URI!;
+const dbName = process.env.MONGODB_DB || "kvl_business_solutions";
 
-export function isMongoEnabled() {
-  return Boolean(uri)
+// Global cache (important for Next.js / Vercel)
+let globalClient: MongoClient | null = null;
+let globalDb: Db | null = null;
+
+export function isMongoEnabled(): boolean {
+  return !!process.env.MONGODB_URI && !!process.env.MONGODB_DB;
 }
 
 export async function getMongoDb(): Promise<Db> {
   if (!uri) {
-    throw new Error('MONGODB_URI is not set')
+    throw new Error("❌ MONGODB_URI is not set");
   }
 
-  if (cachedClient && cachedDb) return cachedDb
+  if (globalClient && globalDb) {
+    return globalDb;
+  }
 
-  const client = new MongoClient(uri)
-  await client.connect()
+  try {
+    const client = new MongoClient(uri);
+    await client.connect();
 
-  cachedClient = client
-  cachedDb = client.db(dbName)
-  return cachedDb
+    globalClient = client;
+    globalDb = client.db(dbName);
+
+    console.log("✅ MongoDB connected:", dbName);
+
+    return globalDb;
+  } catch (error) {
+    console.error("❌ MongoDB connection failed", error);
+    throw error;
+  }
 }
-

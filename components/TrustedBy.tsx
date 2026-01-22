@@ -77,7 +77,7 @@ export default function TrustedBy() {
               Call Now
             </a>
             <a
-              href="https://wa.me/919876543210"
+              href="https://wa.me/919942000413"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-[#25D366] text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-[#20BA5A] transition-all duration-300 transform hover:scale-105"
