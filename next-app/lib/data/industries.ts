@@ -1,0 +1,11 @@
+export const industries = [
+  { slug: 'construction', name: 'Construction Industry', icon: 'HardHat', c1: '#3b82f6', c2: '#1d4ed8', tags: ['Construction ERP', 'BOQ Software', 'GPS Vehicles', 'Site CCTV'], desc: 'Project management, BOQ estimation, material tracking, labor management and site progress monitoring.' },
+  { slug: 'mechanical', name: 'Mechanical Workshops', icon: 'Cog', c1: '#f97316', c2: '#7c2d12', tags: ['Workshop Software', 'Job Cards', 'Biometric', 'Inventory'], desc: 'Service jobs, spare parts, customer history, mechanic tracking, billing and digital invoicing.' },
+  { slug: 'manufacturing', name: 'Manufacturing Plants', icon: 'Factory', c1: '#eab308', c2: '#713f12', tags: ['Industry 4.0', 'SCADA', 'IoT', 'OEE Dashboard'], desc: 'Smart factory, PLC/SCADA, IoT monitoring, production tracking, OEE dashboards.' },
+  { slug: 'transport', name: 'Transport & Logistics', icon: 'Truck', c1: '#f59e0b', c2: '#78350f', tags: ['Fleet GPS', 'Route Plan', 'Fuel Monitor', 'Driver App'], desc: 'GPS fleet tracking, route optimization, driver management, fuel monitoring.' },
+  { slug: 'schools', name: 'Schools & Colleges', icon: 'School', c1: '#06b6d4', c2: '#155e75', tags: ['School ERP', 'Parent App', 'Bus GPS', 'LMS'], desc: 'Admission, fees, attendance, exam management, transport GPS, parent app and LMS.' },
+  { slug: 'hospitals', name: 'Hospitals & Healthcare', icon: 'Hospital', c1: '#22c55e', c2: '#14532d', tags: ['HMS', 'EMR', 'Pharmacy', 'Ambulance GPS'], desc: 'HMS, OPD, IPD, pharmacy, lab, billing, EMR/EHR, ambulance GPS.' },
+  { slug: 'retail', name: 'Retail Businesses', icon: 'Store', c1: '#ef4444', c2: '#7f1d1d', tags: ['POS', 'Multi-Outlet', 'Loyalty', 'E-comm Sync'], desc: 'POS billing, multi-outlet, inventory, loyalty, e-commerce integration.' },
+  { slug: 'realestate', name: 'Real Estate Companies', icon: 'Building2', c1: '#8b5cf6', c2: '#4c1d95', tags: ['Lead CRM', '360° Tours', 'Channel Portal', 'Booking'], desc: 'Lead management, project showcase, virtual tours, channel partner portal.' },
+  { slug: 'government', name: 'Government Contractors', icon: 'Landmark', c1: '#64748b', c2: '#1e293b', tags: ['e-Tender', 'GEM', 'Compliance', 'Audit Reports'], desc: 'e-Tender management, GEM portal, project compliance, documentation.' },
+] as const;

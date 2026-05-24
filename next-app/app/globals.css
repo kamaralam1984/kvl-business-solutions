@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg: 6 11 26;
+    --bg-2: 10 17 36;
+    --bg-3: 15 26 54;
+    --surface: 255 255 255;
+    --surface-2: 255 255 255;
+    --border: 255 255 255;
+    --text: 230 236 255;
+    --text-2: 154 164 194;
+  }
+  html.light {
+    --bg: 245 247 251;
+    --bg-2: 255 255 255;
+    --bg-3: 238 242 255;
+    --surface: 255 255 255;
+    --surface-2: 241 245 255;
+    --border: 227 232 243;
+    --text: 13 19 48;
+    --text-2: 74 83 120;
+  }
+  html.dark .surface-tint { background-color: rgba(255,255,255,0.04); }
+  html.dark .surface2-tint { background-color: rgba(255,255,255,0.06); }
+  html.dark .border-tint { border-color: rgba(255,255,255,0.08); }
+  html.light .surface-tint { background-color: #ffffff; }
+  html.light .surface2-tint { background-color: #f1f5ff; }
+  html.light .border-tint { border-color: #e3e8f3; }
+
+  html { scroll-behavior: smooth; }
+  body {
+    @apply font-sans antialiased;
+    background: rgb(var(--bg));
+    color: rgb(var(--text));
+    transition: background .4s, color .4s;
+  }
+  h1, h2, h3, h4, h5 { @apply font-display; }
+}
+
+@layer components {
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(90deg, #3b82f6, #06b6d4, #22d3ee);
+  }
+  .btn {
+    @apply inline-flex items-center gap-2 px-5 py-3 rounded-[10px] font-semibold text-sm transition-all duration-300 cursor-pointer whitespace-nowrap;
+  }
+  .btn-primary { @apply text-white shadow-[0_8px_24px_-8px_rgba(37,99,235,0.6)]; background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+  .btn-primary:hover { @apply -translate-y-0.5 shadow-[0_14px_30px_-10px_rgba(37,99,235,0.7)]; }
+  .btn-orange { @apply text-white shadow-[0_8px_24px_-8px_rgba(249,115,22,0.55)]; background: linear-gradient(135deg, #f97316, #ea580c); }
+  .btn-orange:hover { @apply -translate-y-0.5; }
+  .btn-ghost { @apply text-text border surface-tint border-tint; }
+  .btn-ghost:hover { @apply surface2-tint; border-color: #2563eb; }
+  .btn-whatsapp { @apply text-white; background: linear-gradient(135deg, #25d366, #128c7e); }
+
+  .card-base { @apply rounded-2xl border surface-tint border-tint transition-all duration-300; }
+  .card-base:hover { @apply -translate-y-1 shadow-card; border-color: #2563eb; }
+
+  .eyebrow {
+    @apply text-[11px] tracking-[2px] font-bold uppercase inline-flex items-center gap-2;
+    color: #2563eb;
+  }
+
+  .section { @apply py-20; }
+  .section-alt { background: rgb(var(--bg-2)); }
+
+  .live-dot {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold;
+    background: rgba(34,197,94,0.15);
+    color: #22c55e;
+  }
+  .live-dot::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: #22c55e;
+    border-radius: 50%;
+    animation: blink 1.5s infinite;
+  }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  .grid-overlay {
+    background-image:
+      linear-gradient(rgba(96,165,250,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(96,165,250,0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  }
+
+  .blueprint {
+    background:
+      radial-gradient(circle at 80% 30%, rgba(59,130,246,0.08), transparent 40%),
+      repeating-linear-gradient(45deg, transparent 0 28px, rgba(96,165,250,0.04) 28px 29px),
+      repeating-linear-gradient(-45deg, transparent 0 28px, rgba(6,182,212,0.04) 28px 29px);
+  }
+}
+
+@layer utilities {
+  .text-text { color: rgb(var(--text)); }
+  .text-text2 { color: rgb(var(--text-2)); }
+  .bg-app { background: rgb(var(--bg)); }
+  .bg-app2 { background: rgb(var(--bg-2)); }
+  .bg-app3 { background: rgb(var(--bg-3)); }
+}
+
+/* Form */
+input, textarea, select {
+  background: transparent;
+  color: rgb(var(--text));
+}
+.form-control {
+  @apply w-full px-4 py-3 rounded-lg border surface-tint border-tint text-sm outline-none transition-all;
+}
+.form-control:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }

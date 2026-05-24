@@ -1,0 +1,138 @@
+import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import { softwareProducts } from '@/lib/data/software';
+import { PageHero } from '@/components/shared/PageHero';
+import { JsonLd } from '@/components/shared/JsonLd';
+import { ReviewsSection } from '@/components/widgets/ReviewsSection';
+import { formatINR } from '@/lib/utils';
+import { Check, Cloud, Server, ShieldCheck, Headphones, RefreshCcw, Award } from 'lucide-react';
+
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlsolutions.in';
+
+export function generateStaticParams() {
+  return softwareProducts.map(p => ({ slug: p.slug }));
+}
+
+export function generateMetadata({ params }: { params: { slug: string } }) {
+  const p = softwareProducts.find(x => x.slug === params.slug);
+  if (!p) return { title: 'Product not found' };
+  return { title: `${p.name} — KVL`, description: p.description };
+}
+
+export default function ProductPage({ params }: { params: { slug: string } }) {
+  const product = softwareProducts.find(p => p.slug === params.slug);
+  if (!product) notFound();
+
+  const cloudPrice = product.price;
+  const onPremPrice = Math.round(product.price * 1.5);
+  const related = softwareProducts.filter(p => p.slug !== product.slug).slice(0, 3);
+
+  const productJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: product.name,
+    description: product.description,
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Web, Cloud, On-Premise',
+    url: `${SITE}/software/${product.slug}`,
+    offers: {
+      '@type': 'AggregateOffer',
+      priceCurrency: 'INR',
+      lowPrice: cloudPrice,
+      highPrice: onPremPrice,
+      offerCount: 2,
+      availability: 'https://schema.org/InStock',
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '4.7',
+      reviewCount: '128',
+    },
+    provider: { '@id': `${SITE}/#organization` },
+  };
+
+  return (
+    <>
+      <JsonLd data={productJsonLd} id={`product-${product.slug}-jsonld`} />
+      <PageHero eyebrow="SOFTWARE" title={product.name} description={product.description} breadcrumb={product.name} />
+
+      <section className="section">
+        <div className="container grid lg:grid-cols-[2fr_1fr] gap-8">
+          <div className="space-y-8">
+            <div className="card-base p-7">
+              <h2 className="text-xl font-bold mb-4">Key Features</h2>
+              <ul className="grid sm:grid-cols-2 gap-3">
+                {product.features.map(f => (
+                  <li key={f} className="flex gap-2 items-start"><Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" /> <span className="text-sm">{f}</span></li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="card-base p-7">
+              <h2 className="text-xl font-bold mb-4">What's included</h2>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="flex gap-3"><Cloud className="w-5 h-5 text-primary shrink-0" /><div><div className="font-semibold text-sm">Free installation</div><div className="text-xs text-text2">Our team deploys it for you within 24 hours.</div></div></div>
+                <div className="flex gap-3"><Headphones className="w-5 h-5 text-primary shrink-0" /><div><div className="font-semibold text-sm">1-year support</div><div className="text-xs text-text2">Email, chat & phone support included.</div></div></div>
+                <div className="flex gap-3"><RefreshCcw className="w-5 h-5 text-primary shrink-0" /><div><div className="font-semibold text-sm">Free updates</div><div className="text-xs text-text2">Get all new features for 12 months.</div></div></div>
+                <div className="flex gap-3"><Award className="w-5 h-5 text-primary shrink-0" /><div><div className="font-semibold text-sm">30-day refund</div><div className="text-xs text-text2">Not happy? Get a full refund.</div></div></div>
+              </div>
+            </div>
+
+            <ReviewsSection productSlug={product.slug} productName={product.name} />
+
+            <div className="card-base p-7">
+              <h2 className="text-xl font-bold mb-4">Frequently asked</h2>
+              <div className="space-y-4 text-sm">
+                <div><div className="font-semibold">Is GST invoice provided?</div><div className="text-text2">Yes, you'll receive a GST-compliant invoice (18% GST) immediately after payment. Download from your dashboard.</div></div>
+                <div><div className="font-semibold">Can I cancel my subscription?</div><div className="text-text2">Yes, within 30 days for a full refund. See our refund policy.</div></div>
+                <div><div className="font-semibold">Do you offer custom features?</div><div className="text-text2">Yes — request a quote for custom modules.</div></div>
+              </div>
+            </div>
+          </div>
+
+          <aside className="space-y-4">
+            <div className="card-base p-6 sticky top-24">
+              <div className="text-xs uppercase tracking-wider text-text2">Starting at</div>
+              <div className="text-4xl font-extrabold text-primary my-2">{formatINR(cloudPrice)}<span className="text-base text-text2 font-normal">{product.unit}</span></div>
+
+              <div className="space-y-3 mt-5">
+                <Link href={`/checkout?product=${product.slug}&host=cloud`} className="btn btn-primary w-full justify-center">
+                  <Cloud className="w-4 h-4" /> Buy Cloud — {formatINR(cloudPrice)}
+                </Link>
+                <Link href={`/checkout?product=${product.slug}&host=on-premise`} className="btn btn-ghost w-full justify-center">
+                  <Server className="w-4 h-4" /> On-Premise — {formatINR(onPremPrice)}
+                </Link>
+              </div>
+
+              <div className="mt-5 pt-5 border-t border-tint space-y-2 text-xs text-text2">
+                <div className="flex gap-2 items-center"><ShieldCheck className="w-3.5 h-3.5 text-green-500" /> Secure Razorpay payment</div>
+                <div className="flex gap-2 items-center"><RefreshCcw className="w-3.5 h-3.5 text-green-500" /> 30-day money-back</div>
+                <div className="flex gap-2 items-center"><Headphones className="w-3.5 h-3.5 text-green-500" /> 1-year support</div>
+              </div>
+
+              <Link href="/contact" className="block text-center text-xs text-primary mt-4 hover:underline">Need a demo? Talk to sales →</Link>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      {related.length > 0 && (
+        <section className="section bg-app2">
+          <div className="container">
+            <h2 className="text-2xl font-extrabold mb-6">Related Software</h2>
+            <div className="grid md:grid-cols-3 gap-4">
+              {related.map(r => (
+                <Link key={r.slug} href={`/software/${r.slug}`} className="card-base p-5 hover:shadow-card-hover transition-all">
+                  <div className="text-xs text-primary font-bold uppercase">{r.tag || 'Software'}</div>
+                  <div className="font-bold mt-1">{r.name}</div>
+                  <div className="text-xs text-text2 mt-1 line-clamp-2">{r.description}</div>
+                  <div className="font-bold text-primary mt-3">{formatINR(r.price)}{r.unit}</div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+    </>
+  );
+}

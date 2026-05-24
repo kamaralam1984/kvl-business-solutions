@@ -1,0 +1,59 @@
+# ─── Dependencies ───
+node_modules/
+.pnp/
+.pnp.*
+
+# ─── Next.js build output ───
+next-app/.next/
+next-app/out/
+next-app/build/
+
+# ─── Production artifacts ───
+**/.next/
+**/out/
+**/dist/
+
+# ─── Environment / secrets ───
+.env
+.env.local
+.env.*.local
+**/.env.local
+**/.env.*.local
+
+# ─── Logs ───
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ─── OS / IDE ───
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# ─── Local dev artifacts ───
+.com.google.Chrome.*
+node-compile-cache/
+node-jiti/
+screenshots/
+
+# ─── Claude Code internal ───
+.claude/
+
+# ─── TypeScript ───
+*.tsbuildinfo
+next-env.d.ts
+
+# ─── Coverage / testing ───
+coverage/
+.nyc_output/
+
+# ─── Vercel ───
+.vercel
+
+# ─── Runtime caches ───
+tsx-*/
+.cache/
+.tmp/

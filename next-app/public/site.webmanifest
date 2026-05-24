@@ -1,0 +1,13 @@
+{
+  "name": "KVL Business Solutions",
+  "short_name": "KVL",
+  "description": "Enterprise software, GPS tracking, civil work and industrial automation.",
+  "icons": [
+    { "src": "/icon", "sizes": "32x32", "type": "image/png" },
+    { "src": "/apple-icon", "sizes": "180x180", "type": "image/png" }
+  ],
+  "theme_color": "#1d4ed8",
+  "background_color": "#0f172a",
+  "display": "standalone",
+  "start_url": "/"
+}
