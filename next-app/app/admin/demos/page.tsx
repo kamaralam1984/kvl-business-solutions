@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Plus, Trash2, Edit3, Save, X, Globe, ExternalLink, Sparkles } from 'lucide-react';
 import { FileUploader, UploadedFile } from '@/components/widgets/FileUploader';
-import { DEMO_CATEGORIES } from '@/lib/models/Demo';
+import { DEMO_CATEGORIES } from '@/lib/data/demo-categories';
 
 type Demo = {
   _id?: string;

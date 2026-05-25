@@ -6,7 +6,7 @@ import { CtaBanner } from '@/components/home/CtaBanner';
 import { TiltCard } from '@/components/shared/TiltCard';
 import * as Icons from 'lucide-react';
 import { Eye, Monitor, Smartphone, Sparkles, ExternalLink, Globe } from 'lucide-react';
-import { DEMO_CATEGORIES } from '@/lib/models/Demo';
+import { DEMO_CATEGORIES } from '@/lib/data/demo-categories';
 import { formatINR } from '@/lib/utils';
 
 type Demo = {

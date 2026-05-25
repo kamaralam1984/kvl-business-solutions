@@ -21,17 +21,5 @@ DemoSchema.index({ active: 1, order: 1, createdAt: -1 });
 
 export const Demo = models.Demo || model('Demo', DemoSchema);
 
-export const DEMO_CATEGORIES = [
-  { id: 'business', label: 'Business' },
-  { id: 'realestate', label: 'Real Estate' },
-  { id: 'ecommerce', label: 'E-commerce' },
-  { id: 'school', label: 'Schools' },
-  { id: 'hospital', label: 'Hospitals' },
-  { id: 'construction', label: 'Construction' },
-  { id: 'mechanical', label: 'Mechanical' },
-  { id: 'gps', label: 'GPS Dashboards' },
-  { id: 'government', label: 'Government' },
-  { id: 'portfolio', label: 'Portfolio' },
-  { id: 'video', label: 'Video / Media' },
-  { id: 'other', label: 'Other' },
-];
+// Re-export for backward compat — actual definition in lib/data/demo-categories.ts
+export { DEMO_CATEGORIES } from '../data/demo-categories';
