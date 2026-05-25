@@ -10,16 +10,20 @@ const SiteSettingsSchema = new Schema({
 
   // Contact info (used in footer, contact page, structured data)
   phone: { type: String, default: '+91 99420 00413' },
+  phone2: { type: String, default: '' },
   email: { type: String, default: 'info@kvlsolutions.in' },
   supportEmail: { type: String, default: 'support@kvlsolutions.in' },
   salesEmail: { type: String, default: 'sales@kvlsolutions.in' },
   whatsapp: { type: String, default: '919942000413' },
-  addressLine1: { type: String, default: 'Pune' },
-  addressLine2: { type: String, default: 'Maharashtra, India' },
+  whatsappSupportText: { type: String, default: '24×7 support' },
+  addressLine1: { type: String, default: 'Pune, Maharashtra, India' },
+  addressLine2: { type: String, default: '' },
+  branches: { type: String, default: 'Delhi, Bangalore, Mumbai' },
   gstin: { type: String, default: '27AAAAA0000A1Z5' },
 
   // Business hours
   businessHours: { type: String, default: 'Mon–Sat: 9 AM – 8 PM' },
+  emergencySupport: { type: String, default: '24×7 emergency support' },
   supportHours: { type: String, default: '24×7 for paid clients' },
   averageResponseTime: { type: String, default: '~22 minutes' },
 

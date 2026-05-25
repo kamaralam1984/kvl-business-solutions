@@ -61,15 +61,19 @@ export default function SiteSettingsPage() {
           <>
             <Section title="Contact info" desc="Used in footer, contact page, and structured data" />
             <Grid cols={2}>
-              <Field label="Phone" value={s.phone} onChange={v => update('phone', v)} />
-              <Field label="WhatsApp (without +)" value={s.whatsapp} onChange={v => update('whatsapp', v)} placeholder="919942000413" />
+              <Field label="Phone 1" value={s.phone} onChange={v => update('phone', v)} placeholder="+91 99420 00413" />
+              <Field label="Phone 2 (optional)" value={s.phone2} onChange={v => update('phone2', v)} placeholder="+91 99420 00414" />
+              <Field label="WhatsApp number (without +)" value={s.whatsapp} onChange={v => update('whatsapp', v)} placeholder="919942000413" />
+              <Field label="WhatsApp support text" value={s.whatsappSupportText} onChange={v => update('whatsappSupportText', v)} placeholder="24×7 support" />
               <Field label="Primary email" value={s.email} onChange={v => update('email', v)} />
-              <Field label="Support email" value={s.supportEmail} onChange={v => update('supportEmail', v)} />
               <Field label="Sales email" value={s.salesEmail} onChange={v => update('salesEmail', v)} />
+              <Field label="Support email" value={s.supportEmail} onChange={v => update('supportEmail', v)} />
               <Field label="GSTIN" value={s.gstin} onChange={v => update('gstin', v)} />
-              <Field label="Address line 1" value={s.addressLine1} onChange={v => update('addressLine1', v)} />
-              <Field label="Address line 2" value={s.addressLine2} onChange={v => update('addressLine2', v)} />
-              <Field label="Business hours" value={s.businessHours} onChange={v => update('businessHours', v)} />
+              <Field label="Head office address" value={s.addressLine1} onChange={v => update('addressLine1', v)} placeholder="Pune, Maharashtra, India" />
+              <Field label="Address line 2 (optional)" value={s.addressLine2} onChange={v => update('addressLine2', v)} />
+              <Field label="Branches (shown on contact page)" value={s.branches} onChange={v => update('branches', v)} placeholder="Delhi, Bangalore, Mumbai" />
+              <Field label="Business hours" value={s.businessHours} onChange={v => update('businessHours', v)} placeholder="Mon–Sat: 9 AM – 8 PM" />
+              <Field label="Emergency support text" value={s.emergencySupport} onChange={v => update('emergencySupport', v)} placeholder="24×7 emergency support" />
               <Field label="Support hours" value={s.supportHours} onChange={v => update('supportHours', v)} />
               <Field label="Avg. response time" value={s.averageResponseTime} onChange={v => update('averageResponseTime', v)} />
             </Grid>
