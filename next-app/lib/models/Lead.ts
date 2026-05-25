@@ -26,10 +26,22 @@ const LeadSchema = new Schema({
 
   // AI Call tracking
   callStatus: { type: String, enum: ['not_called', 'calling', 'completed', 'failed', 'no_answer'], default: 'not_called' },
-  callId: String,       // Vapi call ID
-  callDuration: Number, // seconds
+  callId: String,
+  callDuration: Number,
   callRecordingUrl: String,
   calledAt: Date,
+
+  // Smart follow-up sequence
+  followUpStage: { type: Number, default: 0 },
+  followUpNextAt: { type: Date },
+  followUpDone: { type: Boolean, default: false },
+
+  // AI lead nurturing
+  lastNurtureAt: Date,
+  nurtureCount: { type: Number, default: 0 },
+
+  // Review request
+  reviewRequestSent: { type: Boolean, default: false },
 }, { timestamps: true });
 
 export const Lead = models.Lead || model('Lead', LeadSchema);

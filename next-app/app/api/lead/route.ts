@@ -23,7 +23,11 @@ export async function POST(req: Request) {
     const body = await req.json();
     const data = schema.parse(body);
     await connectDB();
-    const lead = await Lead.create(data);
+    const lead = await Lead.create({
+      ...data,
+      followUpStage: 1,  // WhatsApp sent on creation, next = call at 1hr
+      followUpNextAt: new Date(Date.now() + 60 * 60_000), // 1 hour
+    });
     // AI scoring — fire & forget (non-blocking)
     import('@/lib/ai/lead-scorer').then(({ scoreLeadAsync }) =>
       scoreLeadAsync(lead._id.toString(), data).catch(() => {})
