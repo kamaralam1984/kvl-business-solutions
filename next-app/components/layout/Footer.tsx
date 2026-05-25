@@ -57,11 +57,14 @@ export function Footer({ settings }: { settings?: any }) {
             <li><Link href="/projects">Projects</Link></li>
             <li><Link href="/industries">Industries</Link></li>
             <li><Link href="/clients">Clients</Link></li>
+            <li><Link href="/careers">Careers</Link></li>
             <li><Link href="/contact">Contact</Link></li>
             <li><Link href="/support">Support</Link></li>
             <li><Link href="/docs">Knowledge Base</Link></li>
           </ul>
         </div>
+
+        <div className="lg:hidden md:col-span-2"></div>
 
         <div>
           <h5 className="font-bold mb-4">Contact</h5>
@@ -81,10 +84,14 @@ export function Footer({ settings }: { settings?: any }) {
 
       <div className="container border-t border-tint pt-5 flex flex-col gap-3">
         <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-text2 justify-center">
-          <Link href="/privacy" className="hover:text-primary">Privacy Policy</Link>
-          <Link href="/terms" className="hover:text-primary">Terms of Service</Link>
-          <Link href="/refund-policy" className="hover:text-primary">Refund Policy</Link>
-          <Link href="/shipping-policy" className="hover:text-primary">Shipping Policy</Link>
+          <Link href="/voice" className="hover:text-primary">🎙 Voice AI</Link>
+          <Link href="/mock-interview" className="hover:text-primary">Mock Interview</Link>
+          <Link href="/learn" className="hover:text-primary">Learn</Link>
+          <Link href="/brand" className="hover:text-primary">Brand Kit</Link>
+          <Link href="/privacy" className="hover:text-primary">Privacy</Link>
+          <Link href="/terms" className="hover:text-primary">Terms</Link>
+          <Link href="/refund-policy" className="hover:text-primary">Refund</Link>
+          <Link href="/shipping-policy" className="hover:text-primary">Shipping</Link>
           <Link href="/faq" className="hover:text-primary">FAQ</Link>
           <Link href="/search" className="hover:text-primary">Search</Link>
         </div>
