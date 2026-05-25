@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { LayoutDashboard, Users, Ticket, FileText, Package, Box, UserCog, Mail, Activity, Tag, Calendar, Star, Settings, Megaphone, Globe } from 'lucide-react';
+import { LayoutDashboard, Users, Ticket, FileText, Package, Box, UserCog, Mail, Activity, Tag, Calendar, Star, Settings, Megaphone, Globe, Monitor } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const sections = [
@@ -15,6 +15,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       links: [
         { href: '/admin/site-settings', label: 'Site Settings', Icon: Settings },
         { href: '/admin/banners', label: 'Banners', Icon: Megaphone },
+        { href: '/admin/demos', label: 'Website Demos', Icon: Monitor },
       ],
     },
     {
