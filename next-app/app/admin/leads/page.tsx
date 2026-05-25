@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Search, Trash2, MessageSquare, X, TrendingUp, Users, PhoneCall, Trophy, Brain, Zap, ChevronDown, ChevronUp, Bot } from 'lucide-react';
+import { Search, Trash2, MessageSquare, X, TrendingUp, Users, PhoneCall, Trophy, Brain, Zap, ChevronDown, ChevronUp, Bot, Phone, PhoneMissed, PhoneOff, Loader2 } from 'lucide-react';
 import { ExportButton } from '@/components/admin/ExportButton';
 
 const STATUS_OPTS = ['new', 'contacted', 'qualified', 'won', 'lost'];
@@ -61,6 +61,19 @@ export default function AdminLeads() {
   const rescore = async (lead: any) => {
     await fetch(`/api/admin/leads/${lead._id}/rescore`, { method: 'POST' });
     setTimeout(() => load(), 3000);
+  };
+
+  const [calling, setCalling] = useState<string | null>(null);
+  const callLead = async (lead: any) => {
+    if (!confirm(`"${lead.name}" ko AI call karein? (${lead.phone})`)) return;
+    setCalling(lead._id);
+    try {
+      const r = await fetch(`/api/admin/leads/${lead._id}/call`, { method: 'POST' }).then(x => x.json());
+      if (!r.ok) alert(`Call failed: ${r.error}`);
+      else { alert('Call shuru ho gayi! Priya ab customer se baat kar rahi hai.'); load(); }
+    } finally {
+      setCalling(null);
+    }
   };
 
   const statCards = [
@@ -171,17 +184,36 @@ export default function AdminLeads() {
                     </select>
                   </td>
                   <td className="p-3">
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 flex-wrap">
+                      {/* AI Call button */}
+                      {l.callStatus === 'calling' ? (
+                        <span className="flex items-center gap-1 text-[10px] font-bold text-yellow-500 bg-yellow-500/10 px-2 py-1 rounded-full">
+                          <Loader2 className="w-3 h-3 animate-spin" />Calling…
+                        </span>
+                      ) : l.callStatus === 'completed' ? (
+                        <span className="flex items-center gap-1 text-[10px] font-bold text-green-500 bg-green-500/10 px-2 py-1 rounded-full">
+                          <Phone className="w-3 h-3" />{l.callDuration ? `${Math.round(l.callDuration)}s` : 'Done'}
+                        </span>
+                      ) : l.callStatus === 'no_answer' ? (
+                        <button onClick={() => callLead(l)} className="flex items-center gap-1 text-[10px] font-bold text-slate-400 bg-slate-500/10 px-2 py-1 rounded-full hover:bg-orange-500/10 hover:text-orange-400">
+                          <PhoneMissed className="w-3 h-3" />Retry
+                        </button>
+                      ) : (
+                        <button onClick={() => callLead(l)} disabled={calling === l._id}
+                          className="flex items-center gap-1 text-[10px] font-bold text-primary bg-primary/10 px-2 py-1 rounded-full hover:bg-primary/20 disabled:opacity-50">
+                          <Phone className="w-3 h-3" />AI Call
+                        </button>
+                      )}
                       <button onClick={() => setExpanded(expanded === l._id ? null : l._id)}
-                        className="p-1 text-text2 hover:text-primary" title="AI Insights">
+                        className="p-1 text-text2 hover:text-primary" aria-label="AI Insights">
                         <Brain className="w-4 h-4" />
                       </button>
                       {l.message && (
-                        <button onClick={() => setPreview(l)} className="p-1 text-text2 hover:text-primary" title="View message">
+                        <button onClick={() => setPreview(l)} className="p-1 text-text2 hover:text-primary" aria-label="View message">
                           <MessageSquare className="w-4 h-4" />
                         </button>
                       )}
-                      <button onClick={() => del(l._id, l.name)} className="p-1 text-text2 hover:text-red-500" title="Delete">
+                      <button onClick={() => del(l._id, l.name)} className="p-1 text-text2 hover:text-red-500" aria-label="Delete">
                         <Trash2 className="w-4 h-4" />
                       </button>
                       {expanded === l._id ? <ChevronUp className="w-3 h-3 text-text2" /> : <ChevronDown className="w-3 h-3 text-text2" />}
@@ -210,6 +242,8 @@ export default function AdminLeads() {
                           <p><span className="text-text2">Source:</span> <span className="font-semibold">{l.source}</span></p>
                           <p><span className="text-text2">Created:</span> <span className="font-semibold">{new Date(l.createdAt).toLocaleString('en-IN')}</span></p>
                           {l.chatMessages?.length > 0 && <p><span className="text-text2">Chat turns:</span> <span className="font-semibold">{l.chatMessages.length}</span></p>}
+                          {l.calledAt && <p><span className="text-text2">AI Called:</span> <span className="font-semibold">{new Date(l.calledAt).toLocaleString('en-IN')}</span></p>}
+                          {l.callRecordingUrl && <a href={l.callRecordingUrl} target="_blank" rel="noreferrer" className="text-primary underline text-[10px]">🎙 Recording sunein</a>}
                         </div>
                       </div>
                     </td>

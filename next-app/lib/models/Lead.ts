@@ -23,6 +23,13 @@ const LeadSchema = new Schema({
   },
   chatMessages: [{ role: String, content: String }], // for chatbot-sourced leads
   aiScoredAt: Date,
+
+  // AI Call tracking
+  callStatus: { type: String, enum: ['not_called', 'calling', 'completed', 'failed', 'no_answer'], default: 'not_called' },
+  callId: String,       // Vapi call ID
+  callDuration: Number, // seconds
+  callRecordingUrl: String,
+  calledAt: Date,
 }, { timestamps: true });
 
 export const Lead = models.Lead || model('Lead', LeadSchema);
