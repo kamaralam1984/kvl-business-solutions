@@ -52,7 +52,7 @@ export async function GET(_: Request, { params }: { params: { orderId: string } 
   <div>
     <div class="brand">K·V·L</div>
     <div style="font-size:10px;letter-spacing:3px;color:#64748b;font-weight:600">BUSINESS SOLUTIONS</div>
-    <div class="muted" style="margin-top:8px">Pune, Maharashtra, India<br/>info@kvlsolutions.in · +91 90000 00000<br/>GSTIN: 27AAAAA0000A1Z5</div>
+    <div class="muted" style="margin-top:8px">Pune, Maharashtra, India<br/>info@kvlsolutions.in · +91 99420 00413<br/>GSTIN: 27AAAAA0000A1Z5</div>
   </div>
   <div style="text-align:right">
     <div class="tag">TAX INVOICE</div>

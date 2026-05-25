@@ -67,7 +67,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     logo: `${SITE}/og`,
     description: settings?.tagline || 'India\'s next-generation business solutions company.',
     email: settings?.email || 'info@kvlsolutions.in',
-    telephone: settings?.phone || '+919000000000',
+    telephone: settings?.phone || '+919942000413',
     address: {
       '@type': 'PostalAddress',
       streetAddress: settings?.addressLine1 || 'Pune',

@@ -9,11 +9,11 @@ const SiteSettingsSchema = new Schema({
   tagline: { type: String, default: 'India\'s next-generation business technology' },
 
   // Contact info (used in footer, contact page, structured data)
-  phone: { type: String, default: '+91 90000 00000' },
+  phone: { type: String, default: '+91 99420 00413' },
   email: { type: String, default: 'info@kvlsolutions.in' },
   supportEmail: { type: String, default: 'support@kvlsolutions.in' },
   salesEmail: { type: String, default: 'sales@kvlsolutions.in' },
-  whatsapp: { type: String, default: '919000000000' },
+  whatsapp: { type: String, default: '919942000413' },
   addressLine1: { type: String, default: 'Pune' },
   addressLine2: { type: String, default: 'Maharashtra, India' },
   gstin: { type: String, default: '27AAAAA0000A1Z5' },
@@ -71,7 +71,7 @@ const SiteSettingsSchema = new Schema({
 
   // Maintenance mode
   maintenanceMode: { type: Boolean, default: false },
-  maintenanceMessage: { type: String, default: 'We\'re back in a few minutes. For urgent help, WhatsApp +91 90000 00000.' },
+  maintenanceMessage: { type: String, default: 'We\'re back in a few minutes. For urgent help, WhatsApp +91 99420 00413.' },
 }, { timestamps: true, _id: false });
 
 export const SiteSettings = models.SiteSettings || model('SiteSettings', SiteSettingsSchema);

@@ -51,7 +51,7 @@ export default function BookDemoPage() {
                 <CheckCircle2 className="w-16 h-16 mx-auto text-green-500" />
                 <h2 className="text-2xl font-extrabold mt-3">Booking received!</h2>
                 <p className="text-text2 mt-2">Our team will confirm a slot and email you within 2 business hours.</p>
-                <a href="https://wa.me/919000000000" target="_blank" rel="noreferrer" className="btn btn-primary mt-5 inline-flex">Need it sooner? WhatsApp us</a>
+                <a href="https://wa.me/919942000413" target="_blank" rel="noreferrer" className="btn btn-primary mt-5 inline-flex">Need it sooner? WhatsApp us</a>
               </div>
             ) : (
               <form onSubmit={submit} className="card-base p-7 space-y-3">
@@ -96,8 +96,8 @@ export default function BookDemoPage() {
             <div className="card-base p-5 surface-tint">
               <h3 className="font-bold mb-2 text-sm">Prefer to talk now?</h3>
               <p className="text-text2 text-xs mb-3">Call or WhatsApp our sales team:</p>
-              <a href="tel:+919000000000" className="btn btn-ghost w-full justify-center text-sm mb-2"><Phone className="w-4 h-4" /> +91 90000 00000</a>
-              <a href="https://wa.me/919000000000" target="_blank" rel="noreferrer" className="btn w-full justify-center text-sm text-white" style={{ background: 'linear-gradient(135deg,#25d366,#128c7e)' }}>WhatsApp</a>
+              <a href="tel:+919942000413" className="btn btn-ghost w-full justify-center text-sm mb-2"><Phone className="w-4 h-4" /> +91 99420 00413</a>
+              <a href="https://wa.me/919942000413" target="_blank" rel="noreferrer" className="btn w-full justify-center text-sm text-white" style={{ background: 'linear-gradient(135deg,#25d366,#128c7e)' }}>WhatsApp</a>
             </div>
           </aside>
         </div>

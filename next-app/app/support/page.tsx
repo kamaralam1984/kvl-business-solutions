@@ -22,7 +22,7 @@ export default function SupportPage() {
   const [form, setForm] = useState({ name: '', email: '', product: 'ERP Software', priority: 'Medium', description: '' });
   const [attachments, setAttachments] = useState<UploadedFile[]>([]);
   const [status, setStatus] = useState<'idle'|'sending'|'success'|'error'>('idle');
-  const wa = process.env.NEXT_PUBLIC_WHATSAPP || '919000000000';
+  const wa = process.env.NEXT_PUBLIC_WHATSAPP || '919942000413';
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,7 +44,7 @@ export default function SupportPage() {
         <div className="container grid grid-cols-2 lg:grid-cols-4 gap-5">
           {[
             { Icon: () => <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/></svg>, name: 'WhatsApp', desc: 'Instant chat support', btn: 'Open Chat', href: `https://wa.me/${wa}`, c1: '#25d366', c2: '#128c7e' },
-            { Icon: PhoneCall, name: 'Phone', desc: 'Call our helpline', btn: '+91 90000 00000', href: 'tel:+919000000000', c1: '#3b82f6', c2: '#1d4ed8' },
+            { Icon: PhoneCall, name: 'Phone', desc: 'Call our helpline', btn: '+91 99420 00413', href: 'tel:+919942000413', c1: '#3b82f6', c2: '#1d4ed8' },
             { Icon: Mail, name: 'Email', desc: 'Reply within 1 hour', btn: 'Email Support', href: 'mailto:support@kvlsolutions.in', c1: '#f97316', c2: '#ea580c' },
             { Icon: Bot, name: 'AI Assistant', desc: 'Instant smart help', btn: 'Chat Now', href: '#', c1: '#8b5cf6', c2: '#6d28d9' },
           ].map(c => (

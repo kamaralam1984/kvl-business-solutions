@@ -210,7 +210,7 @@ We need email verification before login.
 Contact support@kvlsolutions.in with your registered email.
 
 ## Still stuck?
-WhatsApp our support: **+91 90000 00000**`,
+WhatsApp our support: **+91 99420 00413**`,
   },
   {
     slug: 'admin-roles',

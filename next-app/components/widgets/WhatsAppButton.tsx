@@ -16,7 +16,7 @@ const QUICK_MESSAGES = [
 ];
 
 export function WhatsAppButton() {
-  const wa = process.env.NEXT_PUBLIC_WHATSAPP || '919000000000';
+  const wa = process.env.NEXT_PUBLIC_WHATSAPP || '919942000413';
   const [open, setOpen] = useState(false);
 
   const send = (msg: string) => {

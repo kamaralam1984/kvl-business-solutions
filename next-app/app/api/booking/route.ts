@@ -37,7 +37,7 @@ export async function POST(req: Request) {
     sendNotification(`We received your demo booking — KVL`,
       `<h2>Hi ${data.name}!</h2>
        <p>Thanks for booking a demo. Our team will confirm a slot within <b>2 business hours</b> and email you the meeting link.</p>
-       <p>Need to chat sooner? WhatsApp <a href="https://wa.me/919000000000">+91 90000 00000</a>.</p>`,
+       <p>Need to chat sooner? WhatsApp <a href="https://wa.me/919942000413">+91 99420 00413</a>.</p>`,
       data.email);
 
     return NextResponse.json({ ok: true, id: b._id });

@@ -7,7 +7,7 @@ import { TiltCard } from '@/components/shared/TiltCard';
 export default function ContactPage() {
   const [form, setForm] = useState({ firstName: '', lastName: '', email: '', phone: '', service: 'Custom Software Development', message: '' });
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
-  const wa = process.env.NEXT_PUBLIC_WHATSAPP || '919000000000';
+  const wa = process.env.NEXT_PUBLIC_WHATSAPP || '919942000413';
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,8 +25,8 @@ export default function ContactPage() {
   };
 
   const items = [
-    { Icon: Phone, title: 'Call Us', text: '+91 90000 00000\n+91 90000 00001', bg: 'linear-gradient(135deg,#2563eb,#1d4ed8)' },
-    { Icon: () => <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/></svg>, title: 'WhatsApp', text: '+91 90000 00000\n24x7 support', bg: 'linear-gradient(135deg,#25d366,#128c7e)' },
+    { Icon: Phone, title: 'Call Us', text: '+91 99420 00413\n+91 90000 00001', bg: 'linear-gradient(135deg,#2563eb,#1d4ed8)' },
+    { Icon: () => <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/></svg>, title: 'WhatsApp', text: '+91 99420 00413\n24x7 support', bg: 'linear-gradient(135deg,#25d366,#128c7e)' },
     { Icon: Mail, title: 'Email', text: 'info@kvlsolutions.in\nsales@kvlsolutions.in', bg: 'linear-gradient(135deg,#f97316,#ea580c)' },
     { Icon: MapPin, title: 'Head Office', text: 'Pune, Maharashtra, India\nBranches: Delhi, Bangalore, Mumbai', bg: 'linear-gradient(135deg,#22c55e,#16a34a)' },
     { Icon: Clock, title: 'Business Hours', text: 'Mon–Sat: 9 AM – 8 PM\n24x7 emergency support', bg: 'linear-gradient(135deg,#8b5cf6,#6d28d9)' },

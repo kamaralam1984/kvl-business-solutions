@@ -62,7 +62,7 @@ export default function SiteSettingsPage() {
             <Section title="Contact info" desc="Used in footer, contact page, and structured data" />
             <Grid cols={2}>
               <Field label="Phone" value={s.phone} onChange={v => update('phone', v)} />
-              <Field label="WhatsApp (without +)" value={s.whatsapp} onChange={v => update('whatsapp', v)} placeholder="919000000000" />
+              <Field label="WhatsApp (without +)" value={s.whatsapp} onChange={v => update('whatsapp', v)} placeholder="919942000413" />
               <Field label="Primary email" value={s.email} onChange={v => update('email', v)} />
               <Field label="Support email" value={s.supportEmail} onChange={v => update('supportEmail', v)} />
               <Field label="Sales email" value={s.salesEmail} onChange={v => update('salesEmail', v)} />

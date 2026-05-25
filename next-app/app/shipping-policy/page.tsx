@@ -31,7 +31,7 @@ export default function ShippingPage() {
       <p>If you receive a damaged or incorrect item, raise a ticket within 48 hours of delivery. We will arrange a free replacement.</p>
 
       <h2>7. Contact</h2>
-      <p>For shipping queries: <a href="mailto:shipping@kvlsolutions.in">shipping@kvlsolutions.in</a> · +91 90000 00000</p>
+      <p>For shipping queries: <a href="mailto:shipping@kvlsolutions.in">shipping@kvlsolutions.in</a> · +91 99420 00413</p>
     </LegalLayout>
   );
 }

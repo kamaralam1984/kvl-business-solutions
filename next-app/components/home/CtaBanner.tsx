@@ -4,7 +4,7 @@ import { Rocket } from 'lucide-react';
 import { openQuoteModal } from '@/components/widgets/QuoteModal';
 
 export function CtaBanner({ title, desc }: { title?: string; desc?: string }) {
-  const wa = process.env.NEXT_PUBLIC_WHATSAPP || '919000000000';
+  const wa = process.env.NEXT_PUBLIC_WHATSAPP || '919942000413';
   return (
     <section className="section">
       <div className="container">

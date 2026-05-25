@@ -10,7 +10,7 @@ import type { Software } from '@/lib/data/software';
 export function SoftwareCard({ product }: { product: Software }) {
   const [host, setHost] = useState<'cloud' | 'onprem'>('cloud');
   const Icon = (Icons as any)[product.icon] || Icons.Box;
-  const wa = process.env.NEXT_PUBLIC_WHATSAPP || '919000000000';
+  const wa = process.env.NEXT_PUBLIC_WHATSAPP || '919942000413';
   const hostMultiplier = host === 'onprem' ? 1.5 : 1;
   const price = Math.round(product.price * hostMultiplier);
 

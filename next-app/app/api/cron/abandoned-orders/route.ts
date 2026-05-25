@@ -29,7 +29,7 @@ export async function GET(req: Request) {
         <p>Hi ${o.billing?.name || 'there'}, you started checking out <b>${o.productName}</b> yesterday but didn't complete the payment.</p>
         <p>Use code <b>COMEBACK10</b> for 10% off — valid for next 48 hours.</p>
         <p><a href="${link}" style="display:inline-block;background:#1d4ed8;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600">Complete Purchase</a></p>
-        <p style="font-size:12px;color:#64748b">Need help? Reply to this email or WhatsApp +91 90000 00000.</p>
+        <p style="font-size:12px;color:#64748b">Need help? Reply to this email or WhatsApp +91 99420 00413.</p>
       </div>`;
     await sendNotification(`Complete your KVL ${o.productName} purchase`, html, o.email);
     sent++;

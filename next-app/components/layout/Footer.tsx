@@ -4,7 +4,7 @@ import { NewsletterForm } from '@/components/widgets/NewsletterForm';
 
 export function Footer({ settings }: { settings?: any }) {
   const brandName = settings?.brandName || 'KVL Business Solutions';
-  const phone = settings?.phone || '+91 90000 00000';
+  const phone = settings?.phone || '+91 99420 00413';
   const email = settings?.email || 'info@kvlsolutions.in';
   const address = [settings?.addressLine1, settings?.addressLine2].filter(Boolean).join(', ') || 'Pune, India';
   const tagline = settings?.tagline || "India's next-generation business solutions company offering software, GPS, civil, automation and enterprise services.";

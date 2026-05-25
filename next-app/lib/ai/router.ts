@@ -129,7 +129,7 @@ export async function chatRouted(opts: ChatOpts): Promise<ChatResult> {
 
   const available = getAvailableProviders();
   if (available.length === 0) {
-    return { reply: 'AI is offline. Please WhatsApp +91 90000 00000 for instant help.', provider: 'none', cached: false, fallbackChain: [], cost: 0 };
+    return { reply: 'AI is offline. Please WhatsApp +91 99420 00413 for instant help.', provider: 'none', cached: false, fallbackChain: [], cost: 0 };
   }
 
   const chain: string[] = [];
@@ -166,7 +166,7 @@ export async function chatRouted(opts: ChatOpts): Promise<ChatResult> {
 
   // All providers failed
   return {
-    reply: 'Sorry, our AI is overloaded right now. Please WhatsApp +91 90000 00000 for instant help.',
+    reply: 'Sorry, our AI is overloaded right now. Please WhatsApp +91 99420 00413 for instant help.',
     provider: 'all-failed',
     cached: false,
     fallbackChain: chain,
