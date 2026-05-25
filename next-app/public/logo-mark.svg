@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="kvl-grad-mk" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Rounded square background (semi-transparent so it works on any bg too — fully transparent overall) -->
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="none" stroke="url(#kvl-grad-mk)" stroke-width="4" opacity="0.5"/>
+
+  <!-- K•V•L centered -->
+  <g font-family="Poppins, 'Segoe UI', Arial, sans-serif" font-weight="900" text-anchor="middle">
+    <text x="100" y="125" font-size="64" fill="url(#kvl-grad-mk)" letter-spacing="4">
+      K<tspan fill="#3b82f6" font-size="28" baseline-shift="25%">·</tspan>V<tspan fill="#3b82f6" font-size="28" baseline-shift="25%">·</tspan>L
+    </text>
+  </g>
+
+  <!-- Tiny tagline -->
+  <text x="100" y="155" font-family="Inter, Arial, sans-serif" font-size="9" font-weight="700"
+        letter-spacing="3" text-anchor="middle" fill="#64748b">
+    BUSINESS
+  </text>
+</svg>
