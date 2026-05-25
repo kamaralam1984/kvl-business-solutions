@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Search, Trash2, MessageSquare, X, TrendingUp, Users, PhoneCall, Trophy } from 'lucide-react';
+import { Search, Trash2, MessageSquare, X, TrendingUp, Users, PhoneCall, Trophy, Brain, Zap, ChevronDown, ChevronUp, Bot } from 'lucide-react';
 import { ExportButton } from '@/components/admin/ExportButton';
 
 const STATUS_OPTS = ['new', 'contacted', 'qualified', 'won', 'lost'];
@@ -11,18 +11,36 @@ const STATUS_COLOR: Record<string, string> = {
   won: 'bg-green-500/20 text-green-500',
   lost: 'bg-slate-500/20 text-slate-500',
 };
+const INTENT_CONFIG: Record<string, { label: string; cls: string }> = {
+  hot:     { label: '🔥 HOT',  cls: 'bg-red-500/20 text-red-500' },
+  warm:    { label: '⚡ WARM', cls: 'bg-orange-500/20 text-orange-500' },
+  cold:    { label: '❄ COLD',  cls: 'bg-blue-400/20 text-blue-400' },
+  unknown: { label: '? N/A',   cls: 'bg-slate-500/20 text-slate-500' },
+};
+
+function ScoreBadge({ score }: { score: number }) {
+  const color = score >= 75 ? 'text-red-500 bg-red-500/10' : score >= 40 ? 'text-orange-500 bg-orange-500/10' : 'text-blue-400 bg-blue-400/10';
+  return (
+    <div className={`w-10 h-10 rounded-full grid place-items-center font-extrabold text-sm ${color} shrink-0`}>
+      {score || '?'}
+    </div>
+  );
+}
 
 export default function AdminLeads() {
   const [leads, setLeads] = useState<any[]>([]);
   const [stats, setStats] = useState<any>({});
   const [q, setQ] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [intentFilter, setIntentFilter] = useState('');
   const [preview, setPreview] = useState<any>(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
 
-  const load = async (search = q, status = statusFilter) => {
+  const load = async (search = q, status = statusFilter, intent = intentFilter) => {
     const p = new URLSearchParams();
     if (search) p.set('q', search);
     if (status) p.set('status', status);
+    if (intent) p.set('intent', intent);
     const d = await fetch(`/api/admin/leads?${p}`).then(r => r.json());
     if (d.ok) { setLeads(d.leads); setStats(d.stats); }
   };
@@ -40,17 +58,33 @@ export default function AdminLeads() {
     load();
   };
 
-  const filterBy = (status: string) => { setStatusFilter(status); load(q, status); };
+  const rescore = async (lead: any) => {
+    await fetch(`/api/admin/leads/${lead._id}/rescore`, { method: 'POST' });
+    setTimeout(() => load(), 3000);
+  };
 
   const statCards = [
     { label: 'Total Leads', value: stats.total || 0, icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-    { label: 'New', value: stats.new || 0, icon: TrendingUp, color: 'text-yellow-500', bg: 'bg-yellow-500/10' },
+    { label: '🔥 Hot Leads', value: stats.hot || 0, icon: Zap, color: 'text-red-500', bg: 'bg-red-500/10' },
     { label: 'In Progress', value: stats.contacted || 0, icon: PhoneCall, color: 'text-purple-500', bg: 'bg-purple-500/10' },
     { label: 'Won', value: stats.won || 0, icon: Trophy, color: 'text-green-500', bg: 'bg-green-500/10' },
   ];
 
+  const hotLeads = leads.filter(l => l.intent === 'hot' && l.status === 'new');
+
   return (
     <div className="space-y-5">
+      {/* Hot leads alert */}
+      {hotLeads.length > 0 && (
+        <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-center gap-3">
+          <Zap className="w-5 h-5 text-red-500 shrink-0" />
+          <p className="text-sm font-semibold text-red-500">
+            {hotLeads.length} Hot lead{hotLeads.length > 1 ? 's' : ''} need immediate attention!
+            {hotLeads[0]?.aiInsights?.nextAction && ` → ${hotLeads[0].aiInsights.nextAction}`}
+          </p>
+        </div>
+      )}
+
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {statCards.map(s => (
@@ -63,14 +97,20 @@ export default function AdminLeads() {
         ))}
       </div>
 
-      {/* Header */}
+      {/* Filters */}
       <div className="flex flex-wrap justify-between items-center gap-3">
         <div className="flex flex-wrap gap-1">
           {['', ...STATUS_OPTS].map(s => (
-            <button key={s} onClick={() => filterBy(s)} className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${statusFilter === s ? 'bg-primary text-white' : 'surface-tint text-text2 hover:text-text'}`}>
-              {s ? s.toUpperCase() : 'ALL'} {s === '' && `(${stats.total || 0})`}
-              {s === 'new' && ` (${stats.new || 0})`}
-              {s === 'won' && ` (${stats.won || 0})`}
+            <button key={s} onClick={() => { setStatusFilter(s); load(q, s, intentFilter); }}
+              className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${statusFilter === s ? 'bg-primary text-white' : 'surface-tint text-text2 hover:text-text'}`}>
+              {s ? s.toUpperCase() : `ALL (${stats.total || 0})`}
+            </button>
+          ))}
+          <span className="w-px h-5 bg-tint mx-1 self-center" />
+          {['', 'hot', 'warm', 'cold'].map(i => (
+            <button key={i} onClick={() => { setIntentFilter(i); load(q, statusFilter, i); }}
+              className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${intentFilter === i ? 'bg-primary text-white' : 'surface-tint text-text2 hover:text-text'}`}>
+              {i ? INTENT_CONFIG[i].label : 'All Intent'}
             </button>
           ))}
         </div>
@@ -88,48 +128,100 @@ export default function AdminLeads() {
         <table className="w-full text-sm">
           <thead className="text-left text-text2 text-xs uppercase border-b border-tint bg-surface">
             <tr>
-              <th className="p-3">Date</th><th className="p-3">Name</th><th className="p-3">Contact</th>
-              <th className="p-3">Service</th><th className="p-3">Status</th><th className="p-3">Actions</th>
+              <th className="p-3">AI Score</th><th className="p-3">Lead</th><th className="p-3">Contact</th>
+              <th className="p-3">Service / Intent</th><th className="p-3">Status</th><th className="p-3">Actions</th>
             </tr>
           </thead>
           <tbody>
             {leads.map((l: any) => (
-              <tr key={l._id} className="border-b border-tint hover:bg-primary/5 transition-colors">
-                <td className="p-3 text-xs text-text2 whitespace-nowrap">{new Date(l.createdAt).toLocaleDateString('en-IN')}</td>
-                <td className="p-3">
-                  <div className="font-semibold">{l.name}</div>
-                  <div className="text-xs text-text2">{l.source || 'contact-form'}</div>
-                </td>
-                <td className="p-3 text-xs">
-                  <div>{l.email}</div>
-                  <div className="text-text2">{l.phone}</div>
-                </td>
-                <td className="p-3 text-xs text-text2">{l.service || '—'}</td>
-                <td className="p-3">
-                  <select value={l.status || 'new'} onChange={e => updateStatus(l._id, e.target.value)}
-                    className={`text-[10px] font-bold px-2 py-1 rounded-full border-0 cursor-pointer ${STATUS_COLOR[l.status || 'new']}`}>
-                    {STATUS_OPTS.map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
-                  </select>
-                </td>
-                <td className="p-3">
-                  <div className="flex items-center gap-1">
-                    {l.message && (
-                      <button onClick={() => setPreview(l)} className="p-1 text-text2 hover:text-primary" title="View message">
-                        <MessageSquare className="w-4 h-4" />
-                      </button>
+              <>
+                <tr key={l._id} className={`border-b border-tint hover:bg-primary/5 transition-colors ${l.intent === 'hot' && l.status === 'new' ? 'bg-red-500/5' : ''}`}>
+                  <td className="p-3">
+                    <div className="flex items-center gap-2">
+                      <ScoreBadge score={l.aiScore} />
+                      {l.intent && l.intent !== 'unknown' && (
+                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${INTENT_CONFIG[l.intent]?.cls}`}>
+                          {INTENT_CONFIG[l.intent]?.label}
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="p-3">
+                    <div className="flex items-center gap-1.5">
+                      <div className="font-semibold">{l.name}</div>
+                      {l.source === 'chatbot' && <Bot className="w-3.5 h-3.5 text-primary" aria-label="Auto-captured from chatbot" />}
+                    </div>
+                    <div className="text-xs text-text2">{l.source || 'contact-form'}</div>
+                    {l.aiInsights?.summary && <div className="text-[11px] text-text2 mt-0.5 italic">{l.aiInsights.summary}</div>}
+                  </td>
+                  <td className="p-3 text-xs">
+                    <div>{l.email?.startsWith('chat_') ? '—' : l.email}</div>
+                    <div className="text-text2">{l.phone}</div>
+                  </td>
+                  <td className="p-3 text-xs">
+                    <div className="font-medium">{l.service || '—'}</div>
+                    {l.aiInsights?.nextAction && (
+                      <div className="text-[10px] text-primary mt-0.5">→ {l.aiInsights.nextAction}</div>
                     )}
-                    <button onClick={() => del(l._id, l.name)} className="p-1 text-text2 hover:text-red-500" title="Delete">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
+                  </td>
+                  <td className="p-3">
+                    <select value={l.status || 'new'} onChange={e => updateStatus(l._id, e.target.value)}
+                      className={`text-[10px] font-bold px-2 py-1 rounded-full border-0 cursor-pointer ${STATUS_COLOR[l.status || 'new']}`}>
+                      {STATUS_OPTS.map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
+                    </select>
+                  </td>
+                  <td className="p-3">
+                    <div className="flex items-center gap-1">
+                      <button onClick={() => setExpanded(expanded === l._id ? null : l._id)}
+                        className="p-1 text-text2 hover:text-primary" title="AI Insights">
+                        <Brain className="w-4 h-4" />
+                      </button>
+                      {l.message && (
+                        <button onClick={() => setPreview(l)} className="p-1 text-text2 hover:text-primary" title="View message">
+                          <MessageSquare className="w-4 h-4" />
+                        </button>
+                      )}
+                      <button onClick={() => del(l._id, l.name)} className="p-1 text-text2 hover:text-red-500" title="Delete">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                      {expanded === l._id ? <ChevronUp className="w-3 h-3 text-text2" /> : <ChevronDown className="w-3 h-3 text-text2" />}
+                    </div>
+                  </td>
+                </tr>
+                {/* AI Insights Expanded Row */}
+                {expanded === l._id && (
+                  <tr key={`${l._id}-exp`} className="border-b border-tint bg-primary/5">
+                    <td colSpan={6} className="px-4 py-3">
+                      <div className="grid sm:grid-cols-3 gap-4 text-xs">
+                        <div className="space-y-1">
+                          <p className="font-bold text-text2 uppercase tracking-wider text-[10px]">AI Insights</p>
+                          <p><span className="text-text2">Budget:</span> <span className="font-semibold">{l.aiInsights?.budget || 'Not mentioned'}</span></p>
+                          <p><span className="text-text2">Timeline:</span> <span className="font-semibold">{l.aiInsights?.timeline || 'Not mentioned'}</span></p>
+                          <p><span className="text-text2">Company:</span> <span className="font-semibold">{l.aiInsights?.companyType || 'Unknown'}</span></p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="font-bold text-text2 uppercase tracking-wider text-[10px]">Urgency & Action</p>
+                          <p><span className="text-text2">Urgency:</span> <span className="font-semibold">{l.aiInsights?.urgency || '—'}</span></p>
+                          <p><span className="text-text2">Next Action:</span> <span className="font-semibold text-primary">{l.aiInsights?.nextAction || '—'}</span></p>
+                          <p><span className="text-text2">Scored:</span> <span className="font-semibold">{l.aiScoredAt ? new Date(l.aiScoredAt).toLocaleString('en-IN') : 'Pending...'}</span></p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="font-bold text-text2 uppercase tracking-wider text-[10px]">Lead Info</p>
+                          <p><span className="text-text2">Source:</span> <span className="font-semibold">{l.source}</span></p>
+                          <p><span className="text-text2">Created:</span> <span className="font-semibold">{new Date(l.createdAt).toLocaleString('en-IN')}</span></p>
+                          {l.chatMessages?.length > 0 && <p><span className="text-text2">Chat turns:</span> <span className="font-semibold">{l.chatMessages.length}</span></p>}
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </>
             ))}
             {leads.length === 0 && (
               <tr><td colSpan={6} className="p-12 text-center">
-                <Users className="w-10 h-10 text-text2 mx-auto mb-2 opacity-40" />
+                <Brain className="w-10 h-10 text-text2 mx-auto mb-2 opacity-40" />
                 <p className="text-text2 font-medium">No leads found</p>
-                <p className="text-xs text-text2 mt-1">Leads from contact form will appear here</p>
+                <p className="text-xs text-text2 mt-1">Leads from contact form and chatbot will appear here with AI scores</p>
               </td></tr>
             )}
           </tbody>
@@ -147,7 +239,17 @@ export default function AdminLeads() {
               </div>
               <button onClick={() => setPreview(null)}><X className="w-5 h-5 text-text2" /></button>
             </div>
-            <div className="bg-tint rounded-xl p-4 text-sm text-text2 whitespace-pre-wrap">{preview.message}</div>
+            {preview.chatMessages?.length > 0 ? (
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {preview.chatMessages.map((m: any, i: number) => (
+                  <div key={i} className={`text-xs p-2 rounded-lg ${m.role === 'user' ? 'bg-primary/10 text-primary ml-4' : 'bg-tint text-text2 mr-4'}`}>
+                    <span className="font-bold">{m.role === 'user' ? 'Customer' : 'AI'}: </span>{m.content}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-tint rounded-xl p-4 text-sm text-text2 whitespace-pre-wrap">{preview.message}</div>
+            )}
             {preview.service && <p className="mt-3 text-xs text-text2">Service: <span className="font-semibold text-text">{preview.service}</span></p>}
           </div>
         </div>

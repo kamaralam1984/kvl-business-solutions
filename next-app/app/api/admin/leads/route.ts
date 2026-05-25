@@ -8,9 +8,11 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const q = url.searchParams.get('q') || '';
   const status = url.searchParams.get('status') || '';
+  const intent = url.searchParams.get('intent') || '';
   const filter: any = {};
   if (q) filter.$or = [{ name: { $regex: q, $options: 'i' } }, { email: { $regex: q, $options: 'i' } }, { phone: { $regex: q, $options: 'i' } }];
   if (status) filter.status = status;
+  if (intent) filter.intent = intent;
   await connectDB();
   const leads = await Lead.find(filter).sort({ createdAt: -1 }).limit(300).lean();
   const stats = {

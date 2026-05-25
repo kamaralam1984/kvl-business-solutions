@@ -3,8 +3,6 @@ import { rateLimit, clientIp } from '@/lib/rate-limit';
 import { chatRouted, ChatMessage } from '@/lib/ai/router';
 import { getSiteSettings } from '@/lib/models/SiteSettings';
 
-// Build system prompt dynamically — pulls phone/WhatsApp from SiteSettings cache
-// Admin can change contact info via /admin/site-settings without code changes
 async function buildSystemPrompt(): Promise<string> {
   const s = await getSiteSettings().catch(() => null);
   const phone = s?.phone || '+91 99420 00413';
@@ -24,7 +22,23 @@ Contact info (use these EXACTLY when sharing — do NOT invent other numbers):
 - Email: ${email}
 - Website: kvlbusinesssolutions.com
 
-Keep replies concise (2-4 sentences), warm and helpful. If user wants to buy or needs human help, suggest WhatsApp or contact form. Reply in the user's language (English or Hindi).`;
+IMPORTANT: If a customer seems seriously interested (asking about price, demo, or purchase), naturally ask for their name and phone number so our team can assist them better. Say something like: "May I have your name and mobile number so our team can assist you personally?"
+
+Keep replies concise (2-4 sentences), warm and helpful. Reply in the user's language (English or Hindi).`;
+}
+
+// Check if conversation has enough turns to attempt lead extraction
+function shouldAttemptExtraction(messages: ChatMessage[]): boolean {
+  const userMsgs = messages.filter(m => m.role === 'user');
+  return userMsgs.length >= 3;
+}
+
+// Simple regex check before calling AI extractor
+function hasContactSignals(messages: ChatMessage[]): boolean {
+  const text = messages.map(m => m.content).join(' ').toLowerCase();
+  const hasPhone = /[6-9]\d{9}|\d{10}/.test(text.replace(/\s/g, ''));
+  const hasIntent = /buy|purchase|price|demo|interested|kharid|lena|chahiye|contact|call me|whatsapp me/.test(text);
+  return hasPhone && hasIntent;
 }
 
 export async function POST(req: Request) {
@@ -40,25 +54,67 @@ export async function POST(req: Request) {
         content: m.content,
       }));
 
-    if (messages.length === 0) {
-      messages.push({ role: 'user', content: 'Hi' });
-    }
+    if (messages.length === 0) messages.push({ role: 'user', content: 'Hi' });
 
     const lastMsg = messages[messages.length - 1].content.trim().toLowerCase();
     const cacheKey = messages.length === 1 ? `chat-greeting:${lastMsg.slice(0, 80)}` : undefined;
 
     const SYSTEM = await buildSystemPrompt();
+    const result = await chatRouted({ messages, system: SYSTEM, maxTokens: 400, temperature: 0.7, cacheKey });
 
-    const result = await chatRouted({
-      messages,
-      system: SYSTEM,
-      maxTokens: 400,
-      temperature: 0.7,
-      cacheKey,
-    });
+    // Auto lead capture — only if conversation has contact signals
+    let leadCaptured = false;
+    let leadScore = 0;
+    let leadIntent = '';
+
+    if (shouldAttemptExtraction(messages) && hasContactSignals(messages)) {
+      try {
+        const { extractLeadFromChat, scoreLeadAsync } = await import('@/lib/ai/lead-scorer');
+        const extracted = await extractLeadFromChat(messages);
+        if (extracted) {
+          const { connectDB } = await import('@/lib/mongodb');
+          const { Lead } = await import('@/lib/models/Lead');
+          await connectDB();
+
+          // Avoid duplicate leads from same phone in last 24h
+          const existing = await Lead.findOne({
+            phone: { $regex: extracted.phone.replace(/\D/g, '').slice(-10) },
+            createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+          });
+
+          if (!existing) {
+            const chatSummary = messages.slice(-10).map(m => ({ role: m.role, content: m.content }));
+            const lead = await Lead.create({
+              name: extracted.name,
+              email: extracted.email || `chat_${Date.now()}@kvl.auto`,
+              phone: extracted.phone,
+              service: extracted.service || '',
+              source: 'chatbot',
+              message: `Auto-captured from chat. Service interest: ${extracted.service || 'not specified'}`,
+              chatMessages: chatSummary,
+            });
+
+            // Score in background
+            scoreLeadAsync(lead._id.toString(), {
+              name: extracted.name,
+              email: extracted.email || '',
+              phone: extracted.phone,
+              service: extracted.service,
+              chatMessages: chatSummary,
+            }).catch(() => {});
+
+            leadCaptured = true;
+            console.log(`[chatbot] Auto-lead captured: ${extracted.name} (${extracted.phone})`);
+          }
+        }
+      } catch (e) {
+        console.error('[chatbot] Lead capture error:', e);
+      }
+    }
 
     return NextResponse.json({
       reply: result.reply,
+      leadCaptured,
       _meta: {
         provider: result.provider,
         cached: result.cached,

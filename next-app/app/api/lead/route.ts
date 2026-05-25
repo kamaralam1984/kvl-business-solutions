@@ -23,6 +23,10 @@ export async function POST(req: Request) {
     const data = schema.parse(body);
     await connectDB();
     const lead = await Lead.create(data);
+    // AI scoring — fire & forget (non-blocking)
+    import('@/lib/ai/lead-scorer').then(({ scoreLeadAsync }) =>
+      scoreLeadAsync(lead._id.toString(), data).catch(() => {})
+    );
     sendNotification(`New Lead — ${data.name}`, leadEmail(data));
     fireTrigger('new_lead', {
       name: data.name, email: data.email, phone: data.phone,
