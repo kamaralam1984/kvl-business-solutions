@@ -103,13 +103,17 @@ export default function WorkflowsPage() {
                     <AlertCircle className="w-3 h-3" /> Last error: {w.lastError}
                   </div>
                 )}
-                {testResult?.id === w._id && (
-                  <div className={`mt-2 text-[10px] p-2 rounded ${testResult.result.ok ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
-                    {testResult.result.ok ? <CheckCircle2 className="w-3 h-3 inline mr-1" /> : <AlertCircle className="w-3 h-3 inline mr-1" />}
-                    Test: ran={testResult.result.result?.ran ?? 0}, failed={testResult.result.result?.failed ?? 0}
-                    {testResult.result.error && ` — ${testResult.result.error}`}
-                  </div>
-                )}
+                {(() => {
+                  if (!testResult || testResult.id !== w._id) return null;
+                  const tr = testResult.result;
+                  return (
+                    <div className={`mt-2 text-[10px] p-2 rounded ${tr.ok ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
+                      {tr.ok ? <CheckCircle2 className="w-3 h-3 inline mr-1" /> : <AlertCircle className="w-3 h-3 inline mr-1" />}
+                      Test: ran={tr.result?.ran ?? 0}, failed={tr.result?.failed ?? 0}
+                      {tr.error && ` — ${tr.error}`}
+                    </div>
+                  );
+                })()}
               </div>
               <div className="flex gap-2">
                 <button onClick={() => toggleActive(w)} className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${w.active ? 'bg-green-500/20 text-green-500' : 'bg-slate-500/20 text-slate-500'}`}>
