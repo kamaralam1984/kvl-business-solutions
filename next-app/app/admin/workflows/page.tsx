@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Plus, Trash2, Save, X, Workflow as WorkflowIcon, Zap } from 'lucide-react';
+import { Plus, Trash2, Save, X, Workflow as WorkflowIcon, Zap, Play, AlertCircle, Loader2, CheckCircle2 } from 'lucide-react';
 
 const TRIGGERS = [
   { id: 'new_lead', label: 'New lead form submission' },
@@ -22,7 +22,7 @@ const ACTIONS = [
 type Workflow = {
   _id?: string; name: string; description?: string; trigger: string; action: string;
   config: { emailSubject?: string; emailTemplate?: string; notificationTitle?: string; notificationMessage?: string; webhookUrl?: string; whatsappMessage?: string };
-  active: boolean; runCount?: number;
+  active: boolean; runCount?: number; lastRunAt?: string; lastError?: string;
 };
 
 const empty: Workflow = {
@@ -34,6 +34,8 @@ export default function WorkflowsPage() {
   const [items, setItems] = useState<Workflow[]>([]);
   const [editing, setEditing] = useState<Workflow | null>(null);
   const [isNew, setIsNew] = useState(false);
+  const [testing, setTesting] = useState<string | null>(null);
+  const [testResult, setTestResult] = useState<{ id: string; result: any } | null>(null);
 
   const load = () => fetch('/api/admin/workflows').then(r => r.json()).then(d => d.ok && setItems(d.workflows));
   useEffect(() => { load(); }, []);
@@ -55,6 +57,17 @@ export default function WorkflowsPage() {
     if (!id || !confirm('Delete workflow?')) return;
     await fetch(`/api/admin/workflows/${id}`, { method: 'DELETE' });
     load();
+  };
+
+  const runTest = async (id: string) => {
+    setTesting(id); setTestResult(null);
+    try {
+      const r = await fetch(`/api/admin/workflows/${id}/test`, { method: 'POST' });
+      const d = await r.json();
+      setTestResult({ id, result: d });
+    } catch (e: any) {
+      setTestResult({ id, result: { ok: false, error: e.message } });
+    } finally { setTesting(null); load(); }
   };
 
   return (
@@ -81,11 +94,29 @@ export default function WorkflowsPage() {
                   <span className="font-semibold">When</span> {trig} → <span className="font-semibold">then</span> {act}
                 </div>
                 {w.description && <div className="text-xs text-text2 mt-1">{w.description}</div>}
-                <div className="text-[10px] text-text2 mt-1">Run {w.runCount || 0} times</div>
+                <div className="text-[10px] text-text2 mt-1 flex flex-wrap gap-3">
+                  <span>Run {w.runCount || 0} times</span>
+                  {w.lastRunAt && <span>Last: {new Date(w.lastRunAt).toLocaleString('en-IN')}</span>}
+                </div>
+                {w.lastError && (
+                  <div className="mt-1 text-[10px] text-red-500 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" /> Last error: {w.lastError}
+                  </div>
+                )}
+                {testResult?.id === w._id && (
+                  <div className={`mt-2 text-[10px] p-2 rounded ${testResult.result.ok ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
+                    {testResult.result.ok ? <CheckCircle2 className="w-3 h-3 inline mr-1" /> : <AlertCircle className="w-3 h-3 inline mr-1" />}
+                    Test: ran={testResult.result.result?.ran ?? 0}, failed={testResult.result.result?.failed ?? 0}
+                    {testResult.result.error && ` — ${testResult.result.error}`}
+                  </div>
+                )}
               </div>
               <div className="flex gap-2">
                 <button onClick={() => toggleActive(w)} className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${w.active ? 'bg-green-500/20 text-green-500' : 'bg-slate-500/20 text-slate-500'}`}>
                   {w.active ? 'ACTIVE' : 'PAUSED'}
+                </button>
+                <button onClick={() => runTest(w._id!)} disabled={testing === w._id} className="text-text2 hover:text-primary text-xs inline-flex items-center gap-1">
+                  {testing === w._id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Play className="w-3 h-3" />} Test
                 </button>
                 <button onClick={() => { setEditing(w); setIsNew(false); }} className="text-text2 hover:text-primary text-xs">Edit</button>
                 <button onClick={() => del(w._id)} className="text-text2 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
@@ -140,7 +171,7 @@ export default function WorkflowsPage() {
               </label>
 
               <button onClick={save} className="btn btn-primary w-full justify-center"><Save className="w-4 h-4" /> Save Workflow</button>
-              <p className="text-[10px] text-text2">Note: Workflows are MVP — currently only saved to DB. Trigger execution wires up coming next.</p>
+              <p className="text-[10px] text-text2">✓ Live execution enabled. Use template vars: <code>{'{{name}}'}</code>, <code>{'{{email}}'}</code>, <code>{'{{amount}}'}</code>, <code>{'{{productName}}'}</code>, <code>{'{{orderId}}'}</code>, etc. Click "Test" to dry-run with mock data.</p>
             </div>
           </div>
         </div>

@@ -8,6 +8,7 @@ import { rzp } from '@/lib/razorpay';
 import { generateOrderId } from '@/lib/license';
 import { softwareProducts } from '@/lib/data/software';
 import { Coupon, evaluateCoupon } from '@/lib/models/Coupon';
+import { fireTrigger } from '@/lib/workflows/runner';
 
 const GST_RATE = 18;
 
@@ -79,6 +80,16 @@ export async function POST(req: Request) {
     if (appliedCoupon) {
       await Coupon.updateOne({ _id: appliedCoupon._id }, { $inc: { usedCount: 1 } });
     }
+
+    fireTrigger('new_order', {
+      name: u?.name || session.user.email,
+      email: session.user.email,
+      phone: u?.phone || '',
+      amount,
+      productName: product.name,
+      orderId,
+      hosting,
+    });
 
     return NextResponse.json({
       ok: true,

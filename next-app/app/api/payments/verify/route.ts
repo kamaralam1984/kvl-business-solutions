@@ -5,6 +5,7 @@ import { verifySignature } from '@/lib/razorpay';
 import { generateLicenseKey } from '@/lib/license';
 import { sendNotification, orderEmail } from '@/lib/email';
 import { notify } from '@/lib/models/Notification';
+import { fireTrigger } from '@/lib/workflows/runner';
 
 export async function POST(req: Request) {
   try {
@@ -30,6 +31,17 @@ export async function POST(req: Request) {
       type: 'order',
       title: `Order paid · ${order.productName}`,
       message: `Your license key is ready. Click to view order details and download invoice.`,
+      link: `/dashboard/orders/${order.orderId}`,
+    });
+
+    fireTrigger('order_paid', {
+      name: order.billing?.name || order.email,
+      email: order.email,
+      phone: order.billing?.phone || '',
+      amount: order.amount,
+      productName: order.productName,
+      orderId: order.orderId,
+      licenseKey: order.licenseKey,
       link: `/dashboard/orders/${order.orderId}`,
     });
 

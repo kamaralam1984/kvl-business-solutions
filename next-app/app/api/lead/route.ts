@@ -4,6 +4,7 @@ import { connectDB } from '@/lib/mongodb';
 import { Lead } from '@/lib/models/Lead';
 import { sendNotification, leadEmail } from '@/lib/email';
 import { rateLimit, clientIp } from '@/lib/rate-limit';
+import { fireTrigger } from '@/lib/workflows/runner';
 
 const schema = z.object({
   name: z.string().min(2),
@@ -23,6 +24,11 @@ export async function POST(req: Request) {
     await connectDB();
     const lead = await Lead.create(data);
     sendNotification(`New Lead — ${data.name}`, leadEmail(data));
+    fireTrigger('new_lead', {
+      name: data.name, email: data.email, phone: data.phone,
+      service: data.service, message: data.message, source: data.source,
+      leadId: lead._id.toString(),
+    });
     return NextResponse.json({ ok: true, id: lead._id });
   } catch (e: any) {
     return NextResponse.json({ ok: false, error: e.message }, { status: 400 });

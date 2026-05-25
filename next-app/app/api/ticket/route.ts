@@ -5,6 +5,7 @@ import { Ticket } from '@/lib/models/Ticket';
 import { sendNotification, ticketEmail } from '@/lib/email';
 import { rateLimit, clientIp } from '@/lib/rate-limit';
 import { notify } from '@/lib/models/Notification';
+import { fireTrigger } from '@/lib/workflows/runner';
 
 const attachmentSchema = z.object({
   url: z.string().url(),
@@ -37,6 +38,10 @@ export async function POST(req: Request) {
       title: `Ticket received [${data.priority.toUpperCase()}]`,
       message: `We got your request and will respond within 4 business hours.`,
       link: '/support',
+    });
+    fireTrigger('new_ticket', {
+      name: data.name, email: data.email, phone: '', priority: data.priority,
+      product: data.product, description: data.description, ticketId: t._id.toString(),
     });
     return NextResponse.json({ ok: true, id: t._id });
   } catch (e: any) {
