@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Plus, Trash2, Edit3, Save, X, Globe, ExternalLink, Sparkles } from 'lucide-react';
+import { Plus, Trash2, Edit3, Save, X, Globe, ExternalLink, Sparkles, Download } from 'lucide-react';
 import { FileUploader, UploadedFile } from '@/components/widgets/FileUploader';
 import { DEMO_CATEGORIES } from '@/lib/data/demo-categories';
 
@@ -61,6 +61,14 @@ export default function AdminDemosPage() {
     load();
   };
 
+  const seedDefaults = async () => {
+    if (!confirm('Add 11 default demos (Vidyt, Aapka Plot, + 9 design templates)? Existing demos with same names will be skipped.')) return;
+    const r = await fetch('/api/admin/demos/seed', { method: 'POST' });
+    const d = await r.json();
+    setMsg(d.ok ? `✓ Added ${d.added}, skipped ${d.skipped} (already exist)` : `Error: ${d.error}`);
+    load();
+  };
+
   return (
     <div>
       <div className="flex justify-between items-end mb-4">
@@ -68,7 +76,10 @@ export default function AdminDemosPage() {
           <h1 className="text-2xl font-extrabold flex items-center gap-2"><Globe className="w-6 h-6 text-primary" /> Website Demos</h1>
           <p className="text-text2 text-sm mt-1">Manage what's shown on /website-demos page. Real client work (LIVE badge) + design templates.</p>
         </div>
-        <button onClick={() => { setEditing(empty); setIsNew(true); }} className="btn btn-primary"><Plus className="w-4 h-4" /> Add Website</button>
+        <div className="flex gap-2">
+          <button onClick={seedDefaults} className="btn btn-ghost text-xs" title="Add 11 default demos (Vidyt, Aapka Plot + 9 templates)"><Download className="w-3.5 h-3.5" /> Seed Defaults</button>
+          <button onClick={() => { setEditing(empty); setIsNew(true); }} className="btn btn-primary"><Plus className="w-4 h-4" /> Add Website</button>
+        </div>
       </div>
       {msg && <div className="text-xs mb-3">{msg}</div>}
 
