@@ -1,21 +1,40 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, X, Send, Mic, MicOff } from 'lucide-react';
+import { Bot, X, Send, Mic, MicOff, Sparkles } from 'lucide-react';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
 
+const PRIYA_GREETING = 'Namaste! 🙏 Main Priya hoon, KVL Business Solutions ki AI assistant. Kya aapko kisi software ya service mein madad chahiye? Free demo arrange kar sakti hoon!';
+
 export function Chatbot() {
   const [open, setOpen] = useState(false);
+  const [showBubble, setShowBubble] = useState(false);
+  const [proactiveDone, setProactiveDone] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([
-    { role: 'assistant', content: 'Hi 👋 I\'m KVL AI. How can I help you today?' },
-    { role: 'assistant', content: 'I can help with software pricing, demos, services, GPS tracking or quote generation.' },
+    { role: 'assistant', content: 'Hi 👋 Main Priya hoon, KVL AI. Aaj kaise help kar sakti hoon?' },
+    { role: 'assistant', content: 'Pricing, demo, services, GPS tracking ya quote — sab ke baare mein bata sakti hoon!' },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [listening, setListening] = useState(false);
   const recRef = useRef<any>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
+
+  // Proactive popup after 30 seconds
+  useEffect(() => {
+    if (proactiveDone) return;
+    const t1 = setTimeout(() => setShowBubble(true), 30_000);
+    const t2 = setTimeout(() => {
+      if (!open) {
+        setOpen(true);
+        setShowBubble(false);
+        setMessages(m => m[0]?.content === PRIYA_GREETING ? m : [{ role: 'assistant', content: PRIYA_GREETING }, ...m]);
+      }
+      setProactiveDone(true);
+    }, 38_000);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [open, proactiveDone]);
 
   useEffect(() => { bodyRef.current?.scrollTo(0, 9e9); }, [messages, loading]);
 
@@ -62,14 +81,40 @@ export function Chatbot() {
 
   return (
     <>
+      {/* Proactive notification bubble */}
+      <AnimatePresence>
+        {showBubble && !open && (
+          <motion.div
+            initial={{ opacity: 0, x: 20, scale: 0.8 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 20, scale: 0.8 }}
+            className="absolute bottom-16 right-0 bg-white dark:bg-slate-800 rounded-2xl rounded-br-sm shadow-2xl p-3 w-56 border border-tint cursor-pointer"
+            onClick={() => { setOpen(true); setShowBubble(false); setProactiveDone(true); }}
+          >
+            <div className="flex items-start gap-2">
+              <div className="w-8 h-8 rounded-full bg-primary/10 grid place-items-center shrink-0">
+                <Sparkles className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <p className="text-[12px] font-bold text-text">Priya - KVL AI</p>
+                <p className="text-[11px] text-text2 leading-relaxed mt-0.5">Namaste! Free demo chahiye? Main help kar sakti hoon 🙏</p>
+              </div>
+            </div>
+            <button onClick={e => { e.stopPropagation(); setShowBubble(false); setProactiveDone(true); }}
+              className="absolute top-1 right-1 text-text2 hover:text-text"><X className="w-3 h-3" /></button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <button
-        onClick={() => setOpen(o => !o)}
+        onClick={() => { setOpen(o => !o); setShowBubble(false); setProactiveDone(true); }}
         className="w-14 h-14 rounded-full grid place-items-center text-white shadow-card relative"
         style={{ background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)' }}
         aria-label="AI Assistant"
       >
         <Bot className="w-6 h-6" />
         <span className="absolute inset-0 rounded-full border-2 border-current opacity-50 animate-pulse-ring" />
+        {showBubble && <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white text-[8px] text-white font-bold grid place-items-center">1</span>}
       </button>
 
       <AnimatePresence>

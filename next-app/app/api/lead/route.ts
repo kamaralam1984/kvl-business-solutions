@@ -5,6 +5,7 @@ import { Lead } from '@/lib/models/Lead';
 import { sendNotification, leadEmail } from '@/lib/email';
 import { rateLimit, clientIp } from '@/lib/rate-limit';
 import { fireTrigger } from '@/lib/workflows/runner';
+import { sendLeadWhatsApp, notifyAdminWhatsApp } from '@/lib/whatsapp';
 
 const schema = z.object({
   name: z.string().min(2),
@@ -28,6 +29,9 @@ export async function POST(req: Request) {
       scoreLeadAsync(lead._id.toString(), data).catch(() => {})
     );
     sendNotification(`New Lead — ${data.name}`, leadEmail(data));
+    // WhatsApp auto-message — fire & forget
+    sendLeadWhatsApp({ name: data.name, phone: data.phone, service: data.service }).catch(() => {});
+    notifyAdminWhatsApp({ name: data.name, phone: data.phone, email: data.email, service: data.service, source: data.source }).catch(() => {});
     fireTrigger('new_lead', {
       name: data.name, email: data.email, phone: data.phone,
       service: data.service, message: data.message, source: data.source,
