@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import Anthropic from '@anthropic-ai/sdk';
 import { rateLimit, clientIp } from '@/lib/rate-limit';
+import { chatRouted, ChatMessage } from '@/lib/ai/router';
 
 const SYSTEM = `You are "KVL AI", the assistant for KVL Business Solutions — an Indian enterprise tech company.
 You help customers with:
@@ -14,27 +14,42 @@ Keep replies concise (2-4 sentences), warm and helpful. If user wants to buy or 
 export async function POST(req: Request) {
   const limit = rateLimit(`chat:${clientIp(req)}`, 30, 60_000);
   if (!limit.allowed) return NextResponse.json({ reply: 'Slow down a bit — too many messages. Try again in a minute.' });
+
   try {
     const { history } = await req.json();
-    if (!process.env.ANTHROPIC_API_KEY) {
-      return NextResponse.json({ reply: 'AI is offline. Please WhatsApp +91 90000 00000 for instant help.' });
+    const messages: ChatMessage[] = (history || [])
+      .filter((m: any) => m.content?.trim())
+      .map((m: any) => ({
+        role: m.role === 'assistant' ? 'assistant' : 'user',
+        content: m.content,
+      }));
+
+    if (messages.length === 0) {
+      messages.push({ role: 'user', content: 'Hi' });
     }
-    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-    const messages = (history || []).filter((m: any) => m.content?.trim()).map((m: any) => ({
-      role: m.role === 'assistant' ? 'assistant' : 'user',
-      content: m.content,
-    }));
-    const msg = await client.messages.create({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 400,
-      system: [{ type: 'text', text: SYSTEM, cache_control: { type: 'ephemeral' } }] as any,
-      messages: messages.length ? messages : [{ role: 'user', content: 'Hi' }],
+
+    // Cache key based on last user message — caches identical greetings/FAQs
+    const lastMsg = messages[messages.length - 1].content.trim().toLowerCase();
+    const cacheKey = messages.length === 1 ? `chat-greeting:${lastMsg.slice(0, 80)}` : undefined;
+
+    const result = await chatRouted({
+      messages,
+      system: SYSTEM,
+      maxTokens: 400,
+      temperature: 0.7,
+      cacheKey,
     });
-    const reply = msg.content
-      .filter((b: any) => b.type === 'text')
-      .map((b: any) => b.text)
-      .join('\n');
-    return NextResponse.json({ reply });
+
+    return NextResponse.json({
+      reply: result.reply,
+      // Debug info (only visible if user logs it, doesn't show to chat UI):
+      _meta: {
+        provider: result.provider,
+        cached: result.cached,
+        fallbacks: result.fallbackChain.length,
+        cost: result.cost.toFixed(6),
+      },
+    });
   } catch (e: any) {
     console.error('chatbot error', e);
     return NextResponse.json({ reply: 'Sorry, I am having trouble. Please WhatsApp +91 90000 00000 for instant help.' });

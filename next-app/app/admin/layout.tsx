@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { LayoutDashboard, Users, Ticket, FileText, Package, Box, UserCog, Mail, Activity, Tag, Calendar, Star, Settings, Megaphone, Globe, Monitor } from 'lucide-react';
+import { LayoutDashboard, Users, Ticket, FileText, Package, Box, UserCog, Mail, Activity, Tag, Calendar, Star, Settings, Megaphone, Globe, Monitor, Cpu } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const sections = [
@@ -8,6 +8,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       links: [
         { href: '/admin', label: 'Dashboard', Icon: LayoutDashboard },
         { href: '/admin/activity', label: 'Activity', Icon: Activity },
+        { href: '/admin/api-usage', label: 'API Usage', Icon: Cpu },
       ],
     },
     {
