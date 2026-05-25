@@ -6,6 +6,7 @@ import { connectDB } from '@/lib/mongodb';
 import { Order } from '@/lib/models/Order';
 import { formatINR } from '@/lib/utils';
 import { ArrowLeft, Download, Copy, Cloud, Server } from 'lucide-react';
+import { OrderTimeline } from '@/components/shared/OrderTimeline';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,8 +25,9 @@ export default async function OrderDetailPage({ params }: { params: { id: string
   };
 
   return (
-    <div className="container py-10 max-w-3xl">
+    <div className="container py-10 max-w-4xl">
       <Link href="/dashboard" className="text-sm text-text2 hover:text-primary inline-flex items-center gap-1 mb-4"><ArrowLeft className="w-4 h-4" /> Back to Dashboard</Link>
+      <div className="grid lg:grid-cols-[1fr_280px] gap-5">
       <div className="card-base p-7">
         <div className="flex justify-between items-start mb-6">
           <div>
@@ -75,6 +77,13 @@ export default async function OrderDetailPage({ params }: { params: { id: string
           )}
           <Link href="/support" className="btn btn-ghost">Need Help?</Link>
         </div>
+      </div>
+      <OrderTimeline
+        status={order.status}
+        createdAt={order.createdAt}
+        paidAt={order.updatedAt}
+        refundedAt={order.refundedAt}
+      />
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { softwareProducts } from '@/lib/data/software';
+import { docArticles } from '@/lib/data/docs';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const site = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlsolutions.in';
@@ -7,7 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const staticPaths = [
     '', 'about', 'services', 'software', 'industries', 'projects', 'clients',
-    'website-demos', 'contact', 'support', 'faq', 'pricing', 'book-demo',
+    'website-demos', 'contact', 'support', 'faq', 'pricing', 'book-demo', 'docs',
     'privacy', 'terms', 'refund-policy', 'shipping-policy',
     'login', 'register',
   ];
@@ -24,6 +25,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: 'monthly' as const,
       priority: 0.8,
+    })),
+    ...docArticles.map(a => ({
+      url: `${site}/docs/${a.slug}`,
+      lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
     })),
   ];
 }

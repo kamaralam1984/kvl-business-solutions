@@ -4,9 +4,20 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { PageHero } from '@/components/shared/PageHero';
 import { CtaBanner } from '@/components/home/CtaBanner';
 import { TiltCard } from '@/components/shared/TiltCard';
-import { Eye, Monitor, Smartphone, GraduationCap, Hospital, HardHat, Satellite, ShoppingCart, Briefcase, Building2, Cog, Landmark, UserSquare } from 'lucide-react';
+import { Eye, Monitor, Smartphone, GraduationCap, Hospital, HardHat, Satellite, ShoppingCart, Briefcase, Building2, Cog, Landmark, UserSquare, Sparkles, ExternalLink, Video, Home } from 'lucide-react';
 
-const demos = [
+type Demo = {
+  id: number; cat: string; name: string; desc: string;
+  Icon: any; c1: string; c2: string; tech: string[];
+  url?: string; live?: boolean;
+};
+
+const demos: Demo[] = [
+  // ─── LIVE production sites built by KVL ───
+  { id: 101, cat: 'business', name: 'Vidyt', desc: 'Live video / content platform — fully deployed for client', Icon: Video, c1: '#9333ea', c2: '#581c87', tech: ['Next.js', 'Tailwind', 'Production'], url: 'https://www.vidyt.com', live: true },
+  { id: 102, cat: 'realestate', name: 'Aapka Plot', desc: 'Real estate & property listing platform — live for plot buyers', Icon: Home, c1: '#16a34a', c2: '#14532d', tech: ['React', 'Real-time', 'Production'], url: 'https://www.aapkaplote.com', live: true },
+
+  // ─── Sample design demos ───
   { id: 1, cat: 'school', name: 'Bright Future Academy', desc: 'Modern school website with admission flow', Icon: GraduationCap, c1: '#8b5cf6', c2: '#6d28d9', tech: ['React', 'Tailwind'] },
   { id: 2, cat: 'hospital', name: 'City Care Multi-Speciality', desc: 'Hospital site with online appointments', Icon: Hospital, c1: '#ef4444', c2: '#b91c1c', tech: ['Next.js', 'API'] },
   { id: 3, cat: 'construction', name: 'Pillar Constructions', desc: 'Premium construction company site', Icon: HardHat, c1: '#eab308', c2: '#a16207', tech: ['WordPress', 'SEO'] },
@@ -40,7 +51,7 @@ export default function DemosPage() {
 
   return (
     <>
-      <PageHero eyebrow="WEBSITE DEMO GALLERY" title="50+ Ready Website" accent="Demos" description="Pick a design, customize it, and go live in 48 hours. Mobile + Desktop preview included." breadcrumb="Website Demos" />
+      <PageHero eyebrow="OUR WORK · DEMOS" title="Live websites &" accent="design demos" description="Real production sites we've launched (look for the LIVE badge) + 50+ design templates ready to customize." breadcrumb="Website Demos" />
 
       <section className="section">
         <div className="container">
@@ -58,26 +69,59 @@ export default function DemosPage() {
                 const v = view[d.id] || 'desktop';
                 return (
                   <motion.div key={d.id} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                    <TiltCard className="card-base overflow-hidden cursor-pointer group">
+                    <TiltCard className={`card-base overflow-hidden cursor-pointer group ${d.live ? 'ring-2 ring-green-500/50' : ''}`}>
                       <div className="h-48 relative grid place-items-center text-white" style={{ background: `linear-gradient(135deg, ${d.c1}, ${d.c2})` }}>
                         {v === 'desktop' ? <d.Icon className="w-14 h-14 opacity-90" /> : <Smartphone className="w-16 h-16 opacity-90" />}
+
+                        {d.live && (
+                          <div className="absolute top-2 left-2 z-10 flex items-center gap-1.5 bg-green-500 text-white px-2 py-1 rounded-full text-[10px] font-bold shadow-card">
+                            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                            LIVE
+                          </div>
+                        )}
+
                         <div className="absolute top-2 right-2 z-10 flex gap-1 bg-black/50 rounded-xl p-0.5 backdrop-blur">
                           <button onClick={(e) => { e.stopPropagation(); setView(p => ({ ...p, [d.id]: 'desktop' })); }} className={`p-1.5 rounded-lg ${v === 'desktop' ? 'bg-primary' : ''}`}><Monitor className="w-3 h-3 text-white" /></button>
                           <button onClick={(e) => { e.stopPropagation(); setView(p => ({ ...p, [d.id]: 'mobile' })); }} className={`p-1.5 rounded-lg ${v === 'mobile' ? 'bg-primary' : ''}`}><Smartphone className="w-3 h-3 text-white" /></button>
                         </div>
+
                         <div className="absolute inset-0 bg-black/85 opacity-0 group-hover:opacity-100 transition-all grid place-items-center">
-                          <button className="btn btn-primary"><Eye className="w-4 h-4" /> Live Preview</button>
+                          {d.url ? (
+                            <a href={d.url} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
+                              <ExternalLink className="w-4 h-4" /> Visit Live Site
+                            </a>
+                          ) : (
+                            <button className="btn btn-primary"><Eye className="w-4 h-4" /> Live Preview</button>
+                          )}
                         </div>
                       </div>
                       <div className="p-4">
-                        <h4 className="text-[15px] font-bold">{d.name}</h4>
-                        <p className="text-xs text-text2 mt-1">{d.desc}</p>
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-[15px] font-bold flex items-center gap-1.5">
+                              {d.name}
+                              {d.live && <Sparkles className="w-3.5 h-3.5 text-green-500" />}
+                            </h4>
+                            <p className="text-xs text-text2 mt-1">{d.desc}</p>
+                          </div>
+                        </div>
                         <div className="flex gap-1.5 mt-2.5 flex-wrap">
-                          {d.tech.map(t => <span key={t} className="text-[10px] px-2 py-0.5 rounded-full surface2-tint border border-tint text-text2">{t}</span>)}
+                          {d.tech.map(t => (
+                            <span key={t} className={`text-[10px] px-2 py-0.5 rounded-full border ${t === 'Production' ? 'bg-green-500/15 border-green-500/40 text-green-500 font-semibold' : 'surface2-tint border-tint text-text2'}`}>{t}</span>
+                          ))}
                         </div>
                         <div className="mt-3 pt-3 border-t border-dashed border-tint flex justify-between items-center">
-                          <span className="text-[11px] text-text2">✨ Fully customizable</span>
-                          <b className="text-[13px] text-primary">from ₹14,999</b>
+                          {d.live && d.url ? (
+                            <>
+                              <span className="text-[11px] text-text2 truncate">{d.url.replace(/^https?:\/\//, '')}</span>
+                              <a href={d.url} target="_blank" rel="noopener noreferrer" className="text-[11px] text-primary font-semibold hover:underline whitespace-nowrap">Visit →</a>
+                            </>
+                          ) : (
+                            <>
+                              <span className="text-[11px] text-text2">✨ Fully customizable</span>
+                              <b className="text-[13px] text-primary">from ₹14,999</b>
+                            </>
+                          )}
                         </div>
                       </div>
                     </TiltCard>

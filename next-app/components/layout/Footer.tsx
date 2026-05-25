@@ -2,7 +2,22 @@ import Link from 'next/link';
 import { Facebook, Instagram, Linkedin, Youtube, Twitter, Phone, Mail, MapPin } from 'lucide-react';
 import { NewsletterForm } from '@/components/widgets/NewsletterForm';
 
-export function Footer() {
+export function Footer({ settings }: { settings?: any }) {
+  const brandName = settings?.brandName || 'KVL Business Solutions';
+  const phone = settings?.phone || '+91 90000 00000';
+  const email = settings?.email || 'info@kvlsolutions.in';
+  const address = [settings?.addressLine1, settings?.addressLine2].filter(Boolean).join(', ') || 'Pune, India';
+  const tagline = settings?.tagline || "India's next-generation business solutions company offering software, GPS, civil, automation and enterprise services.";
+  const showNewsletter = settings?.features?.newsletter !== false;
+
+  const socials = [
+    { Icon: Facebook, url: settings?.social?.facebook, label: 'Facebook' },
+    { Icon: Instagram, url: settings?.social?.instagram, label: 'Instagram' },
+    { Icon: Linkedin, url: settings?.social?.linkedin, label: 'LinkedIn' },
+    { Icon: Youtube, url: settings?.social?.youtube, label: 'YouTube' },
+    { Icon: Twitter, url: settings?.social?.twitter, label: 'Twitter' },
+  ];
+
   return (
     <footer className="bg-app2 border-t border-tint pt-16 pb-6">
       <div className="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
@@ -11,11 +26,11 @@ export function Footer() {
             K<span className="w-1.5 h-1.5 bg-primary rounded-full inline-block" />V<span className="w-1.5 h-1.5 bg-primary rounded-full inline-block" />L
           </div>
           <div className="text-[9px] tracking-[3px] text-text2 mt-1 font-semibold">BUSINESS SOLUTIONS</div>
-          <p className="text-sm text-text2 my-4">India&apos;s next-generation business solutions company offering software, GPS, civil, automation and enterprise services.</p>
+          <p className="text-sm text-text2 my-4">{tagline}</p>
           <div className="flex gap-2">
-            {[Facebook, Instagram, Linkedin, Youtube, Twitter].map((I, i) => (
-              <Link key={i} href="#" className="w-9 h-9 rounded-full border border-tint grid place-items-center text-text2 hover:bg-primary hover:text-white transition-all">
-                <I className="w-4 h-4" />
+            {socials.map((s, i) => (
+              <Link key={i} href={s.url || '#'} target={s.url ? '_blank' : undefined} rel="noopener noreferrer" aria-label={s.label} className="w-9 h-9 rounded-full border border-tint grid place-items-center text-text2 hover:bg-primary hover:text-white transition-all">
+                <s.Icon className="w-4 h-4" />
               </Link>
             ))}
           </div>
@@ -44,18 +59,23 @@ export function Footer() {
             <li><Link href="/clients">Clients</Link></li>
             <li><Link href="/contact">Contact</Link></li>
             <li><Link href="/support">Support</Link></li>
+            <li><Link href="/docs">Knowledge Base</Link></li>
           </ul>
         </div>
 
         <div>
           <h5 className="font-bold mb-4">Contact</h5>
           <ul className="space-y-2 text-sm text-text2 mb-5">
-            <li className="flex gap-2"><Phone className="w-4 h-4 text-primary" /> +91 90000 00000</li>
-            <li className="flex gap-2"><Mail className="w-4 h-4 text-primary" /> info@kvlsolutions.in</li>
-            <li className="flex gap-2"><MapPin className="w-4 h-4 text-primary" /> Pune, India</li>
+            <li className="flex gap-2"><Phone className="w-4 h-4 text-primary" /> {phone}</li>
+            <li className="flex gap-2"><Mail className="w-4 h-4 text-primary" /> {email}</li>
+            <li className="flex gap-2"><MapPin className="w-4 h-4 text-primary" /> {address}</li>
           </ul>
-          <h5 className="font-bold mb-2 text-sm">Newsletter</h5>
-          <NewsletterForm />
+          {showNewsletter && (
+            <>
+              <h5 className="font-bold mb-2 text-sm">Newsletter</h5>
+              <NewsletterForm />
+            </>
+          )}
         </div>
       </div>
 
@@ -69,7 +89,7 @@ export function Footer() {
           <Link href="/search" className="hover:text-primary">Search</Link>
         </div>
         <div className="flex flex-col sm:flex-row justify-between text-xs text-text2 gap-2">
-          <p>© {new Date().getFullYear()} KVL Business Solutions. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} {brandName}. All rights reserved.</p>
           <p>Crafted with ❤ in India</p>
         </div>
       </div>

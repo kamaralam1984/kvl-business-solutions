@@ -5,6 +5,7 @@ import { Order } from '@/lib/models/Order';
 import { formatINR } from '@/lib/utils';
 import Link from 'next/link';
 import { Package, ShoppingBag } from 'lucide-react';
+import { DashboardCharts } from '@/components/dashboard/DashboardCharts';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,6 +25,15 @@ export default async function DashboardPage() {
         <div className="card-base p-5"><div className="text-2xl font-extrabold">{formatINR(orders.filter((o: any) => o.status === 'paid').reduce((s: number, o: any) => s + (o.amount || 0), 0))}</div><div className="text-xs text-text2">Total Spent</div></div>
       </div>
 
+      <DashboardCharts orders={orders.map((o: any) => ({
+        orderId: o.orderId,
+        productName: o.productName,
+        amount: o.amount,
+        status: o.status,
+        hosting: o.hosting,
+        createdAt: new Date(o.createdAt).toISOString(),
+      }))} />
+
       <h2 className="text-xl font-bold mb-3">Your Orders</h2>
       {orders.length === 0 ? (
         <div className="card-base p-8 text-center">
@@ -38,9 +48,9 @@ export default async function DashboardPage() {
             </thead>
             <tbody>
               {orders.map((o: any) => (
-                <tr key={o.orderId} className="border-b border-tint">
-                  <td className="p-3 font-semibold">{o.productName}</td>
-                  <td className="p-3 text-text2">{o.orderId}</td>
+                <tr key={o.orderId} className="border-b border-tint hover:bg-primary/5">
+                  <td className="p-3 font-semibold"><Link href={`/dashboard/orders/${o.orderId}`} className="hover:text-primary">{o.productName}</Link></td>
+                  <td className="p-3 text-text2 font-mono text-xs">{o.orderId}</td>
                   <td className="p-3">{formatINR(o.amount)}</td>
                   <td className="p-3"><span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${o.status === 'paid' ? 'bg-green-500/20 text-green-500' : 'bg-yellow-500/20 text-yellow-500'}`}>{o.status.toUpperCase()}</span></td>
                   <td className="p-3 text-text2 text-xs font-mono">{o.licenseKey || '—'}</td>
