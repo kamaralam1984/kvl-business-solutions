@@ -5,7 +5,7 @@ import { PageHero } from '@/components/shared/PageHero';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { ReviewsSection } from '@/components/widgets/ReviewsSection';
 import { formatINR } from '@/lib/utils';
-import { Check, Cloud, Server, ShieldCheck, Headphones, RefreshCcw, Award } from 'lucide-react';
+import { Check, Cloud, Server, ShieldCheck, Headphones, RefreshCcw, Award, Play, Zap } from 'lucide-react';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlsolutions.in';
 
@@ -25,6 +25,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
 
   const cloudPrice = product.price;
   const onPremPrice = Math.round(product.price * 1.5);
+  const monthlyRent = product.monthlyRent;
   const related = softwareProducts.filter(p => p.slug !== product.slug).slice(0, 3);
 
   const productJsonLd = {
@@ -96,12 +97,20 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
               <div className="text-4xl font-extrabold text-primary my-2">{formatINR(cloudPrice)}<span className="text-base text-text2 font-normal">{product.unit}</span></div>
 
               <div className="space-y-3 mt-5">
+                <Link href={`/software/${product.slug}/demo`} className="btn w-full justify-center bg-gradient-to-r from-violet-600 to-blue-600 text-white hover:opacity-90">
+                  <Play className="w-4 h-4" /> Launch Live Demo
+                </Link>
                 <Link href={`/checkout?product=${product.slug}&host=cloud`} className="btn btn-primary w-full justify-center">
                   <Cloud className="w-4 h-4" /> Buy Cloud — {formatINR(cloudPrice)}
                 </Link>
                 <Link href={`/checkout?product=${product.slug}&host=on-premise`} className="btn btn-ghost w-full justify-center">
                   <Server className="w-4 h-4" /> On-Premise — {formatINR(onPremPrice)}
                 </Link>
+                {monthlyRent && (
+                  <Link href={`/checkout?product=${product.slug}&plan=monthly`} className="btn w-full justify-center border border-violet-500/50 text-violet-400 hover:bg-violet-500/10">
+                    <Zap className="w-4 h-4" /> Rent — {formatINR(monthlyRent)}{product.rentUnit}
+                  </Link>
+                )}
               </div>
 
               <div className="mt-5 pt-5 border-t border-tint space-y-2 text-xs text-text2">
@@ -109,8 +118,6 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
                 <div className="flex gap-2 items-center"><RefreshCcw className="w-3.5 h-3.5 text-green-500" /> 30-day money-back</div>
                 <div className="flex gap-2 items-center"><Headphones className="w-3.5 h-3.5 text-green-500" /> 1-year support</div>
               </div>
-
-              <Link href="/contact" className="block text-center text-xs text-primary mt-4 hover:underline">Need a demo? Talk to sales →</Link>
             </div>
           </aside>
         </div>
