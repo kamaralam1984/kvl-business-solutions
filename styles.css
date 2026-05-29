@@ -1656,3 +1656,198 @@ h1,h2,h3,h4,h5 { font-family: 'Poppins', sans-serif; line-height: 1.2; }
   .float-widgets { right: 16px; bottom: 16px; }
   .cta-banner { padding: 30px 20px; }
 }
+
+/* ===== 3D BLOB HERO VISUAL ===== */
+.hero-3d-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+#blob-canvas {
+  display: block;
+  width: 420px !important;
+  height: 420px !important;
+  border-radius: 50%;
+}
+.hex-shape {
+  position: absolute;
+  clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  animation: hexFloat 4s ease-in-out infinite;
+}
+.hex-orange { width: 46px; height: 53px; background: #b45309; top: 5%;  right: 12%; animation-delay: 0s; }
+.hex-teal   { width: 30px; height: 35px; background: #0d9488; top: 45%; left:  0%;  animation-delay: 1.2s; }
+.hex-brown  { width: 38px; height: 44px; background: #92400e; top: 10%; left:  8%;  animation-delay: 0.6s; }
+.hex-purple { width: 50px; height: 57px; background: #6d28d9; bottom: 10%; right: 0%; animation-delay: 1.8s; }
+@keyframes hexFloat {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-14px) rotate(8deg); }
+}
+.float-card {
+  position: absolute;
+  background: rgba(255,255,255,0.97);
+  color: #111;
+  border-radius: 14px;
+  padding: 10px 14px;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  z-index: 10;
+  animation: cardFloat 5s ease-in-out infinite;
+}
+.fc-users   { bottom: 22%; left: -2%; animation-delay: 0s; }
+.fc-revenue { top: 10%;   right: -2%; animation-delay: 2s; }
+@keyframes cardFloat {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+.fc-avatars { display: flex; }
+.fca {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 700; font-size: 10px;
+  margin-left: -7px; border: 2px solid #fff;
+}
+.fca:first-child { margin-left: 0; }
+.fc-info { line-height: 1.4; }
+.fc-info strong { display: block; font-weight: 700; font-size: 13px; color: #111; }
+.fc-info small  { font-size: 11px; color: #666; display: flex; align-items: center; gap: 4px; }
+.online-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #22c55e; display: inline-block;
+  animation: dotPulse 2s ease-in-out infinite;
+}
+@keyframes dotPulse { 0%,100%{opacity:1;} 50%{opacity:.4;} }
+.card-month  { font-size: 10px !important; color: #888 !important; text-transform: uppercase; letter-spacing: .5px; }
+.card-amount { font-size: 19px; font-weight: 800; color: #111; line-height: 1.2; }
+.card-growth { font-size: 11px !important; color: #22c55e !important; font-weight: 600; }
+.hero-brand-text {
+  position: absolute;
+  bottom: 3%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: 8px;
+  color: rgba(255,255,255,0.9);
+  text-shadow: 0 0 30px rgba(59,130,246,0.7);
+  pointer-events: none;
+}
+[data-theme="light"] .hero-brand-text { color: #1e3a8a; text-shadow: none; }
+[data-theme="light"] #blob-canvas { filter: none; }
+
+/* ===== CALL ME BACK BUTTON ===== */
+#kvl-call-wrap {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+#kvlCallBtn {
+  width: 62px; height: 62px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6 0%, #7c3aed 100%);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 24px;
+  box-shadow: 0 4px 20px rgba(59,130,246,0.5);
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: vapiPulse 2.5s ease-in-out infinite;
+}
+#kvlCallBtn:hover { transform: scale(1.1); box-shadow: 0 6px 32px rgba(59,130,246,0.7); }
+@keyframes vapiPulse {
+  0%,100% { box-shadow: 0 4px 20px rgba(59,130,246,0.5); }
+  50% { box-shadow: 0 4px 20px rgba(59,130,246,0.5), 0 0 0 12px rgba(59,130,246,0.12); }
+}
+.kvl-call-label {
+  background: rgba(0,0,0,0.78);
+  color: #fff;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  backdrop-filter: blur(4px);
+}
+
+/* ===== CALL BACK MODAL ===== */
+.call-modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+.call-modal {
+  background: var(--card-bg, #1e293b);
+  border-radius: 20px;
+  padding: 32px;
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+[data-theme="light"] .call-modal { background: #fff; border-color: rgba(0,0,0,0.08); }
+.modal-close {
+  position: absolute; top: 16px; right: 16px;
+  background: rgba(255,255,255,0.1); border: none;
+  color: var(--text-1, #fff); width: 32px; height: 32px;
+  border-radius: 50%; cursor: pointer; font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-icon {
+  width: 56px; height: 56px; border-radius: 16px;
+  background: linear-gradient(135deg,#3b82f6,#7c3aed);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; color: #fff; margin-bottom: 16px;
+}
+.call-modal h3 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+.call-modal p  { color: var(--text-2, #94a3b8); font-size: 14px; margin-bottom: 20px; }
+.call-modal form { display: flex; flex-direction: column; gap: 12px; }
+.call-modal input,
+.call-modal select {
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  color: var(--text-1, #fff);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+[data-theme="light"] .call-modal input,
+[data-theme="light"] .call-modal select {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #111;
+}
+.call-modal input:focus,
+.call-modal select:focus { border-color: #3b82f6; }
+
+@media (max-width: 640px) {
+  .hex-shape { display: none; }
+  #blob-canvas { width: 300px !important; height: 300px !important; }
+  .hero-3d-wrap { min-height: 320px; }
+  .fc-users  { bottom: 15%; left: -2%; }
+  .fc-revenue{ top: 6%;   right: -2%; }
+  .hero-brand-text { font-size: 24px; }
+  #kvl-call-wrap { bottom: 16px; right: 16px; }
+}
