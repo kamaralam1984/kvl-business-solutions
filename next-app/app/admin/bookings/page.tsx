@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react';
 import { Search, Trash2, Calendar, CheckCircle, Clock, XCircle } from 'lucide-react';
 
 const STATUS_COLOR: Record<string, string> = {
-  pending: 'bg-yellow-500/20 text-yellow-500',
-  confirmed: 'bg-blue-500/20 text-blue-500',
-  completed: 'bg-green-500/20 text-green-500',
-  cancelled: 'bg-red-500/20 text-red-500',
+  pending: 'bg-amber-500/10 text-amber-400',
+  confirmed: 'bg-blue-500/10 text-blue-400',
+  completed: 'bg-emerald-500/10 text-emerald-400',
+  cancelled: 'bg-red-500/10 text-red-400',
 };
 
 const ACTION_BTNS: Record<string, { next: string; label: string; cls: string }[]> = {
@@ -54,78 +54,102 @@ export default function AdminBookings() {
 
   return (
     <div className="space-y-5">
+      {/* Page header */}
+      <div>
+        <p className="eyebrow mb-2">SALES</p>
+        <h1 className="text-2xl font-extrabold text-white">Bookings</h1>
+      </div>
+
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {statCards.map(s => (
-          <div key={s.label} className="card-base p-4 flex items-center gap-3">
+          <div key={s.label} className="p-4 flex items-center gap-3" style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px' }}>
             <div className={`w-10 h-10 rounded-xl grid place-items-center ${s.bg}`}>
               <s.icon className={`w-5 h-5 ${s.color}`} />
             </div>
-            <div><div className="text-2xl font-extrabold">{s.value}</div><div className="text-xs text-text2">{s.label}</div></div>
+            <div><div className="text-2xl font-extrabold text-white">{s.value}</div><div className="text-xs text-text2">{s.label}</div></div>
           </div>
         ))}
       </div>
 
-      {/* Header */}
+      {/* Filters */}
       <div className="flex flex-wrap justify-between items-center gap-3">
         <div className="flex flex-wrap gap-1">
           {['', 'pending', 'confirmed', 'completed', 'cancelled'].map(s => (
-            <button key={s} onClick={() => filterBy(s)} className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${statusFilter === s ? 'bg-primary text-white' : 'surface-tint text-text2 hover:text-text'}`}>
+            <button key={s} onClick={() => filterBy(s)}
+              className="px-3 py-1 rounded-full text-xs font-bold transition-all"
+              style={{
+                background: statusFilter === s ? 'rgba(200,169,110,0.12)' : 'rgba(255,255,255,0.04)',
+                border: `1px solid ${statusFilter === s ? 'rgba(200,169,110,0.35)' : 'rgba(255,255,255,0.08)'}`,
+                color: statusFilter === s ? '#c8a96e' : '#888',
+              }}>
               {s ? s.toUpperCase() : `ALL (${stats.total || 0})`}
               {s === 'pending' && stats.pending ? ` (${stats.pending})` : ''}
             </button>
           ))}
         </div>
         <form onSubmit={e => { e.preventDefault(); load(); }} className="relative">
-          <Search className="absolute left-3 top-2.5 w-4 h-4 text-text2" />
-          <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search name, email…" className="form-control pl-9 w-64" />
+          <Search className="absolute left-3 top-2.5 w-4 h-4" style={{ color: 'rgba(148,163,184,0.5)' }} />
+          <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search name, email…"
+            className="pl-9 w-64 text-sm rounded-lg px-3 py-2 outline-none transition-all"
+            style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.85)' }}
+            onFocus={e => (e.target.style.borderColor = 'rgba(200,169,110,0.4)')}
+            onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.08)')} />
         </form>
       </div>
 
       {/* Table */}
-      <div className="card-base overflow-hidden">
+      <div style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', overflow: 'hidden' }}>
         <table className="w-full text-sm">
-          <thead className="text-left text-text2 text-xs uppercase border-b border-tint bg-surface">
+          <thead style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
             <tr>
-              <th className="p-3">Date</th><th className="p-3">Name</th><th className="p-3">Contact</th>
-              <th className="p-3">Product</th><th className="p-3">Preferred Slot</th><th className="p-3">Status</th><th className="p-3">Actions</th>
+              {['Date', 'Name', 'Contact', 'Product', 'Preferred Slot', 'Status', 'Actions'].map(h => (
+                <th key={h} className="px-4 py-3 text-left text-[11px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.6)' }}>{h}</th>
+              ))}
             </tr>
           </thead>
           <tbody>
             {bookings.map((b: any) => (
-              <tr key={b._id} className="border-b border-tint hover:bg-primary/5 transition-colors">
-                <td className="p-3 text-xs text-text2 whitespace-nowrap">{new Date(b.createdAt).toLocaleDateString('en-IN')}</td>
-                <td className="p-3">
-                  <div className="font-semibold">{b.name}</div>
+              <tr key={b._id} className="transition-colors" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.025)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                <td className="px-4 py-3 text-xs whitespace-nowrap" style={{ color: 'rgba(148,163,184,0.6)' }}>{new Date(b.createdAt).toLocaleDateString('en-IN')}</td>
+                <td className="px-4 py-3">
+                  <div className="font-semibold text-white">{b.name}</div>
                   {b.company && <div className="text-xs text-text2">{b.company}</div>}
                 </td>
-                <td className="p-3 text-xs"><div>{b.email}</div><div className="text-text2">{b.phone}</div></td>
-                <td className="p-3 text-xs font-medium">{b.product || '—'}</td>
-                <td className="p-3 text-xs text-text2">
+                <td className="px-4 py-3 text-xs"><div style={{ color: 'rgba(255,255,255,0.8)' }}>{b.email}</div><div className="text-text2">{b.phone}</div></td>
+                <td className="px-4 py-3 text-xs font-medium text-white">{b.product || '—'}</td>
+                <td className="px-4 py-3 text-xs text-text2">
                   {b.preferredDate ? `${new Date(b.preferredDate).toLocaleDateString('en-IN')} ${b.preferredTime || ''}` : 'Flexible'}
                 </td>
-                <td className="p-3">
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_COLOR[b.status] || ''}`}>
+                <td className="px-4 py-3">
+                  <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${STATUS_COLOR[b.status] || ''}`}>
                     {b.status?.toUpperCase()}
                   </span>
                 </td>
-                <td className="p-3">
+                <td className="px-4 py-3">
                   <div className="flex items-center gap-1 flex-wrap">
                     {(ACTION_BTNS[b.status] || []).map(a => (
                       <button key={a.next} onClick={() => updateStatus(b._id, a.next)} className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${a.cls}`}>
                         {a.label}
                       </button>
                     ))}
-                    <button onClick={() => del(b._id, b.name)} className="p-1 text-text2 hover:text-red-500 ml-1"><Trash2 className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => del(b._id, b.name)} className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors"
+                      style={{ color: 'rgba(148,163,184,0.5)' }}
+                      onMouseEnter={e => (e.currentTarget.style.color = '#f87171')}
+                      onMouseLeave={e => (e.currentTarget.style.color = 'rgba(148,163,184,0.5)')}>
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </td>
               </tr>
             ))}
             {bookings.length === 0 && (
               <tr><td colSpan={7} className="p-12 text-center">
-                <Calendar className="w-10 h-10 text-text2 mx-auto mb-2 opacity-40" />
-                <p className="text-text2 font-medium">No demo bookings yet</p>
-                <p className="text-xs text-text2 mt-1">Bookings from the website will appear here</p>
+                <Calendar className="w-10 h-10 mx-auto mb-2 opacity-30" style={{ color: '#888' }} />
+                <p className="font-medium" style={{ color: 'rgba(148,163,184,0.6)' }}>No demo bookings yet</p>
+                <p className="text-xs mt-1" style={{ color: 'rgba(148,163,184,0.4)' }}>Bookings from the website will appear here</p>
               </td></tr>
             )}
           </tbody>

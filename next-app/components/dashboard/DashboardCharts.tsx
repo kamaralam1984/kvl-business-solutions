@@ -10,7 +10,7 @@ type Order = {
   createdAt: string;
 };
 
-const COLORS = ['#3b82f6', '#8b5cf6', '#22c55e', '#f97316', '#06b6d4', '#ec4899', '#eab308'];
+const COLORS = ['#c8a96e', 'rgba(255,255,255,0.6)', '#4ade80', '#60a5fa', '#fbbf24', 'rgba(255,255,255,0.4)', '#f87171'];
 
 function formatINRShort(n: number) {
   if (n >= 1_00_000) return `₹${(n / 1_00_000).toFixed(1)}L`;
@@ -52,59 +52,69 @@ export function DashboardCharts({ orders }: { orders: Order[] }) {
     return { product: o.productName, expireDate: expire, days };
   }).filter(x => x.days > 0 && x.days < 365).sort((a, b) => a.days - b.days).slice(0, 5);
 
+  const tooltipStyle = {
+    background: '#111111',
+    border: '1px solid rgba(200,169,110,0.3)',
+    borderRadius: 10,
+    fontSize: 12,
+    color: '#f5f5f0',
+  };
+  const axisColor = 'rgba(136,136,136,0.8)';
+  const gridColor = 'rgba(255,255,255,0.04)';
+
   if (paid.length === 0) {
     return (
-      <div className="card-base p-10 text-center">
-        <p className="text-text2 text-sm">No paid orders yet. Charts will appear once you make your first purchase.</p>
+      <div className="p-10 text-center" style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px' }}>
+        <p className="text-sm" style={{ color: 'rgba(148,163,184,0.5)' }}>No paid orders yet. Charts will appear once you make your first purchase.</p>
       </div>
     );
   }
 
   return (
     <div className="grid lg:grid-cols-2 gap-5 mb-8">
-      <div className="card-base p-6">
-        <h3 className="font-bold mb-1">Spend (last 6 months)</h3>
+      <div className="p-6" style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px' }}>
+        <h3 className="font-bold mb-1 text-white">Spend (last 6 months)</h3>
         <p className="text-xs text-text2 mb-4">{paid.length} paid order{paid.length !== 1 ? 's' : ''}</p>
         <ResponsiveContainer width="100%" height={220}>
           <LineChart data={months}>
-            <CartesianGrid stroke="rgb(var(--tint))" strokeDasharray="3 3" />
-            <XAxis dataKey="month" stroke="rgb(var(--text-2))" fontSize={11} />
-            <YAxis stroke="rgb(var(--text-2))" fontSize={11} tickFormatter={formatINRShort} />
+            <CartesianGrid stroke={gridColor} strokeDasharray="3 3" />
+            <XAxis dataKey="month" stroke={axisColor} fontSize={11} tick={{ fill: axisColor }} />
+            <YAxis stroke={axisColor} fontSize={11} tickFormatter={formatINRShort} tick={{ fill: axisColor }} />
             <Tooltip
-              contentStyle={{ background: 'rgb(var(--bg-2))', border: '1px solid rgb(var(--tint))', borderRadius: 8, fontSize: 12 }}
+              contentStyle={tooltipStyle}
               formatter={(v: number) => formatINRShort(v)}
             />
-            <Line type="monotone" dataKey="amount" stroke="#3b82f6" strokeWidth={2.5} dot={{ fill: '#3b82f6', r: 4 }} activeDot={{ r: 6 }} />
+            <Line type="monotone" dataKey="amount" stroke="#c8a96e" strokeWidth={2.5} dot={{ fill: '#c8a96e', r: 4 }} activeDot={{ r: 6, fill: '#f5f5f0' }} />
           </LineChart>
         </ResponsiveContainer>
       </div>
 
-      <div className="card-base p-6">
-        <h3 className="font-bold mb-1">Spend by product</h3>
+      <div className="p-6" style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px' }}>
+        <h3 className="font-bold mb-1 text-white">Spend by product</h3>
         <p className="text-xs text-text2 mb-4">Top {productData.length} of {Object.keys(byProduct).length}</p>
         <ResponsiveContainer width="100%" height={220}>
           <PieChart>
             <Pie data={productData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} label={(p: any) => formatINRShort(p.value)}>
               {productData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
             </Pie>
-            <Tooltip contentStyle={{ background: 'rgb(var(--bg-2))', border: '1px solid rgb(var(--tint))', borderRadius: 8, fontSize: 12 }} formatter={(v: number) => formatINRShort(v)} />
-            <Legend wrapperStyle={{ fontSize: 11 }} />
+            <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => formatINRShort(v)} />
+            <Legend wrapperStyle={{ fontSize: 11, color: 'rgba(148,163,184,0.7)' }} />
           </PieChart>
         </ResponsiveContainer>
       </div>
 
       {upcoming.length > 0 && (
-        <div className="card-base p-6 lg:col-span-2">
-          <h3 className="font-bold mb-1">License renewals coming up</h3>
+        <div className="p-6 lg:col-span-2" style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px' }}>
+          <h3 className="font-bold mb-1 text-white">License renewals coming up</h3>
           <p className="text-xs text-text2 mb-4">Renew before expiry to avoid service interruption</p>
           <div className="space-y-2">
             {upcoming.map((u, i) => (
-              <div key={i} className="flex justify-between items-center p-3 surface-tint rounded-lg">
+              <div key={i} className="flex justify-between items-center p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
                 <div>
-                  <div className="font-semibold text-sm">{u.product}</div>
+                  <div className="font-semibold text-sm text-white">{u.product}</div>
                   <div className="text-xs text-text2">Expires {u.expireDate.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
                 </div>
-                <div className={`text-xs font-bold px-2 py-1 rounded-full ${u.days < 30 ? 'bg-red-500/20 text-red-500' : u.days < 90 ? 'bg-yellow-500/20 text-yellow-500' : 'bg-green-500/20 text-green-500'}`}>
+                <div className={`text-xs font-bold px-2 py-1 rounded-full ${u.days < 30 ? 'bg-red-500/20 text-red-400' : u.days < 90 ? 'bg-amber-500/20 text-amber-400' : 'bg-green-500/20 text-green-400'}`}>
                   {u.days} days
                 </div>
               </div>

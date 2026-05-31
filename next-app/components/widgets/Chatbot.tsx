@@ -5,15 +5,15 @@ import { Bot, X, Send, Mic, MicOff, Sparkles } from 'lucide-react';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
 
-const PRIYA_GREETING = 'Namaste! 🙏 Main Priya hoon, KVL Business Solutions ki AI assistant. Kya aapko kisi software ya service mein madad chahiye? Free demo arrange kar sakti hoon!';
+const PRIYA_GREETING = 'Hello! 👋 I\'m Priya, KVL Business Solutions\' AI assistant. I can help you with software, services, pricing, or a free demo — in any language you prefer!';
 
 export function Chatbot() {
   const [open, setOpen] = useState(false);
   const [showBubble, setShowBubble] = useState(false);
   const [proactiveDone, setProactiveDone] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([
-    { role: 'assistant', content: 'Hi 👋 Main Priya hoon, KVL AI. Aaj kaise help kar sakti hoon?' },
-    { role: 'assistant', content: 'Pricing, demo, services, GPS tracking ya quote — sab ke baare mein bata sakti hoon!' },
+    { role: 'assistant', content: 'Hi 👋 I\'m Priya, KVL AI. How can I help you today?' },
+    { role: 'assistant', content: 'Ask me anything — pricing, demo, services, GPS tracking, or a quote. I speak your language!' },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -64,7 +64,7 @@ export function Chatbot() {
     if (!SR) return alert('Voice not supported in this browser');
     if (listening) { recRef.current?.stop(); return; }
     const rec = new SR();
-    rec.lang = 'en-IN'; rec.continuous = false;
+    rec.lang = navigator.language || 'en-IN'; rec.continuous = false;
     rec.onresult = (e: any) => { setInput(e.results[0][0].transcript); };
     rec.onend = () => setListening(false);
     rec.onerror = () => setListening(false);
@@ -97,7 +97,7 @@ export function Chatbot() {
               </div>
               <div>
                 <p className="text-[12px] font-bold text-text">Priya - KVL AI</p>
-                <p className="text-[11px] text-text2 leading-relaxed mt-0.5">Namaste! Free demo chahiye? Main help kar sakti hoon 🙏</p>
+                <p className="text-[11px] text-text2 leading-relaxed mt-0.5">Hi! Need a free demo? I can help you in any language 🌍</p>
               </div>
             </div>
             <button onClick={e => { e.stopPropagation(); setShowBubble(false); setProactiveDone(true); }}

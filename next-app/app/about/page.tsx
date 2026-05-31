@@ -1,9 +1,9 @@
-import { PageHero } from '@/components/shared/PageHero';
+'use client';
+import { useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
 import { Stats } from '@/components/home/Stats';
-import { TiltCard } from '@/components/shared/TiltCard';
 import { Target, Eye, Heart, Trophy, Building2, LaptopMinimal, Palette, Users, Coffee, Mountain, Satellite, HardHat } from 'lucide-react';
-
-export const metadata = { title: 'About — KVL Business Solutions' };
+import Link from 'next/link';
 
 const timeline = [
   { year: '2015', title: 'Company Founded', desc: 'Started in a small Pune office with 2 engineers and a dream.' },
@@ -15,120 +15,252 @@ const timeline = [
 ];
 
 const team = [
-  { name: 'Krishna Verma', role: 'Founder & CEO', initials: 'KV', c1: '#3b82f6', c2: '#1d4ed8' },
-  { name: 'Anjali Sharma', role: 'CTO', initials: 'AS', c1: '#22c55e', c2: '#16a34a' },
-  { name: 'Rohit Gupta', role: 'Head of GPS Systems', initials: 'RG', c1: '#f97316', c2: '#ea580c' },
-  { name: 'Priya Singh', role: 'Head of Design', initials: 'PS', c1: '#ef4444', c2: '#b91c1c' },
-  { name: 'Vikram Mehta', role: 'VP Civil & Industrial', initials: 'VM', c1: '#8b5cf6', c2: '#6d28d9' },
-  { name: 'Neha Bhatia', role: 'Head of Customer Success', initials: 'NB', c1: '#06b6d4', c2: '#0891b2' },
-  { name: 'Sandeep Malhotra', role: 'Head of Sales', initials: 'SM', c1: '#eab308', c2: '#a16207' },
-  { name: 'Ritu Kapoor', role: 'Head of Marketing', initials: 'RK', c1: '#14b8a6', c2: '#0f766e' },
+  { name: 'Krishna Verma', role: 'Founder & CEO', initials: 'KV' },
+  { name: 'Anjali Sharma', role: 'CTO', initials: 'AS' },
+  { name: 'Rohit Gupta', role: 'Head of GPS Systems', initials: 'RG' },
+  { name: 'Priya Singh', role: 'Head of Design', initials: 'PS' },
+  { name: 'Vikram Mehta', role: 'VP Civil & Industrial', initials: 'VM' },
+  { name: 'Neha Bhatia', role: 'Head of Customer Success', initials: 'NB' },
+  { name: 'Sandeep Malhotra', role: 'Head of Sales', initials: 'SM' },
+  { name: 'Ritu Kapoor', role: 'Head of Marketing', initials: 'RK' },
 ];
 
 const gallery = [
-  { Icon: Building2, label: 'Pune HQ — Workspace', c1: '#3b82f6', c2: '#1d4ed8', wide: true },
-  { Icon: LaptopMinimal, label: 'Engineering Floor', c1: '#06b6d4', c2: '#0891b2' },
-  { Icon: Palette, label: 'Design Studio', c1: '#f97316', c2: '#ea580c', tall: true },
-  { Icon: Users, label: 'Meeting Room', c1: '#22c55e', c2: '#16a34a' },
-  { Icon: Coffee, label: 'Cafeteria', c1: '#8b5cf6', c2: '#6d28d9' },
-  { Icon: Mountain, label: 'Team Offsite 2025', c1: '#ef4444', c2: '#b91c1c', wide: true },
-  { Icon: Satellite, label: 'GPS Lab', c1: '#eab308', c2: '#a16207' },
-  { Icon: HardHat, label: 'Industrial Workshop', c1: '#14b8a6', c2: '#0f766e' },
+  { Icon: Building2, label: 'Pune HQ — Workspace', wide: true, tall: false },
+  { Icon: LaptopMinimal, label: 'Engineering Floor', wide: false, tall: false },
+  { Icon: Palette, label: 'Design Studio', wide: false, tall: true },
+  { Icon: Users, label: 'Meeting Room', wide: false, tall: false },
+  { Icon: Coffee, label: 'Cafeteria', wide: false, tall: false },
+  { Icon: Mountain, label: 'Team Offsite 2025', wide: true, tall: false },
+  { Icon: Satellite, label: 'GPS Lab', wide: false, tall: false },
+  { Icon: HardHat, label: 'Industrial Workshop', wide: false, tall: false },
 ];
+
+function FadeIn({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-80px' });
+  return (
+    <motion.div ref={ref} initial={{ opacity: 0, y: 32 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay }} className={className}>
+      {children}
+    </motion.div>
+  );
+}
 
 export default function AboutPage() {
   return (
-    <>
-      <PageHero eyebrow="ABOUT KVL" title="India's Next-Generation" accent="Business Solutions Company" description="Founded with a single mission — bring world-class enterprise technology to every Indian business." breadcrumb="About Us" />
+    <div style={{ background: '#0a0a0a' }} className="text-white">
 
-      <section className="section">
-        <div className="container grid lg:grid-cols-[1fr_2fr] gap-10">
-          <div>
+      {/* Hero */}
+      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden" style={{ background: '#0a0a0a' }}>
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200,169,110,0.06) 0%, transparent 70%)' }} />
+        <div className="relative z-10 container text-center py-32">
+          <motion.span
+            initial={{ opacity: 0, y: -16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="eyebrow"
+          >
+            ABOUT KVL
+          </motion.span>
+          {/* Since 2018 badge */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="inline-flex items-center gap-2 mt-4 mb-5 px-4 py-1.5 rounded-full border"
+            style={{ borderColor: 'rgba(200,169,110,0.3)', background: 'rgba(200,169,110,0.06)' }}
+          >
+            <span className="text-xs font-bold tracking-widest uppercase" style={{ color: '#c8a96e' }}>Since 2015</span>
+            <span className="w-1 h-1 rounded-full" style={{ background: '#c8a96e' }} />
+            <span className="text-xs text-white/40 tracking-wide">Pune, India</span>
+          </motion.div>
+          <motion.h1
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="text-5xl md:text-7xl font-extrabold leading-tight"
+            style={{ fontFamily: 'Poppins, sans-serif', color: '#f5f5f0' }}
+          >
+            KVL Business<br />Solutions
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.7, delay: 0.4 }}
+            className="mt-6 text-xl max-w-2xl mx-auto"
+            style={{ color: '#888' }}
+          >
+            Founded with a single mission — bring world-class enterprise technology to every Indian business.
+          </motion.p>
+        </div>
+      </section>
+
+      <div className="divider-gold" />
+
+      {/* Story + Mission/Vision */}
+      <section className="section" style={{ background: '#0a0a0a' }}>
+        <div className="container grid lg:grid-cols-[1fr_2fr] gap-12">
+          <FadeIn>
             <span className="eyebrow">OUR STORY</span>
-            <h2 className="text-3xl font-extrabold my-4">Built for <span className="gradient-text">Indian Businesses</span></h2>
-            <p className="text-text2">KVL Business Solutions started in 2015 as a software-services boutique. Today, we are a full-stack enterprise partner — software, websites, GPS systems, civil construction, mechanical work, automation and digital marketing — all under one roof.</p>
-            <p className="text-text2 mt-3">Our mission: combine premium global technology with deep Indian market understanding to help businesses scale 10x faster.</p>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-4">
+            <h2 className="text-4xl font-extrabold my-4 leading-tight" style={{ color: '#f5f5f0', fontFamily: 'Poppins, sans-serif' }}>
+              Built for<br />Indian Businesses
+            </h2>
+            <p className="leading-relaxed text-sm" style={{ color: '#888' }}>
+              KVL Business Solutions started in 2015 as a software-services boutique. Today, we are a full-stack enterprise partner — software, websites, GPS systems, civil construction, mechanical work, automation and digital marketing — all under one roof.
+            </p>
+            <p className="mt-4 leading-relaxed text-sm" style={{ color: '#888' }}>
+              Our mission: combine premium global technology with deep Indian market understanding to help businesses scale 10x faster.
+            </p>
+          </FadeIn>
+          <div className="grid sm:grid-cols-2 gap-5">
             {[
-              { Icon: Target, title: 'Our Mission', desc: 'Empower 100,000 Indian businesses with world-class technology by 2030.', c: '#3b82f6' },
-              { Icon: Eye, title: 'Our Vision', desc: 'Become India\'s most trusted enterprise solutions partner.', c: '#22c55e' },
-              { Icon: Heart, title: 'Our Values', desc: 'Honesty, ownership, customer obsession, premium quality.', c: '#f97316' },
-              { Icon: Trophy, title: 'Our Promise', desc: '1-hour response, lifetime support, transparent pricing.', c: '#ef4444' },
-            ].map(it => (
-              <TiltCard key={it.title} className="card-base p-5">
-                <div className="w-12 h-12 rounded-xl grid place-items-center mb-3 border" style={{ background: `${it.c}25`, color: it.c, borderColor: `${it.c}50` }}>
-                  <it.Icon className="w-5 h-5" />
+              { Icon: Target, title: 'Our Mission', desc: 'Empower 100,000 Indian businesses with world-class technology by 2030.' },
+              { Icon: Eye, title: 'Our Vision', desc: "Become India's most trusted enterprise solutions partner." },
+              { Icon: Heart, title: 'Our Values', desc: 'Honesty, ownership, customer obsession, premium quality.' },
+              { Icon: Trophy, title: 'Our Promise', desc: '1-hour response, lifetime support, transparent pricing.' },
+            ].map((it, i) => (
+              <FadeIn key={it.title} delay={i * 0.1}>
+                <div className="card-premium p-6 h-full">
+                  <div className="w-10 h-10 rounded-xl grid place-items-center mb-4" style={{ background: 'rgba(200,169,110,0.08)', border: '1px solid rgba(200,169,110,0.2)' }}>
+                    <it.Icon className="w-5 h-5" style={{ color: '#c8a96e' }} />
+                  </div>
+                  <h4 className="font-bold text-base mb-2" style={{ color: '#f5f5f0' }}>{it.title}</h4>
+                  <p className="text-sm leading-relaxed" style={{ color: '#888' }}>{it.desc}</p>
                 </div>
-                <h4 className="font-bold mb-1">{it.title}</h4>
-                <p className="text-[13px] text-text2">{it.desc}</p>
-              </TiltCard>
+              </FadeIn>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="section section-alt">
+      {/* Stats — 4 numbers */}
+      <section className="py-16" style={{ background: '#111111' }}>
         <div className="container">
-          <div className="text-center mb-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+            {[
+              { num: '1000+', label: 'Businesses Served' },
+              { num: '500+', label: 'Projects Delivered' },
+              { num: '14+', label: 'Services Offered' },
+              { num: '10+', label: 'Years Experience' },
+            ].map((s, i) => (
+              <FadeIn key={s.label} delay={i * 0.08}>
+                <div className="text-center">
+                  <div className="text-4xl md:text-5xl font-extrabold mb-2" style={{ color: '#f5f5f0', fontFamily: 'Poppins, sans-serif' }}>{s.num}</div>
+                  <div className="text-xs uppercase tracking-widest" style={{ color: '#888' }}>{s.label}</div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Journey Timeline */}
+      <section className="section" style={{ background: '#0a0a0a' }}>
+        <div className="container">
+          <FadeIn className="text-center mb-16">
             <span className="eyebrow">OUR JOURNEY</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold my-4">A Decade of Innovation</h2>
-            <p className="text-text2 max-w-xl mx-auto">From a 2-person studio to India&apos;s full-stack enterprise partner.</p>
-          </div>
-          <div className="relative max-w-3xl mx-auto py-6">
-            <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary to-transparent md:-translate-x-1/2" />
+            <h2 className="text-4xl md:text-5xl font-extrabold my-4" style={{ color: '#f5f5f0', fontFamily: 'Poppins, sans-serif' }}>
+              A Decade of Innovation
+            </h2>
+            <p className="max-w-xl mx-auto text-sm" style={{ color: '#888' }}>From a 2-person studio to India&apos;s full-stack enterprise partner.</p>
+          </FadeIn>
+          <div className="relative max-w-3xl mx-auto">
+            {/* Vertical line */}
+            <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px md:-translate-x-px" style={{ background: 'rgba(255,255,255,0.1)' }} />
             {timeline.map((t, i) => (
-              <div key={t.year} className={`flex mb-10 relative ${i % 2 === 0 ? 'md:justify-start md:pr-1/2' : 'md:justify-end md:pl-1/2'} pl-12 md:pl-0`}>
-                <div className="absolute left-4 md:left-1/2 top-5 w-4 h-4 rounded-full bg-primary border-4 border-app2 md:-translate-x-1/2 shadow-[0_0_16px_rgba(37,99,235,0.6)]" />
-                <div className={`card-base p-5 max-w-md ${i % 2 === 0 ? 'md:mr-8 md:text-right' : 'md:ml-8'}`}>
-                  <div className="text-xs text-primary font-bold tracking-widest">{t.year}</div>
-                  <h4 className="font-bold my-1">{t.title}</h4>
-                  <p className="text-[13px] text-text2">{t.desc}</p>
+              <FadeIn key={t.year} delay={i * 0.08}>
+                <div className={`flex mb-12 relative ${i % 2 === 0 ? 'md:justify-start md:pr-[52%]' : 'md:justify-end md:pl-[52%]'} pl-14 md:pl-0`}>
+                  {/* Gold circle marker */}
+                  <div className="absolute left-4 md:left-1/2 top-4 w-4 h-4 rounded-full md:-translate-x-1/2 z-10 ring-2" style={{ background: '#c8a96e', ringColor: 'rgba(200,169,110,0.3)', boxShadow: '0 0 12px rgba(200,169,110,0.4)', border: '2px solid #0a0a0a', outline: '2px solid rgba(200,169,110,0.35)' }} />
+                  <div className="card-premium p-5 max-w-xs">
+                    <div className="text-sm font-extrabold mb-1" style={{ color: '#c8a96e' }}>{t.year}</div>
+                    <h4 className="font-bold mb-1 text-sm" style={{ color: '#f5f5f0' }}>{t.title}</h4>
+                    <p className="text-xs leading-relaxed" style={{ color: '#888' }}>{t.desc}</p>
+                  </div>
                 </div>
-              </div>
+              </FadeIn>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="section">
+      {/* Team */}
+      <section className="section" style={{ background: '#111111' }}>
         <div className="container">
-          <div className="text-center mb-12">
+          <FadeIn className="text-center mb-14">
             <span className="eyebrow">OUR TEAM</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold my-4">The People Behind KVL</h2>
-            <p className="text-text2 max-w-xl mx-auto">A diverse team of engineers, designers, civil experts and business strategists.</p>
-          </div>
+            <h2 className="text-4xl md:text-5xl font-extrabold my-4" style={{ color: '#f5f5f0', fontFamily: 'Poppins, sans-serif' }}>
+              The People Behind KVL
+            </h2>
+            <p className="max-w-xl mx-auto text-sm" style={{ color: '#888' }}>A diverse team of engineers, designers, civil experts and business strategists.</p>
+          </FadeIn>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-            {team.map(m => (
-              <TiltCard key={m.name} className="card-base p-5 text-center">
-                <div className="w-24 h-24 mx-auto mb-3 rounded-full grid place-items-center text-white font-extrabold text-2xl" style={{ background: `linear-gradient(135deg, ${m.c1}, ${m.c2})` }}>{m.initials}</div>
-                <h4 className="font-bold">{m.name}</h4>
-                <div className="text-xs text-primary font-semibold mt-1 uppercase tracking-wide">{m.role}</div>
-              </TiltCard>
+            {team.map((m, i) => (
+              <FadeIn key={m.name} delay={i * 0.06}>
+                <div className="card-premium p-6 text-center group cursor-default">
+                  <div
+                    className="w-16 h-16 mx-auto mb-4 rounded-full grid place-items-center font-extrabold text-lg transition-all duration-300"
+                    style={{
+                      background: 'rgba(255,255,255,0.05)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      color: '#f5f5f0',
+                    }}
+                  >
+                    {m.initials}
+                  </div>
+                  <h4 className="font-bold text-sm" style={{ color: '#f5f5f0' }}>{m.name}</h4>
+                  <div className="text-xs mt-1 uppercase tracking-wide" style={{ color: '#c8a96e' }}>{m.role}</div>
+                </div>
+              </FadeIn>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="section section-alt">
+      {/* Gallery */}
+      <section className="section" style={{ background: '#0a0a0a' }}>
         <div className="container">
-          <div className="text-center mb-10">
+          <FadeIn className="text-center mb-12">
             <span className="eyebrow">INSIDE KVL</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold my-4">Our Office &amp; Culture</h2>
-            <p className="text-text2">Where innovation meets execution every day.</p>
-          </div>
+            <h2 className="text-4xl md:text-5xl font-extrabold my-4" style={{ color: '#f5f5f0', fontFamily: 'Poppins, sans-serif' }}>
+              Our Office &amp; Culture
+            </h2>
+            <p className="text-sm" style={{ color: '#888' }}>Where innovation meets execution every day.</p>
+          </FadeIn>
           <div className="grid grid-cols-2 md:grid-cols-4 auto-rows-[180px] gap-3">
             {gallery.map((g, i) => (
-              <div key={i} className={`relative rounded-xl overflow-hidden grid place-items-center text-white text-3xl ${g.wide ? 'col-span-2' : ''} ${g.tall ? 'row-span-2' : ''}`} style={{ background: `linear-gradient(135deg, ${g.c1}, ${g.c2})` }}>
-                <g.Icon className="w-9 h-9" />
-                <span className="absolute bottom-0 left-0 right-0 p-2.5 text-xs font-semibold bg-gradient-to-t from-black/70 to-transparent text-left">{g.label}</span>
-              </div>
+              <FadeIn key={i} delay={i * 0.05} className={`${g.wide ? 'col-span-2' : ''} ${g.tall ? 'row-span-2' : ''}`}>
+                <div
+                  className="relative rounded-2xl overflow-hidden grid place-items-center h-full w-full"
+                  style={{ background: '#1a1a1a', border: '1px solid rgba(255,255,255,0.07)' }}
+                >
+                  <g.Icon className="w-9 h-9" style={{ color: 'rgba(255,255,255,0.2)' }} />
+                  <span className="absolute bottom-0 left-0 right-0 p-3 text-xs font-semibold text-left" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)', color: '#f5f5f0' }}>{g.label}</span>
+                </div>
+              </FadeIn>
             ))}
           </div>
         </div>
       </section>
 
       <Stats />
-    </>
+
+      {/* CTA */}
+      <section className="section" style={{ background: '#111111' }}>
+        <div className="container text-center">
+          <FadeIn>
+            <h2 className="text-4xl font-extrabold mb-4" style={{ color: '#f5f5f0', fontFamily: 'Poppins, sans-serif' }}>
+              Ready to work with us?
+            </h2>
+            <p className="mb-8 max-w-lg mx-auto text-sm" style={{ color: '#888' }}>Join 1000+ businesses already scaling with KVL. Free consultation, no commitment.</p>
+            <div className="flex gap-4 justify-center flex-wrap">
+              <Link href="/contact" className="btn-primary px-8 py-3 rounded-xl font-semibold inline-flex items-center gap-2">Get in Touch</Link>
+              <Link href="/services" className="btn-gold px-8 py-3 rounded-xl font-semibold inline-flex items-center gap-2">Our Services</Link>
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+
+    </div>
   );
 }

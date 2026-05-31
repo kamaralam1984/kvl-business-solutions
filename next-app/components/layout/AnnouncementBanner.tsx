@@ -1,14 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { X, Megaphone } from 'lucide-react';
-
-const variantStyles: Record<string, string> = {
-  promo: 'bg-gradient-to-r from-primary to-primary-600 text-white',
-  info: 'bg-blue-600 text-white',
-  success: 'bg-green-600 text-white',
-  warning: 'bg-yellow-500 text-black',
-};
+import { X, Sparkles, ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export function AnnouncementBanner({ banner }: { banner: any | null }) {
   const [dismissed, setDismissed] = useState(false);
@@ -20,7 +14,6 @@ export function AnnouncementBanner({ banner }: { banner: any | null }) {
   }, [banner]);
 
   if (!banner || dismissed) return null;
-  const styles = variantStyles[banner.variant || 'promo'] || variantStyles.promo;
 
   const dismiss = () => {
     if (typeof window !== 'undefined') {
@@ -30,23 +23,65 @@ export function AnnouncementBanner({ banner }: { banner: any | null }) {
   };
 
   return (
-    <div className={`${styles} relative`}>
-      <div className="container py-2 flex items-center justify-center gap-3 text-sm font-medium">
-        <Megaphone className="w-4 h-4 shrink-0 hidden sm:block" />
-        <span className="text-center">
-          {banner.text}
-          {banner.link && (
-            <Link href={banner.link} className="underline ml-2 font-bold hover:opacity-80">
-              {banner.linkText || 'Learn more'} →
-            </Link>
+    <AnimatePresence>
+      <motion.div
+        initial={{ height: 0, opacity: 0 }}
+        animate={{ height: 'auto', opacity: 1 }}
+        exit={{ height: 0, opacity: 0 }}
+        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        className="relative overflow-hidden"
+        style={{
+          background: 'rgba(200,169,110,0.08)',
+          borderBottom: '1px solid rgba(200,169,110,0.2)',
+        }}
+      >
+        {/* Shimmer sweep */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'linear-gradient(90deg, transparent 0%, rgba(200,169,110,0.12) 50%, transparent 100%)',
+            backgroundSize: '200% 100%',
+            animation: 'shimmerGold 4s linear infinite',
+          }}
+        />
+
+        <div className="container py-2.5 flex items-center justify-center gap-3 relative z-10">
+          <Sparkles className="w-3.5 h-3.5 shrink-0 hidden sm:block" style={{ color: '#c8a870' }} />
+
+          <span className="text-center text-[13px] font-medium" style={{ color: 'rgba(0,0,0,0.65)' }}>
+            {banner.text}
+            {banner.link && (
+              <Link
+                href={banner.link}
+                className="inline-flex items-center gap-1 ml-2.5 font-semibold transition-all duration-200 group"
+                style={{ color: '#c8a870' }}
+              >
+                {banner.linkText || 'Learn more'}
+                <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform duration-200" />
+              </Link>
+            )}
+          </span>
+
+          {banner.dismissible && (
+            <button
+              onClick={dismiss}
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200"
+              style={{ color: 'rgba(0,0,0,0.35)' }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLElement).style.color = 'rgba(0,0,0,0.7)';
+                (e.currentTarget as HTMLElement).style.background = 'rgba(0,0,0,0.06)';
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLElement).style.color = 'rgba(0,0,0,0.35)';
+                (e.currentTarget as HTMLElement).style.background = 'transparent';
+              }}
+              aria-label="Dismiss"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
           )}
-        </span>
-        {banner.dismissible && (
-          <button onClick={dismiss} className="absolute right-3 top-1/2 -translate-y-1/2 opacity-70 hover:opacity-100" aria-label="Dismiss">
-            <X className="w-4 h-4" />
-          </button>
-        )}
-      </div>
-    </div>
+        </div>
+      </motion.div>
+    </AnimatePresence>
   );
 }

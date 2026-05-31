@@ -1,11 +1,9 @@
 'use client';
 import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PageHero } from '@/components/shared/PageHero';
 import { CtaBanner } from '@/components/home/CtaBanner';
-import { TiltCard } from '@/components/shared/TiltCard';
 import * as Icons from 'lucide-react';
-import { Eye, Monitor, Smartphone, Sparkles, ExternalLink, Globe } from 'lucide-react';
+import { Monitor, Smartphone, ExternalLink, Globe, Sparkles } from 'lucide-react';
 import { DEMO_CATEGORIES } from '@/lib/data/demo-categories';
 import { formatINR } from '@/lib/utils';
 
@@ -28,7 +26,6 @@ export function DemosClient({ demos }: { demos: Demo[] }) {
   const [cat, setCat] = useState('all');
   const [view, setView] = useState<Record<string, 'desktop' | 'mobile'>>({});
 
-  // Only show categories that have at least 1 demo
   const usedCats = useMemo(() => {
     const set = new Set(demos.map(d => d.category));
     return [{ id: 'all', label: 'All Demos' }, ...DEMO_CATEGORIES.filter(c => set.has(c.id))];
@@ -37,86 +34,206 @@ export function DemosClient({ demos }: { demos: Demo[] }) {
   const filtered = cat === 'all' ? demos : demos.filter(d => d.category === cat);
 
   return (
-    <>
-      <PageHero eyebrow="OUR WORK · DEMOS" title="Live websites &" accent="design demos" description="Real production sites we've launched (look for the LIVE badge) + design templates ready to customize." breadcrumb="Website Demos" />
+    <div style={{ background: '#0a0a0a' }} className="text-white">
 
-      <section className="section">
+      {/* Hero */}
+      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden" style={{ background: '#0a0a0a' }}>
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200,169,110,0.05) 0%, transparent 70%)' }} />
+        <div className="relative z-10 container text-center py-28">
+          <motion.span
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="eyebrow"
+          >
+            OUR WORK · DEMOS
+          </motion.span>
+          <motion.h1
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+            className="text-5xl md:text-7xl font-extrabold mt-4 mb-6 leading-tight"
+            style={{ color: '#f5f5f0', fontFamily: 'Poppins, sans-serif' }}
+          >
+            Live Websites &amp;<br />Design Demos
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
+            className="text-xl max-w-2xl mx-auto"
+            style={{ color: '#888' }}
+          >
+            Real production sites we&apos;ve launched (look for the LIVE badge) + design templates ready to customize.
+          </motion.p>
+        </div>
+      </section>
+
+      <div className="divider-gold" />
+
+      {/* Filter + Grid */}
+      <section className="section" style={{ background: '#0a0a0a' }}>
         <div className="container">
-          <div className="flex flex-wrap gap-2 justify-center mb-10">
+
+          {/* Category filter — underline style, gold active */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-wrap gap-0 justify-center mb-12 border-b"
+            style={{ borderColor: 'rgba(255,255,255,0.07)' }}
+          >
             {usedCats.map(c => (
-              <button key={c.id} onClick={() => setCat(c.id)} className={`px-4 py-2 rounded-full text-xs font-semibold transition-all border ${cat === c.id ? 'bg-primary text-white border-primary' : 'border-tint surface-tint text-text hover:bg-primary hover:text-white'}`}>
+              <button
+                key={c.id}
+                onClick={() => setCat(c.id)}
+                className="relative px-5 py-3 text-sm font-medium transition-colors duration-200"
+                style={{ color: cat === c.id ? '#f5f5f0' : '#888' }}
+              >
                 {c.label}
+                {cat === c.id && (
+                  <motion.div
+                    layoutId="demo-tab-underline"
+                    className="absolute bottom-0 left-0 right-0 h-0.5"
+                    style={{ background: '#c8a96e' }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                  />
+                )}
               </button>
             ))}
-          </div>
+          </motion.div>
 
           <AnimatePresence mode="popLayout">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {filtered.map(d => {
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filtered.map((d, i) => {
                 const v = view[d._id] || 'desktop';
                 const Icon = (Icons as any)[d.iconName] || Globe;
+                const catLabel = usedCats.find(c => c.id === d.category)?.label || d.category;
                 return (
-                  <motion.div key={d._id} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                    <TiltCard className={`card-base overflow-hidden cursor-pointer group ${d.live ? 'ring-2 ring-green-500/50' : ''}`}>
-                      <div className="h-48 relative grid place-items-center text-white" style={{ background: `linear-gradient(135deg, ${d.c1}, ${d.c2})` }}>
-                        {d.image && v === 'desktop' ? (
-                          <img src={d.image} alt={d.name} className="absolute inset-0 w-full h-full object-cover" />
-                        ) : v === 'desktop' ? <Icon className="w-14 h-14 opacity-90" /> : <Smartphone className="w-16 h-16 opacity-90" />}
-
-                        {d.live && (
-                          <div className="absolute top-2 left-2 z-10 flex items-center gap-1.5 bg-green-500 text-white px-2 py-1 rounded-full text-[10px] font-bold shadow-card">
-                            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-                            LIVE
+                  <motion.div
+                    key={d._id}
+                    layout
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.4, delay: i * 0.03 }}
+                  >
+                    <div
+                      className="card-premium overflow-hidden group cursor-pointer"
+                      style={d.live ? { borderColor: 'rgba(34,197,94,0.25)' } : {}}
+                    >
+                      {/* Image / Preview */}
+                      <div className="h-48 relative overflow-hidden">
+                        {d.image ? (
+                          <img
+                            src={d.image}
+                            alt={d.name}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        ) : (
+                          <div
+                            className="w-full h-full grid place-items-center"
+                            style={{ background: `linear-gradient(135deg, ${d.c1}, ${d.c2})` }}
+                          >
+                            <Icon className="w-12 h-12 text-white/40" />
                           </div>
                         )}
 
-                        <div className="absolute top-2 right-2 z-10 flex gap-1 bg-black/50 rounded-xl p-0.5 backdrop-blur">
-                          <button onClick={(e) => { e.stopPropagation(); setView(p => ({ ...p, [d._id]: 'desktop' })); }} className={`p-1.5 rounded-lg ${v === 'desktop' ? 'bg-primary' : ''}`}><Monitor className="w-3 h-3 text-white" /></button>
-                          <button onClick={(e) => { e.stopPropagation(); setView(p => ({ ...p, [d._id]: 'mobile' })); }} className={`p-1.5 rounded-lg ${v === 'mobile' ? 'bg-primary' : ''}`}><Smartphone className="w-3 h-3 text-white" /></button>
+                        {/* View toggle + link overlay */}
+                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3" style={{ background: 'rgba(0,0,0,0.75)' }}>
+                          <button
+                            onClick={e => { e.stopPropagation(); setView({ ...view, [d._id]: 'desktop' }); }}
+                            className="p-2 rounded-lg transition-colors"
+                            style={{ background: v === 'desktop' ? '#c8a96e' : 'rgba(255,255,255,0.15)', color: '#fff' }}
+                          >
+                            <Monitor className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={e => { e.stopPropagation(); setView({ ...view, [d._id]: 'mobile' }); }}
+                            className="p-2 rounded-lg transition-colors"
+                            style={{ background: v === 'mobile' ? '#c8a96e' : 'rgba(255,255,255,0.15)', color: '#fff' }}
+                          >
+                            <Smartphone className="w-4 h-4" />
+                          </button>
+                          {d.url && d.live && (
+                            <a
+                              href={d.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="p-2 rounded-lg transition-colors"
+                              style={{ background: 'rgba(255,255,255,0.15)', color: '#fff' }}
+                              onClick={e => e.stopPropagation()}
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                            </a>
+                          )}
                         </div>
 
-                        <div className="absolute inset-0 bg-black/85 opacity-0 group-hover:opacity-100 transition-all grid place-items-center z-10">
-                          {d.url ? (
-                            <a href={d.url} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
-                              <ExternalLink className="w-4 h-4" /> Visit Live Site
-                            </a>
+                        {/* Status badge */}
+                        <div className="absolute top-3 left-3 flex gap-2">
+                          {d.live ? (
+                            <span
+                              className="px-2 py-0.5 rounded-full text-[10px] font-bold text-white flex items-center gap-1"
+                              style={{ background: 'rgba(34,197,94,0.85)' }}
+                            >
+                              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />LIVE
+                            </span>
                           ) : (
-                            <button className="btn btn-primary"><Eye className="w-4 h-4" /> Live Preview</button>
+                            <span
+                              className="px-2 py-0.5 rounded-full text-[10px] font-bold"
+                              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#888' }}
+                            >SAMPLE</span>
                           )}
                         </div>
-                      </div>
-                      <div className="p-4">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex-1 min-w-0">
-                            <h4 className="text-[15px] font-bold flex items-center gap-1.5">
-                              {d.name}
-                              {d.live && <Sparkles className="w-3.5 h-3.5 text-green-500" />}
-                            </h4>
-                            <p className="text-xs text-text2 mt-1">{d.description}</p>
-                          </div>
+
+                        {/* Category badge */}
+                        <div className="absolute top-3 right-3">
+                          <span
+                            className="px-2 py-0.5 rounded-full text-[10px] font-semibold capitalize"
+                            style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)', color: '#f5f5f0' }}
+                          >
+                            {catLabel}
+                          </span>
                         </div>
-                        <div className="flex gap-1.5 mt-2.5 flex-wrap">
+                      </div>
+
+                      {/* Card body */}
+                      <div className="p-5">
+                        <h3 className="font-bold text-base leading-tight mb-1" style={{ color: '#f5f5f0' }}>{d.name}</h3>
+                        {d.description && (
+                          <p className="text-sm mb-3 leading-relaxed" style={{ color: '#888' }}>{d.description}</p>
+                        )}
+                        <div className="flex flex-wrap gap-1.5 mb-4">
                           {d.technologies.map(t => (
-                            <span key={t} className={`text-[10px] px-2 py-0.5 rounded-full border ${t === 'Production' ? 'bg-green-500/15 border-green-500/40 text-green-500 font-semibold' : 'surface2-tint border-tint text-text2'}`}>{t}</span>
+                            <span
+                              key={t}
+                              className="px-2 py-0.5 rounded text-[10px] font-medium"
+                              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: '#888' }}
+                            >
+                              {t}
+                            </span>
                           ))}
                         </div>
-                        <div className="mt-3 pt-3 border-t border-dashed border-tint flex justify-between items-center">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <span className="text-[10px] uppercase tracking-wider" style={{ color: '#888' }}>Starting from</span>
+                            <div className="font-extrabold text-lg" style={{ color: '#c8a96e' }}>{formatINR(d.startingPrice)}</div>
+                          </div>
                           {d.live && d.url ? (
-                            <>
-                              <span className="text-[11px] text-text2 truncate">{d.url.replace(/^https?:\/\//, '')}</span>
-                              <a href={d.url} target="_blank" rel="noopener noreferrer" className="text-[11px] text-primary font-semibold hover:underline whitespace-nowrap">Visit →</a>
-                            </>
-                          ) : d.startingPrice > 0 ? (
-                            <>
-                              <span className="text-[11px] text-text2">✨ Fully customizable</span>
-                              <b className="text-[13px] text-primary">from {formatINR(d.startingPrice)}</b>
-                            </>
+                            <a
+                              href={d.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="btn-primary px-4 py-2 rounded-xl text-xs font-semibold inline-flex items-center gap-1"
+                            >
+                              <ExternalLink className="w-3 h-3" /> View Live
+                            </a>
                           ) : (
-                            <span className="text-[11px] text-text2">Sample design</span>
+                            <span className="text-[11px] italic" style={{ color: '#888' }}>Sample design</span>
                           )}
                         </div>
                       </div>
-                    </TiltCard>
+                    </div>
                   </motion.div>
                 );
               })}
@@ -124,14 +241,15 @@ export function DemosClient({ demos }: { demos: Demo[] }) {
           </AnimatePresence>
 
           {filtered.length === 0 && (
-            <div className="card-base p-10 text-center mt-4">
-              <p className="text-text2">No demos in this category yet.</p>
+            <div className="card-premium p-12 text-center mt-6">
+              <Sparkles className="w-8 h-8 mx-auto mb-3" style={{ color: '#c8a96e' }} />
+              <p style={{ color: '#888' }}>No demos in this category yet.</p>
             </div>
           )}
         </div>
       </section>
 
       <CtaBanner title="Like a demo? We'll launch yours in 48 hours." desc="Pick a design, share content & logo — your site goes live this week." />
-    </>
+    </div>
   );
 }

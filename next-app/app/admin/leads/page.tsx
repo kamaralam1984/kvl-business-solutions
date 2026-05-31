@@ -5,11 +5,11 @@ import { ExportButton } from '@/components/admin/ExportButton';
 
 const STATUS_OPTS = ['new', 'contacted', 'qualified', 'won', 'lost'];
 const STATUS_COLOR: Record<string, string> = {
-  new: 'bg-blue-500/20 text-blue-500',
-  contacted: 'bg-yellow-500/20 text-yellow-500',
-  qualified: 'bg-purple-500/20 text-purple-500',
-  won: 'bg-green-500/20 text-green-500',
-  lost: 'bg-slate-500/20 text-slate-500',
+  new: 'bg-blue-500/10 text-blue-400',
+  contacted: 'bg-amber-500/10 text-amber-400',
+  qualified: 'bg-emerald-500/10 text-emerald-400',
+  won: 'bg-emerald-500/10 text-emerald-400',
+  lost: 'bg-red-500/10 text-red-400',
 };
 const INTENT_CONFIG: Record<string, { label: string; cls: string }> = {
   hot:     { label: '🔥 HOT',  cls: 'bg-red-500/20 text-red-500' },
@@ -79,7 +79,7 @@ export default function AdminLeads() {
   const statCards = [
     { label: 'Total Leads', value: stats.total || 0, icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10' },
     { label: '🔥 Hot Leads', value: stats.hot || 0, icon: Zap, color: 'text-red-500', bg: 'bg-red-500/10' },
-    { label: 'In Progress', value: stats.contacted || 0, icon: PhoneCall, color: 'text-purple-500', bg: 'bg-purple-500/10' },
+    { label: 'In Progress', value: stats.contacted || 0, icon: PhoneCall, color: 'text-amber-400', bg: 'bg-amber-500/10' },
     { label: 'Won', value: stats.won || 0, icon: Trophy, color: 'text-green-500', bg: 'bg-green-500/10' },
   ];
 
@@ -87,11 +87,17 @@ export default function AdminLeads() {
 
   return (
     <div className="space-y-5">
+      {/* Page header */}
+      <div>
+        <p className="eyebrow mb-2">SALES</p>
+        <h1 className="text-2xl font-extrabold text-white">Leads</h1>
+      </div>
+
       {/* Hot leads alert */}
       {hotLeads.length > 0 && (
-        <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-center gap-3">
-          <Zap className="w-5 h-5 text-red-500 shrink-0" />
-          <p className="text-sm font-semibold text-red-500">
+        <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)' }}>
+          <Zap className="w-5 h-5 text-red-400 shrink-0" />
+          <p className="text-sm font-semibold text-red-400">
             {hotLeads.length} Hot lead{hotLeads.length > 1 ? 's' : ''} need immediate attention!
             {hotLeads[0]?.aiInsights?.nextAction && ` → ${hotLeads[0].aiInsights.nextAction}`}
           </p>
@@ -101,11 +107,11 @@ export default function AdminLeads() {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {statCards.map(s => (
-          <div key={s.label} className="card-base p-4 flex items-center gap-3">
+          <div key={s.label} className="p-4 flex items-center gap-3" style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px' }}>
             <div className={`w-10 h-10 rounded-xl grid place-items-center ${s.bg}`}>
               <s.icon className={`w-5 h-5 ${s.color}`} />
             </div>
-            <div><div className="text-2xl font-extrabold">{s.value}</div><div className="text-xs text-text2">{s.label}</div></div>
+            <div><div className="text-2xl font-extrabold text-white">{s.value}</div><div className="text-xs text-text2">{s.label}</div></div>
           </div>
         ))}
       </div>
@@ -115,41 +121,61 @@ export default function AdminLeads() {
         <div className="flex flex-wrap gap-1">
           {['', ...STATUS_OPTS].map(s => (
             <button key={s} onClick={() => { setStatusFilter(s); load(q, s, intentFilter); }}
-              className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${statusFilter === s ? 'bg-primary text-white' : 'surface-tint text-text2 hover:text-text'}`}>
+              className="px-3 py-1 rounded-full text-xs font-bold transition-all"
+              style={{
+                background: statusFilter === s ? 'rgba(200,169,110,0.12)' : 'rgba(255,255,255,0.04)',
+                border: `1px solid ${statusFilter === s ? 'rgba(200,169,110,0.35)' : 'rgba(255,255,255,0.08)'}`,
+                color: statusFilter === s ? '#c8a96e' : '#888',
+              }}>
               {s ? s.toUpperCase() : `ALL (${stats.total || 0})`}
             </button>
           ))}
-          <span className="w-px h-5 bg-tint mx-1 self-center" />
+          <span className="w-px h-5 mx-1 self-center" style={{ background: 'rgba(255,255,255,0.08)' }} />
           {['', 'hot', 'warm', 'cold'].map(i => (
             <button key={i} onClick={() => { setIntentFilter(i); load(q, statusFilter, i); }}
-              className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${intentFilter === i ? 'bg-primary text-white' : 'surface-tint text-text2 hover:text-text'}`}>
+              className="px-3 py-1 rounded-full text-xs font-bold transition-all"
+              style={{
+                background: intentFilter === i ? 'rgba(200,169,110,0.12)' : 'rgba(255,255,255,0.04)',
+                border: `1px solid ${intentFilter === i ? 'rgba(200,169,110,0.35)' : 'rgba(255,255,255,0.08)'}`,
+                color: intentFilter === i ? '#c8a96e' : '#888',
+              }}>
               {i ? INTENT_CONFIG[i].label : 'All Intent'}
             </button>
           ))}
         </div>
         <div className="flex items-center gap-2">
           <form onSubmit={e => { e.preventDefault(); load(); }} className="relative">
-            <Search className="absolute left-3 top-2.5 w-4 h-4 text-text2" />
-            <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search name, email, phone…" className="form-control pl-9 w-64" />
+            <Search className="absolute left-3 top-2.5 w-4 h-4" style={{ color: 'rgba(148,163,184,0.5)' }} />
+            <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search name, email, phone…"
+              className="pl-9 w-64 text-sm rounded-lg px-3 py-2 outline-none transition-all"
+              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.85)' }}
+              onFocus={e => (e.target.style.borderColor = 'rgba(200,169,110,0.4)')}
+              onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.08)')} />
           </form>
           <ExportButton type="leads" />
         </div>
       </div>
 
       {/* Table */}
-      <div className="card-base overflow-hidden">
+      <div style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', overflow: 'hidden' }}>
         <table className="w-full text-sm">
-          <thead className="text-left text-text2 text-xs uppercase border-b border-tint bg-surface">
+          <thead style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
             <tr>
-              <th className="p-3">AI Score</th><th className="p-3">Lead</th><th className="p-3">Contact</th>
-              <th className="p-3">Service / Intent</th><th className="p-3">Status</th><th className="p-3">Actions</th>
+              <th className="px-4 py-3 text-left text-[11px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.6)' }}>AI Score</th>
+              <th className="px-4 py-3 text-left text-[11px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.6)' }}>Lead</th>
+              <th className="px-4 py-3 text-left text-[11px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.6)' }}>Contact</th>
+              <th className="px-4 py-3 text-left text-[11px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.6)' }}>Service / Intent</th>
+              <th className="px-4 py-3 text-left text-[11px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.6)' }}>Status</th>
+              <th className="px-4 py-3 text-left text-[11px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.6)' }}>Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody style={{ borderTop: 'none' }}>
             {leads.map((l: any) => (
               <>
-                <tr key={l._id} className={`border-b border-tint hover:bg-primary/5 transition-colors ${l.intent === 'hot' && l.status === 'new' ? 'bg-red-500/5' : ''}`}>
-                  <td className="p-3">
+                <tr key={l._id} className="transition-colors" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', background: l.intent === 'hot' && l.status === 'new' ? 'rgba(239,68,68,0.04)' : 'transparent' }}
+                  onMouseEnter={e => (e.currentTarget.style.background = l.intent === 'hot' && l.status === 'new' ? 'rgba(239,68,68,0.07)' : 'rgba(255,255,255,0.025)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = l.intent === 'hot' && l.status === 'new' ? 'rgba(239,68,68,0.04)' : 'transparent')}>
+                  <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <ScoreBadge score={l.aiScore} />
                       {l.intent && l.intent !== 'unknown' && (
@@ -159,31 +185,31 @@ export default function AdminLeads() {
                       )}
                     </div>
                   </td>
-                  <td className="p-3">
+                  <td className="px-4 py-3">
                     <div className="flex items-center gap-1.5">
-                      <div className="font-semibold">{l.name}</div>
+                      <div className="font-semibold text-white">{l.name}</div>
                       {l.source === 'chatbot' && <Bot className="w-3.5 h-3.5 text-primary" aria-label="Auto-captured from chatbot" />}
                     </div>
                     <div className="text-xs text-text2">{l.source || 'contact-form'}</div>
                     {l.aiInsights?.summary && <div className="text-[11px] text-text2 mt-0.5 italic">{l.aiInsights.summary}</div>}
                   </td>
-                  <td className="p-3 text-xs">
-                    <div>{l.email?.startsWith('chat_') ? '—' : l.email}</div>
+                  <td className="px-4 py-3 text-xs">
+                    <div style={{ color: 'rgba(255,255,255,0.8)' }}>{l.email?.startsWith('chat_') ? '—' : l.email}</div>
                     <div className="text-text2">{l.phone}</div>
                   </td>
-                  <td className="p-3 text-xs">
-                    <div className="font-medium">{l.service || '—'}</div>
+                  <td className="px-4 py-3 text-xs">
+                    <div className="font-medium" style={{ color: 'rgba(255,255,255,0.8)' }}>{l.service || '—'}</div>
                     {l.aiInsights?.nextAction && (
                       <div className="text-[10px] text-primary mt-0.5">→ {l.aiInsights.nextAction}</div>
                     )}
                   </td>
-                  <td className="p-3">
+                  <td className="px-4 py-3">
                     <select value={l.status || 'new'} onChange={e => updateStatus(l._id, e.target.value)}
                       className={`text-[10px] font-bold px-2 py-1 rounded-full border-0 cursor-pointer ${STATUS_COLOR[l.status || 'new']}`}>
                       {STATUS_OPTS.map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
                     </select>
                   </td>
-                  <td className="p-3">
+                  <td className="px-4 py-3">
                     <div className="flex items-center gap-1 flex-wrap">
                       {/* AI Call button */}
                       {l.callStatus === 'calling' ? (
@@ -222,7 +248,7 @@ export default function AdminLeads() {
                 </tr>
                 {/* AI Insights Expanded Row */}
                 {expanded === l._id && (
-                  <tr key={`${l._id}-exp`} className="border-b border-tint bg-primary/5">
+                  <tr key={`${l._id}-exp`} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', background: 'rgba(200,169,110,0.04)' }}>
                     <td colSpan={6} className="px-4 py-3">
                       <div className="grid sm:grid-cols-3 gap-4 text-xs">
                         <div className="space-y-1">
@@ -253,9 +279,9 @@ export default function AdminLeads() {
             ))}
             {leads.length === 0 && (
               <tr><td colSpan={6} className="p-12 text-center">
-                <Brain className="w-10 h-10 text-text2 mx-auto mb-2 opacity-40" />
-                <p className="text-text2 font-medium">No leads found</p>
-                <p className="text-xs text-text2 mt-1">Leads from contact form and chatbot will appear here with AI scores</p>
+                <Brain className="w-10 h-10 mx-auto mb-2 opacity-30" style={{ color: '#888' }} />
+                <p className="font-medium" style={{ color: 'rgba(148,163,184,0.6)' }}>No leads found</p>
+                <p className="text-xs mt-1" style={{ color: 'rgba(148,163,184,0.4)' }}>Leads from contact form and chatbot will appear here with AI scores</p>
               </td></tr>
             )}
           </tbody>
@@ -264,27 +290,28 @@ export default function AdminLeads() {
 
       {/* Message Preview Modal */}
       {preview && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)' }}>
+          <div className="rounded-2xl shadow-2xl w-full max-w-md p-6" style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px' }}>
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h3 className="font-bold text-lg">{preview.name}</h3>
+                <h3 className="font-bold text-lg text-white">{preview.name}</h3>
                 <p className="text-xs text-text2">{preview.email} · {preview.phone}</p>
               </div>
-              <button onClick={() => setPreview(null)}><X className="w-5 h-5 text-text2" /></button>
+              <button onClick={() => setPreview(null)} style={{ color: 'rgba(148,163,184,0.6)' }}><X className="w-5 h-5" /></button>
             </div>
             {preview.chatMessages?.length > 0 ? (
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {preview.chatMessages.map((m: any, i: number) => (
-                  <div key={i} className={`text-xs p-2 rounded-lg ${m.role === 'user' ? 'bg-primary/10 text-primary ml-4' : 'bg-tint text-text2 mr-4'}`}>
+                  <div key={i} className={`text-xs p-2 rounded-lg ${m.role === 'user' ? 'ml-4' : 'mr-4'}`}
+                    style={{ background: m.role === 'user' ? 'rgba(200,169,110,0.1)' : 'rgba(255,255,255,0.05)', color: m.role === 'user' ? '#c8a96e' : 'rgba(245,245,240,0.7)' }}>
                     <span className="font-bold">{m.role === 'user' ? 'Customer' : 'AI'}: </span>{m.content}
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="bg-tint rounded-xl p-4 text-sm text-text2 whitespace-pre-wrap">{preview.message}</div>
+              <div className="rounded-xl p-4 text-sm whitespace-pre-wrap" style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(148,163,184,0.8)' }}>{preview.message}</div>
             )}
-            {preview.service && <p className="mt-3 text-xs text-text2">Service: <span className="font-semibold text-text">{preview.service}</span></p>}
+            {preview.service && <p className="mt-3 text-xs text-text2">Service: <span className="font-semibold text-white">{preview.service}</span></p>}
           </div>
         </div>
       )}

@@ -116,7 +116,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </Suspense>
         )}
         <SessionProviderWrapper>
-          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+          <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
             <AnnouncementBanner banner={banner} />
             <Header />
             <main>{children}</main>

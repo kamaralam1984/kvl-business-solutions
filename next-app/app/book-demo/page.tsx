@@ -1,11 +1,11 @@
 'use client';
 import { useState } from 'react';
 import Script from 'next/script';
-import { PageHero } from '@/components/shared/PageHero';
+import { motion } from 'framer-motion';
 import { softwareProducts } from '@/lib/data/software';
 import { Calendar, CheckCircle2, Clock, Video, Phone, Send } from 'lucide-react';
 
-const CAL_USERNAME = process.env.NEXT_PUBLIC_CAL_USERNAME || ''; // e.g., "kvl-sales/30min"
+const CAL_USERNAME = process.env.NEXT_PUBLIC_CAL_USERNAME || '';
 
 export default function BookDemoPage() {
   const [form, setForm] = useState({
@@ -27,81 +27,271 @@ export default function BookDemoPage() {
   };
 
   return (
-    <>
-      <PageHero
-        eyebrow="BOOK A DEMO"
-        title="See KVL in action"
-        accent="— 30 minutes"
-        description="Pick a slot that works for you. We'll walk you through the product, answer questions, and share a custom quote."
-        breadcrumb="Book Demo"
-      />
+    <div style={{ background: '#0a0a0a' }} className="text-white">
 
-      <section className="section">
-        <div className="container grid lg:grid-cols-[2fr_1fr] gap-8 max-w-6xl">
-          <div>
-            {CAL_USERNAME ? (
-              <>
-                <Script src="https://app.cal.com/embed/embed.js" strategy="afterInteractive" />
-                <div className="card-base p-2 min-h-[640px]">
-                  <iframe src={`https://cal.com/${CAL_USERNAME}?embed=true&theme=auto`} width="100%" height="640" frameBorder={0} className="rounded-xl" />
-                </div>
-              </>
-            ) : state === 'success' ? (
-              <div className="card-base p-10 text-center">
-                <CheckCircle2 className="w-16 h-16 mx-auto text-green-500" />
-                <h2 className="text-2xl font-extrabold mt-3">Booking received!</h2>
-                <p className="text-text2 mt-2">Our team will confirm a slot and email you within 2 business hours.</p>
-                <a href="https://wa.me/919942000413" target="_blank" rel="noreferrer" className="btn btn-primary mt-5 inline-flex">Need it sooner? WhatsApp us</a>
-              </div>
-            ) : (
-              <form onSubmit={submit} className="card-base p-7 space-y-3">
-                <h2 className="text-xl font-bold mb-3 flex items-center gap-2"><Calendar className="w-5 h-5 text-primary" /> Schedule your demo</h2>
-                <div className="grid sm:grid-cols-2 gap-3">
-                  <input className="form-control" placeholder="Full name *" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
-                  <input type="email" className="form-control" placeholder="Email *" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
-                  <input className="form-control" placeholder="Phone / WhatsApp *" required value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
-                  <input className="form-control" placeholder="Company name" value={form.company} onChange={e => setForm({ ...form, company: e.target.value })} />
-                </div>
-                <select className="form-control" value={form.product} onChange={e => setForm({ ...form, product: e.target.value })}>
-                  <option>General consultation</option>
-                  {softwareProducts.map(p => <option key={p.slug} value={p.name}>{p.name}</option>)}
-                  <option>Custom development</option>
-                  <option>GPS / Hardware</option>
-                  <option>Civil / Automation</option>
-                </select>
-                <div className="grid sm:grid-cols-2 gap-3">
-                  <input type="date" className="form-control" min={new Date().toISOString().split('T')[0]} value={form.preferredDate} onChange={e => setForm({ ...form, preferredDate: e.target.value })} />
-                  <select className="form-control" value={form.preferredTime} onChange={e => setForm({ ...form, preferredTime: e.target.value })}>
-                    {['10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00', '18:00'].map(t => <option key={t}>{t}</option>)}
-                  </select>
-                </div>
-                <textarea className="form-control" rows={3} placeholder="Anything specific you'd like us to cover? (optional)" value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} />
-                {err && <p className="text-red-500 text-xs">{err}</p>}
-                <button disabled={state === 'sending'} className="btn btn-primary w-full justify-center"><Send className="w-4 h-4" /> {state === 'sending' ? 'Booking…' : 'Request Demo'}</button>
-                <p className="text-[10px] text-text2 text-center">We'll confirm by email + WhatsApp within 2 business hours.</p>
-              </form>
-            )}
-          </div>
-
-          <aside className="space-y-4">
-            <div className="card-base p-5">
-              <h3 className="font-bold mb-3">What to expect</h3>
-              <ul className="space-y-3 text-sm">
-                <li className="flex gap-2 items-start"><Clock className="w-4 h-4 text-primary shrink-0 mt-0.5" /><span><b>30 min</b> walkthrough of your chosen product</span></li>
-                <li className="flex gap-2 items-start"><Video className="w-4 h-4 text-primary shrink-0 mt-0.5" /><span><b>Live screenshare</b> + Q&amp;A with a product expert</span></li>
-                <li className="flex gap-2 items-start"><CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" /><span><b>Custom quote</b> + 7-day free trial sent after demo</span></li>
-                <li className="flex gap-2 items-start"><Phone className="w-4 h-4 text-primary shrink-0 mt-0.5" /><span><b>No pressure</b> — we only sell if it fits</span></li>
-              </ul>
-            </div>
-            <div className="card-base p-5 surface-tint">
-              <h3 className="font-bold mb-2 text-sm">Prefer to talk now?</h3>
-              <p className="text-text2 text-xs mb-3">Call or WhatsApp our sales team:</p>
-              <a href="tel:+919942000413" className="btn btn-ghost w-full justify-center text-sm mb-2"><Phone className="w-4 h-4" /> +91 99420 00413</a>
-              <a href="https://wa.me/919942000413" target="_blank" rel="noreferrer" className="btn w-full justify-center text-sm text-white" style={{ background: 'linear-gradient(135deg,#25d366,#128c7e)' }}>WhatsApp</a>
-            </div>
-          </aside>
+      {/* Hero */}
+      <section className="relative min-h-[55vh] flex items-center justify-center overflow-hidden" style={{ background: '#0a0a0a' }}>
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200,169,110,0.05) 0%, transparent 70%)' }} />
+        <div className="relative z-10 container text-center py-24">
+          <motion.span
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="eyebrow"
+          >
+            BOOK A DEMO
+          </motion.span>
+          <motion.h1
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+            className="text-5xl md:text-7xl font-extrabold mt-4 mb-6 leading-tight"
+            style={{ color: '#f5f5f0', fontFamily: 'Poppins, sans-serif' }}
+          >
+            Book Your Free Demo
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
+            className="text-xl max-w-2xl mx-auto"
+            style={{ color: '#888' }}
+          >
+            {"Pick a slot that works for you. We'll walk you through the product, answer questions, and share a custom quote."}
+          </motion.p>
         </div>
       </section>
-    </>
+
+      <div className="divider-gold" />
+
+      {/* Main content */}
+      <section className="section" style={{ background: '#0a0a0a' }}>
+        <div className="container">
+          <div className="grid lg:grid-cols-[1.4fr_1fr] gap-8 max-w-5xl mx-auto">
+
+            {/* Form / Cal / Success */}
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>
+              {CAL_USERNAME ? (
+                <>
+                  <Script src="https://cal.com/embed.js" />
+                  <div className="card-premium overflow-hidden rounded-2xl">
+                    <iframe src={`https://cal.com/${CAL_USERNAME}?embed=true`} className="w-full h-[600px] border-0 rounded-2xl" />
+                  </div>
+                </>
+              ) : state === 'success' ? (
+                <div className="card-premium p-12 text-center">
+                  <div
+                    className="w-20 h-20 rounded-full grid place-items-center mx-auto mb-5"
+                    style={{ background: 'rgba(200,169,110,0.1)', border: '1px solid rgba(200,169,110,0.3)' }}
+                  >
+                    <CheckCircle2 className="w-10 h-10" style={{ color: '#c8a96e' }} />
+                  </div>
+                  <h2 className="text-3xl font-extrabold mb-3" style={{ color: '#f5f5f0', fontFamily: 'Poppins, sans-serif' }}>Booking received!</h2>
+                  <p className="mb-7 text-sm" style={{ color: '#888' }}>Our team will confirm a slot and email you within 2 business hours.</p>
+                  <a
+                    href="https://wa.me/919942000413"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn-primary px-6 py-3 rounded-xl font-semibold inline-flex items-center gap-2"
+                  >
+                    Need it sooner? WhatsApp us
+                  </a>
+                </div>
+              ) : (
+                <div className="card-premium p-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div
+                      className="w-10 h-10 rounded-xl grid place-items-center"
+                      style={{ background: 'rgba(200,169,110,0.08)', border: '1px solid rgba(200,169,110,0.2)' }}
+                    >
+                      <Calendar className="w-5 h-5" style={{ color: '#c8a96e' }} />
+                    </div>
+                    <h2 className="text-xl font-bold" style={{ color: '#f5f5f0' }}>Schedule your demo</h2>
+                  </div>
+
+                  {/* Progress steps */}
+                  <div className="flex gap-2 mb-6">
+                    {['Your Info', 'Product', 'Date & Time'].map((step, i) => (
+                      <div key={step} className="flex-1 text-center">
+                        <div
+                          className="h-1 rounded-full mb-1.5"
+                          style={{ background: i === 0 ? '#c8a96e' : 'rgba(255,255,255,0.08)' }}
+                        />
+                        <span className="text-[10px]" style={{ color: '#888' }}>{step}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <form onSubmit={submit} className="space-y-4">
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Full name *</label>
+                        <input
+                          className="form-control"
+                          style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)', color: '#f5f5f0' }}
+                          placeholder="Your name"
+                          required
+                          value={form.name}
+                          onChange={e => setForm({ ...form, name: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Email *</label>
+                        <input
+                          type="email"
+                          className="form-control"
+                          style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)', color: '#f5f5f0' }}
+                          placeholder="you@company.com"
+                          required
+                          value={form.email}
+                          onChange={e => setForm({ ...form, email: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Phone *</label>
+                        <input
+                          className="form-control"
+                          style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)', color: '#f5f5f0' }}
+                          placeholder="+91 98765 43210"
+                          required
+                          value={form.phone}
+                          onChange={e => setForm({ ...form, phone: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Company</label>
+                        <input
+                          className="form-control"
+                          style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)', color: '#f5f5f0' }}
+                          placeholder="Optional"
+                          value={form.company}
+                          onChange={e => setForm({ ...form, company: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Product / Service</label>
+                      <select
+                        className="form-control"
+                        style={{ background: '#0a0a0a', borderColor: 'rgba(255,255,255,0.1)', color: '#888' }}
+                        value={form.product}
+                        onChange={e => setForm({ ...form, product: e.target.value })}
+                      >
+                        <option style={{ background: '#0a0a0a' }}>General consultation</option>
+                        {softwareProducts.map(p => (
+                          <option key={p.slug} style={{ background: '#0a0a0a' }}>{p.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Preferred Date</label>
+                        <input
+                          type="date"
+                          className="form-control"
+                          style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)', color: '#888' }}
+                          value={form.preferredDate}
+                          onChange={e => setForm({ ...form, preferredDate: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Preferred Time</label>
+                        <input
+                          type="time"
+                          className="form-control"
+                          style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)', color: '#888' }}
+                          value={form.preferredTime}
+                          onChange={e => setForm({ ...form, preferredTime: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Questions or requirements</label>
+                      <textarea
+                        className="form-control resize-none"
+                        style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)', color: '#f5f5f0', minHeight: '80px' }}
+                        placeholder="Anything specific you'd like to cover?"
+                        value={form.notes}
+                        onChange={e => setForm({ ...form, notes: e.target.value })}
+                      />
+                    </div>
+                    {err && <p className="text-red-400 text-xs">{err}</p>}
+                    <button
+                      disabled={state === 'sending'}
+                      className="btn-primary w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2 disabled:opacity-60"
+                    >
+                      <Send className="w-4 h-4" />
+                      {state === 'sending' ? 'Booking…' : 'Request Demo'}
+                    </button>
+                    <p className="text-[10px] text-center" style={{ color: '#888' }}>
+                      {"We'll confirm by email + WhatsApp within 2 business hours."}
+                    </p>
+                  </form>
+                </div>
+              )}
+            </motion.div>
+
+            {/* Sidebar */}
+            <motion.aside
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.15 }}
+              className="space-y-5"
+            >
+              <div className="card-premium p-6">
+                <div className="flex items-center gap-2 mb-5">
+                  <span className="eyebrow">WHAT TO EXPECT</span>
+                </div>
+                <ul className="space-y-4 text-sm">
+                  {[
+                    { Icon: Clock, label: '30 min', desc: 'walkthrough of your chosen product' },
+                    { Icon: Video, label: 'Live screenshare', desc: '+ Q&A with a product expert' },
+                    { Icon: CheckCircle2, label: 'Custom quote', desc: '+ 7-day free trial sent after demo' },
+                    { Icon: Phone, label: 'No pressure', desc: '— we only sell if it fits' },
+                  ].map((item, i) => (
+                    <li key={i} className="flex gap-3 items-start">
+                      <div
+                        className="w-8 h-8 rounded-lg grid place-items-center shrink-0 mt-0.5"
+                        style={{ background: 'rgba(200,169,110,0.08)', border: '1px solid rgba(200,169,110,0.2)' }}
+                      >
+                        <item.Icon className="w-4 h-4" style={{ color: '#c8a96e' }} />
+                      </div>
+                      <span style={{ color: '#888' }}>
+                        <span className="font-semibold" style={{ color: '#f5f5f0' }}>{item.label}</span> {item.desc}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="card-premium p-6">
+                <h3 className="font-bold mb-1 text-sm" style={{ color: '#f5f5f0' }}>Prefer to talk now?</h3>
+                <p className="text-xs mb-4" style={{ color: '#888' }}>Call or WhatsApp our sales team:</p>
+                <a
+                  href="tel:+919942000413"
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-medium transition-all mb-3"
+                  style={{ border: '1px solid rgba(255,255,255,0.1)', color: '#f5f5f0' }}
+                >
+                  <Phone className="w-4 h-4" /> +91 99420 00413
+                </a>
+                <a
+                  href="https://wa.me/919942000413"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-white text-sm font-semibold transition-all hover:scale-[1.02]"
+                  style={{ background: 'linear-gradient(135deg,#25d366,#128c7e)' }}
+                >
+                  WhatsApp
+                </a>
+              </div>
+            </motion.aside>
+
+          </div>
+        </div>
+      </section>
+
+    </div>
   );
 }

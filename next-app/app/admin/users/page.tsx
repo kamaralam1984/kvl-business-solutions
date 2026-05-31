@@ -78,14 +78,22 @@ export default function AdminUsersPage() {
   );
 
   return (
-    <div>
-      <div className="flex justify-between items-end mb-4 gap-4">
-        <h1 className="text-2xl font-extrabold">Users ({users.length})</h1>
+    <div className="space-y-5">
+      {/* Page header */}
+      <div className="flex justify-between items-end gap-4">
+        <div>
+          <p className="eyebrow mb-2">SYSTEM</p>
+          <h1 className="text-2xl font-extrabold text-white">Users ({users.length})</h1>
+        </div>
         <div className="flex items-center gap-3">
           <ExportButton type="users" />
           <form onSubmit={e => { e.preventDefault(); load(q); }} className="relative w-64">
-            <Search className="absolute left-3 top-3 w-4 h-4 text-text2" />
-            <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search name or email" className="form-control pl-10" />
+            <Search className="absolute left-3 top-2.5 w-4 h-4" style={{ color: 'rgba(148,163,184,0.5)' }} />
+            <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search name or email"
+              className="pl-9 w-full text-sm rounded-lg px-3 py-2 outline-none transition-all"
+              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.85)' }}
+              onFocus={e => (e.target.style.borderColor = 'rgba(200,169,110,0.4)')}
+              onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.08)')} />
           </form>
           <button onClick={openAdd} className="btn-primary flex items-center gap-2 whitespace-nowrap">
             <UserPlus className="w-4 h-4" /> Add User
@@ -93,42 +101,50 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      <div className="card-base overflow-hidden">
+      <div style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', overflow: 'hidden' }}>
         <table className="w-full text-sm">
-          <thead className="text-left text-text2 text-xs uppercase border-b border-tint">
+          <thead style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
             <tr>
-              <th className="p-3">Joined</th>
-              <th className="p-3">Email</th>
-              <th className="p-3">Name</th>
-              <th className="p-3">Phone</th>
-              <th className="p-3">Role</th>
-              <th className="p-3">Verified</th>
-              <th className="p-3"></th>
+              {['Joined', 'Email', 'Name', 'Phone', 'Role', 'Verified', ''].map((h, i) => (
+                <th key={i} className="px-4 py-3 text-left text-[11px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.6)' }}>{h}</th>
+              ))}
             </tr>
           </thead>
           <tbody>
             {users.map(u => (
-              <tr key={u._id} className="border-b border-tint hover:bg-primary/5">
-                <td className="p-3 text-xs text-text2">{new Date(u.createdAt).toLocaleDateString('en-IN')}</td>
-                <td className="p-3 font-semibold">{u.email}</td>
-                <td className="p-3 text-text2">{u.name || '—'}</td>
-                <td className="p-3 text-text2 text-xs">{u.phone || '—'}</td>
-                <td className="p-3">
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full inline-flex items-center gap-1 ${u.role === 'admin' ? 'bg-primary/20 text-primary' : 'bg-slate-500/20 text-slate-500'}`}>
+              <tr key={u._id} className="transition-colors" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.025)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                <td className="px-4 py-3 text-xs" style={{ color: 'rgba(148,163,184,0.6)' }}>{new Date(u.createdAt).toLocaleDateString('en-IN')}</td>
+                <td className="px-4 py-3 font-semibold text-white">{u.email}</td>
+                <td className="px-4 py-3 text-text2">{u.name || '—'}</td>
+                <td className="px-4 py-3 text-text2 text-xs">{u.phone || '—'}</td>
+                <td className="px-4 py-3">
+                  <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full inline-flex items-center gap-1 ${u.role === 'admin' ? 'bg-amber-500/10 text-amber-400' : 'bg-white/[0.06] text-[#888]'}`}>
                     {u.role === 'admin' ? <ShieldCheck className="w-3 h-3" /> : <Shield className="w-3 h-3" />} {u.role.toUpperCase()}
                   </span>
                 </td>
-                <td className="p-3 text-xs">
-                  {u.emailVerified ? <span className="text-green-500">✓ verified</span> : <span className="text-yellow-500">pending</span>}
+                <td className="px-4 py-3 text-xs">
+                  {u.emailVerified ? <span className="text-green-400">✓ verified</span> : <span className="text-amber-400">pending</span>}
                 </td>
-                <td className="p-3 text-right flex items-center justify-end gap-1">
-                  <button onClick={() => openEdit(u)} className="text-text2 hover:text-primary p-1"><Pencil className="w-4 h-4" /></button>
-                  <button onClick={() => del(u)} className="text-text2 hover:text-red-500 p-1"><Trash2 className="w-4 h-4" /></button>
+                <td className="px-4 py-3 text-right flex items-center justify-end gap-1">
+                  <button onClick={() => openEdit(u)} className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors"
+                    style={{ color: 'rgba(148,163,184,0.5)' }}
+                    onMouseEnter={e => (e.currentTarget.style.color = '#f5f5f0')}
+                    onMouseLeave={e => (e.currentTarget.style.color = 'rgba(136,136,136,0.6)')}>
+                    <Pencil className="w-4 h-4" />
+                  </button>
+                  <button onClick={() => del(u)} className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors"
+                    style={{ color: 'rgba(148,163,184,0.5)' }}
+                    onMouseEnter={e => (e.currentTarget.style.color = '#f87171')}
+                    onMouseLeave={e => (e.currentTarget.style.color = 'rgba(148,163,184,0.5)')}>
+                    <Trash2 className="w-4 h-4" />
+                  </button>
                 </td>
               </tr>
             ))}
             {users.length === 0 && (
-              <tr><td colSpan={7} className="p-8 text-center text-text2">No users found.</td></tr>
+              <tr><td colSpan={7} className="p-8 text-center" style={{ color: 'rgba(148,163,184,0.5)' }}>No users found.</td></tr>
             )}
           </tbody>
         </table>
@@ -136,11 +152,11 @@ export default function AdminUsersPage() {
 
       {/* Modal */}
       {modal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-md">
-            <div className="flex items-center justify-between p-5 border-b border-tint">
-              <h2 className="text-lg font-bold">{modal === 'add' ? 'Add New User' : 'Edit User'}</h2>
-              <button onClick={closeModal} className="text-text2 hover:text-text1"><X className="w-5 h-5" /></button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)' }}>
+          <div className="rounded-2xl shadow-2xl w-full max-w-md" style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <div className="flex items-center justify-between p-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+              <h2 className="text-lg font-bold text-white">{modal === 'add' ? 'Add New User' : 'Edit User'}</h2>
+              <button onClick={closeModal} style={{ color: 'rgba(148,163,184,0.6)' }}><X className="w-5 h-5" /></button>
             </div>
             <div className="p-5 space-y-4">
               <div className="grid grid-cols-2 gap-4">

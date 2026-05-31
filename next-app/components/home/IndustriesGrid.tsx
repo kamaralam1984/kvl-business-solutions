@@ -1,108 +1,197 @@
 'use client';
-import Link from 'next/link';
 import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
-import { ArrowRight, CheckCircle2 } from 'lucide-react';
-import { industries } from '@/lib/data/industries';
 
-// Mock client counts per industry — placeholder credibility stats (edit later in admin)
-const stats: Record<string, { clients: string; satisfaction: string }> = {
-  construction:  { clients: '180+', satisfaction: '98%' },
-  mechanical:    { clients: '220+', satisfaction: '97%' },
-  manufacturing: { clients: '95+',  satisfaction: '99%' },
-  transport:     { clients: '350+', satisfaction: '96%' },
-  schools:       { clients: '140+', satisfaction: '98%' },
-  hospitals:     { clients: '60+',  satisfaction: '99%' },
-  retail:        { clients: '420+', satisfaction: '97%' },
-  realestate:    { clients: '110+', satisfaction: '98%' },
-  government:    { clients: '40+',  satisfaction: '100%' },
-};
+const industries = [
+  {
+    icon: '🏭',
+    title: 'Manufacturing',
+    desc: 'ERP, inventory, production tracking',
+    featured: true,
+    img: 'https://images.unsplash.com/photo-1565043666747-69f6646db940?w=500&q=80&auto=format&fit=crop',
+  },
+  {
+    icon: '🏫',
+    title: 'Education',
+    desc: 'School/college management systems',
+    img: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=500&q=80&auto=format&fit=crop',
+  },
+  {
+    icon: '🚛',
+    title: 'Logistics',
+    desc: 'Fleet GPS, delivery tracking',
+    img: 'https://images.unsplash.com/photo-1609587312208-cea54be969e7?w=500&q=80&auto=format&fit=crop',
+  },
+  {
+    icon: '🏥',
+    title: 'Healthcare',
+    desc: 'Hospital management, billing',
+    img: 'https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=500&q=80&auto=format&fit=crop',
+  },
+  {
+    icon: '🏗️',
+    title: 'Construction',
+    desc: 'Project management, civil works',
+    img: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=500&q=80&auto=format&fit=crop',
+  },
+  {
+    icon: '🛒',
+    title: 'Retail',
+    desc: 'POS, inventory, e-commerce',
+    img: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&q=80&auto=format&fit=crop',
+  },
+  {
+    icon: '🌾',
+    title: 'Agriculture',
+    desc: 'Farm management, GPS mapping',
+    featured: true,
+    img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=500&q=80&auto=format&fit=crop',
+  },
+  {
+    icon: '⚡',
+    title: 'Energy',
+    desc: 'Power monitoring, automation',
+    img: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=500&q=80&auto=format&fit=crop',
+  },
+];
 
 export function IndustriesGrid() {
   return (
-    <section className="section section-alt overflow-hidden">
+    <section className="py-24" style={{ background: 'rgb(var(--bg))' }}>
       <div className="container">
+        {/* Header */}
         <div className="text-center mb-14">
-          <span className="eyebrow">INDUSTRIES WE SERVE</span>
-          <h2 className="text-3xl md:text-4xl font-extrabold my-4">Solutions for Every Industry</h2>
-          <p className="text-text2 max-w-xl mx-auto">Industry-specific software and services to boost efficiency and productivity. 1000+ businesses across 9 verticals trust KVL.</p>
+          <span className="eyebrow block mb-3">WHAT WE COVER</span>
+          <h2
+            className="font-display font-black tracking-tight mb-4"
+            style={{ fontSize: 'clamp(2rem, 4vw, 3.25rem)', color: 'rgb(var(--text))' }}
+          >
+            Industries We Serve
+          </h2>
+          <p className="max-w-md mx-auto text-sm leading-relaxed" style={{ color: 'rgba(var(--text-2))' }}>
+            Purpose-built software for 8+ verticals — from factory floors to farm fields.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {/* Bento grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {industries.map((ind, i) => {
-            const Icon = (Icons as any)[ind.icon] || Icons.Briefcase;
-            const stat = stats[ind.slug] || { clients: '50+', satisfaction: '95%' };
+            if (ind.featured) {
+              return (
+                <motion.div
+                  key={ind.title}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.06, duration: 0.4 }}
+                  className="md:col-span-2 md:row-span-2 group cursor-default"
+                >
+                  <div
+                    className="relative rounded-2xl overflow-hidden"
+                    style={{ height: '100%', minHeight: 200 }}
+                  >
+                    <img
+                      src={ind.img}
+                      alt={ind.title}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        transition: 'transform 0.6s ease',
+                        minHeight: 200,
+                      }}
+                      className="group-hover:scale-105"
+                    />
+                    <div
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        background: 'linear-gradient(180deg, transparent 20%, rgba(8,8,10,0.9) 100%)',
+                      }}
+                    />
+                    {/* Gold border accent */}
+                    <div
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        border: '1px solid rgba(200,168,112,0.25)',
+                        borderRadius: '1rem',
+                        pointerEvents: 'none',
+                      }}
+                    />
+                    <div
+                      style={{
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        padding: '24px',
+                      }}
+                    >
+                      <div className="text-4xl mb-3">{ind.icon}</div>
+                      <div
+                        className="font-display font-bold text-[22px] mb-2"
+                        style={{ color: '#f0ede6' }}
+                      >
+                        {ind.title}
+                      </div>
+                      <div
+                        className="text-[14px] leading-relaxed mb-4"
+                        style={{ color: 'rgba(255,255,255,0.6)' }}
+                      >
+                        {ind.desc}
+                      </div>
+                      <div className="text-[13px] font-semibold" style={{ color: '#c8a870' }}>
+                        Explore solutions →
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            }
             return (
               <motion.div
-                key={ind.slug}
-                initial={{ opacity: 0, y: 30 }}
+                key={ind.title}
+                initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.05, duration: 0.4 }}
+                transition={{ delay: i * 0.06, duration: 0.4 }}
+                className="group cursor-default"
               >
-                <Link
-                  href={`/industries#${ind.slug}`}
-                  className="card-base overflow-hidden group block h-full hover:shadow-card-hover transition-all hover:-translate-y-1 duration-300"
-                >
-                  {/* Header — gradient banner with big icon */}
+                <div className="relative rounded-2xl overflow-hidden" style={{ height: 180 }}>
+                  <img
+                    src={ind.img}
+                    alt={ind.title}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      transition: 'transform 0.6s ease',
+                    }}
+                    className="group-hover:scale-105"
+                  />
                   <div
-                    className="h-32 relative overflow-hidden grid place-items-center"
-                    style={{ background: `linear-gradient(135deg, ${ind.c1}, ${ind.c2})` }}
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'linear-gradient(180deg, transparent 30%, rgba(8,8,10,0.85) 100%)',
+                    }}
+                  />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      padding: '16px',
+                    }}
                   >
-                    {/* Decorative radial pattern */}
-                    <div className="absolute inset-0 opacity-20" style={{
-                      backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,.4) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255,255,255,.25) 0%, transparent 50%)',
-                    }} />
-                    {/* Big industry icon */}
-                    <Icon className="w-16 h-16 text-white opacity-95 relative z-10 group-hover:scale-110 transition-transform duration-300" strokeWidth={1.5} />
-                    {/* Client count badge */}
-                    <div className="absolute top-2 right-2 bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full text-[10px] font-bold text-white border border-white/30">
-                      {stat.clients} clients
-                    </div>
-                    {/* Satisfaction badge */}
-                    <div className="absolute bottom-2 left-2 bg-white/15 backdrop-blur-sm px-2 py-0.5 rounded-full text-[10px] font-semibold text-white flex items-center gap-1">
-                      <CheckCircle2 className="w-3 h-3" /> {stat.satisfaction}
-                    </div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: '#f0ede6' }}>{ind.title}</div>
+                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>{ind.desc}</div>
                   </div>
-
-                  {/* Body */}
-                  <div className="p-5">
-                    <h3 className="font-bold text-base mb-1.5 group-hover:text-primary transition-colors">
-                      {ind.name}
-                    </h3>
-                    <p className="text-xs text-text2 line-clamp-2 mb-3 leading-relaxed">
-                      {ind.desc}
-                    </p>
-
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-1.5 mb-3">
-                      {ind.tags.slice(0, 4).map(t => (
-                        <span key={t} className="text-[10px] px-2 py-0.5 rounded-full surface2-tint border border-tint text-text2">
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* Footer link */}
-                    <div className="pt-3 border-t border-dashed border-tint flex justify-between items-center">
-                      <span className="text-[11px] text-text2">Industry solutions</span>
-                      <span className="text-primary text-xs font-bold inline-flex items-center gap-1 group-hover:gap-2 transition-all">
-                        Explore <ArrowRight className="w-3.5 h-3.5" />
-                      </span>
-                    </div>
-                  </div>
-                </Link>
+                </div>
               </motion.div>
             );
           })}
-        </div>
-
-        {/* Bottom CTA */}
-        <div className="text-center mt-12">
-          <p className="text-text2 text-sm mb-4">Your industry not listed? We build custom solutions for any business vertical.</p>
-          <Link href="/contact" className="btn btn-primary">
-            Discuss your industry needs <ArrowRight className="w-4 h-4" />
-          </Link>
         </div>
       </div>
     </section>
