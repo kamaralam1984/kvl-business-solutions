@@ -47,12 +47,12 @@ export function CallBackWidget() {
             initial={{ opacity: 0, y: 10, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.9 }}
-            className="absolute bottom-14 right-0 w-72 bg-surface rounded-2xl shadow-2xl border border-tint p-4 z-[110]"
+            className="absolute bottom-14 right-0 w-72 bg-app2 rounded-2xl shadow-2xl border border-tint p-4 z-[110]"
           >
             <div className="flex justify-between items-center mb-3">
               <div>
-                <h4 className="font-bold text-sm">📞 Call Me Back</h4>
-                <p className="text-[11px] text-text2">Priya 30 seconds mein call karegi!</p>
+                <h4 className="font-bold text-sm">Call Me Back</h4>
+                <p className="text-[11px] text-text2">Our team will call you back within 30 seconds.</p>
               </div>
               <button onClick={() => setOpen(false)}><X className="w-4 h-4 text-text2" /></button>
             </div>
@@ -60,14 +60,14 @@ export function CallBackWidget() {
             {done ? (
               <div className="text-center py-4">
                 <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-2" />
-                <p className="font-bold text-sm">Call aa rahi hai!</p>
-                <p className="text-[11px] text-text2 mt-1">Priya abhi aapko call karengi — phone ready rakhein.</p>
+                <p className="font-bold text-sm">Your call is on its way</p>
+                <p className="text-[11px] text-text2 mt-1">Our team will call you shortly — please keep your phone nearby.</p>
               </div>
             ) : (
               <form onSubmit={submit} className="space-y-2.5">
                 <input
                   value={name} onChange={e => setName(e.target.value)}
-                  placeholder="Aapka naam (optional)"
+                  placeholder="Your name (optional)"
                   className="form-control w-full text-sm"
                 />
                 <input
@@ -78,9 +78,9 @@ export function CallBackWidget() {
                 />
                 <button type="submit" disabled={loading}
                   className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 disabled:opacity-60">
-                  {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Calling...</> : <><Phone className="w-4 h-4" />Abhi Call Karein!</>}
+                  {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Calling...</> : <><Phone className="w-4 h-4" />Request a Call Back</>}
                 </button>
-                <p className="text-[10px] text-text2 text-center">Free service — koi charge nahi</p>
+                <p className="text-[10px] text-text2 text-center">Free service, no charge.</p>
               </form>
             )}
           </motion.div>

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { z } from 'zod';
 import { connectDB } from '@/lib/mongodb';
 import { Review } from '@/lib/models/Review';
@@ -29,8 +30,8 @@ export async function POST(req: Request) {
        <p><b>${data.title || ''}</b></p><p>${data.message}</p>
        <p><a href="${process.env.NEXT_PUBLIC_SITE_URL || ''}/admin/reviews">Moderate in admin</a></p>`);
     return NextResponse.json({ ok: true, id: r._id, message: 'Review submitted — pending approval' });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e.message }, { status: 400 });
+  } catch (e) {
+    return apiError(e);
   }
 }
 

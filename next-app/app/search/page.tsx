@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Search as SearchIcon } from 'lucide-react';
 import { softwareProducts } from '@/lib/data/software';
+import { caseStudies } from '@/lib/data/case-studies';
 import { PageHero } from '@/components/shared/PageHero';
 import { formatINR } from '@/lib/utils';
 
@@ -40,6 +41,11 @@ function SearchView() {
     const term = q.toLowerCase();
     return pages.filter(p => p.title.toLowerCase().includes(term) || p.text.toLowerCase().includes(term));
   }, [q]);
+  const projectResults = useMemo(() => {
+    if (!q.trim()) return [];
+    const term = q.toLowerCase();
+    return caseStudies.filter(c => c.name.toLowerCase().includes(term) || c.overview.toLowerCase().includes(term) || c.industry.toLowerCase().includes(term));
+  }, [q]);
 
   const submit = (e: React.FormEvent) => { e.preventDefault(); router.push(`/search?q=${encodeURIComponent(q)}`); };
 
@@ -73,6 +79,19 @@ function SearchView() {
                   </div>
                 </div>
               )}
+              {projectResults.length > 0 && (
+                <div className="mb-8">
+                  <h2 className="font-bold mb-3 text-sm uppercase text-text2 tracking-wider">Projects ({projectResults.length})</h2>
+                  <div className="space-y-2">
+                    {projectResults.map(c => (
+                      <Link key={c.slug} href={`/projects/${c.slug}`} className="block card-base p-4 hover:bg-primary/5 transition-all">
+                        <div className="font-semibold">{c.name}</div>
+                        <div className="text-xs text-text2 mt-1 line-clamp-2">{c.overview}</div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
               {pageResults.length > 0 && (
                 <div className="mb-8">
                   <h2 className="font-bold mb-3 text-sm uppercase text-text2 tracking-wider">Pages ({pageResults.length})</h2>
@@ -87,7 +106,7 @@ function SearchView() {
                   </div>
                 </div>
               )}
-              {productResults.length === 0 && pageResults.length === 0 && (
+              {productResults.length === 0 && pageResults.length === 0 && projectResults.length === 0 && (
                 <div className="card-base p-8 text-center">
                   <p className="text-text2">No results for <b>"{q}"</b>. Try a different search term.</p>
                   <Link href="/contact" className="btn btn-primary mt-4 inline-flex">Contact Us</Link>

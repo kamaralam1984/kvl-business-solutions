@@ -177,12 +177,12 @@ export default async function AdminHome() {
                 {s.trend}
               </span>
             </div>
-            <div className="font-display font-black leading-none mb-2"
-              style={{ fontSize: '2.2rem', color: '#f0ede6', letterSpacing: '-0.03em' }}>
+            <div className="font-display font-black leading-none mb-2 text-text"
+              style={{ fontSize: '2.2rem', letterSpacing: '-0.03em' }}>
               {s.val.toLocaleString()}
             </div>
-            <div className="text-[12px] font-semibold mb-0.5" style={{ color: 'rgba(255,255,255,0.6)' }}>{s.label}</div>
-            <div className="text-[11px]" style={{ color: 'rgba(255,255,255,0.2)' }}>{s.sub}</div>
+            <div className="text-[12px] font-semibold mb-0.5 text-text2">{s.label}</div>
+            <div className="text-[11px] text-text3">{s.sub}</div>
           </div>
         ))}
       </div>

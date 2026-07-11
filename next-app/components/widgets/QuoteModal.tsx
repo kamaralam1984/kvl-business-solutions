@@ -30,6 +30,7 @@ export function QuoteModal() {
   const [contact, setContact] = useState({ name: '', email: '', phone: '' });
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const h = () => setOpen(true);
@@ -43,8 +44,9 @@ export function QuoteModal() {
 
   const submit = async () => {
     setSubmitting(true);
+    setError('');
     try {
-      await fetch('/api/quote', {
+      const res = await fetch('/api/quote', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -52,11 +54,18 @@ export function QuoteModal() {
           estimateLow: low, estimateHigh: high, contact,
         }),
       });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok || !d.ok) {
+        setError(d.error || 'Could not send your quote request. Please try again or WhatsApp us.');
+        return;
+      }
       setDone(true);
+    } catch {
+      setError('Could not send your quote request. Please try again or WhatsApp us.');
     } finally { setSubmitting(false); }
   };
 
-  const close = () => { setOpen(false); setTimeout(() => { setStep(0); setSel({}); setDone(false); setContact({ name: '', email: '', phone: '' }); }, 300); };
+  const close = () => { setOpen(false); setTimeout(() => { setStep(0); setSel({}); setDone(false); setError(''); setContact({ name: '', email: '', phone: '' }); }, 300); };
 
   const Pane = ({ items, group }: { items: any[]; group: keyof typeof sel }) => (
     <div className="grid grid-cols-2 gap-2.5 mb-4">
@@ -110,9 +119,12 @@ export function QuoteModal() {
                       <div className="text-xs opacity-80">{sel.type?.label} · {sel.scope?.label} · {sel.timeline?.label}</div>
                     </div>
                     <div className="space-y-2">
-                      <input className="form-control" placeholder="Your name" value={contact.name} onChange={e => setContact({...contact, name: e.target.value})} />
-                      <input className="form-control" placeholder="Email" type="email" value={contact.email} onChange={e => setContact({...contact, email: e.target.value})} />
-                      <input className="form-control" placeholder="Phone" value={contact.phone} onChange={e => setContact({...contact, phone: e.target.value})} />
+                      <label htmlFor="quote-name" className="sr-only">Your name</label>
+                      <input id="quote-name" name="name" autoComplete="name" className="form-control" placeholder="Your name" value={contact.name} onChange={e => setContact({...contact, name: e.target.value})} />
+                      <label htmlFor="quote-email" className="sr-only">Email</label>
+                      <input id="quote-email" name="email" autoComplete="email" className="form-control" placeholder="Email" type="email" required value={contact.email} onChange={e => setContact({...contact, email: e.target.value})} />
+                      <label htmlFor="quote-phone" className="sr-only">Phone</label>
+                      <input id="quote-phone" name="phone" autoComplete="tel" type="tel" className="form-control" placeholder="Phone" value={contact.phone} onChange={e => setContact({...contact, phone: e.target.value})} />
                     </div>
                   </div>
                 )}
@@ -124,6 +136,7 @@ export function QuoteModal() {
                     <button onClick={submit} className="btn btn-primary" disabled={submitting || !contact.email}><Send className="w-4 h-4" /> {submitting ? 'Sending...' : 'Submit'}</button>
                   )}
                 </div>
+                {error && <p className="text-red-400 text-xs mt-3 text-center">{error}</p>}
               </>
             ) : (
               <div className="text-center py-6">

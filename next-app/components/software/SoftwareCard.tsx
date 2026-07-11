@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import * as Icons from 'lucide-react';
 import { Eye, ShoppingCart, Check, Calendar, Zap, Play } from 'lucide-react';
 import { TiltCard } from '@/components/shared/TiltCard';
@@ -11,18 +12,30 @@ export function SoftwareCard({ product }: { product: Software }) {
   const [mode, setMode] = useState<'buy' | 'rent'>('buy');
   const [host, setHost] = useState<'cloud' | 'onprem'>('cloud');
   const Icon = (Icons as any)[product.icon] || Icons.Box;
-  const wa = process.env.NEXT_PUBLIC_WHATSAPP || '919942000413';
+  const wa = (process.env.NEXT_PUBLIC_WHATSAPP || '919942000413').replace(/\D/g, '');
   const buyPrice = mode === 'buy' ? Math.round(product.price * (host === 'onprem' ? 1.5 : 1)) : product.monthlyRent;
   const unit = mode === 'buy' ? product.unit : product.rentUnit;
 
   return (
     <TiltCard className="card-base overflow-hidden flex flex-col group">
       {/* Header */}
-      <div className="h-44 relative grid place-items-center text-white overflow-hidden" style={{ background: `linear-gradient(135deg, ${product.c1}, ${product.c2})` }}>
-        <div className="absolute inset-0 opacity-30" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.15) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.15) 1px,transparent 1px)', backgroundSize: '24px 24px' }} />
-        <div className="relative z-10 flex flex-col items-center gap-2">
-          <Icon className="w-12 h-12 drop-shadow-lg" />
-          <span className="text-xs font-bold bg-white/20 px-3 py-1 rounded-full backdrop-blur">{product.name}</span>
+      <div className="h-44 relative flex flex-col items-center justify-end text-white overflow-hidden">
+        <Image
+          src={product.image}
+          alt={product.name}
+          fill
+          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/70 to-transparent" />
+        <div className="relative z-10 mb-4 flex flex-col items-center gap-2">
+          <span
+            className="grid h-11 w-11 place-items-center rounded-xl shadow-lg"
+            style={{ background: `linear-gradient(135deg, ${product.c1}, ${product.c2})` }}
+          >
+            <Icon className="h-5.5 w-5.5 text-white" />
+          </span>
+          <span className="text-xs font-bold bg-black/40 px-3 py-1 rounded-full backdrop-blur">{product.name}</span>
         </div>
         {product.tag && (
           <span className="absolute top-3 left-3 bg-black/40 text-white px-2.5 py-1 rounded-full text-[10px] font-bold backdrop-blur z-10">{product.tag}</span>

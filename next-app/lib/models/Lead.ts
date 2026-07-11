@@ -1,4 +1,4 @@
-import mongoose, { Schema, models, model } from 'mongoose';
+import { Schema, models, model } from 'mongoose';
 
 const LeadSchema = new Schema({
   name: { type: String, required: true },
@@ -9,6 +9,14 @@ const LeadSchema = new Schema({
   source: { type: String, default: 'contact-form' },
   status: { type: String, enum: ['new', 'contacted', 'qualified', 'won', 'lost'], default: 'new', index: true },
   notes: String,
+
+  // Explicit qualification fields (collected on the contact form)
+  companyName: String,
+  country: String,
+  businessType: String,   // e.g. "Startup", "SME", "Enterprise", "Government", "Individual"
+  budget: String,          // e.g. "₹5,00,000 – ₹15,00,000"
+  timeline: String,        // e.g. "Within 1 month"
+  leadTier: { type: String, enum: ['high', 'medium', 'low'], default: 'low', index: true }, // deterministic, rule-based
 
   // AI-generated fields
   aiScore: { type: Number, default: 0, index: true },        // 0-100
@@ -42,6 +50,15 @@ const LeadSchema = new Schema({
 
   // Review request
   reviewRequestSent: { type: Boolean, default: false },
+
+  // Lead-to-Deal automation: set when a Deal has been auto-created for this lead
+  // (on status -> 'qualified'), so we never create a duplicate Deal for the same lead.
+  dealId: { type: Schema.Types.ObjectId, ref: 'Deal', default: null },
+
+  // Referral attribution: set from the `kvl_ref` cookie (captured by middleware.ts
+  // from a ?ref=<code> query param) when this lead was submitted, if that code
+  // matches a real Referral document. See lib/referrals.ts for conversion tracking.
+  referralCode: { type: String, index: true },
 }, { timestamps: true });
 
 export const Lead = models.Lead || model('Lead', LeadSchema);

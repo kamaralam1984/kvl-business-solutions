@@ -20,9 +20,9 @@ export async function GET(req: Request) {
         <div style={{ fontSize: 72, fontWeight: 900, lineHeight: 1.1, marginBottom: 20, maxWidth: 1000 }}>{title}</div>
         <div style={{ fontSize: 28, opacity: 0.8, maxWidth: 900, lineHeight: 1.4 }}>{subtitle}</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginTop: 'auto', paddingTop: 40, fontSize: 18, opacity: 0.6 }}>
-          <span>kvlsolutions.in</span>
+          <span>kvlbusinesssolutions.com</span>
           <span>·</span>
-          <span>Pune, India</span>
+          <span>Patna, India</span>
           <span>·</span>
           <span>1000+ businesses trust KVL</span>
         </div>

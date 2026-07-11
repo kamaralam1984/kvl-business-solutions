@@ -11,12 +11,12 @@ const SiteSettingsSchema = new Schema({
   // Contact info (used in footer, contact page, structured data)
   phone: { type: String, default: '+91 99420 00413' },
   phone2: { type: String, default: '' },
-  email: { type: String, default: 'info@kvlsolutions.in' },
-  supportEmail: { type: String, default: 'support@kvlsolutions.in' },
-  salesEmail: { type: String, default: 'sales@kvlsolutions.in' },
+  email: { type: String, default: 'info@kvlbusinesssolutions.com' },
+  supportEmail: { type: String, default: 'support@kvlbusinesssolutions.com' },
+  salesEmail: { type: String, default: 'sales@kvlbusinesssolutions.com' },
   whatsapp: { type: String, default: '919942000413' },
   whatsappSupportText: { type: String, default: '24×7 support' },
-  addressLine1: { type: String, default: 'Pune, Maharashtra, India' },
+  addressLine1: { type: String, default: 'Patna, Sultanganj, Bihar, India' },
   addressLine2: { type: String, default: '' },
   branches: { type: String, default: 'Delhi, Bangalore, Mumbai' },
   gstin: { type: String, default: '27AAAAA0000A1Z5' },
@@ -33,7 +33,8 @@ const SiteSettingsSchema = new Schema({
     instagram: String,
     linkedin: String,
     youtube: String,
-    twitter: String,
+    twitter: String, // Twitter / X
+    github: String,
   },
 
   // Hero (homepage)
@@ -76,6 +77,11 @@ const SiteSettingsSchema = new Schema({
   // Maintenance mode
   maintenanceMode: { type: Boolean, default: false },
   maintenanceMessage: { type: String, default: 'We\'re back in a few minutes. For urgent help, WhatsApp +91 99420 00413.' },
+
+  // Referral program — the real reward policy, written by an admin. Left blank
+  // by default; the referral pages show "no policy published yet" until an
+  // admin fills this in with the actual, real terms (no invented amounts).
+  referralRewardDescription: { type: String, default: '' },
 }, { timestamps: true, _id: false });
 
 export const SiteSettings = models.SiteSettings || model('SiteSettings', SiteSettingsSchema);

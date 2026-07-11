@@ -12,7 +12,7 @@ export default function RefundPage() {
 
       <h2>2. How to request a refund</h2>
       <ul>
-        <li>Email <a href="mailto:billing@kvlsolutions.in">billing@kvlsolutions.in</a> with your order ID.</li>
+        <li>Email <a href="mailto:billing@kvlbusinesssolutions.com">billing@kvlbusinesssolutions.com</a> with your order ID.</li>
         <li>Or raise a ticket from your <a href="/support">support page</a>.</li>
         <li>Refunds are processed within <b>5–7 business days</b> back to the original payment method.</li>
       </ul>
@@ -35,7 +35,7 @@ export default function RefundPage() {
       <p>If a payment fails, we will retry after 3 days. After 7 days of failed payments, your subscription may be suspended.</p>
 
       <h2>7. Disputes</h2>
-      <p>If you disagree with a refund decision, email <a href="mailto:legal@kvlsolutions.in">legal@kvlsolutions.in</a>. We will respond within 5 business days.</p>
+      <p>If you disagree with a refund decision, email <a href="mailto:legal@kvlbusinesssolutions.com">legal@kvlbusinesssolutions.com</a>. We will respond within 5 business days.</p>
     </LegalLayout>
   );
 }

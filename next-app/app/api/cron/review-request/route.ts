@@ -3,13 +3,12 @@ import { connectDB } from '@/lib/mongodb';
 import { Lead } from '@/lib/models/Lead';
 import { sendNotification } from '@/lib/email';
 import { sendFollowUpWhatsApp } from '@/lib/whatsapp';
+import { requireCronAuth } from '@/lib/cron-auth';
 
-const CRON_SECRET = process.env.CRON_SECRET || 'kvl-cron-2024';
 const GOOGLE_REVIEW_URL = process.env.GOOGLE_REVIEW_URL || 'https://g.page/r/kvlbusinesssolutions/review';
 
 export async function GET(req: Request) {
-  const secret = new URL(req.url).searchParams.get('secret');
-  if (secret !== CRON_SECRET) return NextResponse.json({ ok: false }, { status: 401 });
+  const unauth = requireCronAuth(req); if (unauth) return unauth;
 
   await connectDB();
 

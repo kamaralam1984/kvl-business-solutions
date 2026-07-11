@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { z } from 'zod';
 import { connectDB } from '@/lib/mongodb';
 import { Review } from '@/lib/models/Review';
@@ -19,8 +20,8 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     if (!r) return NextResponse.json({ ok: false, error: 'Not found' }, { status: 404 });
     logActivity({ action: 'review.update', actorEmail: g.session?.user?.email || undefined, actorRole: 'admin', target: 'Review', targetId: r._id.toString(), details: data, req });
     return NextResponse.json({ ok: true, review: r });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e.message }, { status: 400 });
+  } catch (e) {
+    return apiError(e);
   }
 }
 

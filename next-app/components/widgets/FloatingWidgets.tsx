@@ -4,6 +4,7 @@ import { QuoteModal } from './QuoteModal';
 import { WhatsAppButton } from './WhatsAppButton';
 import { ExitIntentPopup } from './ExitIntentPopup';
 import { CallBackWidget } from './CallBackWidget';
+import { MobileStickyBar } from './MobileStickyBar';
 
 export function FloatingWidgets() {
   return (
@@ -11,13 +12,21 @@ export function FloatingWidgets() {
       {/* Exit intent popup — triggers on mouse leave or 45s on mobile */}
       <ExitIntentPopup />
 
-      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[99] flex flex-col gap-3 items-end">
+      {/* Desktop: full stacked bubble cluster. */}
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[99] hidden md:flex flex-col gap-3 items-end">
         <Chatbot />
         <CallBackWidget />
         <div className="relative">
           <WhatsAppButton />
         </div>
       </div>
+
+      {/* Mobile: Call + WhatsApp move into the sticky bottom bar; chat stays as a bubble above it. */}
+      <div className="fixed bottom-16 right-4 z-[99] flex md:hidden">
+        <Chatbot />
+      </div>
+      <MobileStickyBar />
+
       <QuoteModal />
     </>
   );

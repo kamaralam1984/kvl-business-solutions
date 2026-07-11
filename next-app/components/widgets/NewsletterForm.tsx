@@ -20,14 +20,23 @@ export function NewsletterForm({ source = 'footer' }: { source?: string }) {
     } catch (e: any) { setState('error'); setMsg(e.message); }
   };
 
+  const inputId = `newsletter-email-${source}`;
+  const msgId = `${inputId}-msg`;
+
   return (
     <form onSubmit={submit} className="space-y-2">
       <div className="flex gap-2">
         <div className="relative flex-1">
+          <label htmlFor={inputId} className="sr-only">Email address</label>
           <Mail className="absolute left-3 top-3 w-4 h-4 text-text2" />
           <input
+            id={inputId}
+            name="email"
             type="email" required value={email} onChange={e => setEmail(e.target.value)}
             placeholder="Your email"
+            autoComplete="email"
+            aria-invalid={state === 'error'}
+            aria-describedby={msg ? msgId : undefined}
             className="form-control pl-10 text-sm"
             disabled={state === 'loading' || state === 'ok'}
           />
@@ -36,7 +45,7 @@ export function NewsletterForm({ source = 'footer' }: { source?: string }) {
           {state === 'ok' ? <Check className="w-4 h-4" /> : <Send className="w-4 h-4" />}
         </button>
       </div>
-      {msg && <p className={`text-xs ${state === 'error' ? 'text-red-500' : 'text-green-500'}`}>{msg}</p>}
+      {msg && <p id={msgId} role="status" className={`text-xs ${state === 'error' ? 'text-red-500' : 'text-green-500'}`}>{msg}</p>}
       <p className="text-[10px] text-text2">Get product updates, deals & tips. Unsubscribe anytime.</p>
     </form>
   );

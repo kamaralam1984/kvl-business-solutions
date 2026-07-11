@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { z } from 'zod';
 import { rateLimit, clientIp } from '@/lib/rate-limit';
 import { initiateCall } from '@/lib/vapi';
@@ -42,8 +43,7 @@ export async function POST(req: Request) {
     await Lead.findByIdAndUpdate(lead._id, { callStatus: 'calling', callId, calledAt: new Date() });
 
     return NextResponse.json({ ok: true, callId });
-  } catch (e: any) {
-    console.error('[call-back]', e);
-    return NextResponse.json({ ok: false, error: e.message }, { status: 500 });
+  } catch (e) {
+    return apiError(e);
   }
 }

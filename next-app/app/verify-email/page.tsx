@@ -2,12 +2,12 @@
 import { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
+import { CheckCircle2, XCircle, Loader2, MailCheck } from 'lucide-react';
 
 function VerifyView() {
   const sp = useSearchParams();
   const token = sp.get('token');
-  const [state, setState] = useState<'loading' | 'ok' | 'error'>('loading');
+  const [state, setState] = useState<'loading' | 'confirm' | 'confirming' | 'ok' | 'error'>('loading');
   const [msg, setMsg] = useState('');
 
   useEffect(() => {
@@ -15,18 +15,51 @@ function VerifyView() {
     fetch(`/api/auth/verify?token=${encodeURIComponent(token)}`)
       .then(r => r.json())
       .then(d => {
-        if (d.ok) setState('ok');
+        if (d.ok) setState('confirm');
         else { setState('error'); setMsg(d.error || 'Verification failed'); }
       })
       .catch(() => { setState('error'); setMsg('Network error'); });
   }, [token]);
+
+  const confirmEmail = async () => {
+    if (!token) return;
+    setState('confirming');
+    try {
+      const res = await fetch('/api/auth/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+      });
+      const d = await res.json();
+      if (d.ok) setState('ok');
+      else { setState('error'); setMsg(d.error || 'Verification failed'); }
+    } catch {
+      setState('error'); setMsg('Network error');
+    }
+  };
 
   return (
     <div className="card-base p-8 max-w-md w-full text-center">
       {state === 'loading' && (
         <>
           <Loader2 className="w-12 h-12 mx-auto animate-spin text-primary" />
-          <p className="mt-4">Verifying your email…</p>
+          <p className="mt-4">Checking your verification link…</p>
+        </>
+      )}
+      {state === 'confirm' && (
+        <>
+          <MailCheck className="w-14 h-14 mx-auto text-primary" />
+          <h1 className="text-2xl font-extrabold mt-3">Confirm your email</h1>
+          <p className="text-text2 mt-1 text-sm">Click below to finish verifying your account.</p>
+          <button type="button" onClick={confirmEmail} className="btn btn-primary mt-5 inline-flex">
+            Confirm Email
+          </button>
+        </>
+      )}
+      {state === 'confirming' && (
+        <>
+          <Loader2 className="w-12 h-12 mx-auto animate-spin text-primary" />
+          <p className="mt-4">Verifying…</p>
         </>
       )}
       {state === 'ok' && (

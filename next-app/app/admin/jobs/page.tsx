@@ -10,7 +10,7 @@ type Job = {
 };
 
 const empty: Job = {
-  slug: '', title: '', department: 'Engineering', location: 'Pune, India',
+  slug: '', title: '', department: 'Engineering', location: 'Patna, India',
   type: 'Full-time', remote: false, experience: '', salary: '',
   description: '', requirements: [], responsibilities: [], active: true,
 };

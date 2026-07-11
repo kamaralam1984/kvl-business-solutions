@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { z } from 'zod';
 import { connectDB } from '@/lib/mongodb';
 import { Subscriber } from '@/lib/models/Subscriber';
@@ -29,8 +30,8 @@ export async function POST(req: Request) {
     await Subscriber.create({ email: email.toLowerCase(), source: source || 'footer' });
     sendNotification(`New newsletter signup — ${email}`, `<p>${email} subscribed via ${source || 'footer'}</p>`);
     return NextResponse.json({ ok: true });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e.message }, { status: 400 });
+  } catch (e) {
+    return apiError(e);
   }
 }
 
@@ -45,7 +46,7 @@ export async function DELETE(req: Request) {
       { $set: { active: false, unsubscribedAt: new Date() } }
     );
     return NextResponse.json({ ok: true });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e.message }, { status: 400 });
+  } catch (e) {
+    return apiError(e);
   }
 }

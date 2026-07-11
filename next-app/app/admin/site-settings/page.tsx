@@ -1,12 +1,12 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Save, Settings, Phone, Globe, Building2, Star, ToggleLeft, AlertTriangle, Image as ImageIcon } from 'lucide-react';
+import { Save, Settings, Phone, Globe, Star, ToggleLeft, AlertTriangle, Image as ImageIcon, Gift } from 'lucide-react';
 
 export default function SiteSettingsPage() {
   const [s, setS] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState('');
-  const [tab, setTab] = useState<'contact' | 'brand' | 'hero' | 'features' | 'seo' | 'maintenance'>('contact');
+  const [tab, setTab] = useState<'contact' | 'brand' | 'hero' | 'features' | 'seo' | 'referrals' | 'maintenance'>('contact');
 
   useEffect(() => {
     fetch('/api/admin/site-settings').then(r => r.json()).then(d => d.ok && setS(d.settings));
@@ -34,6 +34,7 @@ export default function SiteSettingsPage() {
     { id: 'hero', label: 'Homepage', Icon: ImageIcon },
     { id: 'features', label: 'Features', Icon: ToggleLeft },
     { id: 'seo', label: 'SEO', Icon: Star },
+    { id: 'referrals', label: 'Referrals', Icon: Gift },
     { id: 'maintenance', label: 'Maintenance', Icon: AlertTriangle },
   ];
 
@@ -69,7 +70,7 @@ export default function SiteSettingsPage() {
               <Field label="Sales email" value={s.salesEmail} onChange={v => update('salesEmail', v)} />
               <Field label="Support email" value={s.supportEmail} onChange={v => update('supportEmail', v)} />
               <Field label="GSTIN" value={s.gstin} onChange={v => update('gstin', v)} />
-              <Field label="Head office address" value={s.addressLine1} onChange={v => update('addressLine1', v)} placeholder="Pune, Maharashtra, India" />
+              <Field label="Head office address" value={s.addressLine1} onChange={v => update('addressLine1', v)} placeholder="Patna, Sultanganj, Bihar, India" />
               <Field label="Address line 2 (optional)" value={s.addressLine2} onChange={v => update('addressLine2', v)} />
               <Field label="Branches (shown on contact page)" value={s.branches} onChange={v => update('branches', v)} placeholder="Delhi, Bangalore, Mumbai" />
               <Field label="Business hours" value={s.businessHours} onChange={v => update('businessHours', v)} placeholder="Mon–Sat: 9 AM – 8 PM" />
@@ -85,6 +86,7 @@ export default function SiteSettingsPage() {
               <Field label="LinkedIn URL" value={s.social?.linkedin || ''} onChange={v => updateNested('social', 'linkedin', v)} />
               <Field label="YouTube URL" value={s.social?.youtube || ''} onChange={v => updateNested('social', 'youtube', v)} />
               <Field label="Twitter / X URL" value={s.social?.twitter || ''} onChange={v => updateNested('social', 'twitter', v)} />
+              <Field label="GitHub URL" value={s.social?.github || ''} onChange={v => updateNested('social', 'github', v)} placeholder="https://github.com/kvl" />
             </Grid>
           </>
         )}
@@ -149,6 +151,19 @@ export default function SiteSettingsPage() {
             <Section title="Default SEO" desc="Used when pages don't override" />
             <Field label="Meta title" value={s.metaTitle} onChange={v => update('metaTitle', v)} />
             <Field label="Meta description" value={s.metaDescription} onChange={v => update('metaDescription', v)} textarea />
+          </>
+        )}
+
+        {tab === 'referrals' && (
+          <>
+            <Section title="Referral program" desc="Shown on the admin referrals list and on each user's referral dashboard (/dashboard/referrals). Write the real, current reward policy here — leave blank if there isn't one yet." />
+            <Field
+              label="Reward policy description"
+              value={s.referralRewardDescription}
+              onChange={v => update('referralRewardDescription', v)}
+              textarea
+              placeholder="e.g. Contact sales@kvlbusinesssolutions.com once your referral converts to a paid client to discuss a reward."
+            />
           </>
         )}
 

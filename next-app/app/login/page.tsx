@@ -3,6 +3,7 @@ import { Suspense, useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { LogIn, Mail, Lock } from 'lucide-react';
 import { GoogleSignInButton } from '@/components/widgets/GoogleSignInButton';
@@ -39,14 +40,13 @@ function LoginForm() {
 
         <div className="relative z-10 text-center px-12">
           {/* KVL wordmark */}
-          <div className="mb-8">
-            <div
-              className="text-6xl font-extrabold tracking-tight mb-2"
-              style={{ color: '#f5f5f0', fontFamily: 'Poppins, sans-serif' }}
+          <div className="mb-8 flex justify-center">
+            <span
+              className="relative rounded-xl overflow-hidden shrink-0"
+              style={{ width: 260, height: 81, boxShadow: '0 0 0 1px rgba(200,169,110,0.35), 0 8px 40px rgba(0,0,0,0.4)' }}
             >
-              KVL
-            </div>
-            <div className="text-sm tracking-[4px] uppercase" style={{ color: '#c8a96e' }}>Business Solutions</div>
+              <Image src="/brand-logo.png" alt="KVL Business Solutions" fill sizes="260px" className="object-cover" />
+            </span>
           </div>
 
           {/* Gold divider */}
@@ -59,8 +59,8 @@ function LoginForm() {
           <div className="mt-10 grid grid-cols-2 gap-4">
             {[['1000+', 'Businesses'], ['500+', 'Projects'], ['14+', 'Services'], ['ISO', 'Certified']].map(([val, label]) => (
               <div key={label} className="card-premium p-4 text-center">
-                <div className="text-2xl font-extrabold" style={{ color: '#f5f5f0', fontFamily: 'Poppins, sans-serif' }}>{val}</div>
-                <div className="text-xs mt-1 uppercase tracking-wider" style={{ color: '#888' }}>{label}</div>
+                <div className="text-2xl font-extrabold text-text" style={{ fontFamily: 'Poppins, sans-serif' }}>{val}</div>
+                <div className="text-xs mt-1 uppercase tracking-wider text-text2">{label}</div>
               </div>
             ))}
           </div>
@@ -90,36 +90,46 @@ function LoginForm() {
 
           <form onSubmit={submit} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Email</label>
+              <label htmlFor="login-email" className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Email</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-3.5 w-4 h-4" style={{ color: '#888' }} />
                 <input
+                  id="login-email"
+                  name="email"
                   className="form-control pl-10"
                   style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)', color: '#f5f5f0' }}
                   type="email"
+                  autoComplete="email"
                   required
                   placeholder="you@company.com"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
+                  aria-invalid={!!err}
+                  aria-describedby={err ? 'login-error' : undefined}
                 />
               </div>
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Password</label>
+              <label htmlFor="login-password" className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Password</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3.5 w-4 h-4" style={{ color: '#888' }} />
                 <input
+                  id="login-password"
+                  name="password"
                   className="form-control pl-10"
                   style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)', color: '#f5f5f0' }}
                   type="password"
+                  autoComplete="current-password"
                   required
                   placeholder="••••••••"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
+                  aria-invalid={!!err}
+                  aria-describedby={err ? 'login-error' : undefined}
                 />
               </div>
             </div>
-            {err && <p className="text-red-400 text-xs">{err}</p>}
+            {err && <p id="login-error" role="alert" className="text-red-400 text-xs">{err}</p>}
             <div className="flex justify-end">
               <Link href="/forgot-password" className="text-xs transition-colors" style={{ color: '#c8a96e' }}>
                 Forgot password?

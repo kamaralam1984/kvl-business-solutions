@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import crypto from 'crypto';
 import { connectDB } from '@/lib/mongodb';
 import { Order } from '@/lib/models/Order';
@@ -47,8 +48,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ ok: true });
-  } catch (e: any) {
-    console.error('webhook error', e);
-    return NextResponse.json({ ok: false, error: e.message }, { status: 500 });
+  } catch (e) {
+    return apiError(e);
   }
 }

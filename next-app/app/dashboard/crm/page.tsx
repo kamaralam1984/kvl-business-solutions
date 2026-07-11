@@ -1,7 +1,8 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { Plus, Trash2, X, Save, Sparkles, IndianRupee, TrendingUp, Briefcase, Loader2 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { Plus, Trash2, X, Save, Sparkles, Briefcase, Loader2, Search, Download, CheckSquare, Square, Filter } from 'lucide-react';
 import { formatINR } from '@/lib/utils';
+import { toCSV } from '@/lib/csv';
 
 const STAGES = [
   { id: 'lead', label: 'Lead', color: '#94a3b8' },
@@ -9,6 +10,7 @@ const STAGES = [
   { id: 'proposal', label: 'Proposal', color: '#f97316' },
   { id: 'negotiation', label: 'Negotiation', color: '#eab308' },
   { id: 'won', label: 'Won 🎉', color: '#22c55e' },
+  { id: 'repeat', label: 'Repeat Business', color: '#8b5cf6' },
   { id: 'lost', label: 'Lost', color: '#ef4444' },
 ];
 
@@ -17,15 +19,31 @@ type Deal = {
   title: string; contactName?: string; value: number;
   stage: string; probability: number;
   source?: string; notes?: string; aiSuggestion?: string;
+  tags?: string[]; ownerEmail?: string; createdAt?: string;
 };
 
-const empty: Deal = { title: '', contactName: '', value: 0, stage: 'lead', probability: 20, source: '', notes: '' };
+const empty: Deal = { title: '', contactName: '', value: 0, stage: 'lead', probability: 20, source: '', notes: '', tags: [] };
 
 export default function CrmPage() {
   const [deals, setDeals] = useState<Deal[]>([]);
   const [editing, setEditing] = useState<Deal | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [aiLoading, setAiLoading] = useState<string | null>(null);
+
+  // --- Search / filters (task 6) ---
+  const [search, setSearch] = useState('');
+  const [stageFilter, setStageFilter] = useState('');
+  const [ownerFilter, setOwnerFilter] = useState('');
+  const [sourceFilter, setSourceFilter] = useState('');
+  const [tagFilter, setTagFilter] = useState('');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+
+  // --- Bulk select (task 6) ---
+  const [selectMode, setSelectMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkStage, setBulkStage] = useState('');
+  const [bulkBusy, setBulkBusy] = useState(false);
 
   const load = () => fetch('/api/crm/deals').then(r => r.json()).then(d => d.ok && setDeals(d.deals));
   useEffect(() => { load(); }, []);
@@ -59,8 +77,92 @@ export default function CrmPage() {
     } finally { setAiLoading(null); }
   };
 
-  const totalValue = deals.filter(d => d.stage !== 'lost').reduce((s, d) => s + d.value, 0);
-  const wonValue = deals.filter(d => d.stage === 'won').reduce((s, d) => s + d.value, 0);
+  // Distinct facet values, derived from the loaded deals
+  const allTags = useMemo(() => Array.from(new Set(deals.flatMap(d => d.tags || []))).sort(), [deals]);
+  const allOwners = useMemo(() => Array.from(new Set(deals.map(d => d.ownerEmail).filter(Boolean) as string[])).sort(), [deals]);
+
+  const filtered = useMemo(() => {
+    const s = search.trim().toLowerCase();
+    const from = dateFrom ? new Date(dateFrom) : null;
+    const to = dateTo ? new Date(dateTo + 'T23:59:59') : null;
+    return deals.filter(d => {
+      if (s && !(d.title.toLowerCase().includes(s) || (d.contactName || '').toLowerCase().includes(s))) return false;
+      if (stageFilter && d.stage !== stageFilter) return false;
+      if (ownerFilter && !(d.ownerEmail || '').toLowerCase().includes(ownerFilter.toLowerCase())) return false;
+      if (sourceFilter && !(d.source || '').toLowerCase().includes(sourceFilter.toLowerCase())) return false;
+      if (tagFilter && !(d.tags || []).includes(tagFilter)) return false;
+      if (from && d.createdAt && new Date(d.createdAt) < from) return false;
+      if (to && d.createdAt && new Date(d.createdAt) > to) return false;
+      return true;
+    });
+  }, [deals, search, stageFilter, ownerFilter, sourceFilter, tagFilter, dateFrom, dateTo]);
+
+  const clearFilters = () => {
+    setSearch(''); setStageFilter(''); setOwnerFilter(''); setSourceFilter(''); setTagFilter(''); setDateFrom(''); setDateTo('');
+  };
+  const hasFilters = !!(search || stageFilter || ownerFilter || sourceFilter || tagFilter || dateFrom || dateTo);
+
+  const toggleQuickStage = (stage: string) => setStageFilter(prev => prev === stage ? '' : stage);
+
+  const totalValue = filtered.filter(d => d.stage !== 'lost').reduce((s, d) => s + d.value, 0);
+  const wonValue = filtered.filter(d => d.stage === 'won' || d.stage === 'repeat').reduce((s, d) => s + d.value, 0);
+
+  const exportCSV = () => {
+    const rows = filtered.map(d => ({
+      title: d.title,
+      contactName: d.contactName || '',
+      value: d.value,
+      stage: d.stage,
+      probability: d.probability,
+      source: d.source || '',
+      owner: d.ownerEmail || '',
+      tags: (d.tags || []).join(';'),
+      notes: d.notes || '',
+      createdAt: d.createdAt || '',
+    }));
+    const csv = toCSV(rows);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `kvl-deals-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  // --- Bulk actions ---
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const applyBulkStage = async () => {
+    if (!bulkStage || selectedIds.size === 0) return;
+    setBulkBusy(true);
+    try {
+      await Promise.all(Array.from(selectedIds).map(id =>
+        fetch(`/api/crm/deals/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ stage: bulkStage }) })
+      ));
+      setSelectedIds(new Set()); setBulkStage('');
+      load();
+    } finally { setBulkBusy(false); }
+  };
+
+  const bulkDelete = async () => {
+    if (selectedIds.size === 0) return;
+    if (!confirm(`Delete ${selectedIds.size} selected deal(s)? This cannot be undone.`)) return;
+    setBulkBusy(true);
+    try {
+      await Promise.all(Array.from(selectedIds).map(id => fetch(`/api/crm/deals/${id}`, { method: 'DELETE' })));
+      setSelectedIds(new Set());
+      load();
+    } finally { setBulkBusy(false); }
+  };
 
   return (
     <div className="container py-8">
@@ -70,16 +172,78 @@ export default function CrmPage() {
           <p className="text-text2 text-sm mt-1">Track deals from lead to close. AI suggests the best next action.</p>
         </div>
         <div className="flex gap-3 items-end">
-          <div className="text-right"><div className="text-xs text-text2">Pipeline</div><div className="text-2xl font-extrabold text-primary">{formatINR(totalValue)}</div></div>
+          <div className="text-right"><div className="text-xs text-text2">Pipeline{hasFilters ? ' (filtered)' : ''}</div><div className="text-2xl font-extrabold text-primary">{formatINR(totalValue)}</div></div>
           <div className="text-right"><div className="text-xs text-text2">Won</div><div className="text-2xl font-extrabold text-green-500">{formatINR(wonValue)}</div></div>
           <button onClick={() => { setEditing(empty); setIsNew(true); }} className="btn btn-primary"><Plus className="w-4 h-4" /> New Deal</button>
         </div>
       </div>
 
+      {/* Search + filters toolbar */}
+      <div className="card-base p-3 mb-3 flex flex-wrap gap-2 items-center">
+        <div className="relative flex-1 min-w-[200px]">
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text2" />
+          <input className="form-control w-full pl-9" placeholder="Search title or contact name…" value={search} onChange={e => setSearch(e.target.value)} />
+        </div>
+        <select className="form-control w-auto" value={stageFilter} onChange={e => setStageFilter(e.target.value)}>
+          <option value="">All stages</option>
+          {STAGES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
+        </select>
+        <input className="form-control w-auto" placeholder="Owner email" value={ownerFilter} onChange={e => setOwnerFilter(e.target.value)} list="crm-owners" />
+        <datalist id="crm-owners">{allOwners.map(o => <option key={o} value={o} />)}</datalist>
+        <input className="form-control w-auto" placeholder="Source" value={sourceFilter} onChange={e => setSourceFilter(e.target.value)} />
+        {allTags.length > 0 && (
+          <select className="form-control w-auto" value={tagFilter} onChange={e => setTagFilter(e.target.value)}>
+            <option value="">All tags</option>
+            {allTags.map(t => <option key={t} value={t}>{t}</option>)}
+          </select>
+        )}
+        <input type="date" className="form-control w-auto" value={dateFrom} onChange={e => setDateFrom(e.target.value)} title="From date" />
+        <input type="date" className="form-control w-auto" value={dateTo} onChange={e => setDateTo(e.target.value)} title="To date" />
+        {hasFilters && <button onClick={clearFilters} className="btn btn-ghost text-xs"><X className="w-3.5 h-3.5" /> Clear</button>}
+      </div>
+
+      {/* Quick filters + export + bulk-select toggle */}
+      <div className="flex flex-wrap items-center gap-2 mb-4">
+        <span className="text-[11px] text-text2 font-bold flex items-center gap-1"><Filter className="w-3 h-3" /> Quick:</span>
+        {(['won', 'lost', 'repeat'] as const).map(stg => {
+          const s = STAGES.find(x => x.id === stg)!;
+          const active = stageFilter === stg;
+          return (
+            <button key={stg} onClick={() => toggleQuickStage(stg)}
+              className="px-2.5 py-1 rounded-full text-[11px] font-bold transition-colors"
+              style={{ background: active ? s.color : 'transparent', color: active ? '#fff' : s.color, border: `1px solid ${s.color}` }}>
+              {s.label}
+            </button>
+          );
+        })}
+        <div className="flex-1" />
+        <button onClick={exportCSV} className="btn btn-ghost text-xs"><Download className="w-3.5 h-3.5" /> Export CSV</button>
+        <button onClick={() => { setSelectMode(v => !v); setSelectedIds(new Set()); }} className="btn btn-ghost text-xs">
+          {selectMode ? <CheckSquare className="w-3.5 h-3.5" /> : <Square className="w-3.5 h-3.5" />} {selectMode ? 'Exit select' : 'Select deals'}
+        </button>
+      </div>
+
+      {/* Bulk action bar */}
+      {selectMode && (
+        <div className="card-base p-3 mb-4 flex flex-wrap items-center gap-2">
+          <span className="text-xs font-bold">{selectedIds.size} selected</span>
+          <select className="form-control w-auto" value={bulkStage} onChange={e => setBulkStage(e.target.value)} disabled={selectedIds.size === 0}>
+            <option value="">Change stage to…</option>
+            {STAGES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
+          </select>
+          <button onClick={applyBulkStage} disabled={!bulkStage || selectedIds.size === 0 || bulkBusy} className="btn btn-primary text-xs disabled:opacity-50">
+            {bulkBusy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null} Apply
+          </button>
+          <button onClick={bulkDelete} disabled={selectedIds.size === 0 || bulkBusy} className="btn btn-ghost text-xs text-red-500 disabled:opacity-50">
+            <Trash2 className="w-3.5 h-3.5" /> Delete selected
+          </button>
+        </div>
+      )}
+
       {/* Kanban */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3 overflow-x-auto">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-3 overflow-x-auto">
         {STAGES.map(s => {
-          const stageDeals = deals.filter(d => d.stage === s.id);
+          const stageDeals = filtered.filter(d => d.stage === s.id);
           const stageValue = stageDeals.reduce((sum, d) => sum + d.value, 0);
           return (
             <div key={s.id} className="card-base p-3 min-h-[400px]">
@@ -95,10 +259,25 @@ export default function CrmPage() {
               <div className="space-y-2">
                 {stageDeals.map(d => (
                   <div key={d._id} className="surface-tint p-3 rounded-lg cursor-pointer hover:bg-primary/10 group">
-                    <div className="font-semibold text-sm mb-1">{d.title}</div>
-                    {d.contactName && <div className="text-[10px] text-text2 mb-1">{d.contactName}</div>}
-                    <div className="text-xs font-bold text-primary">{formatINR(d.value)}</div>
-                    <div className="text-[10px] text-text2 mt-1">{d.probability}% chance</div>
+                    <div className="flex items-start gap-2">
+                      {selectMode && (
+                        <input type="checkbox" className="mt-1 shrink-0" checked={selectedIds.has(d._id!)} onChange={() => toggleSelect(d._id!)} />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="font-semibold text-sm mb-1">{d.title}</div>
+                        {d.contactName && <div className="text-[10px] text-text2 mb-1">{d.contactName}</div>}
+                        <div className="text-xs font-bold text-primary">{formatINR(d.value)}</div>
+                        <div className="text-[10px] text-text2 mt-1">{d.probability}% chance</div>
+                      </div>
+                    </div>
+
+                    {d.tags && d.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {d.tags.map(t => (
+                          <span key={t} className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-primary/10 text-primary">{t}</span>
+                        ))}
+                      </div>
+                    )}
 
                     {d.aiSuggestion && (
                       <div className="mt-2 p-2 rounded bg-primary/10 text-[10px] text-text2 leading-relaxed">
@@ -153,6 +332,8 @@ export default function CrmPage() {
                 {STAGES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
               </select>
               <input className="form-control" placeholder="Source (e.g., website, referral)" value={editing.source || ''} onChange={e => setEditing({ ...editing, source: e.target.value })} />
+              <input className="form-control" placeholder="Tags (comma separated, e.g. vip, renewal)" value={(editing.tags || []).join(', ')}
+                onChange={e => setEditing({ ...editing, tags: e.target.value.split(',').map(t => t.trim()).filter(Boolean) })} />
               <textarea className="form-control" rows={3} placeholder="Notes" value={editing.notes || ''} onChange={e => setEditing({ ...editing, notes: e.target.value })} />
               <button onClick={save} className="btn btn-primary w-full justify-center"><Save className="w-4 h-4" /> Save</button>
             </div>

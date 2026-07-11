@@ -3,8 +3,7 @@ import { connectDB } from '@/lib/mongodb';
 import { Lead } from '@/lib/models/Lead';
 import { chatRouted } from '@/lib/ai/router';
 import { sendNotification } from '@/lib/email';
-
-const CRON_SECRET = process.env.CRON_SECRET || 'kvl-cron-2024';
+import { requireCronAuth } from '@/lib/cron-auth';
 
 // Weekly AI-generated nurture email for leads not yet converted
 async function generateNurtureEmail(lead: any): Promise<string> {
@@ -25,8 +24,7 @@ Return ONLY the HTML email body (no subject line).`,
 }
 
 export async function GET(req: Request) {
-  const secret = new URL(req.url).searchParams.get('secret');
-  if (secret !== CRON_SECRET) return NextResponse.json({ ok: false }, { status: 401 });
+  const unauth = requireCronAuth(req); if (unauth) return unauth;
 
   await connectDB();
 

@@ -1,23 +1,31 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { PageHero } from '@/components/shared/PageHero';
 import { Download, FileImage, Palette } from 'lucide-react';
 
-export const metadata = { title: 'Brand Assets — Logo Downloads' };
+export const metadata = {
+  title: 'Brand Assets — Logo & Media Kit',
+  description: 'Download official KVL Business Solutions logos and brand colors in multiple formats — for partner sites, press, presentations and social media.',
+};
 
 const variants = [
-  // SVG (vector — best quality, scales infinitely)
-  { name: 'Horizontal · Brand colors', href: '/logo.svg',          preview: '/logo.svg',          bg: 'bg-white',  format: 'SVG · Transparent' },
-  { name: 'Horizontal · Light (for dark bg)', href: '/logo-light.svg', preview: '/logo-light.svg', bg: 'bg-slate-900', format: 'SVG · Transparent' },
-  { name: 'Horizontal · Dark (for light bg)', href: '/logo-dark.svg',  preview: '/logo-dark.svg',  bg: 'bg-white',  format: 'SVG · Transparent' },
-  { name: 'Stacked · Square',          href: '/logo-stacked.svg', preview: '/logo-stacked.svg',   bg: 'bg-white',  format: 'SVG · Transparent' },
-  { name: 'Mark · Symbol only',        href: '/logo-mark.svg',    preview: '/logo-mark.svg',      bg: 'bg-white',  format: 'SVG · Transparent' },
+  // SVG (vector — best quality, scales infinitely). Rendered `unoptimized`
+  // since next/image's built-in optimizer blocks SVG output unless
+  // `images.dangerouslyAllowSVG` is enabled — these are small local static
+  // assets, so skipping the optimizer costs nothing.
+  { name: 'Horizontal · Brand colors', href: '/logo.svg',          preview: '/logo.svg',          bg: 'bg-white',  format: 'SVG · Transparent', w: 240, h: 120, svg: true },
+  { name: 'Horizontal · Light (for dark bg)', href: '/logo-light.svg', preview: '/logo-light.svg', bg: 'bg-slate-900', format: 'SVG · Transparent', w: 240, h: 120, svg: true },
+  { name: 'Horizontal · Dark (for light bg)', href: '/logo-dark.svg',  preview: '/logo-dark.svg',  bg: 'bg-white',  format: 'SVG · Transparent', w: 240, h: 120, svg: true },
+  { name: 'Stacked · Square',          href: '/logo-stacked.svg', preview: '/logo-stacked.svg',   bg: 'bg-white',  format: 'SVG · Transparent', w: 180, h: 180, svg: true },
+  { name: 'Mark · Symbol only',        href: '/logo-mark.svg',    preview: '/logo-mark.svg',      bg: 'bg-white',  format: 'SVG · Transparent', w: 180, h: 180, svg: true },
 
-  // PNG (auto-generated, transparent)
-  { name: 'Horizontal · Brand · PNG', href: '/logo?type=horizontal&theme=brand', preview: '/logo?type=horizontal&theme=brand', bg: 'bg-white',     format: 'PNG · Transparent · 800×400' },
-  { name: 'Horizontal · Light · PNG', href: '/logo?type=horizontal&theme=light', preview: '/logo?type=horizontal&theme=light', bg: 'bg-slate-900', format: 'PNG · Transparent · 800×400' },
-  { name: 'Horizontal · Dark · PNG',  href: '/logo?type=horizontal&theme=dark',  preview: '/logo?type=horizontal&theme=dark',  bg: 'bg-white',     format: 'PNG · Transparent · 800×400' },
-  { name: 'Stacked · Brand · PNG',    href: '/logo?type=stacked&theme=brand',    preview: '/logo?type=stacked&theme=brand',    bg: 'bg-white',     format: 'PNG · Transparent · 600×600' },
-  { name: 'Mark · Brand · PNG',       href: '/logo?type=mark&theme=brand',       preview: '/logo?type=mark&theme=brand',       bg: 'bg-white',     format: 'PNG · Transparent · 400×400' },
+  // PNG (auto-generated, transparent) — dimensions match the real sizes
+  // returned by app/logo/route.tsx for each type.
+  { name: 'Horizontal · Brand · PNG', href: '/logo?type=horizontal&theme=brand', preview: '/logo?type=horizontal&theme=brand', bg: 'bg-white',     format: 'PNG · Transparent · 800×400', w: 800, h: 400, svg: false },
+  { name: 'Horizontal · Light · PNG', href: '/logo?type=horizontal&theme=light', preview: '/logo?type=horizontal&theme=light', bg: 'bg-slate-900', format: 'PNG · Transparent · 800×400', w: 800, h: 400, svg: false },
+  { name: 'Horizontal · Dark · PNG',  href: '/logo?type=horizontal&theme=dark',  preview: '/logo?type=horizontal&theme=dark',  bg: 'bg-white',     format: 'PNG · Transparent · 800×400', w: 800, h: 400, svg: false },
+  { name: 'Stacked · Brand · PNG',    href: '/logo?type=stacked&theme=brand',    preview: '/logo?type=stacked&theme=brand',    bg: 'bg-white',     format: 'PNG · Transparent · 600×600', w: 600, h: 600, svg: false },
+  { name: 'Mark · Brand · PNG',       href: '/logo?type=mark&theme=brand',       preview: '/logo?type=mark&theme=brand',       bg: 'bg-white',     format: 'PNG · Transparent · 400×400', w: 400, h: 400, svg: false },
 ];
 
 const colors = [
@@ -55,7 +63,14 @@ export default function BrandPage() {
                   <div className="absolute inset-0 opacity-10" style={{
                     backgroundImage: 'repeating-conic-gradient(#aaa 0% 25%, transparent 0% 50%) 50% / 16px 16px',
                   }} />
-                  <img src={v.preview} alt={v.name} className="max-h-32 max-w-full object-contain relative z-10" />
+                  <Image
+                    src={v.preview}
+                    alt={v.name}
+                    width={v.w}
+                    height={v.h}
+                    unoptimized={v.svg}
+                    className="max-h-32 max-w-full w-auto h-auto object-contain relative z-10"
+                  />
                 </div>
                 <div className="p-4">
                   <div className="font-semibold text-sm">{v.name}</div>

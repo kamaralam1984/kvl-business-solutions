@@ -1,7 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Zap, Gift, ArrowRight } from 'lucide-react';
+import { X, Zap, MessageSquare, ArrowRight } from 'lucide-react';
+import { trackEvent } from '@/components/analytics/GoogleAnalytics';
 
 export function ExitIntentPopup() {
   const [show, setShow] = useState(false);
@@ -50,9 +51,10 @@ export function ExitIntentPopup() {
         email,
         phone: '0000000000',
         source: 'exit-popup',
-        message: 'User submitted email via exit intent popup — wants free demo + discount',
+        message: 'User submitted email via exit intent popup — wants a free consultation',
       }),
     }).catch(() => {});
+    trackEvent('lead_submit', { source: 'exit-popup' });
     setSubmitted(true);
     setTimeout(dismiss, 3000);
   };
@@ -72,7 +74,7 @@ export function ExitIntentPopup() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.85, y: 30 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            className="bg-surface rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative"
+            className="bg-app2 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative"
           >
             <button onClick={dismiss} className="absolute top-4 right-4 z-10 text-text2 hover:text-text bg-tint rounded-full p-1">
               <X className="w-4 h-4" />
@@ -89,12 +91,12 @@ export function ExitIntentPopup() {
               <div className="relative">
                 <div className="flex justify-center mb-3">
                   <div className="w-14 h-14 rounded-2xl bg-white/20 grid place-items-center">
-                    <Gift className="w-7 h-7" />
+                    <MessageSquare className="w-7 h-7" />
                   </div>
                 </div>
-                <p className="text-xs font-bold uppercase tracking-widest opacity-80 mb-1">Ruko! Khaas Offer</p>
-                <h2 className="text-2xl font-extrabold">10% Discount + Free Demo</h2>
-                <p className="text-sm opacity-80 mt-1">Sirf aaj ke liye — limited seats!</p>
+                <p className="text-xs font-bold uppercase tracking-widest opacity-80 mb-1">Before You Go</p>
+                <h2 className="text-2xl font-extrabold">Get a Free Consultation</h2>
+                <p className="text-sm opacity-80 mt-1">Leave your email and a solution architect will reach out.</p>
               </div>
             </div>
 
@@ -104,27 +106,27 @@ export function ExitIntentPopup() {
                   <div className="w-14 h-14 rounded-full bg-green-500/10 grid place-items-center mx-auto mb-3">
                     <Zap className="w-7 h-7 text-green-500" />
                   </div>
-                  <h3 className="font-bold text-lg">Shukriya! 🎉</h3>
-                  <p className="text-text2 text-sm mt-1">Hamaari team aapko jald contact karegi.</p>
+                  <h3 className="font-bold text-lg">Thank you</h3>
+                  <p className="text-text2 text-sm mt-1">Our team will be in touch shortly.</p>
                 </div>
               ) : (
                 <>
                   <p className="text-text2 text-sm text-center mb-4">
-                    Apna email daalo — hum aapko <strong>free demo schedule</strong> karenge aur <strong>10% discount</strong> denge!
+                    Share your email and we'll set up a <strong>free strategy call</strong> to talk through your project — no pressure, no obligation.
                   </p>
                   <form onSubmit={submit} className="space-y-3">
                     <input
                       type="email" required
                       value={email} onChange={e => setEmail(e.target.value)}
-                      placeholder="aapka@email.com"
+                      placeholder="you@company.com"
                       className="form-control w-full"
                     />
                     <button type="submit"
                       className="w-full btn-primary flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm">
-                      Free Demo Book Karein <ArrowRight className="w-4 h-4" />
+                      Get My Free Consultation <ArrowRight className="w-4 h-4" />
                     </button>
                   </form>
-                  <p className="text-[11px] text-text2 text-center mt-3">Koi spam nahi. Sirf 1 call hamaari team ki taraf se.</p>
+                  <p className="text-[11px] text-text2 text-center mt-3">No spam — just one call from our team.</p>
                 </>
               )}
             </div>

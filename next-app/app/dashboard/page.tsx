@@ -4,7 +4,7 @@ import { connectDB } from '@/lib/mongodb';
 import { Order } from '@/lib/models/Order';
 import { formatINR } from '@/lib/utils';
 import Link from 'next/link';
-import { Package, ShoppingBag } from 'lucide-react';
+import { Package, ShoppingBag, Gift } from 'lucide-react';
 import { DashboardCharts } from '@/components/dashboard/DashboardCharts';
 
 export const dynamic = 'force-dynamic';
@@ -24,6 +24,14 @@ export default async function DashboardPage() {
         <div className="card-base p-5"><ShoppingBag className="w-6 h-6 text-green-500 mb-2" /><div className="text-2xl font-extrabold">{orders.filter((o: any) => o.status === 'paid').length}</div><div className="text-xs text-text2">Active Licenses</div></div>
         <div className="card-base p-5"><div className="text-2xl font-extrabold">{formatINR(orders.filter((o: any) => o.status === 'paid').reduce((s: number, o: any) => s + (o.amount || 0), 0))}</div><div className="text-xs text-text2">Total Spent</div></div>
       </div>
+
+      <Link href="/dashboard/referrals" className="card-base p-5 flex items-center gap-4 mb-8 hover:border-primary transition-colors">
+        <div className="w-11 h-11 rounded-xl grid place-items-center shrink-0 bg-primary/10"><Gift className="w-5 h-5 text-primary" /></div>
+        <div className="flex-1">
+          <div className="font-bold text-sm">Refer a friend, earn rewards</div>
+          <div className="text-xs text-text2">Share your referral link and track clicks &amp; signups</div>
+        </div>
+      </Link>
 
       <DashboardCharts orders={orders.map((o: any) => ({
         orderId: o.orderId,

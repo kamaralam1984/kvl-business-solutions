@@ -1,14 +1,16 @@
 'use client';
 import Link from 'next/link';
-import { Facebook, Instagram, Linkedin, Youtube, Twitter, Phone, Mail, MapPin, ArrowUpRight, ArrowRight } from 'lucide-react';
+import Image from 'next/image';
+import { Facebook, Instagram, Linkedin, Youtube, Twitter, Github, Phone, Mail, MapPin, MessageCircle, ArrowUpRight, ArrowRight } from 'lucide-react';
 import { NewsletterForm } from '@/components/widgets/NewsletterForm';
 
 export function Footer({ settings }: { settings?: any }) {
   const brandName = settings?.brandName || 'KVL Business Solutions';
   const phone     = settings?.phone     || '+91 99420 00413';
-  const email     = settings?.email     || 'info@kvlsolutions.in';
-  const address   = [settings?.addressLine1, settings?.addressLine2].filter(Boolean).join(', ') || 'Pune, Maharashtra, India';
-  const tagline   = settings?.tagline   || "India's next-generation enterprise solutions — Software, GPS, Civil & AI Business Technology.";
+  const email     = settings?.email     || 'info@kvlbusinesssolutions.com';
+  const address   = [settings?.addressLine1, settings?.addressLine2].filter(Boolean).join(', ') || 'Patna, Sultanganj, Bihar, India';
+  const whatsapp  = (settings?.whatsapp || '919942000413').replace(/\D/g, '');
+  const tagline   = settings?.tagline   || 'Custom software, ERP, CRM, and AI automation for businesses that run on real systems.';
   const showNewsletter = settings?.features?.newsletter !== false;
 
   const socials = [
@@ -16,27 +18,56 @@ export function Footer({ settings }: { settings?: any }) {
     { Icon: Instagram, url: settings?.social?.instagram, label: 'Instagram' },
     { Icon: Linkedin,  url: settings?.social?.linkedin,  label: 'LinkedIn' },
     { Icon: Youtube,   url: settings?.social?.youtube,   label: 'YouTube' },
-    { Icon: Twitter,   url: settings?.social?.twitter,   label: 'Twitter' },
-  ];
+    { Icon: Twitter,   url: settings?.social?.twitter,   label: 'Twitter / X' },
+    { Icon: Github,    url: settings?.social?.github,    label: 'GitHub' },
+  ].filter(s => !!s.url);
 
   const services = [
-    { label: 'Software Development', href: '/services' },
-    { label: 'Website Development',  href: '/services' },
-    { label: 'GPS Fleet Tracking',   href: '/services' },
-    { label: 'Civil & Construction', href: '/services' },
-    { label: 'Industrial Automation',href: '/services' },
-    { label: 'CCTV & Security',      href: '/services' },
+    { label: 'Website Development', href: '/services/website' },
+    { label: 'Mobile Apps',         href: '/services/android' },
+    { label: 'ERP',                 href: '/services/erp' },
+    { label: 'CRM',                 href: '/services/crm' },
+    { label: 'AI Automation',       href: '/services/ai' },
+    { label: 'Custom Software',     href: '/services/custom-software' },
+  ];
+
+  const industries = [
+    { label: 'Healthcare',    href: '/industries/hospitals' },
+    { label: 'Education',     href: '/industries/schools' },
+    { label: 'Real Estate',   href: '/industries/realestate' },
+    { label: 'Construction',  href: '/industries/construction' },
+    { label: 'Manufacturing', href: '/industries/manufacturing' },
+    { label: 'Government',    href: '/industries/government' },
+  ];
+
+  const portfolio = [
+    { label: 'VidYT',            href: '/projects/vidyt' },
+    { label: 'AapKaPlot',        href: '/projects/aapkaplot' },
+    { label: 'Gravity',          href: '/projects/gravity' },
+    { label: 'Restro OS',        href: '/projects/restro-os' },
+    { label: 'All Projects',     href: '/projects' },
+    { label: 'Website Demos',    href: '/website-demos' },
   ];
 
   const company = [
-    { label: 'About Us',      href: '/about' },
-    { label: 'Pricing',       href: '/pricing' },
-    { label: 'Book a Demo',   href: '/book-demo' },
-    { label: 'Industries',    href: '/industries' },
-    { label: 'Careers',       href: '/careers' },
-    { label: 'Contact',       href: '/contact' },
-    { label: 'Support',       href: '/support' },
-    { label: 'Knowledge Base',href: '/docs' },
+    { label: 'About Us',    href: '/about' },
+    { label: 'Patna Office', href: '/software-development-company-patna' },
+    { label: 'Global Delivery', href: '/global' },
+    { label: 'Brand',       href: '/brand' },
+    { label: 'Careers',     href: '/careers' },
+    { label: 'Pricing',     href: '/pricing' },
+    { label: 'Book a Demo', href: '/book-demo' },
+    { label: 'Mock Interview', href: '/mock-interview' },
+  ];
+
+  const resources = [
+    { label: 'Blog',           href: '/blog' },
+    { label: 'Knowledge Base', href: '/docs' },
+    { label: 'Learn',          href: '/learn' },
+    { label: 'AI Voice Demo',  href: '/voice' },
+    { label: 'FAQ',            href: '/faq' },
+    { label: 'Support',        href: '/support' },
+    { label: 'Downloads',      href: '/downloads' },
   ];
 
   const legal = [
@@ -44,11 +75,10 @@ export function Footer({ settings }: { settings?: any }) {
     { label: 'Terms of Use',    href: '/terms' },
     { label: 'Refund Policy',   href: '/refund-policy' },
     { label: 'Shipping Policy', href: '/shipping-policy' },
-    { label: 'FAQ',             href: '/faq' },
   ];
 
   return (
-    <footer style={{ background: '#f4f3f1', position: 'relative', overflow: 'hidden' }}>
+    <footer style={{ background: 'rgb(var(--bg-3))', position: 'relative', overflow: 'hidden' }}>
 
       {/* Premium top gold line */}
       <div style={{
@@ -62,13 +92,13 @@ export function Footer({ settings }: { settings?: any }) {
       }} />
 
       {/* CTA banner strip */}
-      <div className="relative z-10 border-b" style={{ borderColor: 'rgba(0,0,0,0.07)', background: '#ffffff' }}>
+      <div className="relative z-10 border-b" style={{ borderColor: 'rgba(var(--border) / 0.07)', background: 'rgb(var(--bg-2))' }}>
         <div className="container py-14 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <div className="eyebrow mb-2" style={{ color: 'rgba(0,0,0,0.45)' }}>Ready to grow?</div>
-            <h3 className="font-display font-black text-[1.6rem] tracking-tight leading-none" style={{ color: '#0a0a0a' }}>
-              Let&apos;s build something<br />
-              <span style={{ color: '#c8a870' }}>extraordinary together.</span>
+            <div className="eyebrow mb-2" style={{ color: 'rgba(var(--text) / 0.45)' }}>Have a project in mind?</div>
+            <h3 className="font-display font-black text-[1.6rem] tracking-tight leading-none" style={{ color: 'rgb(var(--text))' }}>
+              Tell us what you&apos;re building.<br />
+              <span style={{ color: '#c8a870' }}>We&apos;ll tell you how.</span>
             </h3>
           </div>
           <div className="flex gap-3 shrink-0">
@@ -88,9 +118,9 @@ export function Footer({ settings }: { settings?: any }) {
             <Link
               href="/book-demo"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-[14px] font-semibold border transition-all duration-200"
-              style={{ borderColor: 'rgba(0,0,0,0.15)', color: 'rgba(0,0,0,0.6)' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0,0,0,0.25)'; (e.currentTarget as HTMLElement).style.color = '#0a0a0a'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0,0,0,0.15)'; (e.currentTarget as HTMLElement).style.color = 'rgba(0,0,0,0.6)'; }}
+              style={{ borderColor: 'rgba(var(--border) / 0.15)', color: 'rgba(var(--text) / 0.6)' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(var(--border) / 0.25)'; (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text))'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(var(--border) / 0.15)'; (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.6)'; }}
             >
               Book Demo
             </Link>
@@ -98,55 +128,34 @@ export function Footer({ settings }: { settings?: any }) {
         </div>
       </div>
 
-      {/* Main footer grid */}
-      <div className="container relative z-10 py-16 pb-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
-
-        {/* Column 1: Brand */}
-        <div className="lg:col-span-2">
-          <Link href="/" className="inline-flex flex-col leading-none mb-5 group">
-            <span className="font-display font-black flex items-center" style={{ letterSpacing: '3px', fontSize: '20px', color: '#0a0a0a' }}>
-              K
-              <span style={{ color: '#c8a870', margin: '0 1px', fontSize: '7px', lineHeight: 1 }}>◆</span>
-              V
-              <span style={{ color: '#c8a870', margin: '0 1px', fontSize: '7px', lineHeight: 1 }}>◆</span>
-              L
-            </span>
-            <span className="text-[6.5px] tracking-[3.5px] font-semibold uppercase mt-1" style={{ color: 'rgba(0,0,0,0.3)' }}>
-              BUSINESS SOLUTIONS
+      {/* Brand + Newsletter row */}
+      <div className="container relative z-10 pt-16 pb-10 grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-10 items-start">
+        <div>
+          <Link href="/" className="inline-flex mb-5 group">
+            <span
+              className="relative rounded-lg overflow-hidden shrink-0 transition-transform duration-300 group-hover:scale-105"
+              style={{ width: 138, height: 43, boxShadow: '0 0 0 1px rgba(200,168,112,0.35), 0 2px 10px rgba(0,0,0,0.15)' }}
+            >
+              <Image src="/brand-logo.png" alt="KVL Business Solutions" fill sizes="138px" className="object-cover" />
             </span>
           </Link>
 
-          <p className="text-[13px] leading-[1.8] mb-7" style={{ color: 'rgba(0,0,0,0.45)', maxWidth: 280 }}>
+          <p className="text-[13px] leading-[1.8] mb-6" style={{ color: 'rgba(var(--text) / 0.45)', maxWidth: 340 }}>
             {tagline}
           </p>
 
-          {/* Contact items */}
-          <div className="space-y-3 mb-7">
-            {[
-              { Icon: Phone,  text: phone },
-              { Icon: Mail,   text: email },
-              { Icon: MapPin, text: address },
-            ].map(({ Icon, text }) => (
-              <div key={text} className="flex items-start gap-3">
-                <Icon className="w-3.5 h-3.5 mt-0.5 shrink-0" style={{ color: '#c8a870' }} />
-                <span className="text-[12px] leading-relaxed" style={{ color: 'rgba(0,0,0,0.55)' }}>{text}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Socials */}
           <div className="flex flex-wrap gap-2">
             {socials.map((s, i) => (
               <Link
                 key={i}
-                href={s.url || '#'}
-                target={s.url ? '_blank' : undefined}
+                href={s.url}
+                target="_blank"
                 rel="noopener noreferrer"
                 aria-label={s.label}
                 className="w-9 h-9 rounded-xl grid place-items-center border transition-all duration-200"
-                style={{ borderColor: 'rgba(0,0,0,0.1)', color: 'rgba(0,0,0,0.4)' }}
+                style={{ borderColor: 'rgba(var(--border) / 0.1)', color: 'rgba(var(--text) / 0.4)' }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(200,168,112,0.5)'; (e.currentTarget as HTMLElement).style.color = '#c8a870'; (e.currentTarget as HTMLElement).style.background = 'rgba(200,168,112,0.06)'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0,0,0,0.1)'; (e.currentTarget as HTMLElement).style.color = 'rgba(0,0,0,0.4)'; (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(var(--border) / 0.1)'; (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.4)'; (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
               >
                 <s.Icon className="w-3.5 h-3.5" />
               </Link>
@@ -154,55 +163,88 @@ export function Footer({ settings }: { settings?: any }) {
           </div>
         </div>
 
-        {/* Column 2: Services */}
-        <FooterCol title="Services" links={services} />
-
-        {/* Column 3: Company */}
-        <FooterCol title="Company" links={company} />
-
-        {/* Column 4: Newsletter + Legal */}
-        <div>
-          {showNewsletter && (
-            <div className="rounded-xl p-5 mb-7"
-              style={{ background: '#ffffff', border: '1px solid rgba(0,0,0,0.08)' }}>
-              <div className="text-[10px] font-bold tracking-[0.15em] uppercase mb-1" style={{ color: '#0a0a0a' }}>Stay Updated</div>
-              <p className="text-[12px] mb-4 leading-relaxed" style={{ color: 'rgba(0,0,0,0.45)' }}>
-                Get the latest business insights from KVL.
-              </p>
-              <NewsletterForm />
-            </div>
-          )}
-
-          <div className="text-[11px] font-bold tracking-[0.12em] uppercase mb-3" style={{ color: 'rgba(0,0,0,0.5)' }}>
-            Legal
+        {showNewsletter && (
+          <div className="rounded-xl p-5" style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.08)' }}>
+            <div className="text-[10px] font-bold tracking-[0.15em] uppercase mb-1" style={{ color: 'rgb(var(--text))' }}>Stay Updated</div>
+            <p className="text-[12px] mb-4 leading-relaxed" style={{ color: 'rgba(var(--text) / 0.45)' }}>
+              Get product updates and business insights from KVL, sent occasionally.
+            </p>
+            <NewsletterForm />
           </div>
-          <ul className="space-y-2.5">
+        )}
+      </div>
+
+      {/* Link columns */}
+      <div className="container relative z-10 pb-16 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10">
+        <FooterCol title="Services" links={services} />
+        <FooterCol title="Industries" links={industries} />
+        <FooterCol title="Portfolio" links={portfolio} />
+        <FooterCol title="Company" links={company} />
+        <FooterCol title="Resources" links={resources} />
+
+        {/* Contact column */}
+        <div>
+          <div className="text-[11px] font-bold tracking-[0.14em] uppercase mb-5" style={{ color: 'rgba(var(--text) / 0.5)' }}>
+            Contact
+          </div>
+          <ul className="space-y-3">
+            <li>
+              <a href={`tel:${phone.replace(/\s/g, '')}`} className="flex items-start gap-2.5 text-[13px] transition-colors duration-200" style={{ color: 'rgba(var(--text) / 0.55)' }}>
+                <Phone className="w-3.5 h-3.5 mt-0.5 shrink-0" style={{ color: '#c8a870' }} />
+                {phone}
+              </a>
+            </li>
+            <li>
+              <a href={`mailto:${email}`} className="flex items-start gap-2.5 text-[13px] transition-colors duration-200" style={{ color: 'rgba(var(--text) / 0.55)' }}>
+                <Mail className="w-3.5 h-3.5 mt-0.5 shrink-0" style={{ color: '#c8a870' }} />
+                {email}
+              </a>
+            </li>
+            <li>
+              <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noreferrer" className="flex items-start gap-2.5 text-[13px] transition-colors duration-200" style={{ color: 'rgba(var(--text) / 0.55)' }}>
+                <MessageCircle className="w-3.5 h-3.5 mt-0.5 shrink-0" style={{ color: '#c8a870' }} />
+                WhatsApp
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=25.5941,85.1376"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-start gap-2.5 text-[13px] transition-colors duration-200"
+                style={{ color: 'rgba(var(--text) / 0.55)' }}
+              >
+                <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0" style={{ color: '#c8a870' }} />
+                {address}
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Bottom bar */}
+      <div className="relative z-10" style={{ borderTop: '1px solid rgba(var(--border) / 0.08)' }}>
+        <div className="container py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-[12px]" style={{ color: 'rgba(var(--text) / 0.3)' }}>
+            &copy; {new Date().getFullYear()} {brandName}. All rights reserved.
+          </p>
+          <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5">
             {legal.map(item => (
               <li key={item.label}>
                 <Link
                   href={item.href}
                   className="text-[12px] transition-colors duration-200"
-                  style={{ color: 'rgba(0,0,0,0.4)' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#0a0a0a'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(0,0,0,0.4)'; }}
+                  style={{ color: 'rgba(var(--text) / 0.4)' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text))'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.4)'; }}
                 >
                   {item.label}
                 </Link>
               </li>
             ))}
           </ul>
-        </div>
-      </div>
-
-      {/* Bottom bar */}
-      <div className="relative z-10" style={{ borderTop: '1px solid rgba(0,0,0,0.08)' }}>
-        <div className="container py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-[12px]" style={{ color: 'rgba(0,0,0,0.3)' }}>
-            &copy; {new Date().getFullYear()} {brandName}. All rights reserved.
-          </p>
-          <p className="text-[12px]" style={{ color: 'rgba(0,0,0,0.3)' }}>
-            Crafted with precision in India&nbsp;&nbsp;·&nbsp;&nbsp;
-            <span style={{ color: '#c8a870', fontWeight: 600 }}>Made for Excellence</span>
+          <p className="text-[12px]" style={{ color: 'rgba(var(--text) / 0.3)' }}>
+            Built in Patna, India
           </p>
         </div>
       </div>
@@ -210,10 +252,10 @@ export function Footer({ settings }: { settings?: any }) {
   );
 }
 
-function FooterCol({ title, links }: { title: string; links: { label: string; href: string }[] }) {
+function FooterCol({ title, links }: { title: string; links: { label: string; href: string; external?: boolean }[] }) {
   return (
     <div>
-      <div className="text-[11px] font-bold tracking-[0.14em] uppercase mb-5" style={{ color: 'rgba(0,0,0,0.5)' }}>
+      <div className="text-[11px] font-bold tracking-[0.14em] uppercase mb-5" style={{ color: 'rgba(var(--text) / 0.5)' }}>
         {title}
       </div>
       <ul className="space-y-3">
@@ -221,10 +263,12 @@ function FooterCol({ title, links }: { title: string; links: { label: string; hr
           <li key={item.label}>
             <Link
               href={item.href}
+              target={item.external ? '_blank' : undefined}
+              rel={item.external ? 'noreferrer' : undefined}
               className="text-[13px] flex items-center gap-2 group transition-all duration-200"
-              style={{ color: 'rgba(0,0,0,0.4)' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#0a0a0a'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(0,0,0,0.4)'; }}
+              style={{ color: 'rgba(var(--text) / 0.4)' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text))'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.4)'; }}
             >
               <ArrowRight className="w-3 h-3 shrink-0 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" style={{ color: '#c8a870' }} />
               {item.label}

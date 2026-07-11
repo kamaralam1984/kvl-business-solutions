@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { connectDB } from '@/lib/mongodb';
 import { Lead } from '@/lib/models/Lead';
 import { requireAdmin } from '@/lib/admin-guard';
@@ -26,7 +27,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     });
 
     return NextResponse.json({ ok: true, callId });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e.message }, { status: 500 });
+  } catch (e) {
+    return apiError(e);
   }
 }

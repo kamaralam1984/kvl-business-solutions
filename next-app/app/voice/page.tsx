@@ -76,7 +76,7 @@ export default function VoiceAssistantPage() {
 
   return (
     <>
-      <PageHero eyebrow="AI VOICE ASSISTANT" title="Talk to" accent="KVL AI" description="Voice me poochiye software, pricing, demos — Hindi ya English dono kaam karte hain." breadcrumb="Voice" />
+      <PageHero eyebrow="AI VOICE ASSISTANT" title="Talk to" accent="KVL AI" description="Ask about software, pricing or demos by voice, in Hindi or English — a preview of the same voice automation we build for client call centers and support lines." breadcrumb="Voice" />
 
       <section className="section">
         <div className="container max-w-2xl">
@@ -84,7 +84,7 @@ export default function VoiceAssistantPage() {
           <div className="card-base p-6 mb-6 max-h-[400px] overflow-y-auto space-y-3">
             {history.map((m, i) => (
               <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${m.role === 'user' ? 'bg-primary text-white rounded-br-sm' : 'surface-tint rounded-bl-sm'}`}>
+                <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${m.role === 'user' ? 'bg-violet-600 text-white rounded-br-sm' : 'surface-tint rounded-bl-sm'}`}>
                   {m.content}
                 </div>
               </div>

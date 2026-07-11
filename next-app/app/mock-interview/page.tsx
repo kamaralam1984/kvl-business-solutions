@@ -65,7 +65,7 @@ export default function MockInterviewPage() {
 
   return (
     <>
-      <PageHero eyebrow="AI MOCK INTERVIEWS" title="Practice with" accent="AI" description="Real interview simulation. 6 questions per session. Detailed feedback at the end." breadcrumb="Mock Interview" />
+      <PageHero eyebrow="AI MOCK INTERVIEWS" title="Practice with" accent="AI" description="A realistic AI-run interview — 6 role-specific questions and detailed feedback at the end, free to use while you prepare for the real thing." breadcrumb="Mock Interview" />
 
       <section className="section">
         <div className="container max-w-3xl">
@@ -115,7 +115,7 @@ export default function MockInterviewPage() {
               <div className="card-base p-5 mb-4 max-h-[60vh] overflow-y-auto space-y-3">
                 {history.map((m, i) => (
                   <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[85%] p-3 rounded-2xl text-sm ${m.role === 'user' ? 'bg-primary text-white rounded-br-sm' : 'surface-tint rounded-bl-sm'}`}>
+                    <div className={`max-w-[85%] p-3 rounded-2xl text-sm ${m.role === 'user' ? 'bg-violet-600 text-white rounded-br-sm' : 'surface-tint rounded-bl-sm'}`}>
                       {m.role === 'assistant' && <div className="text-[10px] font-bold text-primary mb-1">🤖 INTERVIEWER</div>}
                       {m.content}
                     </div>

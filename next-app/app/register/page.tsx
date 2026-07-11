@@ -1,6 +1,7 @@
 'use client';
 import { Suspense, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { UserPlus, MailCheck, User, Mail, Lock, Phone, Building2 } from 'lucide-react';
 import { signIn } from 'next-auth/react';
@@ -40,11 +41,11 @@ export default function RegisterPage() {
         >
           <MailCheck className="w-8 h-8" style={{ color: '#c8a96e' }} />
         </div>
-        <h1 className="text-2xl font-extrabold" style={{ color: '#f5f5f0', fontFamily: 'Poppins, sans-serif' }}>Check your inbox!</h1>
-        <p className="mt-3 text-sm" style={{ color: '#888' }}>
-          We sent a verification link to <span className="font-semibold" style={{ color: '#f5f5f0' }}>{form.email}</span>. Click it to confirm your account.
+        <h1 className="text-2xl font-extrabold text-text" style={{ fontFamily: 'Poppins, sans-serif' }}>Check your inbox!</h1>
+        <p className="mt-3 text-sm text-text2">
+          We sent a verification link to <span className="font-semibold text-text">{form.email}</span>. Click it to confirm your account.
         </p>
-        <p className="text-xs mt-3" style={{ color: '#888' }}>Redirecting you to your dashboard…</p>
+        <p className="text-xs mt-3 text-text2">Redirecting you to your dashboard…</p>
       </motion.div>
     </div>
   );
@@ -61,9 +62,13 @@ export default function RegisterPage() {
         <div className="absolute top-0 left-0 right-0 h-40 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 40% at 50% 0%, rgba(200,169,110,0.06) 0%, transparent 100%)' }} />
 
         <div className="relative z-10 text-center px-12">
-          <div className="mb-8">
-            <div className="text-6xl font-extrabold tracking-tight mb-2" style={{ color: '#f5f5f0', fontFamily: 'Poppins, sans-serif' }}>KVL</div>
-            <div className="text-sm tracking-[4px] uppercase" style={{ color: '#c8a96e' }}>Business Solutions</div>
+          <div className="mb-8 flex justify-center">
+            <span
+              className="relative rounded-xl overflow-hidden shrink-0"
+              style={{ width: 260, height: 81, boxShadow: '0 0 0 1px rgba(200,169,110,0.35), 0 8px 40px rgba(0,0,0,0.4)' }}
+            >
+              <Image src="/brand-logo.png" alt="KVL Business Solutions" fill sizes="260px" className="object-cover" />
+            </span>
           </div>
 
           <div className="divider-gold mb-8 max-w-[120px] mx-auto" />
@@ -114,10 +119,13 @@ export default function RegisterPage() {
 
           <form onSubmit={submit} className="space-y-3">
             <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Full Name *</label>
+              <label htmlFor="register-name" className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Full Name *</label>
               <div className="relative">
                 <User className="absolute left-3 top-3.5 w-4 h-4" style={{ color: '#888' }} />
                 <input
+                  id="register-name"
+                  name="name"
+                  autoComplete="name"
                   className="form-control pl-10"
                   style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)', color: '#f5f5f0' }}
                   required
@@ -128,26 +136,34 @@ export default function RegisterPage() {
               </div>
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Email *</label>
+              <label htmlFor="register-email" className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Email *</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-3.5 w-4 h-4" style={{ color: '#888' }} />
                 <input
+                  id="register-email"
+                  name="email"
                   type="email"
+                  autoComplete="email"
                   className="form-control pl-10"
                   style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)', color: '#f5f5f0' }}
                   required
                   placeholder="you@company.com"
                   value={form.email}
                   onChange={e => setForm({ ...form, email: e.target.value })}
+                  aria-invalid={!!err}
+                  aria-describedby={err ? 'register-error' : undefined}
                 />
               </div>
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Password *</label>
+              <label htmlFor="register-password" className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Password *</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3.5 w-4 h-4" style={{ color: '#888' }} />
                 <input
+                  id="register-password"
+                  name="password"
                   type="password"
+                  autoComplete="new-password"
                   className="form-control pl-10"
                   style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)', color: '#f5f5f0' }}
                   required
@@ -159,10 +175,14 @@ export default function RegisterPage() {
               </div>
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Phone <span style={{ color: '#888' }}>(optional)</span></label>
+              <label htmlFor="register-phone" className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Phone <span style={{ color: '#888' }}>(optional)</span></label>
               <div className="relative">
                 <Phone className="absolute left-3 top-3.5 w-4 h-4" style={{ color: '#888' }} />
                 <input
+                  id="register-phone"
+                  name="phone"
+                  type="tel"
+                  autoComplete="tel"
                   className="form-control pl-10"
                   style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)', color: '#f5f5f0' }}
                   placeholder="+91 98765 43210"
@@ -172,10 +192,13 @@ export default function RegisterPage() {
               </div>
             </div>
             <div>
-              <label className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Company <span style={{ color: '#888' }}>(optional)</span></label>
+              <label htmlFor="register-company" className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Company <span style={{ color: '#888' }}>(optional)</span></label>
               <div className="relative">
                 <Building2 className="absolute left-3 top-3.5 w-4 h-4" style={{ color: '#888' }} />
                 <input
+                  id="register-company"
+                  name="company"
+                  autoComplete="organization"
                   className="form-control pl-10"
                   style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)', color: '#f5f5f0' }}
                   placeholder="Your company"
@@ -184,7 +207,7 @@ export default function RegisterPage() {
                 />
               </div>
             </div>
-            {err && <p className="text-red-400 text-xs">{err}</p>}
+            {err && <p id="register-error" role="alert" className="text-red-400 text-xs">{err}</p>}
             <button
               disabled={loading}
               className="btn-primary w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2 disabled:opacity-60 mt-1"

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { z } from 'zod';
 import { connectDB } from '@/lib/mongodb';
 import { Product } from '@/lib/models/Product';
@@ -26,8 +27,8 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     if (!p) return NextResponse.json({ ok: false, error: 'Not found' }, { status: 404 });
     logActivity({ action: 'product.update', actorEmail: g.session?.user?.email || undefined, actorRole: 'admin', target: 'Product', targetId: p.slug, details: data, req });
     return NextResponse.json({ ok: true, product: p });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e.message }, { status: 400 });
+  } catch (e) {
+    return apiError(e);
   }
 }
 

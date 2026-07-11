@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { z } from 'zod';
 import { chatRouted, ChatMessage } from '@/lib/ai/router';
 
@@ -55,7 +56,7 @@ Be specific and constructive. Use markdown formatting (## headings, - bullets, *
     });
 
     return NextResponse.json({ ok: true, type: 'question', reply: result.reply, provider: result.provider });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e.message }, { status: 400 });
+  } catch (e) {
+    return apiError(e);
   }
 }

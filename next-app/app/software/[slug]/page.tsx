@@ -5,9 +5,14 @@ import { PageHero } from '@/components/shared/PageHero';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { ReviewsSection } from '@/components/widgets/ReviewsSection';
 import { formatINR } from '@/lib/utils';
+import { connectDB } from '@/lib/mongodb';
+import { Review } from '@/lib/models/Review';
 import { Check, Cloud, Server, ShieldCheck, Headphones, RefreshCcw, Award, Play, Zap } from 'lucide-react';
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlsolutions.in';
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
+
+export const dynamic = 'force-static';
+export const dynamicParams = false;
 
 export function generateStaticParams() {
   return softwareProducts.map(p => ({ slug: p.slug }));
@@ -16,10 +21,17 @@ export function generateStaticParams() {
 export function generateMetadata({ params }: { params: { slug: string } }) {
   const p = softwareProducts.find(x => x.slug === params.slug);
   if (!p) return { title: 'Product not found' };
-  return { title: `${p.name} — KVL`, description: p.description };
+  const title = `${p.name} — Buy or Rent, Free Live Demo`;
+  const url = `${SITE}/software/${p.slug}`;
+  return {
+    title,
+    description: p.description,
+    alternates: { canonical: url },
+    openGraph: { title, description: p.description, url, type: 'website' },
+  };
 }
 
-export default function ProductPage({ params }: { params: { slug: string } }) {
+export default async function ProductPage({ params }: { params: { slug: string } }) {
   const product = softwareProducts.find(p => p.slug === params.slug);
   if (!product) notFound();
 
@@ -27,6 +39,20 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
   const onPremPrice = Math.round(product.price * 1.5);
   const monthlyRent = product.monthlyRent;
   const related = softwareProducts.filter(p => p.slug !== product.slug).slice(0, 3);
+
+  let ratingValue = 0;
+  let reviewCount = 0;
+  try {
+    await connectDB();
+    const approvedReviews = await Review.find({ productSlug: product.slug, approved: true }).lean();
+    reviewCount = approvedReviews.length;
+    if (reviewCount > 0) {
+      const sum = approvedReviews.reduce((s: number, r: any) => s + r.rating, 0);
+      ratingValue = Math.round((sum / reviewCount) * 10) / 10;
+    }
+  } catch {
+    reviewCount = 0;
+  }
 
   const productJsonLd = {
     '@context': 'https://schema.org',
@@ -44,18 +70,26 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
       offerCount: 2,
       availability: 'https://schema.org/InStock',
     },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.7',
-      reviewCount: '128',
-    },
     provider: { '@id': `${SITE}/#organization` },
+    ...(reviewCount > 0 ? {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue,
+        reviewCount,
+      },
+    } : {}),
   };
 
   return (
     <>
       <JsonLd data={productJsonLd} id={`product-${product.slug}-jsonld`} />
-      <PageHero eyebrow="SOFTWARE" title={product.name} description={product.description} breadcrumb={product.name} />
+      <PageHero
+        eyebrow="SOFTWARE"
+        title={product.name}
+        description={product.description}
+        breadcrumb={product.name}
+        breadcrumbPath={[{ label: 'Software', href: '/software' }, { label: product.name }]}
+      />
 
       <section className="section">
         <div className="container grid lg:grid-cols-[2fr_1fr] gap-8">

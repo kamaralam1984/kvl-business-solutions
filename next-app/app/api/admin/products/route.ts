@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { z } from 'zod';
 import { connectDB } from '@/lib/mongodb';
 import { Product } from '@/lib/models/Product';
@@ -33,7 +34,7 @@ export async function POST(req: Request) {
     const p = await Product.create(data);
     logActivity({ action: 'product.create', actorEmail: g.session?.user?.email || undefined, actorRole: 'admin', target: 'Product', targetId: p.slug, details: { name: p.name, price: p.price }, req });
     return NextResponse.json({ ok: true, product: p });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e.message }, { status: 400 });
+  } catch (e) {
+    return apiError(e);
   }
 }

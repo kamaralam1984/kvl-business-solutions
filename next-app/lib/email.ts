@@ -2,7 +2,7 @@ import { Resend } from 'resend';
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 const FROM = process.env.EMAIL_FROM || 'KVL <onboarding@resend.dev>';
-const SALES = process.env.EMAIL_TO_SALES || 'sales@kvlsolutions.in';
+const SALES = process.env.EMAIL_TO_SALES || 'sales@kvlbusinesssolutions.com';
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
 export async function sendNotification(subject: string, html: string, to = SALES) {
@@ -21,7 +21,7 @@ const wrap = (title: string, body: string) => `
   <div style="background:#fff;border:1px solid #e2e8f0;border-top:none;padding:24px;border-radius:0 0 12px 12px">
     ${body}
     <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0"/>
-    <p style="font-size:11px;color:#64748b;margin:0">KVL Business Solutions · Pune, India · info@kvlsolutions.in</p>
+    <p style="font-size:11px;color:#64748b;margin:0">KVL Business Solutions · Patna, India · info@kvlbusinesssolutions.com</p>
   </div>
 </div>`;
 

@@ -1,11 +1,12 @@
 'use client';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Users, Ticket, FileText, Package, Box, UserCog, Mail,
   Activity, Tag, Calendar, Star, Settings, Megaphone, Globe, Monitor, Cpu,
   Workflow, Briefcase, Sparkles, Bell, Search, LogOut, ChevronRight,
-  TrendingUp, Zap, Shield,
+  TrendingUp, Zap, Shield, Gift,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -25,6 +26,7 @@ const sections = [
       { href: '/admin/bookings', label: 'Bookings',    Icon: Calendar },
       { href: '/admin/orders',   label: 'Orders',      Icon: Package },
       { href: '/admin/quotes',   label: 'Quotes',      Icon: FileText },
+      { href: '/admin/referrals', label: 'Referrals',  Icon: Gift },
     ],
   },
   {
@@ -89,18 +91,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Logo & nav link */}
         <div className="px-5 pt-6 pb-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
           <Link href="/" className="flex items-center gap-3 group mb-4">
-            <div style={{
-              width: 32, height: 32, borderRadius: 10,
-              background: 'rgba(200,168,112,0.08)',
-              border: '1px solid rgba(200,168,112,0.2)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <span className="font-black text-[13px]" style={{ color: '#c8a870', letterSpacing: '1px' }}>K</span>
-            </div>
-            <div>
-              <div className="font-bold text-[14px] tracking-wide text-white leading-none">KVL Admin</div>
-              <div className="text-[10px] mt-0.5" style={{ color: 'rgba(255,255,255,0.25)' }}>Business Solutions</div>
-            </div>
+            <span
+              className="relative rounded-lg overflow-hidden shrink-0"
+              style={{ width: 120, height: 37, boxShadow: '0 0 0 1px rgba(200,168,112,0.35)' }}
+            >
+              <Image src="/brand-logo.png" alt="KVL Business Solutions" fill sizes="120px" className="object-cover" />
+            </span>
+            <div className="text-[10px] font-semibold tracking-wide" style={{ color: 'rgba(255,255,255,0.3)' }}>Admin</div>
           </Link>
 
           {/* System health */}

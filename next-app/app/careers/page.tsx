@@ -5,7 +5,10 @@ import { PageHero } from '@/components/shared/PageHero';
 import { CtaBanner } from '@/components/home/CtaBanner';
 import { MapPin, Briefcase, Clock, ArrowRight, Sparkles } from 'lucide-react';
 
-export const metadata = { title: 'Careers — Join KVL Business Solutions' };
+export const metadata = {
+  title: 'Careers — Join KVL Business Solutions',
+  description: 'Join a fast-growing enterprise technology company building real software used by hospitals, schools, and businesses across India. Explore open roles in engineering, design, and sales.',
+};
 export const dynamic = 'force-dynamic';
 
 export default async function CareersPage() {
@@ -23,7 +26,7 @@ export default async function CareersPage() {
         eyebrow="JOIN US"
         title="Build the future of"
         accent="Indian business tech"
-        description="We're growing fast. Join 50+ passionate engineers, designers, and sales pros transforming how 1000+ businesses run."
+        description="We're growing fast. Join engineers, designers and business strategists building enterprise software used by hospitals, schools and businesses across India."
         breadcrumb="Careers"
       />
 
@@ -34,8 +37,8 @@ export default async function CareersPage() {
             {[
               { icon: '🚀', title: 'Fast-growing', desc: 'Be part of something big' },
               { icon: '🏆', title: 'Top pay', desc: 'Above-market salaries' },
-              { icon: '💪', title: 'Real impact', desc: 'Your code helps 1000+ businesses' },
-              { icon: '🌍', title: 'Hybrid work', desc: 'Pune HQ + remote' },
+              { icon: '💪', title: 'Real impact', desc: 'Your code runs in production, not a demo' },
+              { icon: '🌍', title: 'Hybrid work', desc: 'Patna HQ + remote' },
               { icon: '📚', title: 'Learning budget', desc: '₹50k/yr for courses' },
               { icon: '❤️', title: 'Health insurance', desc: 'Family coverage' },
             ].map(p => (
@@ -49,7 +52,7 @@ export default async function CareersPage() {
 
           {/* Open positions */}
           <h2 className="text-2xl font-extrabold mb-2 flex items-center gap-2"><Briefcase className="w-6 h-6 text-primary" /> Open positions ({jobs.length})</h2>
-          <p className="text-text2 text-sm mb-6">All roles offer competitive salary, equity, hybrid work, and a chance to shape India's business tech.</p>
+          <p className="text-text2 text-sm mb-6">All roles offer competitive salary, equity, hybrid work, and a real chance to shape India's business technology landscape.</p>
 
           {jobs.length === 0 ? (
             <div className="card-base p-10 text-center">

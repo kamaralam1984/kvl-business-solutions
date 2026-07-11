@@ -9,6 +9,16 @@ const TRIGGERS = [
   { id: 'order_paid', label: 'Order payment received' },
   { id: 'lead_inactive_3d', label: 'Lead inactive for 3 days' },
   { id: 'cart_abandoned', label: 'Cart abandoned (24h)' },
+  { id: 'deal_won', label: 'Deal marked Won' },
+  { id: 'deal_lost', label: 'Deal marked Lost' },
+  { id: 'proposal_sent', label: 'Deal moved to Proposal stage' },
+  { id: 'meeting_scheduled', label: 'Meeting scheduled (not yet wired to a feature)' },
+  { id: 'proposal_viewed', label: 'Proposal viewed (not yet wired to a feature)' },
+  { id: 'proposal_accepted', label: 'Proposal accepted (not yet wired to a feature)' },
+  { id: 'amc_expiring', label: 'AMC expiring soon (not yet wired to a feature)' },
+  { id: 'invoice_overdue', label: 'Invoice overdue (not yet wired to a feature)' },
+  { id: 'support_closed', label: 'Support ticket closed (not yet wired to a feature)' },
+  { id: 'payment_received', label: 'Payment received (not yet wired to a feature)' },
 ];
 
 const ACTIONS = [

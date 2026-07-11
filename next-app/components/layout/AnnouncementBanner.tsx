@@ -48,7 +48,7 @@ export function AnnouncementBanner({ banner }: { banner: any | null }) {
         <div className="container py-2.5 flex items-center justify-center gap-3 relative z-10">
           <Sparkles className="w-3.5 h-3.5 shrink-0 hidden sm:block" style={{ color: '#c8a870' }} />
 
-          <span className="text-center text-[13px] font-medium" style={{ color: 'rgba(0,0,0,0.65)' }}>
+          <span className="text-center text-[13px] font-medium" style={{ color: 'rgba(var(--text) / 0.65)' }}>
             {banner.text}
             {banner.link && (
               <Link
@@ -66,13 +66,13 @@ export function AnnouncementBanner({ banner }: { banner: any | null }) {
             <button
               onClick={dismiss}
               className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200"
-              style={{ color: 'rgba(0,0,0,0.35)' }}
+              style={{ color: 'rgba(var(--text) / 0.35)' }}
               onMouseEnter={e => {
-                (e.currentTarget as HTMLElement).style.color = 'rgba(0,0,0,0.7)';
-                (e.currentTarget as HTMLElement).style.background = 'rgba(0,0,0,0.06)';
+                (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.7)';
+                (e.currentTarget as HTMLElement).style.background = 'rgba(var(--text) / 0.06)';
               }}
               onMouseLeave={e => {
-                (e.currentTarget as HTMLElement).style.color = 'rgba(0,0,0,0.35)';
+                (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.35)';
                 (e.currentTarget as HTMLElement).style.background = 'transparent';
               }}
               aria-label="Dismiss"

@@ -36,13 +36,13 @@ export default function TermsPage() {
       <p>Our maximum liability is limited to the amount you paid in the 12 months prior to the claim. We are not liable for indirect, consequential, or incidental damages.</p>
 
       <h2>9. Governing law</h2>
-      <p>These terms are governed by Indian law. Disputes are subject to the exclusive jurisdiction of courts in Pune, Maharashtra.</p>
+      <p>These terms are governed by Indian law. Disputes are subject to the exclusive jurisdiction of courts in Patna, Bihar.</p>
 
       <h2>10. Changes</h2>
       <p>We may update these terms; material changes will be emailed 30 days in advance.</p>
 
       <h2>11. Contact</h2>
-      <p>Email <a href="mailto:legal@kvlsolutions.in">legal@kvlsolutions.in</a> for any questions.</p>
+      <p>Email <a href="mailto:legal@kvlbusinesssolutions.com">legal@kvlbusinesssolutions.com</a> for any questions.</p>
     </LegalLayout>
   );
 }

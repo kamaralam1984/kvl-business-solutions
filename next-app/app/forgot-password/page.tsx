@@ -41,10 +41,23 @@ export default function ForgotPasswordPage() {
         ) : (
           <form onSubmit={submit} className="space-y-3">
             <div className="relative">
+              <label htmlFor="forgot-email" className="sr-only">Your email</label>
               <Mail className="absolute left-3 top-3.5 w-4 h-4 text-text2" />
-              <input className="form-control pl-10" type="email" required placeholder="Your email" value={email} onChange={e => setEmail(e.target.value)} />
+              <input
+                id="forgot-email"
+                name="email"
+                className="form-control pl-10"
+                type="email"
+                autoComplete="email"
+                required
+                placeholder="Your email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                aria-invalid={!!err}
+                aria-describedby={err ? 'forgot-error' : undefined}
+              />
             </div>
-            {err && <p className="text-red-500 text-xs">{err}</p>}
+            {err && <p id="forgot-error" role="alert" className="text-red-500 text-xs">{err}</p>}
             <button disabled={loading} className="btn btn-primary w-full justify-center">{loading ? 'Sending…' : 'Send Reset Link'}</button>
             <p className="text-sm text-text2 text-center mt-5">
               <Link href="/login" className="text-primary">← Back to Login</Link>

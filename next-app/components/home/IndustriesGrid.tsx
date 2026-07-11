@@ -1,198 +1,72 @@
 'use client';
-import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
+import { Hospital, School, Banknote, UtensilsCrossed, Building2, HardHat, Factory, Landmark } from 'lucide-react';
 
 const industries = [
-  {
-    icon: '🏭',
-    title: 'Manufacturing',
-    desc: 'ERP, inventory, production tracking',
-    featured: true,
-    img: 'https://images.unsplash.com/photo-1565043666747-69f6646db940?w=500&q=80&auto=format&fit=crop',
-  },
-  {
-    icon: '🏫',
-    title: 'Education',
-    desc: 'School/college management systems',
-    img: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=500&q=80&auto=format&fit=crop',
-  },
-  {
-    icon: '🚛',
-    title: 'Logistics',
-    desc: 'Fleet GPS, delivery tracking',
-    img: 'https://images.unsplash.com/photo-1609587312208-cea54be969e7?w=500&q=80&auto=format&fit=crop',
-  },
-  {
-    icon: '🏥',
-    title: 'Healthcare',
-    desc: 'Hospital management, billing',
-    img: 'https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=500&q=80&auto=format&fit=crop',
-  },
-  {
-    icon: '🏗️',
-    title: 'Construction',
-    desc: 'Project management, civil works',
-    img: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=500&q=80&auto=format&fit=crop',
-  },
-  {
-    icon: '🛒',
-    title: 'Retail',
-    desc: 'POS, inventory, e-commerce',
-    img: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&q=80&auto=format&fit=crop',
-  },
-  {
-    icon: '🌾',
-    title: 'Agriculture',
-    desc: 'Farm management, GPS mapping',
-    featured: true,
-    img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=500&q=80&auto=format&fit=crop',
-  },
-  {
-    icon: '⚡',
-    title: 'Energy',
-    desc: 'Power monitoring, automation',
-    img: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=500&q=80&auto=format&fit=crop',
-  },
+  { Icon: Hospital,        title: 'Healthcare',  desc: 'One patient record across OPD, IPD, pharmacy, lab and billing — less paperwork, faster care.', href: '/industries/hospitals' },
+  { Icon: School,          title: 'Education',   desc: 'Admissions, fees, attendance and exams on one platform — freeing staff from manual tracking.', href: '/industries/schools' },
+  { Icon: Banknote,        title: 'Finance',     desc: 'Books, compliance and transactions kept audit-ready by design — reporting season, without the scramble.', href: '/industries' },
+  { Icon: UtensilsCrossed, title: 'Restaurant',  desc: 'Billing, tables, inventory and delivery synced in real time — nothing lost between kitchen and till.', href: '/industries/restaurant-hospitality' },
+  { Icon: Building2,       title: 'Real Estate', desc: 'Leads, site visits, bookings and channel partners in one pipeline — so no enquiry goes cold.', href: '/industries/realestate' },
+  { Icon: HardHat,         title: 'Construction',desc: 'BOQ, materials, labor and site progress tracked live — catch cost overruns before they happen.', href: '/industries/construction' },
+  { Icon: Factory,         title: 'Manufacturing',desc: 'PLC, SCADA, IoT and OEE data unified — the shop floor visible in real time, not at month-end.', href: '/industries/manufacturing' },
+  { Icon: Landmark,        title: 'Government',  desc: 'e-Tenders, GEM listings and compliance tracked end-to-end — so nothing is ever missed.', href: '/industries/government' },
 ];
 
 export function IndustriesGrid() {
+  const ref    = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-60px' });
+
   return (
-    <section className="py-24" style={{ background: 'rgb(var(--bg))' }}>
+    <section className="py-28" style={{ background: 'rgb(var(--bg))' }}>
       <div className="container">
-        {/* Header */}
-        <div className="text-center mb-14">
-          <span className="eyebrow block mb-3">WHAT WE COVER</span>
-          <h2
-            className="font-display font-black tracking-tight mb-4"
-            style={{ fontSize: 'clamp(2rem, 4vw, 3.25rem)', color: 'rgb(var(--text))' }}
-          >
-            Industries We Serve
+
+        {/* Section header — centered */}
+        <div className="max-w-2xl mx-auto text-center mb-16">
+          <span className="eyebrow mb-4 block">Industries</span>
+          <h2 className="heading-lg" style={{ color: 'rgb(var(--text))' }}>
+            Different sectors, different rules.<br />
+            <span style={{ color: '#c8a870' }}>We already know the difference.</span>
           </h2>
-          <p className="max-w-md mx-auto text-sm leading-relaxed" style={{ color: 'rgba(var(--text-2))' }}>
-            Purpose-built software for 8+ verticals — from factory floors to farm fields.
-          </p>
         </div>
 
-        {/* Bento grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {industries.map((ind, i) => {
-            if (ind.featured) {
-              return (
-                <motion.div
-                  key={ind.title}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.06, duration: 0.4 }}
-                  className="md:col-span-2 md:row-span-2 group cursor-default"
-                >
-                  <div
-                    className="relative rounded-2xl overflow-hidden"
-                    style={{ height: '100%', minHeight: 200 }}
-                  >
-                    <img
-                      src={ind.img}
-                      alt={ind.title}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        transition: 'transform 0.6s ease',
-                        minHeight: 200,
-                      }}
-                      className="group-hover:scale-105"
-                    />
-                    <div
-                      style={{
-                        position: 'absolute',
-                        inset: 0,
-                        background: 'linear-gradient(180deg, transparent 20%, rgba(8,8,10,0.9) 100%)',
-                      }}
-                    />
-                    {/* Gold border accent */}
-                    <div
-                      style={{
-                        position: 'absolute',
-                        inset: 0,
-                        border: '1px solid rgba(200,168,112,0.25)',
-                        borderRadius: '1rem',
-                        pointerEvents: 'none',
-                      }}
-                    />
-                    <div
-                      style={{
-                        position: 'absolute',
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        padding: '24px',
-                      }}
-                    >
-                      <div className="text-4xl mb-3">{ind.icon}</div>
-                      <div
-                        className="font-display font-bold text-[22px] mb-2"
-                        style={{ color: '#f0ede6' }}
-                      >
-                        {ind.title}
-                      </div>
-                      <div
-                        className="text-[14px] leading-relaxed mb-4"
-                        style={{ color: 'rgba(255,255,255,0.6)' }}
-                      >
-                        {ind.desc}
-                      </div>
-                      <div className="text-[13px] font-semibold" style={{ color: '#c8a870' }}>
-                        Explore solutions →
-                      </div>
-                    </div>
+        {/* Industry cards */}
+        <motion.div
+          ref={ref}
+          className="grid grid-cols-2 lg:grid-cols-4 gap-5"
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.06 } } }}
+        >
+          {industries.map((ind) => (
+            <motion.div
+              key={ind.title}
+              variants={{
+                hidden:  { opacity: 0, y: 24 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+              }}
+            >
+              <Link href={ind.href} className="block h-full group">
+                <div className="card-premium h-full p-6 flex flex-col">
+                  <div className="w-11 h-11 rounded-xl grid place-items-center mb-5"
+                    style={{ background: 'rgba(200,168,112,0.10)', border: '1px solid rgba(200,168,112,0.22)' }}>
+                    <ind.Icon className="w-5 h-5" style={{ color: '#c8a870' }} />
                   </div>
-                </motion.div>
-              );
-            }
-            return (
-              <motion.div
-                key={ind.title}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.06, duration: 0.4 }}
-                className="group cursor-default"
-              >
-                <div className="relative rounded-2xl overflow-hidden" style={{ height: 180 }}>
-                  <img
-                    src={ind.img}
-                    alt={ind.title}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      transition: 'transform 0.6s ease',
-                    }}
-                    className="group-hover:scale-105"
-                  />
-                  <div
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      background: 'linear-gradient(180deg, transparent 30%, rgba(8,8,10,0.85) 100%)',
-                    }}
-                  />
-                  <div
-                    style={{
-                      position: 'absolute',
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      padding: '16px',
-                    }}
-                  >
-                    <div style={{ fontSize: 14, fontWeight: 700, color: '#f0ede6' }}>{ind.title}</div>
-                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>{ind.desc}</div>
-                  </div>
+
+                  <h3 className="font-display font-bold text-[1rem] mb-2 leading-snug" style={{ color: 'rgb(var(--text))' }}>
+                    {ind.title}
+                  </h3>
+
+                  <p className="text-[13px] leading-[1.6]" style={{ color: 'rgb(var(--text-2))' }}>
+                    {ind.desc}
+                  </p>
                 </div>
-              </motion.div>
-            );
-          })}
-        </div>
+              </Link>
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );

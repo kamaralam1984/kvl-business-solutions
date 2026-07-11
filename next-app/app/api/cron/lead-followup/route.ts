@@ -4,8 +4,7 @@ import { Lead } from '@/lib/models/Lead';
 import { sendFollowUpWhatsApp } from '@/lib/whatsapp';
 import { sendNotification } from '@/lib/email';
 import { initiateCall } from '@/lib/vapi';
-
-const CRON_SECRET = process.env.CRON_SECRET || 'kvl-cron-2024';
+import { requireCronAuth } from '@/lib/cron-auth';
 
 // Follow-up stages:
 // 1 → call at 1hr
@@ -92,8 +91,7 @@ async function runFollowUp(lead: any) {
 }
 
 export async function GET(req: Request) {
-  const secret = new URL(req.url).searchParams.get('secret');
-  if (secret !== CRON_SECRET) return NextResponse.json({ ok: false }, { status: 401 });
+  const unauth = requireCronAuth(req); if (unauth) return unauth;
 
   await connectDB();
   const due = await Lead.find({

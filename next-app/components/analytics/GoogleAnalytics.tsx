@@ -24,8 +24,8 @@ export function GoogleAnalytics({ gaId }: { gaId: string }) {
 
   return (
     <>
-      <Script src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} strategy="afterInteractive" />
-      <Script id="ga-init" strategy="afterInteractive">{`
+      <Script src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} strategy="lazyOnload" />
+      <Script id="ga-init" strategy="lazyOnload">{`
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         window.gtag = gtag;

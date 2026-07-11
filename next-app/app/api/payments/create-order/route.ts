@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { connectDB } from '@/lib/mongodb';
@@ -101,7 +102,7 @@ export async function POST(req: Request) {
       productName: product.name,
       breakdown: { baseSubtotal, discount, subtotal, gstAmount, gstRate: GST_RATE, total: amount, couponCode: appliedCoupon?.code },
     });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e.message }, { status: 500 });
+  } catch (e) {
+    return apiError(e);
   }
 }

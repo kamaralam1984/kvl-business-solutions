@@ -4,6 +4,7 @@ import { sendNotification } from '../email';
 import { notify } from '../models/Notification';
 import { Deal } from '../models/Deal';
 import { logActivity } from '../activity';
+import { sendCustomWhatsApp } from '../whatsapp';
 
 type TriggerContext = Record<string, any>;
 
@@ -36,7 +37,7 @@ async function actionCreateNotification(workflow: any, ctx: TriggerContext) {
 }
 
 async function actionAddToCrm(workflow: any, ctx: TriggerContext) {
-  const ownerEmail = process.env.EMAIL_TO_SALES || 'sales@kvlsolutions.in';
+  const ownerEmail = process.env.EMAIL_TO_SALES || 'sales@kvlbusinesssolutions.com';
   await connectDB();
   await Deal.create({
     ownerEmail: ownerEmail.toLowerCase(),
@@ -51,21 +52,33 @@ async function actionAddToCrm(workflow: any, ctx: TriggerContext) {
 }
 
 async function actionWhatsApp(workflow: any, ctx: TriggerContext) {
-  // For now — just log. Real WhatsApp Business API requires Gupshup/Twilio integration (paid).
+  const phone = ctx.phone;
+  if (!phone) throw new Error('No phone in context');
   const message = fill(workflow.config?.whatsappMessage || '', ctx);
-  console.log(`[workflow] WhatsApp to ${ctx.phone || 'no-phone'}: ${message}`);
-  // TODO: integrate with WhatsApp Business API
+  await sendCustomWhatsApp({ phone, message });
 }
+
+const WEBHOOK_TIMEOUT_MS = 8000;
 
 async function actionWebhook(workflow: any, ctx: TriggerContext) {
   const url = workflow.config?.webhookUrl;
   if (!url) throw new Error('No webhook URL configured');
-  const r = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-KVL-Workflow': workflow._id.toString() },
-    body: JSON.stringify({ trigger: workflow.trigger, context: ctx, timestamp: new Date().toISOString() }),
-  });
-  if (!r.ok) throw new Error(`Webhook ${r.status}`);
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), WEBHOOK_TIMEOUT_MS);
+  try {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-KVL-Workflow': workflow._id.toString() },
+      body: JSON.stringify({ trigger: workflow.trigger, context: ctx, timestamp: new Date().toISOString() }),
+      signal: controller.signal,
+    });
+    if (!r.ok) throw new Error(`Webhook responded ${r.status}`);
+  } catch (e: any) {
+    if (e.name === 'AbortError') throw new Error(`Webhook timed out after ${WEBHOOK_TIMEOUT_MS}ms`);
+    throw e;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 const actionHandlers: Record<string, (w: any, c: TriggerContext) => Promise<void>> = {

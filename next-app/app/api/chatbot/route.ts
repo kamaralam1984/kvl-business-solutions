@@ -6,8 +6,8 @@ import { getSiteSettings } from '@/lib/models/SiteSettings';
 async function buildSystemPrompt(): Promise<string> {
   const s = await getSiteSettings().catch(() => null);
   const phone = s?.phone || '+91 99420 00413';
-  const whatsapp = s?.whatsapp || '919942000413';
-  const email = s?.salesEmail || 'sales@kvlsolutions.in';
+  const whatsapp = (s?.whatsapp || '919942000413').replace(/\D/g, '');
+  const email = s?.salesEmail || 'sales@kvlbusinesssolutions.com';
 
   return `You are "KVL AI", the assistant for KVL Business Solutions — an Indian enterprise tech company.
 You help customers with:

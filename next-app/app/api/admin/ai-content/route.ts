@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { requireAdmin } from '@/lib/admin-guard';
 import { chatRouted } from '@/lib/ai/router';
 
@@ -54,7 +55,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ ok: true, content: result.reply, provider: result.provider });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e.message }, { status: 500 });
+  } catch (e) {
+    return apiError(e);
   }
 }

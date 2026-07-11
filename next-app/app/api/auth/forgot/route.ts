@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { z } from 'zod';
 import { connectDB } from '@/lib/mongodb';
 import { User } from '@/lib/models/User';
@@ -29,7 +30,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ ok: true, message: 'If the email exists, a reset link has been sent.' });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e.message }, { status: 400 });
+  } catch (e) {
+    return apiError(e);
   }
 }

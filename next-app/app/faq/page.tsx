@@ -2,14 +2,17 @@
 import { useState } from 'react';
 import { ChevronDown, HelpCircle } from 'lucide-react';
 import { PageHero } from '@/components/shared/PageHero';
+import { CtaBanner } from '@/components/home/CtaBanner';
+import { JsonLd } from '@/components/shared/JsonLd';
 
 const faqs = [
   {
     cat: 'General',
     items: [
-      { q: 'What does KVL offer?', a: 'KVL provides 12+ enterprise software products, custom development, GPS tracking, CCTV, civil work, and industrial automation services across India.' },
-      { q: 'Where are you located?', a: 'Our HQ is in Pune, India. We serve clients across India and overseas.' },
+      { q: 'What does KVL offer?', a: 'KVL provides 15 enterprise software products, custom development, GPS tracking, CCTV, civil work, and industrial automation services across India.' },
+      { q: 'Where are you located?', a: 'Our HQ is in Patna, Bihar, India. We serve clients across India and overseas.' },
       { q: 'Do you serve small businesses?', a: 'Yes — we have plans starting from ₹15,000 designed for small and mid-sized businesses.' },
+      { q: 'Will you sign an NDA before discussing our project?', a: 'Yes — an NDA is available on request before we go into any project detail. Just ask on your first call.' },
     ],
   },
   {
@@ -31,15 +34,26 @@ const faqs = [
   {
     cat: 'Support',
     items: [
-      { q: 'How do I get support?', a: 'Email support@kvlsolutions.in, raise a ticket from /support, or use the chatbot. We respond within 4 business hours.' },
+      { q: 'How do I get support?', a: 'Email support@kvlbusinesssolutions.com, raise a ticket from /support, or use the chatbot. We respond within 4 business hours.' },
       { q: 'What is your SLA?', a: 'Critical issues: 1 hour. High: 4 hours. Medium: 1 day. Low: 3 days.' },
     ],
   },
 ];
 
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.flatMap(group => group.items).map(item => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: { '@type': 'Answer', text: item.a },
+  })),
+};
+
 export default function FAQPage() {
   return (
     <>
+      <JsonLd data={faqJsonLd} id="faq-jsonld" />
       <PageHero eyebrow="HELP CENTER" title="Frequently Asked" accent="Questions" description="Quick answers to common questions about KVL products and services." breadcrumb="FAQ" />
       <section className="section">
         <div className="container max-w-3xl space-y-8">
@@ -53,6 +67,7 @@ export default function FAQPage() {
           ))}
         </div>
       </section>
+      <CtaBanner title="Still have questions?" desc="Need Similar Software? Book a free strategy call and talk it through with a solution architect." />
     </>
   );
 }

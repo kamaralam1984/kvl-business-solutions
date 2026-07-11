@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { connectDB } from '@/lib/mongodb';
 import { Order } from '@/lib/models/Order';
 import { verifySignature } from '@/lib/razorpay';
@@ -46,7 +47,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ ok: true, orderId: order.orderId, licenseKey: order.licenseKey });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e.message }, { status: 500 });
+  } catch (e) {
+    return apiError(e);
   }
 }

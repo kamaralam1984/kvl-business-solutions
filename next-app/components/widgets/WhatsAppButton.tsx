@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { X, MessageCircle, ArrowRight } from 'lucide-react';
+import { trackEvent } from '@/components/analytics/GoogleAnalytics';
 
 const WHATSAPP_ICON = (
   <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
@@ -16,10 +17,11 @@ const QUICK_MESSAGES = [
 ];
 
 export function WhatsAppButton() {
-  const wa = process.env.NEXT_PUBLIC_WHATSAPP || '919942000413';
+  const wa = (process.env.NEXT_PUBLIC_WHATSAPP || '919942000413').replace(/\D/g, '');
   const [open, setOpen] = useState(false);
 
   const send = (msg: string) => {
+    trackEvent('whatsapp_click', { widget: 'floating-button' });
     window.open(`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`, '_blank');
     setOpen(false);
   };
@@ -30,7 +32,7 @@ export function WhatsAppButton() {
         onClick={() => setOpen(!open)}
         className="w-14 h-14 rounded-full grid place-items-center text-white shadow-card relative"
         style={{ background: 'linear-gradient(135deg, #25d366, #128c7e)' }}
-        aria-label="WhatsApp"
+        aria-label="Talk to a Software Consultant on WhatsApp"
       >
         {open ? <X className="w-6 h-6" /> : WHATSAPP_ICON}
         {!open && <span className="absolute inset-0 rounded-full border-2 border-current opacity-50 animate-pulse-ring" />}
@@ -43,7 +45,7 @@ export function WhatsAppButton() {
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-white/20 grid place-items-center">{WHATSAPP_ICON}</div>
               <div>
-                <div className="font-bold text-sm">KVL Sales Team</div>
+                <div className="font-bold text-sm">Talk to a Software Consultant</div>
                 <div className="text-[11px] opacity-90 flex items-center gap-1.5">
                   <span className="w-2 h-2 bg-green-300 rounded-full animate-pulse" /> Online · Replies in ~5 min
                 </div>

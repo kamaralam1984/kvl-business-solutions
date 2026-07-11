@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import { connectDB } from '@/lib/mongodb';
@@ -35,7 +36,7 @@ export async function POST(req: Request) {
     const u = await User.create({ name: data.name, email: data.email.toLowerCase(), passwordHash, role: data.role, phone: data.phone || '', emailVerified: true, provider: 'credentials' });
     logActivity({ action: 'user.create', actorEmail: g.session?.user?.email || undefined, actorRole: 'admin', target: 'User', targetId: u.email, req });
     return NextResponse.json({ ok: true, user: { _id: u._id, name: u.name, email: u.email, role: u.role } }, { status: 201 });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e.message }, { status: 400 });
+  } catch (e) {
+    return apiError(e);
   }
 }

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { z } from 'zod';
 import { connectDB } from '@/lib/mongodb';
 import { Coupon } from '@/lib/models/Coupon';
@@ -22,8 +23,8 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     if (!c) return NextResponse.json({ ok: false, error: 'Not found' }, { status: 404 });
     logActivity({ action: 'coupon.update', actorEmail: g.session?.user?.email || undefined, actorRole: 'admin', target: 'Coupon', targetId: c.code, details: data, req });
     return NextResponse.json({ ok: true, coupon: c });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e.message }, { status: 400 });
+  } catch (e) {
+    return apiError(e);
   }
 }
 

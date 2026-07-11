@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { z } from 'zod';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { connectDB } from '@/lib/mongodb';
 import { Deal, DEAL_STAGES } from '@/lib/models/Deal';
 import { chatRouted } from '@/lib/ai/router';
+import { fireTrigger } from '@/lib/workflows/runner';
 
 const schema = z.object({
   title: z.string().optional(),
@@ -13,6 +15,7 @@ const schema = z.object({
   stage: z.enum(DEAL_STAGES).optional(),
   probability: z.number().min(0).max(100).optional(),
   notes: z.string().optional(),
+  tags: z.array(z.string()).optional(),
 });
 
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
@@ -21,11 +24,28 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   try {
     const data = schema.parse(await req.json());
     await connectDB();
+    const before: any = data.stage
+      ? await Deal.findOne({ _id: params.id, ownerEmail: session.user.email }).lean()
+      : null;
     const d = await Deal.findOneAndUpdate({ _id: params.id, ownerEmail: session.user.email }, { $set: data }, { new: true });
     if (!d) return NextResponse.json({ ok: false, error: 'Not found' }, { status: 404 });
+
+    // --- Workflow trigger firing (additive, task 13) ---
+    // Fires only when `stage` was actually part of this update and changed value.
+    if (data.stage && before && before.stage !== data.stage) {
+      const ctx = {
+        dealId: d._id.toString(), title: d.title, name: d.contactName, email: undefined,
+        amount: d.value, stage: d.stage, ownerEmail: d.ownerEmail, source: d.source,
+      };
+      if (data.stage === 'won') fireTrigger('deal_won', ctx);
+      else if (data.stage === 'lost') fireTrigger('deal_lost', ctx);
+      else if (data.stage === 'proposal') fireTrigger('proposal_sent', ctx);
+    }
+    // --- end additive block ---
+
     return NextResponse.json({ ok: true, deal: d });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e.message }, { status: 400 });
+  } catch (e) {
+    return apiError(e);
   }
 }
 

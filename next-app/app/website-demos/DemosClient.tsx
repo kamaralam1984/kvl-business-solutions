@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CtaBanner } from '@/components/home/CtaBanner';
@@ -34,10 +35,10 @@ export function DemosClient({ demos }: { demos: Demo[] }) {
   const filtered = cat === 'all' ? demos : demos.filter(d => d.category === cat);
 
   return (
-    <div style={{ background: '#0a0a0a' }} className="text-white">
+    <div style={{ background: 'rgb(var(--bg))' }}>
 
       {/* Hero */}
-      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden" style={{ background: '#0a0a0a' }}>
+      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden" style={{ background: 'rgb(var(--bg))' }}>
         <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200,169,110,0.05) 0%, transparent 70%)' }} />
         <div className="relative z-10 container text-center py-28">
           <motion.span
@@ -53,7 +54,7 @@ export function DemosClient({ demos }: { demos: Demo[] }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
             className="text-5xl md:text-7xl font-extrabold mt-4 mb-6 leading-tight"
-            style={{ color: '#f5f5f0', fontFamily: 'Poppins, sans-serif' }}
+            style={{ color: 'rgb(var(--text))', fontFamily: 'Poppins, sans-serif' }}
           >
             Live Websites &amp;<br />Design Demos
           </motion.h1>
@@ -62,7 +63,7 @@ export function DemosClient({ demos }: { demos: Demo[] }) {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.7, delay: 0.3 }}
             className="text-xl max-w-2xl mx-auto"
-            style={{ color: '#888' }}
+            style={{ color: 'rgba(var(--text) / 0.55)' }}
           >
             Real production sites we&apos;ve launched (look for the LIVE badge) + design templates ready to customize.
           </motion.p>
@@ -72,7 +73,7 @@ export function DemosClient({ demos }: { demos: Demo[] }) {
       <div className="divider-gold" />
 
       {/* Filter + Grid */}
-      <section className="section" style={{ background: '#0a0a0a' }}>
+      <section className="section" style={{ background: 'rgb(var(--bg))' }}>
         <div className="container">
 
           {/* Category filter — underline style, gold active */}
@@ -81,14 +82,14 @@ export function DemosClient({ demos }: { demos: Demo[] }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="flex flex-wrap gap-0 justify-center mb-12 border-b"
-            style={{ borderColor: 'rgba(255,255,255,0.07)' }}
+            style={{ borderColor: 'rgba(var(--border) / 0.1)' }}
           >
             {usedCats.map(c => (
               <button
                 key={c.id}
                 onClick={() => setCat(c.id)}
                 className="relative px-5 py-3 text-sm font-medium transition-colors duration-200"
-                style={{ color: cat === c.id ? '#f5f5f0' : '#888' }}
+                style={{ color: cat === c.id ? 'rgb(var(--text))' : 'rgba(var(--text) / 0.55)' }}
               >
                 {c.label}
                 {cat === c.id && (
@@ -125,10 +126,12 @@ export function DemosClient({ demos }: { demos: Demo[] }) {
                       {/* Image / Preview */}
                       <div className="h-48 relative overflow-hidden">
                         {d.image ? (
-                          <img
+                          <Image
                             src={d.image}
                             alt={d.name}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            fill
+                            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
                           />
                         ) : (
                           <div
@@ -180,8 +183,8 @@ export function DemosClient({ demos }: { demos: Demo[] }) {
                             </span>
                           ) : (
                             <span
-                              className="px-2 py-0.5 rounded-full text-[10px] font-bold"
-                              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: '#888' }}
+                              className="px-2 py-0.5 rounded-full text-[10px] font-bold text-text2"
+                              style={{ background: 'rgba(var(--text) / 0.08)', border: '1px solid rgba(var(--border) / 0.15)' }}
                             >SAMPLE</span>
                           )}
                         </div>
@@ -199,16 +202,16 @@ export function DemosClient({ demos }: { demos: Demo[] }) {
 
                       {/* Card body */}
                       <div className="p-5">
-                        <h3 className="font-bold text-base leading-tight mb-1" style={{ color: '#f5f5f0' }}>{d.name}</h3>
+                        <h3 className="font-bold text-base leading-tight mb-1 text-text">{d.name}</h3>
                         {d.description && (
-                          <p className="text-sm mb-3 leading-relaxed" style={{ color: '#888' }}>{d.description}</p>
+                          <p className="text-sm mb-3 leading-relaxed text-text2">{d.description}</p>
                         )}
                         <div className="flex flex-wrap gap-1.5 mb-4">
                           {d.technologies.map(t => (
                             <span
                               key={t}
-                              className="px-2 py-0.5 rounded text-[10px] font-medium"
-                              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: '#888' }}
+                              className="px-2 py-0.5 rounded text-[10px] font-medium text-text2"
+                              style={{ background: 'rgba(var(--text) / 0.05)', border: '1px solid rgba(var(--border) / 0.08)' }}
                             >
                               {t}
                             </span>
@@ -216,7 +219,7 @@ export function DemosClient({ demos }: { demos: Demo[] }) {
                         </div>
                         <div className="flex items-center justify-between">
                           <div>
-                            <span className="text-[10px] uppercase tracking-wider" style={{ color: '#888' }}>Starting from</span>
+                            <span className="text-[10px] uppercase tracking-wider text-text2">Starting from</span>
                             <div className="font-extrabold text-lg" style={{ color: '#c8a96e' }}>{formatINR(d.startingPrice)}</div>
                           </div>
                           {d.live && d.url ? (
@@ -229,7 +232,7 @@ export function DemosClient({ demos }: { demos: Demo[] }) {
                               <ExternalLink className="w-3 h-3" /> View Live
                             </a>
                           ) : (
-                            <span className="text-[11px] italic" style={{ color: '#888' }}>Sample design</span>
+                            <span className="text-[11px] italic text-text2">Sample design</span>
                           )}
                         </div>
                       </div>
@@ -243,7 +246,7 @@ export function DemosClient({ demos }: { demos: Demo[] }) {
           {filtered.length === 0 && (
             <div className="card-premium p-12 text-center mt-6">
               <Sparkles className="w-8 h-8 mx-auto mb-3" style={{ color: '#c8a96e' }} />
-              <p style={{ color: '#888' }}>No demos in this category yet.</p>
+              <p className="text-text2">No demos in this category yet.</p>
             </div>
           )}
         </div>

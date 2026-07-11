@@ -1,6 +1,6 @@
 import { Schema, models, model } from 'mongoose';
 
-export const DEAL_STAGES = ['lead', 'qualified', 'proposal', 'negotiation', 'won', 'lost'] as const;
+export const DEAL_STAGES = ['lead', 'qualified', 'proposal', 'negotiation', 'won', 'repeat', 'lost'] as const;
 export type DealStage = typeof DEAL_STAGES[number];
 
 const DealSchema = new Schema({
@@ -16,6 +16,7 @@ const DealSchema = new Schema({
   notes: String,
   lastAction: String,
   aiSuggestion: String,
+  tags: { type: [String], default: [] },
 }, { timestamps: true });
 
 DealSchema.index({ ownerEmail: 1, stage: 1, createdAt: -1 });

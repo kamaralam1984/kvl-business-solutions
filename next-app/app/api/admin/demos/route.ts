@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { z } from 'zod';
 import { connectDB } from '@/lib/mongodb';
 import { Demo } from '@/lib/models/Demo';
@@ -53,7 +54,7 @@ export async function POST(req: Request) {
     const d = await Demo.create(data);
     logActivity({ action: 'demo.create', actorEmail: g.session?.user?.email || undefined, actorRole: 'admin', target: 'Demo', targetId: d._id.toString(), details: { name: d.name, url: d.url }, req });
     return NextResponse.json({ ok: true, demo: d });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e.message }, { status: 400 });
+  } catch (e) {
+    return apiError(e);
   }
 }

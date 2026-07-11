@@ -1,139 +1,121 @@
 'use client';
-import { motion } from 'framer-motion';
+import { useRef } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { motion, useInView } from 'framer-motion';
+import { ArrowUpRight, ExternalLink } from 'lucide-react';
+import { caseStudies } from '@/lib/data/case-studies';
 
-const cases = [
-  {
-    client: 'Sharma Enterprises',
-    industry: 'Manufacturing',
-    result: '340% ROI in 6 months',
-    metric: '₹12Cr saved annually',
-    service: 'Custom ERP',
-    color: '#c8a870',
-    image: 'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&q=80&auto=format&fit=crop',
-  },
-  {
-    client: 'Metro GPS Fleet',
-    industry: 'Logistics',
-    result: '247 vehicles tracked live',
-    metric: '28% fuel savings',
-    service: 'GPS Tracking',
-    color: '#22c55e',
-    image: 'https://images.unsplash.com/photo-1609587312208-cea54be969e7?w=800&q=80&auto=format&fit=crop',
-  },
-  {
-    client: 'Green Valley School',
-    industry: 'Education',
-    result: '5000+ students enrolled',
-    metric: '2x admin efficiency',
-    service: 'School ERP',
-    color: '#3b82f6',
-    image: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800&q=80&auto=format&fit=crop',
-  },
-];
+const projects = caseStudies.map(c => ({
+  name: c.name,
+  slug: c.slug,
+  url: c.url,
+  problem: c.challenge.body,
+  solution: c.solution.body,
+  tech: c.tech,
+  impact: c.benefits[0]?.desc || c.overview,
+  image: c.images.hero,
+}));
 
 export function CaseStudies() {
-  return (
-    <section className="py-24" style={{ background: 'rgb(var(--bg))' }}>
-      <div className="container">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-14"
-        >
-          <span className="eyebrow block mb-4">CASE STUDIES</span>
-          <h2
-            className="font-display font-black tracking-tight text-white mb-4"
-            style={{ fontSize: 'clamp(1.9rem, 4vw, 3rem)', lineHeight: 1.08 }}
-          >
-            Real Results. Real Businesses.
-          </h2>
-          <p className="text-[16px] max-w-xl mx-auto" style={{ color: '#888' }}>
-            See how KVL solutions have transformed businesses across India with measurable impact.
-          </p>
-        </motion.div>
+  const ref    = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-60px' });
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {cases.map((c, i) => (
+  return (
+    <section className="py-28" style={{ background: 'rgb(var(--bg))' }}>
+      <div className="container">
+
+        {/* Section header */}
+        <div className="max-w-2xl mx-auto text-center mb-16">
+          <span className="eyebrow mb-4 block">Live Products, Not Mockups</span>
+          <h2 className="heading-lg" style={{ color: 'rgb(var(--text))' }}>
+            Real products. Real users.<br />
+            <span style={{ color: '#c8a870' }}>Verifiable today, not case studies we wrote ourselves.</span>
+          </h2>
+        </div>
+
+        {/* Project cards */}
+        <motion.div
+          ref={ref}
+          className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.1 } } }}
+        >
+          {projects.map((p) => (
             <motion.div
-              key={c.client}
-              initial={{ opacity: 0, y: 32 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.55, delay: i * 0.1 }}
-              className="h-full"
+              key={p.name}
+              variants={{
+                hidden:  { opacity: 0, y: 28 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+              }}
             >
-              <div className="card-premium group cursor-pointer h-full flex flex-col overflow-hidden">
-                {/* Project photography */}
-                <div className="relative overflow-hidden" style={{ height: 180 }}>
-                  <img
-                    src={c.image}
-                    alt={`${c.client} project`}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              <div className="card-premium h-full flex flex-col overflow-hidden group">
+                <Link href={`/projects/${p.slug}`} className="relative block overflow-hidden" style={{ height: 180 }}>
+                  <Image
+                    src={p.image}
+                    alt={`${p.name} — live project built by KVL Business Solutions`}
+                    fill
+                    sizes="(max-width: 640px) 100vw, 50vw"
+                    className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
                   />
-                  {/* Gradient overlay so text below reads cleanly */}
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%)',
-                    }}
-                  />
-                  {/* Service tag overlaid on image */}
                   <span
-                    className="absolute bottom-3 left-4 text-[11px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full"
+                    className="absolute top-3 left-4 text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full"
                     style={{
-                      background: `${c.color}22`,
-                      color: c.color,
-                      border: `1px solid ${c.color}40`,
+                      background: 'rgba(34,197,94,0.12)',
+                      color: '#16a34a',
+                      border: '1px solid rgba(34,197,94,0.3)',
                       backdropFilter: 'blur(6px)',
                     }}
                   >
-                    {c.service}
+                    Live
                   </span>
-                  <span
-                    className="absolute bottom-3 right-4 text-[12px]"
-                    style={{ color: 'rgba(255,255,255,0.55)' }}
-                  >
-                    {c.industry}
-                  </span>
-                </div>
+                </Link>
 
-                {/* Card body */}
                 <div className="p-7 flex flex-col flex-1">
-                  {/* Client name */}
-                  <h3 className="font-display font-bold text-[20px] text-white mb-2">{c.client}</h3>
+                  <Link href={`/projects/${p.slug}`}>
+                    <h3 className="font-display font-bold text-[1.1rem] mb-4 hover:underline" style={{ color: 'rgb(var(--text))' }}>
+                      {p.name}
+                    </h3>
+                  </Link>
 
-                  {/* Result highlight */}
-                  <div
-                    className="text-[28px] font-black font-display mb-1"
-                    style={{ color: c.color }}
-                  >
-                    {c.result}
-                  </div>
-                  <div className="text-[14px]" style={{ color: 'rgba(255,255,255,0.45)' }}>
-                    {c.metric}
+                  <div className="mb-3">
+                    <div className="text-[10px] font-bold tracking-[0.12em] uppercase mb-1" style={{ color: 'rgb(var(--text-3))' }}>Problem</div>
+                    <p className="text-[13px] leading-[1.6]" style={{ color: 'rgb(var(--text-2))' }}>{p.problem}</p>
                   </div>
 
-                  {/* Bottom CTA */}
-                  <div className="mt-auto pt-6">
-                    <div className="pt-4 border-t border-white/[0.06] flex items-center justify-between">
-                      <span className="text-[13px]" style={{ color: 'rgba(255,255,255,0.35)' }}>
-                        View case study
+                  <div className="mb-3">
+                    <div className="text-[10px] font-bold tracking-[0.12em] uppercase mb-1" style={{ color: 'rgb(var(--text-3))' }}>Solution</div>
+                    <p className="text-[13px] leading-[1.6]" style={{ color: 'rgb(var(--text-2))' }}>{p.solution}</p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-1.5 mb-4">
+                    {p.tech.map(t => (
+                      <span key={t} className="text-[10.5px] font-medium px-2 py-0.5 rounded-full"
+                        style={{ background: 'rgba(200,168,112,0.08)', color: '#a3814f', border: '1px solid rgba(200,168,112,0.2)' }}>
+                        {t}
                       </span>
-                      <span
-                        className="group-hover:translate-x-1 transition-transform text-[18px]"
-                        style={{ color: 'rgba(255,255,255,0.3)' }}
-                      >
-                        →
-                      </span>
-                    </div>
+                    ))}
+                  </div>
+
+                  <p className="text-[13px] leading-[1.6] font-medium mb-6" style={{ color: 'rgb(var(--text))' }}>
+                    {p.impact}
+                  </p>
+
+                  <div className="mt-auto pt-5 flex items-center justify-between" style={{ borderTop: '1px solid rgba(var(--border) / 0.07)' }}>
+                    <Link href={`/projects/${p.slug}`} className="inline-flex items-center gap-1.5 text-[13px] font-semibold group/link" style={{ color: '#c8a870' }}>
+                      View Case Study
+                      <ArrowUpRight className="w-4 h-4 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform duration-200" />
+                    </Link>
+                    <a href={p.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[11.5px] font-medium" style={{ color: 'rgb(var(--text-3))' }}>
+                      Live site <ExternalLink className="w-3 h-3" />
+                    </a>
                   </div>
                 </div>
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

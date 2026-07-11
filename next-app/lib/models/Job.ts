@@ -4,7 +4,7 @@ const JobSchema = new Schema({
   slug: { type: String, required: true, unique: true, index: true },
   title: { type: String, required: true },
   department: { type: String, default: 'Engineering' },
-  location: { type: String, default: 'Pune, India' },
+  location: { type: String, default: 'Patna, India' },
   type: { type: String, enum: ['Full-time', 'Part-time', 'Contract', 'Internship'], default: 'Full-time' },
   remote: { type: Boolean, default: false },
   experience: String, // "2-5 years"

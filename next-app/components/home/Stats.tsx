@@ -69,8 +69,8 @@ function StatCard({
       <div
         className="relative rounded-2xl p-7 overflow-hidden transition-all duration-300 h-full"
         style={{
-          background: '#ffffff',
-          border: '1px solid rgba(0,0,0,0.07)',
+          background: 'rgb(var(--bg-3))',
+          border: '1px solid rgba(var(--border) / 0.07)',
           boxShadow: '0 2px 16px rgba(0,0,0,0.05)',
         }}
         onMouseEnter={e => {
@@ -85,10 +85,10 @@ function StatCard({
         {/* Top row — icon + label */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex-1">
-            <div className="text-[11px] font-bold tracking-[0.15em] uppercase mb-1" style={{ color: 'rgba(0,0,0,0.4)' }}>
+            <div className="text-[11px] font-bold tracking-[0.15em] uppercase mb-1" style={{ color: 'rgba(var(--text) / 0.4)' }}>
               {label}
             </div>
-            <div className="text-[11px]" style={{ color: 'rgba(0,0,0,0.3)' }}>{sub}</div>
+            <div className="text-[11px]" style={{ color: 'rgba(var(--text) / 0.3)' }}>{sub}</div>
           </div>
           <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
             style={{ background: `rgba(${hexToRgb(color)},0.08)`, border: `1px solid rgba(${hexToRgb(color)},0.15)` }}>
@@ -98,13 +98,13 @@ function StatCard({
 
         {/* Big number */}
         <div className="font-display font-black leading-none tracking-tight mb-5"
-          style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', color: '#0a0a0a' }}>
+          style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', color: 'rgb(var(--text))' }}>
           {display}
           <span style={{ color: '#c8a870', fontSize: '0.5em', letterSpacing: '-0.01em' }}>{suffix}</span>
         </div>
 
         {/* Progress bar */}
-        <div className="w-full h-1 rounded-full overflow-hidden" style={{ background: 'rgba(0,0,0,0.06)' }}>
+        <div className="w-full h-1 rounded-full overflow-hidden" style={{ background: 'rgba(var(--text) / 0.06)' }}>
           <motion.div
             initial={{ width: 0 }}
             animate={inView ? { width: `${barPct}%` } : { width: 0 }}
@@ -145,7 +145,7 @@ export function Stats() {
           className="text-center mb-14"
         >
           <span className="eyebrow mb-3">By the numbers</span>
-          <h2 className="heading-lg" style={{ color: '#0a0a0a' }}>
+          <h2 className="heading-lg" style={{ color: 'rgb(var(--text))' }}>
             Proven results across<br />
             <span style={{ color: '#c8a870' }}>India&apos;s enterprises</span>
           </h2>

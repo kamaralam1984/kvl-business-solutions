@@ -30,7 +30,7 @@ function UnsubView() {
         <>
           <XCircle className="w-14 h-14 mx-auto text-red-500" />
           <h1 className="text-2xl font-extrabold mt-3">Couldn't unsubscribe</h1>
-          <p className="text-text2 mt-2 text-sm">Invalid link. Email us at <a href="mailto:info@kvlsolutions.in" className="text-primary">info@kvlsolutions.in</a> to opt out.</p>
+          <p className="text-text2 mt-2 text-sm">Invalid link. Email us at <a href="mailto:info@kvlbusinesssolutions.com" className="text-primary">info@kvlbusinesssolutions.com</a> to opt out.</p>
         </>
       )}
       <Link href="/" className="btn btn-ghost mt-4 inline-flex">Back to Home</Link>

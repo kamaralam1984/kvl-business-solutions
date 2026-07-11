@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { connectDB } from '@/lib/mongodb';
@@ -39,7 +40,7 @@ export async function POST(req: Request) {
     await sendNotification('Verify your KVL email', verifyEmail(u.name, `${site}/verify-email?token=${token}`), u.email);
 
     return NextResponse.json({ ok: true, id: u._id, message: 'Check your email to verify your account.' });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e.message }, { status: 400 });
+  } catch (e) {
+    return apiError(e);
   }
 }

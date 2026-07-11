@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { z } from 'zod';
 import { connectDB } from '@/lib/mongodb';
 import { Order } from '@/lib/models/Order';
@@ -51,8 +52,7 @@ export async function POST(req: Request, { params }: { params: { orderId: string
     });
 
     return NextResponse.json({ ok: true, refundId: (refund as any).id, amount: refundAmountPaise });
-  } catch (e: any) {
-    console.error('refund error', e);
-    return NextResponse.json({ ok: false, error: e.error?.description || e.message }, { status: 500 });
+  } catch (e) {
+    return apiError(e);
   }
 }

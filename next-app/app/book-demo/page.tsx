@@ -1,13 +1,16 @@
 'use client';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Script from 'next/script';
 import { motion } from 'framer-motion';
 import { softwareProducts } from '@/lib/data/software';
+import { trackEvent } from '@/components/analytics/GoogleAnalytics';
 import { Calendar, CheckCircle2, Clock, Video, Phone, Send } from 'lucide-react';
 
 const CAL_USERNAME = process.env.NEXT_PUBLIC_CAL_USERNAME || '';
 
 export default function BookDemoPage() {
+  const router = useRouter();
   const [form, setForm] = useState({
     name: '', email: '', phone: '', company: '',
     product: 'General consultation', preferredDate: '', preferredTime: '10:00', notes: '',
@@ -22,15 +25,17 @@ export default function BookDemoPage() {
       const r = await fetch('/api/booking', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
       const d = await r.json();
       if (!d.ok) throw new Error(d.error || 'Failed');
+      trackEvent('booking_submit', { product: form.product });
       setState('success');
+      router.push('/thank-you?type=booking');
     } catch (e: any) { setState('error'); setErr(e.message); }
   };
 
   return (
-    <div style={{ background: '#0a0a0a' }} className="text-white">
+    <div style={{ background: 'rgb(var(--bg))' }}>
 
       {/* Hero */}
-      <section className="relative min-h-[55vh] flex items-center justify-center overflow-hidden" style={{ background: '#0a0a0a' }}>
+      <section className="relative min-h-[55vh] flex items-center justify-center overflow-hidden" style={{ background: 'rgb(var(--bg))' }}>
         <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200,169,110,0.05) 0%, transparent 70%)' }} />
         <div className="relative z-10 container text-center py-24">
           <motion.span
@@ -46,7 +51,7 @@ export default function BookDemoPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
             className="text-5xl md:text-7xl font-extrabold mt-4 mb-6 leading-tight"
-            style={{ color: '#f5f5f0', fontFamily: 'Poppins, sans-serif' }}
+            style={{ color: 'rgb(var(--text))', fontFamily: 'Poppins, sans-serif' }}
           >
             Book Your Free Demo
           </motion.h1>
@@ -55,7 +60,7 @@ export default function BookDemoPage() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.7, delay: 0.3 }}
             className="text-xl max-w-2xl mx-auto"
-            style={{ color: '#888' }}
+            style={{ color: 'rgba(var(--text) / 0.55)' }}
           >
             {"Pick a slot that works for you. We'll walk you through the product, answer questions, and share a custom quote."}
           </motion.p>
@@ -65,7 +70,7 @@ export default function BookDemoPage() {
       <div className="divider-gold" />
 
       {/* Main content */}
-      <section className="section" style={{ background: '#0a0a0a' }}>
+      <section className="section" style={{ background: 'rgb(var(--bg))' }}>
         <div className="container">
           <div className="grid lg:grid-cols-[1.4fr_1fr] gap-8 max-w-5xl mx-auto">
 
@@ -86,8 +91,8 @@ export default function BookDemoPage() {
                   >
                     <CheckCircle2 className="w-10 h-10" style={{ color: '#c8a96e' }} />
                   </div>
-                  <h2 className="text-3xl font-extrabold mb-3" style={{ color: '#f5f5f0', fontFamily: 'Poppins, sans-serif' }}>Booking received!</h2>
-                  <p className="mb-7 text-sm" style={{ color: '#888' }}>Our team will confirm a slot and email you within 2 business hours.</p>
+                  <h2 className="text-3xl font-extrabold mb-3 text-text" style={{ fontFamily: 'Poppins, sans-serif' }}>Booking received!</h2>
+                  <p className="mb-7 text-sm text-text2">Our team will confirm a slot and email you within 2 business hours.</p>
                   <a
                     href="https://wa.me/919942000413"
                     target="_blank"
@@ -106,7 +111,7 @@ export default function BookDemoPage() {
                     >
                       <Calendar className="w-5 h-5" style={{ color: '#c8a96e' }} />
                     </div>
-                    <h2 className="text-xl font-bold" style={{ color: '#f5f5f0' }}>Schedule your demo</h2>
+                    <h2 className="text-xl font-bold text-text">Schedule your demo</h2>
                   </div>
 
                   {/* Progress steps */}
@@ -115,9 +120,9 @@ export default function BookDemoPage() {
                       <div key={step} className="flex-1 text-center">
                         <div
                           className="h-1 rounded-full mb-1.5"
-                          style={{ background: i === 0 ? '#c8a96e' : 'rgba(255,255,255,0.08)' }}
+                          style={{ background: i === 0 ? '#c8a96e' : 'rgba(var(--border) / 0.08)' }}
                         />
-                        <span className="text-[10px]" style={{ color: '#888' }}>{step}</span>
+                        <span className="text-[10px] text-text2">{step}</span>
                       </div>
                     ))}
                   </div>
@@ -125,10 +130,12 @@ export default function BookDemoPage() {
                   <form onSubmit={submit} className="space-y-4">
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Full name *</label>
+                        <label htmlFor="bookdemo-name" className="block text-xs font-medium mb-1.5 text-text">Full name *</label>
                         <input
+                          id="bookdemo-name"
+                          name="name"
+                          autoComplete="name"
                           className="form-control"
-                          style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)', color: '#f5f5f0' }}
                           placeholder="Your name"
                           required
                           value={form.name}
@@ -136,11 +143,13 @@ export default function BookDemoPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Email *</label>
+                        <label htmlFor="bookdemo-email" className="block text-xs font-medium mb-1.5 text-text">Email *</label>
                         <input
+                          id="bookdemo-email"
+                          name="email"
                           type="email"
+                          autoComplete="email"
                           className="form-control"
-                          style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)', color: '#f5f5f0' }}
                           placeholder="you@company.com"
                           required
                           value={form.email}
@@ -150,10 +159,13 @@ export default function BookDemoPage() {
                     </div>
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Phone *</label>
+                        <label htmlFor="bookdemo-phone" className="block text-xs font-medium mb-1.5 text-text">Phone *</label>
                         <input
+                          id="bookdemo-phone"
+                          name="phone"
+                          type="tel"
+                          autoComplete="tel"
                           className="form-control"
-                          style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)', color: '#f5f5f0' }}
                           placeholder="+91 98765 43210"
                           required
                           value={form.phone}
@@ -161,10 +173,12 @@ export default function BookDemoPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Company</label>
+                        <label htmlFor="bookdemo-company" className="block text-xs font-medium mb-1.5 text-text">Company</label>
                         <input
+                          id="bookdemo-company"
+                          name="company"
+                          autoComplete="organization"
                           className="form-control"
-                          style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)', color: '#f5f5f0' }}
                           placeholder="Optional"
                           value={form.company}
                           onChange={e => setForm({ ...form, company: e.target.value })}
@@ -172,52 +186,57 @@ export default function BookDemoPage() {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Product / Service</label>
+                      <label htmlFor="bookdemo-product" className="block text-xs font-medium mb-1.5 text-text">Product / Service</label>
                       <select
+                        id="bookdemo-product"
+                        name="product"
                         className="form-control"
-                        style={{ background: '#0a0a0a', borderColor: 'rgba(255,255,255,0.1)', color: '#888' }}
                         value={form.product}
                         onChange={e => setForm({ ...form, product: e.target.value })}
                       >
-                        <option style={{ background: '#0a0a0a' }}>General consultation</option>
+                        <option style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>General consultation</option>
                         {softwareProducts.map(p => (
-                          <option key={p.slug} style={{ background: '#0a0a0a' }}>{p.name}</option>
+                          <option key={p.slug} style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>{p.name}</option>
                         ))}
                       </select>
                     </div>
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Preferred Date</label>
+                        <label htmlFor="bookdemo-date" className="block text-xs font-medium mb-1.5 text-text">Preferred Date</label>
                         <input
+                          id="bookdemo-date"
+                          name="preferredDate"
                           type="date"
                           className="form-control"
-                          style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)', color: '#888' }}
                           value={form.preferredDate}
                           onChange={e => setForm({ ...form, preferredDate: e.target.value })}
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Preferred Time</label>
+                        <label htmlFor="bookdemo-time" className="block text-xs font-medium mb-1.5 text-text">Preferred Time</label>
                         <input
+                          id="bookdemo-time"
+                          name="preferredTime"
                           type="time"
                           className="form-control"
-                          style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)', color: '#888' }}
                           value={form.preferredTime}
                           onChange={e => setForm({ ...form, preferredTime: e.target.value })}
                         />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium mb-1.5" style={{ color: '#f5f5f0' }}>Questions or requirements</label>
+                      <label htmlFor="bookdemo-notes" className="block text-xs font-medium mb-1.5 text-text">Questions or requirements</label>
                       <textarea
+                        id="bookdemo-notes"
+                        name="notes"
                         className="form-control resize-none"
-                        style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)', color: '#f5f5f0', minHeight: '80px' }}
+                        style={{ minHeight: '80px' }}
                         placeholder="Anything specific you'd like to cover?"
                         value={form.notes}
                         onChange={e => setForm({ ...form, notes: e.target.value })}
                       />
                     </div>
-                    {err && <p className="text-red-400 text-xs">{err}</p>}
+                    {err && <p id="bookdemo-error" role="alert" className="text-red-400 text-xs">{err}</p>}
                     <button
                       disabled={state === 'sending'}
                       className="btn-primary w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2 disabled:opacity-60"
@@ -225,7 +244,7 @@ export default function BookDemoPage() {
                       <Send className="w-4 h-4" />
                       {state === 'sending' ? 'Booking…' : 'Request Demo'}
                     </button>
-                    <p className="text-[10px] text-center" style={{ color: '#888' }}>
+                    <p className="text-[10px] text-center text-text2">
                       {"We'll confirm by email + WhatsApp within 2 business hours."}
                     </p>
                   </form>
@@ -258,8 +277,8 @@ export default function BookDemoPage() {
                       >
                         <item.Icon className="w-4 h-4" style={{ color: '#c8a96e' }} />
                       </div>
-                      <span style={{ color: '#888' }}>
-                        <span className="font-semibold" style={{ color: '#f5f5f0' }}>{item.label}</span> {item.desc}
+                      <span className="text-text2">
+                        <span className="font-semibold text-text">{item.label}</span> {item.desc}
                       </span>
                     </li>
                   ))}
@@ -267,12 +286,13 @@ export default function BookDemoPage() {
               </div>
 
               <div className="card-premium p-6">
-                <h3 className="font-bold mb-1 text-sm" style={{ color: '#f5f5f0' }}>Prefer to talk now?</h3>
-                <p className="text-xs mb-4" style={{ color: '#888' }}>Call or WhatsApp our sales team:</p>
+                <h3 className="font-bold mb-1 text-sm text-text">Prefer to talk now?</h3>
+                <p className="text-xs mb-4 text-text2">Call or WhatsApp our sales team:</p>
                 <a
                   href="tel:+919942000413"
-                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-medium transition-all mb-3"
-                  style={{ border: '1px solid rgba(255,255,255,0.1)', color: '#f5f5f0' }}
+                  onClick={() => trackEvent('call_click', { widget: 'book-demo-sidebar' })}
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-medium transition-all mb-3 text-text"
+                  style={{ border: '1px solid rgba(var(--border) / 0.15)' }}
                 >
                   <Phone className="w-4 h-4" /> +91 99420 00413
                 </a>
@@ -280,6 +300,7 @@ export default function BookDemoPage() {
                   href="https://wa.me/919942000413"
                   target="_blank"
                   rel="noreferrer"
+                  onClick={() => trackEvent('whatsapp_click', { widget: 'book-demo-sidebar' })}
                   className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-white text-sm font-semibold transition-all hover:scale-[1.02]"
                   style={{ background: 'linear-gradient(135deg,#25d366,#128c7e)' }}
                 >

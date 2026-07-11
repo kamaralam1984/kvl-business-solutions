@@ -1,63 +1,67 @@
 'use client';
-import { motion } from 'framer-motion';
-import { ShieldCheck, Award, CreditCard, Star, Shield, Globe } from 'lucide-react';
+import { useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
+import { ShieldCheck, Sparkles, Layers, LayoutDashboard, FileCheck, Headset } from 'lucide-react';
 
-const certs = [
-  { Icon: ShieldCheck, label: 'ISO 27001', desc: 'Security Certified', color: '#22c55e' },
-  { Icon: Award, label: 'MSME Registered', desc: 'Govt. of India', color: '#f97316' },
-  { Icon: CreditCard, label: 'Razorpay Verified', desc: 'Payment Partner', color: '#3b82f6' },
-  { Icon: Star, label: '4.8/5 Rating', desc: '1000+ reviews', color: '#c8a870' },
-  { Icon: Shield, label: 'SSL Secured', desc: '256-bit encryption', color: '#6366f1' },
-  { Icon: Globe, label: '99.5% Uptime', desc: 'SLA guaranteed', color: '#14b8a6' },
+const reasons = [
+  { Icon: ShieldCheck,      title: 'Verified Credentials',    desc: 'ISO 27001 certified, MSME-registered, and a Razorpay Verified Partner — rated 4.8/5 by the businesses we work with.' },
+  { Icon: Sparkles,         title: 'AI Failover, Built In',   desc: 'A 9-provider AI failover chain keeps lead scoring, voice outreach, and content tools running without interruption.' },
+  { Icon: Layers,           title: 'Modern Engineering Stack',desc: 'Built on Next.js, React, TypeScript, and MongoDB — the stack serious product teams standardize on.' },
+  { Icon: LayoutDashboard,  title: 'Working Software Suite',  desc: 'A full admin panel, customer dashboard, and no-code workflow engine — not a prototype, real software already running in production.' },
+  { Icon: FileCheck,        title: 'Straightforward Terms',   desc: 'Fixed, transparent pricing and a 30-day money-back guarantee — no hidden costs, no surprises.' },
+  { Icon: Headset,          title: 'Fast, Human Support',     desc: 'Free training, guided onboarding, and support that typically responds within 20-25 minutes.' },
 ];
 
 export function Certifications() {
-  return (
-    <section className="py-16" style={{ background: 'rgb(var(--bg-2))' }}>
-      <div className="container">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.55 }}
-          className="text-center mb-12"
-        >
-          <span className="eyebrow block mb-4">TRUSTED &amp; CERTIFIED</span>
-          <h2
-            className="font-display font-bold text-white"
-            style={{ fontSize: 'clamp(1.4rem, 3vw, 2rem)' }}
-          >
-            Your security is our priority
-          </h2>
-        </motion.div>
+  const ref    = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-60px' });
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {certs.map((c, i) => (
+  return (
+    <section className="py-28" style={{ background: 'rgb(var(--bg-2))' }}>
+      <div className="container">
+
+        {/* Section header */}
+        <div className="max-w-2xl mx-auto text-center mb-16">
+          <span className="eyebrow mb-4 block">Why Businesses Trust KVL</span>
+          <h2 className="heading-lg" style={{ color: 'rgb(var(--text))' }}>
+            Nothing here is inflated.<br />
+            <span style={{ color: '#c8a870' }}>Every claim is verifiable.</span>
+          </h2>
+        </div>
+
+        {/* Reason cards */}
+        <motion.div
+          ref={ref}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+          initial="hidden"
+          animate={inView ? 'visible' : 'hidden'}
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
+        >
+          {reasons.map((r) => (
             <motion.div
-              key={c.label}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.45, delay: i * 0.07 }}
+              key={r.title}
+              variants={{
+                hidden:  { opacity: 0, y: 24 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
+              }}
             >
-              <div className="card-premium p-5 text-center group">
-                <div
-                  className="w-11 h-11 mx-auto mb-3 rounded-xl grid place-items-center"
-                  style={{ background: `${c.color}15` }}
-                >
-                  <c.Icon
-                    className="w-5 h-5"
-                    style={{ color: c.color }}
-                  />
+              <div className="card-premium h-full p-7">
+                <div className="w-11 h-11 rounded-xl grid place-items-center mb-5"
+                  style={{ background: 'rgba(200,168,112,0.10)', border: '1px solid rgba(200,168,112,0.22)' }}>
+                  <r.Icon className="w-5 h-5" style={{ color: '#c8a870' }} />
                 </div>
-                <div className="font-bold text-[13px] text-white mb-0.5">{c.label}</div>
-                <div className="text-[11px]" style={{ color: 'rgba(255,255,255,0.4)' }}>
-                  {c.desc}
-                </div>
+
+                <h3 className="font-display font-bold text-[1.02rem] mb-2.5 leading-snug" style={{ color: 'rgb(var(--text))' }}>
+                  {r.title}
+                </h3>
+
+                <p className="text-[13.5px] leading-[1.7]" style={{ color: 'rgb(var(--text-2))' }}>
+                  {r.desc}
+                </p>
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

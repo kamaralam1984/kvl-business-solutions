@@ -20,6 +20,7 @@ const config: Config = {
         'gold-light': '#e8c890',
         ink:      '#0a0a0a',
         chalk:    '#f8f8f6',
+        primary:  { DEFAULT: '#2563eb', 600: '#1d4ed8', 400: '#3b82f6' },
       },
       fontFamily: {
         sans:    ['var(--font-inter)', 'system-ui', 'sans-serif'],

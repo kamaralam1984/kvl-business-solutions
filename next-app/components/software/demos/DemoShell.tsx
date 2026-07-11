@@ -9,7 +9,7 @@ import type { Software } from '@/lib/data/software';
 export function DemoShell({ product, children, activeNav, onNavChange }: { product: Software; children: React.ReactNode; activeNav: number; onNavChange: (i: number) => void }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const Icon = (Icons as any)[product.icon] || Icons.Box;
-  const wa = process.env.NEXT_PUBLIC_WHATSAPP || '919942000413';
+  const wa = (process.env.NEXT_PUBLIC_WHATSAPP || '919942000413').replace(/\D/g, '');
 
   return (
     <div className="min-h-screen bg-slate-950 text-white flex flex-col">

@@ -12,7 +12,7 @@ export default function ShippingPage() {
 
       <h2>2. Hardware shipping (GPS, CCTV)</h2>
       <ul>
-        <li>Orders are dispatched within <b>1–3 business days</b> from our Pune warehouse.</li>
+        <li>Orders are dispatched within <b>1–3 business days</b> from our Patna warehouse.</li>
         <li>Standard delivery: <b>4–7 business days</b> across India via Bluedart / DTDC / India Post.</li>
         <li>Express delivery available for an additional fee (1–3 business days).</li>
         <li>Free shipping on orders above ₹10,000.</li>
@@ -25,13 +25,13 @@ export default function ShippingPage() {
       <p>You will receive an email with tracking details once your order is dispatched.</p>
 
       <h2>5. International shipping</h2>
-      <p>We currently ship hardware only within India. For international software licenses, email <a href="mailto:sales@kvlsolutions.in">sales@kvlsolutions.in</a>.</p>
+      <p>We currently ship hardware only within India. For international software licenses, email <a href="mailto:sales@kvlbusinesssolutions.com">sales@kvlbusinesssolutions.com</a>.</p>
 
       <h2>6. Damaged or wrong items</h2>
       <p>If you receive a damaged or incorrect item, raise a ticket within 48 hours of delivery. We will arrange a free replacement.</p>
 
       <h2>7. Contact</h2>
-      <p>For shipping queries: <a href="mailto:shipping@kvlsolutions.in">shipping@kvlsolutions.in</a> · +91 99420 00413</p>
+      <p>For shipping queries: <a href="mailto:shipping@kvlbusinesssolutions.com">shipping@kvlbusinesssolutions.com</a> · +91 99420 00413</p>
     </LegalLayout>
   );
 }

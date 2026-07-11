@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { z } from 'zod';
 import { connectDB } from '@/lib/mongodb';
 import { Job } from '@/lib/models/Job';
@@ -8,7 +9,7 @@ const schema = z.object({
   slug: z.string().min(2).regex(/^[a-z0-9-]+$/),
   title: z.string().min(2),
   department: z.string().default('Engineering'),
-  location: z.string().default('Pune, India'),
+  location: z.string().default('Patna, India'),
   type: z.enum(['Full-time', 'Part-time', 'Contract', 'Internship']).default('Full-time'),
   remote: z.boolean().default(false),
   experience: z.string().optional(),
@@ -33,7 +34,7 @@ export async function POST(req: Request) {
     await connectDB();
     const j = await Job.create(data);
     return NextResponse.json({ ok: true, job: j });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e.message }, { status: 400 });
+  } catch (e) {
+    return apiError(e);
   }
 }
