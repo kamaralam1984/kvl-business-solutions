@@ -1,6 +1,5 @@
 'use client';
-import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { useReveal, revealStyle } from '@/lib/hooks/useReveal';
 import { ShieldCheck, Sparkles, Layers, LayoutDashboard, FileCheck, Headset } from 'lucide-react';
 
 const reasons = [
@@ -13,8 +12,7 @@ const reasons = [
 ];
 
 export function Certifications() {
-  const ref    = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-60px' });
+  const { ref, inView } = useReveal();
 
   return (
     <section className="py-28" style={{ background: 'rgb(var(--bg-2))' }}>
@@ -30,21 +28,9 @@ export function Certifications() {
         </div>
 
         {/* Reason cards */}
-        <motion.div
-          ref={ref}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
-          initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
-          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
-        >
-          {reasons.map((r) => (
-            <motion.div
-              key={r.title}
-              variants={{
-                hidden:  { opacity: 0, y: 24 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
-              }}
-            >
+        <div ref={ref} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {reasons.map((r, i) => (
+            <div key={r.title} style={revealStyle(inView, i, { staggerMs: 80, durationMs: 550 })}>
               <div className="card-premium h-full p-7">
                 <div className="w-11 h-11 rounded-xl grid place-items-center mb-5"
                   style={{ background: 'rgba(200,168,112,0.10)', border: '1px solid rgba(200,168,112,0.22)' }}>
@@ -59,9 +45,9 @@ export function Certifications() {
                   {r.desc}
                 </p>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

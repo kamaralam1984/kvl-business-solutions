@@ -1,7 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { useReveal, revealStyle } from '@/lib/hooks/useReveal';
 import { Hospital, School, Banknote, UtensilsCrossed, Building2, HardHat, Factory, Landmark } from 'lucide-react';
 
 const industries = [
@@ -16,8 +15,7 @@ const industries = [
 ];
 
 export function IndustriesGrid() {
-  const ref    = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-60px' });
+  const { ref, inView } = useReveal();
 
   return (
     <section className="py-28" style={{ background: 'rgb(var(--bg))' }}>
@@ -33,21 +31,9 @@ export function IndustriesGrid() {
         </div>
 
         {/* Industry cards */}
-        <motion.div
-          ref={ref}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-5"
-          initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
-          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.06 } } }}
-        >
-          {industries.map((ind) => (
-            <motion.div
-              key={ind.title}
-              variants={{
-                hidden:  { opacity: 0, y: 24 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
-              }}
-            >
+        <div ref={ref} className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+          {industries.map((ind, i) => (
+            <div key={ind.title} style={revealStyle(inView, i, { staggerMs: 60 })}>
               <Link href={ind.href} className="block h-full group">
                 <div className="card-premium h-full p-6 flex flex-col">
                   <div className="w-11 h-11 rounded-xl grid place-items-center mb-5"
@@ -64,9 +50,9 @@ export function IndustriesGrid() {
                   </p>
                 </div>
               </Link>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

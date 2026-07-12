@@ -1,8 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { useReveal, revealStyle } from '@/lib/hooks/useReveal';
 import { Star, ArrowUpRight } from 'lucide-react';
 
 type Review = {
@@ -17,8 +16,7 @@ type Review = {
 
 export function Testimonials() {
   const [reviews, setReviews] = useState<Review[] | null>(null);
-  const ref    = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-60px' });
+  const { ref, inView } = useReveal();
 
   useEffect(() => {
     fetch('/api/reviews')
@@ -43,21 +41,9 @@ export function Testimonials() {
         </div>
 
         {hasReviews ? (
-          <motion.div
-            ref={ref}
-            className="grid grid-cols-1 sm:grid-cols-3 gap-5"
-            initial="hidden"
-            animate={inView ? 'visible' : 'hidden'}
-            variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.1 } } }}
-          >
-            {reviews!.map((r) => (
-              <motion.div
-                key={r._id}
-                variants={{
-                  hidden:  { opacity: 0, y: 24 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
-                }}
-              >
+          <div ref={ref} className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            {reviews!.map((r, i) => (
+              <div key={r._id} style={revealStyle(inView, i, { staggerMs: 100, durationMs: 550 })}>
                 <div className="card-premium h-full p-7">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-9 h-9 rounded-full grid place-items-center font-bold text-[13px]"
@@ -76,9 +62,9 @@ export function Testimonials() {
                   </div>
                   <p className="text-[13.5px] leading-[1.7]" style={{ color: 'rgb(var(--text-2))' }}>{r.message}</p>
                 </div>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         ) : (
           <div className="max-w-2xl mx-auto text-center">
             <div className="card-premium p-10">

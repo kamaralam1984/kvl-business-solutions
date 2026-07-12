@@ -1,12 +1,14 @@
 'use client';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { useReveal, revealStyle } from '@/lib/hooks/useReveal';
 import { ArrowUpRight, MessageCircle, CalendarClock, CheckCircle2 } from 'lucide-react';
 
 const WHATSAPP_NUMBER = '919942000413';
 const WHATSAPP_MESSAGE = "Hi KVL, I'd like to talk about a software project.";
 
 export function CtaBanner({ title, desc }: { title?: string; desc?: string }) {
+  const { ref, inView } = useReveal();
+
   return (
     <>
       <div className="divider-premium" />
@@ -42,13 +44,7 @@ export function CtaBanner({ title, desc }: { title?: string; desc?: string }) {
         </div>
 
         <div className="container relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 36 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="text-center max-w-3xl mx-auto"
-          >
+          <div ref={ref} style={revealStyle(inView, 0, { durationMs: 800, distance: 36 })} className="text-center max-w-3xl mx-auto">
             <span className="eyebrow mb-8 block">Let's Talk</span>
 
             {/* Headline */}
@@ -130,7 +126,7 @@ export function CtaBanner({ title, desc }: { title?: string; desc?: string }) {
               <CheckCircle2 className="w-3.5 h-3.5 shrink-0" style={{ color: '#c8a870' }} />
               30-day money-back guarantee. Free training and onboarding on every project.
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 

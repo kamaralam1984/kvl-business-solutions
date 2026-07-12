@@ -1,6 +1,5 @@
 'use client';
-import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { useReveal, revealStyle } from '@/lib/hooks/useReveal';
 
 const steps = [
   { num: '01', title: 'Discover',    desc: 'We learn your business, your goals and what the system actually needs to do.' },
@@ -13,8 +12,7 @@ const steps = [
 ];
 
 export function Process() {
-  const ref    = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-60px' });
+  const { ref, inView } = useReveal();
 
   return (
     <section className="py-28" style={{ background: 'rgb(var(--bg))' }}>
@@ -30,21 +28,9 @@ export function Process() {
         </div>
 
         {/* Process steps */}
-        <motion.div
-          ref={ref}
-          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5"
-          initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
-          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.07 } } }}
-        >
-          {steps.map((s) => (
-            <motion.div
-              key={s.num}
-              variants={{
-                hidden:  { opacity: 0, y: 22 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
-              }}
-            >
+        <div ref={ref} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+          {steps.map((s, i) => (
+            <div key={s.num} style={revealStyle(inView, i, { staggerMs: 70, distance: 22 })}>
               <div className="card-premium h-full p-6">
                 <div className="w-11 h-11 rounded-full grid place-items-center mb-5 font-display font-bold text-[13px]"
                   style={{ background: 'rgba(200,168,112,0.10)', border: '1px solid rgba(200,168,112,0.22)', color: '#c8a870' }}>
@@ -59,9 +45,9 @@ export function Process() {
                   {s.desc}
                 </p>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

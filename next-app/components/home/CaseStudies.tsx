@@ -1,8 +1,7 @@
 'use client';
-import { useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion, useInView } from 'framer-motion';
+import { useReveal, revealStyle } from '@/lib/hooks/useReveal';
 import { ArrowUpRight, ExternalLink } from 'lucide-react';
 import { caseStudies } from '@/lib/data/case-studies';
 
@@ -21,8 +20,7 @@ const projects = FEATURED_SLUGS
   }));
 
 export function CaseStudies() {
-  const ref    = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: '-60px' });
+  const { ref, inView } = useReveal();
 
   return (
     <section className="py-28" style={{ background: 'rgb(var(--bg))' }}>
@@ -38,21 +36,9 @@ export function CaseStudies() {
         </div>
 
         {/* Project cards */}
-        <motion.div
-          ref={ref}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-          initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
-          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.1 } } }}
-        >
-          {projects.map((p) => (
-            <motion.div
-              key={p.name}
-              variants={{
-                hidden:  { opacity: 0, y: 28 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
-              }}
-            >
+        <div ref={ref} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {projects.map((p, i) => (
+            <div key={p.name} style={revealStyle(inView, i, { staggerMs: 100, durationMs: 600, distance: 28 })}>
               <div className="card-premium h-full flex flex-col overflow-hidden group">
                 <Link href={`/projects/${p.slug}`} className="relative block overflow-hidden aspect-[16/10]">
                   <Image
@@ -104,9 +90,9 @@ export function CaseStudies() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
