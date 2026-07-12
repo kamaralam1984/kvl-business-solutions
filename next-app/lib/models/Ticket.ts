@@ -8,6 +8,13 @@ const AttachmentSchema = new Schema({
   format: String,
 }, { _id: false });
 
+const ReplySchema = new Schema({
+  message: { type: String, required: true },
+  authorEmail: String,
+  isAdmin: { type: Boolean, default: true },
+  createdAt: { type: Date, default: Date.now },
+}, { _id: false });
+
 const TicketSchema = new Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, index: true },
@@ -17,6 +24,7 @@ const TicketSchema = new Schema({
   status: { type: String, enum: ['open', 'in-progress', 'resolved', 'closed'], default: 'open', index: true },
   assignedTo: String,
   attachments: { type: [AttachmentSchema], default: [] },
+  replies: { type: [ReplySchema], default: [] },
 }, { timestamps: true });
 
 export const Ticket = models.Ticket || model('Ticket', TicketSchema);

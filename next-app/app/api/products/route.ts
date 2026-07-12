@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { softwareProducts } from '@/lib/data/software';
+import { getLiveSoftwareProducts } from '@/lib/data/live-software';
 
 export async function GET() {
-  return NextResponse.json({ products: softwareProducts });
+  const products = await getLiveSoftwareProducts();
+  return NextResponse.json({ products });
 }

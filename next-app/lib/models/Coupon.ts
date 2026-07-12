@@ -21,7 +21,14 @@ export function evaluateCoupon(coupon: any, opts: { amount: number; productSlug:
   if (!coupon.active) return { ok: false, error: 'Coupon is inactive' };
   const now = new Date();
   if (coupon.validFrom && now < new Date(coupon.validFrom)) return { ok: false, error: 'Coupon not yet active' };
-  if (coupon.validUntil && now > new Date(coupon.validUntil)) return { ok: false, error: 'Coupon expired' };
+  // validUntil is entered as a bare date (admin UI only collects a day, no
+  // time), which Mongo stores as midnight UTC — comparing directly would
+  // expire the coupon at the START of its last valid day instead of the end.
+  if (coupon.validUntil) {
+    const endOfValidUntilDay = new Date(coupon.validUntil);
+    endOfValidUntilDay.setUTCHours(23, 59, 59, 999);
+    if (now > endOfValidUntilDay) return { ok: false, error: 'Coupon expired' };
+  }
   if (coupon.maxUses > 0 && coupon.usedCount >= coupon.maxUses) return { ok: false, error: 'Coupon usage limit reached' };
   if (opts.amount < (coupon.minOrderAmount || 0)) return { ok: false, error: `Min order amount ₹${coupon.minOrderAmount}` };
   if (coupon.productSlugs?.length > 0 && !coupon.productSlugs.includes(opts.productSlug)) return { ok: false, error: 'Coupon not valid for this product' };

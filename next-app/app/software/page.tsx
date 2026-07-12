@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { CtaBanner } from '@/components/home/CtaBanner';
 import { SoftwareMarketplace } from '@/components/software/SoftwareMarketplace';
-import { softwareProducts } from '@/lib/data/software';
+import { getLiveSoftwareProducts } from '@/lib/data/live-software';
 import { connectDB } from '@/lib/mongodb';
 import { Review } from '@/lib/models/Review';
 import { Star, Shield, Headphones, Zap } from 'lucide-react';
@@ -18,13 +18,15 @@ export const metadata = {
 };
 
 export default async function SoftwarePage() {
+  const products = await getLiveSoftwareProducts();
+
   // Real approved-review counts per product, used as an honest "Popular" sort proxy
   // in the marketplace filters — no fabricated popularity numbers.
   let reviewCounts: Record<string, number> = {};
   try {
     await connectDB();
     const counts = await Review.aggregate([
-      { $match: { approved: true, productSlug: { $in: softwareProducts.map(p => p.slug) } } },
+      { $match: { approved: true, productSlug: { $in: products.map(p => p.slug) } } },
       { $group: { _id: '$productSlug', count: { $sum: 1 } } },
     ]);
     reviewCounts = Object.fromEntries(counts.map((c: any) => [c._id, c.count]));
@@ -84,7 +86,7 @@ export default async function SoftwarePage() {
             <p className="text-text3 text-sm">Click <span className="text-text/70 font-semibold">Demo</span> to explore live interactive dashboard • Hover card for instant preview</p>
           </div>
           <Suspense fallback={<div className="text-center py-16 text-text3 text-sm">Loading marketplace filters…</div>}>
-            <SoftwareMarketplace products={softwareProducts} reviewCounts={reviewCounts} />
+            <SoftwareMarketplace products={products} reviewCounts={reviewCounts} />
           </Suspense>
         </div>
       </section>

@@ -3,7 +3,7 @@ import { Clock, ArrowUpRight } from 'lucide-react';
 import { PageHero } from '@/components/shared/PageHero';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { CtaBanner } from '@/components/home/CtaBanner';
-import { blogPosts } from '@/lib/data/blog';
+import { getLiveBlogPosts } from '@/lib/data/live-blog';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
 
@@ -12,7 +12,8 @@ export const metadata = {
   description: 'Practical, expert-level guides on ERP selection, GST e-invoicing, GPS fleet ROI, AI automation, and custom software decisions — written for Indian business owners, not filler content.',
 };
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const blogPosts = await getLiveBlogPosts();
   const sorted = [...blogPosts].sort(
     (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   );

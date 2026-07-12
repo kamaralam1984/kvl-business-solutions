@@ -2,14 +2,15 @@ import { PageHero } from '@/components/shared/PageHero';
 import { CtaBanner } from '@/components/home/CtaBanner';
 import { ProjectFilterBar } from '@/components/projects/ProjectFilterBar';
 import { DownloadsSection } from '@/components/widgets/DownloadsSection';
-import { caseStudies } from '@/lib/data/case-studies';
+import { getLiveCaseStudies } from '@/lib/data/live-case-studies';
 
 export const metadata = {
   title: 'Project Portfolio — Real, Live Products Built by KVL Business Solutions',
   description: 'Real, verifiable software products KVL Business Solutions has designed and engineered — live in production today, not mockups or representative examples.',
 };
 
-export default function ProjectsPage() {
+export default async function ProjectsPage() {
+  const caseStudies = await getLiveCaseStudies();
   return (
     <>
       <PageHero eyebrow="PROJECT PORTFOLIO" title="Real Products," accent="Live in Production" description="Every project below is a real, working product you can visit today — the business challenge it solved, how we built it, and the outcome it created." breadcrumb="Projects" />

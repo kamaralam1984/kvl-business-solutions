@@ -6,9 +6,10 @@ import {
   LayoutDashboard, Users, Ticket, FileText, Package, Box, UserCog, Mail,
   Activity, Tag, Calendar, Star, Settings, Megaphone, Globe, Monitor, Cpu,
   Workflow, Briefcase, Sparkles, Bell, Search, LogOut, ChevronRight,
-  TrendingUp, Zap, Shield, Gift,
+  TrendingUp, Zap, Shield, Gift, ExternalLink, HeartHandshake, Plug,
+  HeartPulse, Download, MessageSquare, BookOpen, Layers, BarChart3,
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const sections = [
   {
@@ -27,17 +28,21 @@ const sections = [
       { href: '/admin/orders',   label: 'Orders',      Icon: Package },
       { href: '/admin/quotes',   label: 'Quotes',      Icon: FileText },
       { href: '/admin/referrals', label: 'Referrals',  Icon: Gift },
+      { href: '/dashboard/crm', label: 'Deals / CRM Pipeline', Icon: HeartHandshake, external: true },
     ],
   },
   {
     label: 'CONTENT',
     links: [
-      { href: '/admin/demos',    label: 'Demos',       Icon: Monitor },
-      { href: '/admin/products', label: 'Products',    Icon: Box },
-      { href: '/admin/courses',  label: 'Courses',     Icon: Briefcase },
-      { href: '/admin/jobs',     label: 'Jobs',        Icon: Briefcase },
-      { href: '/admin/banners',  label: 'Banners',     Icon: Megaphone },
-      { href: '/admin/reviews',  label: 'Reviews',     Icon: Star },
+      { href: '/admin/demos',       label: 'Demos',        Icon: Monitor },
+      { href: '/admin/products',    label: 'Products',     Icon: Box },
+      { href: '/admin/blog',        label: 'Blog',         Icon: BookOpen },
+      { href: '/admin/case-studies', label: 'Case Studies', Icon: Layers },
+      { href: '/admin/downloads',   label: 'Downloads',    Icon: Download },
+      { href: '/admin/courses',     label: 'Courses',      Icon: Briefcase },
+      { href: '/admin/jobs',        label: 'Jobs',         Icon: Briefcase },
+      { href: '/admin/banners',     label: 'Banners',      Icon: Megaphone },
+      { href: '/admin/reviews',     label: 'Reviews',      Icon: Star },
     ],
   },
   {
@@ -48,6 +53,10 @@ const sections = [
       { href: '/admin/tickets',       label: 'Tickets',       Icon: Ticket },
       { href: '/admin/coupons',       label: 'Coupons',       Icon: Tag },
       { href: '/admin/workflows',     label: 'Workflows',     Icon: Workflow },
+      { href: '/admin/chatbot-logs',  label: 'Chatbot Logs',  Icon: MessageSquare },
+      { href: '/admin/visitor-stats', label: 'Visitor Stats', Icon: BarChart3 },
+      { href: '/admin/automation',    label: 'Automation Health', Icon: HeartPulse },
+      { href: '/admin/integrations',  label: 'Integrations',  Icon: Plug },
       { href: '/admin/site-settings', label: 'Site Settings', Icon: Settings },
       { href: '/admin/ai-content',    label: 'AI Content',    Icon: Sparkles },
     ],
@@ -72,7 +81,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     : 'Dashboard';
 
   return (
-    <div className="flex min-h-screen" style={{ background: '#08080a' }}>
+    <div className="flex min-h-screen relative" style={{ background: '#08080a' }}>
+
+      {/* Ambient background glow — subtle, gives the dark shell depth instead of flat black */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden>
+        <div className="orb orb-lg absolute" style={{ top: '-10%', left: '15%', width: 480, height: 480, background: 'rgba(200,169,110,0.05)' }} />
+        <div className="orb orb-lg absolute" style={{ bottom: '-15%', right: '5%', width: 560, height: 560, background: 'rgba(99,102,241,0.04)' }} />
+      </div>
 
       {/* ── Sidebar ──────────────────────────────── */}
       <aside
@@ -132,6 +147,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                       >
                         <l.Icon className="w-3.5 h-3.5 shrink-0 opacity-80" />
                         <span className="flex-1">{l.label}</span>
+                        {(l as any).external && (
+                          <ExternalLink className="w-3 h-3 shrink-0 opacity-40" />
+                        )}
                         {active && (
                           <span className="w-1.5 h-1.5 rounded-full shrink-0"
                             style={{ background: '#c8a870', boxShadow: '0 0 8px rgba(200,168,112,0.5)' }} />
@@ -218,6 +236,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             background: 'rgba(8,8,10,0.9)',
             backdropFilter: 'blur(16px)',
             borderBottom: '1px solid rgba(255,255,255,0.055)',
+            boxShadow: '0 1px 0 rgba(200,169,110,0.12)',
           }}
         >
           {/* Breadcrumb */}
@@ -265,7 +284,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
             {/* Notifications */}
             <button
-              className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 relative"
+              className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 relative hover:scale-110 active:scale-95"
               style={{
                 color: 'rgba(255,255,255,0.35)',
                 background: 'rgba(255,255,255,0.04)',
@@ -287,11 +306,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
             {/* Admin avatar */}
             <div
-              className="w-8 h-8 rounded-full flex items-center justify-center text-[12px] font-bold cursor-pointer"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-[12px] font-bold cursor-pointer transition-transform duration-200 hover:scale-110"
               style={{
                 background: 'rgba(200,169,110,0.1)',
                 color: '#c8a96e',
                 border: '1.5px solid rgba(200,169,110,0.25)',
+                boxShadow: '0 0 0 0 rgba(200,169,110,0.4)',
               }}
             >
               A
@@ -300,8 +320,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         {/* Page content */}
-        <main className="flex-1" style={{ background: '#08080a', padding: '28px 32px' }}>
-          {children}
+        <main className="flex-1 relative" style={{ padding: '28px 32px' }}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={pathname}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
         </main>
       </div>
     </div>

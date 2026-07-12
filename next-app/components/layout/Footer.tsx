@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Facebook, Instagram, Linkedin, Youtube, Twitter, Github, Phone, Mail, MapPin, MessageCircle, ArrowUpRight, ArrowRight } from 'lucide-react';
 import { NewsletterForm } from '@/components/widgets/NewsletterForm';
+import { VisitorCounter } from '@/components/widgets/VisitorCounter';
 
 export function Footer({ settings }: { settings?: any }) {
   const brandName = settings?.brandName || 'KVL Business Solutions';
@@ -228,6 +229,7 @@ export function Footer({ settings }: { settings?: any }) {
           <p className="text-[12px]" style={{ color: 'rgba(var(--text) / 0.3)' }}>
             &copy; {new Date().getFullYear()} {brandName}. All rights reserved.
           </p>
+          <VisitorCounter />
           <ul className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5">
             {legal.map(item => (
               <li key={item.label}>

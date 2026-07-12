@@ -31,10 +31,24 @@ export function leadEmail(lead: any) {
     <p><b>Message:</b><br/>${lead.message || ''}</p>`);
 }
 
+export function callBackEmail(data: { name: string; phone: string }) {
+  return wrap('Call Me Back Requested', `<h2>📞 Call Back Requested — ${data.name}</h2>
+    <p><b>Phone:</b> ${data.phone}</p>
+    <p>Customer asked for an immediate callback via the website widget — they're expecting to hear from us within 30 seconds.</p>`);
+}
+
 export function ticketEmail(t: any) {
   return wrap('New Support Ticket', `<h2>New Support Ticket [${(t.priority || 'medium').toUpperCase()}]</h2>
     <p><b>From:</b> ${t.name} (${t.email})<br/><b>Product:</b> ${t.product || '—'}</p>
     <p><b>Issue:</b><br/>${t.description}</p>`);
+}
+
+export function ticketReplyEmail(t: any, message: string) {
+  return wrap('Reply to Your Support Ticket', `<h2>Hi ${t.name} 👋</h2>
+    <p>We've replied to your support ticket${t.product ? ` about <b>${t.product}</b>` : ''}:</p>
+    <p style="background:#f1f5f9;padding:14px;border-radius:8px;white-space:pre-wrap">${message}</p>
+    <p style="font-size:12px;color:#64748b">Your original issue: "${t.description}"</p>
+    <p style="font-size:12px;color:#64748b">Reply to this email if you need further help, or WhatsApp +91 99420 00413.</p>`);
 }
 
 export function quoteEmail(q: any) {

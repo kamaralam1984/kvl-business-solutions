@@ -21,6 +21,11 @@ function fill(template: string, ctx: TriggerContext): string {
 
 // Action handlers
 async function actionSendEmail(workflow: any, ctx: TriggerContext) {
+  // sendNotification() silently no-ops when RESEND_API_KEY isn't set (by
+  // design, for its other fire-and-forget callers) — check here instead, so
+  // the workflow run is honestly reported as failed rather than a false
+  // "success" that masks total delivery failure.
+  if (!process.env.RESEND_API_KEY) throw new Error('RESEND_API_KEY not configured — email was not sent');
   const subject = fill(workflow.config?.emailSubject || 'KVL notification', ctx);
   const body = fill(workflow.config?.emailTemplate || 'Hi {{name}}, this is an automated message from KVL.', ctx);
   const to = ctx.email || ctx.customerEmail;
@@ -52,6 +57,11 @@ async function actionAddToCrm(workflow: any, ctx: TriggerContext) {
 }
 
 async function actionWhatsApp(workflow: any, ctx: TriggerContext) {
+  // Same reasoning as actionSendEmail — sendCustomWhatsApp() silently no-ops
+  // without WATI credentials, so check here to report an honest failure.
+  if (!process.env.WATI_API_ENDPOINT || !process.env.WATI_API_KEY) {
+    throw new Error('WATI_API_ENDPOINT/WATI_API_KEY not configured — WhatsApp message was not sent');
+  }
   const phone = ctx.phone;
   if (!phone) throw new Error('No phone in context');
   const message = fill(workflow.config?.whatsappMessage || '', ctx);

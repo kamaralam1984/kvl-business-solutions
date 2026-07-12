@@ -3,7 +3,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import * as Icons from 'lucide-react';
 import { ChevronRight, ArrowUpRight, CheckCircle2, ExternalLink, Compass } from 'lucide-react';
-import { caseStudies, type CaseStudy } from '@/lib/data/case-studies';
+import { type CaseStudy } from '@/lib/data/case-studies';
+import { getLiveCaseStudy, getLiveCaseStudies } from '@/lib/data/live-case-studies';
 import { services } from '@/lib/data/services';
 import { industries } from '@/lib/data/industries';
 import { JsonLd } from '@/components/shared/JsonLd';
@@ -11,9 +12,11 @@ import { ParticleBackground } from '@/components/shared/ParticleBackground';
 import { CtaBanner } from '@/components/home/CtaBanner';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
+const absoluteUrl = (src: string) => (src.startsWith('http') ? src : `${SITE}${src}`);
 
-export const dynamic = 'force-static';
-export const dynamicParams = false;
+// Re-generated every 5 minutes (and on-demand for slugs not pre-rendered at
+// build time) so Admin → Case Studies entries show up without a full redeploy.
+export const revalidate = 300;
 
 const processSteps = [
   { num: '01', title: 'Discover',    desc: 'We learn the business, the goals and what the system actually needs to do.' },
@@ -49,12 +52,13 @@ function rankRelatedCaseStudies(current: CaseStudy, all: CaseStudy[], limit = 3)
     .map(entry => entry.c);
 }
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const caseStudies = await getLiveCaseStudies();
   return caseStudies.map(c => ({ slug: c.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
-  const c = caseStudies.find(x => x.slug === params.slug);
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const c = await getLiveCaseStudy(params.slug);
   if (!c) return { title: 'Case study not found' };
   return {
     title: c.seo.title,
@@ -64,17 +68,20 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
       title: c.seo.title,
       description: c.seo.description,
       url: `${SITE}/projects/${c.slug}`,
-      images: [{ url: `${SITE}${c.images.hero}` }],
+      images: [{ url: absoluteUrl(c.images.hero) }],
       type: 'article',
     },
   };
 }
 
-export default function CaseStudyPage({ params }: { params: { slug: string } }) {
-  const study = caseStudies.find(c => c.slug === params.slug);
+export default async function CaseStudyPage({ params }: { params: { slug: string } }) {
+  const [study, allStudies] = await Promise.all([
+    getLiveCaseStudy(params.slug),
+    getLiveCaseStudies(),
+  ]);
   if (!study) notFound();
 
-  const related = rankRelatedCaseStudies(study, caseStudies, 3);
+  const related = rankRelatedCaseStudies(study, allStudies, 3);
   const relatedServices = study.relatedServiceSlugs
     .map(slug => services.find(s => s.slug === slug))
     .filter(Boolean) as typeof services;
@@ -88,7 +95,7 @@ export default function CaseStudyPage({ params }: { params: { slug: string } }) 
     name: study.name,
     description: study.overview,
     url: `${SITE}/projects/${study.slug}`,
-    image: `${SITE}${study.images.hero}`,
+    image: absoluteUrl(study.images.hero),
     creator: { '@id': `${SITE}/#organization` },
     about: study.businessCategory,
   };

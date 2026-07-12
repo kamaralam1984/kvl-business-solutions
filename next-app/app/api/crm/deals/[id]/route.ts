@@ -24,10 +24,12 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   try {
     const data = schema.parse(await req.json());
     await connectDB();
-    const before: any = data.stage
-      ? await Deal.findOne({ _id: params.id, ownerEmail: session.user.email }).lean()
-      : null;
-    const d = await Deal.findOneAndUpdate({ _id: params.id, ownerEmail: session.user.email }, { $set: data }, { new: true });
+    // Admins can edit any deal (matches the "see the whole pipeline" behavior
+    // in GET above); regular users are still scoped to their own deals.
+    const isAdmin = (session.user as any).role === 'admin';
+    const filter = isAdmin ? { _id: params.id } : { _id: params.id, ownerEmail: session.user.email };
+    const before: any = data.stage ? await Deal.findOne(filter).lean() : null;
+    const d = await Deal.findOneAndUpdate(filter, { $set: data }, { new: true });
     if (!d) return NextResponse.json({ ok: false, error: 'Not found' }, { status: 404 });
 
     // --- Workflow trigger firing (additive, task 13) ---
@@ -53,7 +55,9 @@ export async function DELETE(_: Request, { params }: { params: { id: string } })
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
   await connectDB();
-  await Deal.findOneAndDelete({ _id: params.id, ownerEmail: session.user.email });
+  const isAdmin = (session.user as any).role === 'admin';
+  const filter = isAdmin ? { _id: params.id } : { _id: params.id, ownerEmail: session.user.email };
+  await Deal.findOneAndDelete(filter);
   return NextResponse.json({ ok: true });
 }
 
@@ -62,7 +66,9 @@ export async function POST(_: Request, { params }: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
   await connectDB();
-  const d: any = await Deal.findOne({ _id: params.id, ownerEmail: session.user.email }).lean();
+  const isAdmin = (session.user as any).role === 'admin';
+  const filter = isAdmin ? { _id: params.id } : { _id: params.id, ownerEmail: session.user.email };
+  const d: any = await Deal.findOne(filter).lean();
   if (!d) return NextResponse.json({ ok: false, error: 'Not found' }, { status: 404 });
 
   const sys = `You are a smart sales coach. Given a deal in the pipeline, suggest the BEST next action in 1-2 sentences. Be specific and actionable.`;

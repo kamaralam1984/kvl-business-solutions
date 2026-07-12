@@ -3,7 +3,7 @@ import { apiError } from '@/lib/api-response';
 import { z } from 'zod';
 import { connectDB } from '@/lib/mongodb';
 import { Coupon, evaluateCoupon } from '@/lib/models/Coupon';
-import { softwareProducts } from '@/lib/data/software';
+import { getLiveSoftwareProduct } from '@/lib/data/live-software';
 import { rateLimit, clientIp } from '@/lib/rate-limit';
 
 const schema = z.object({
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
 
   try {
     const { code, productSlug, hosting } = schema.parse(await req.json());
-    const product = softwareProducts.find(p => p.slug === productSlug);
+    const product = await getLiveSoftwareProduct(productSlug);
     if (!product) return NextResponse.json({ ok: false, error: 'Invalid product' }, { status: 400 });
 
     await connectDB();

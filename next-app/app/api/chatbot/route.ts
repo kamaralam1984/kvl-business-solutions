@@ -48,7 +48,7 @@ export async function POST(req: Request) {
   if (!limit.allowed) return NextResponse.json({ reply: 'Slow down a bit — too many messages. Try again in a minute.' });
 
   try {
-    const { history } = await req.json();
+    const { history, sessionId } = await req.json();
     const messages: ChatMessage[] = (history || [])
       .filter((m: any) => m.content?.trim())
       .map((m: any) => ({
@@ -112,6 +112,27 @@ export async function POST(req: Request) {
       } catch (e) {
         console.error('[chatbot] Lead capture error:', e);
       }
+    }
+
+    // Persist the full conversation for quality review in Admin → Chatbot Logs.
+    // Fire-and-forget — a logging failure must never break the chat reply.
+    if (sessionId) {
+      (async () => {
+        const { connectDB } = await import('@/lib/mongodb');
+        const { ChatLog } = await import('@/lib/models/ChatLog');
+        await connectDB();
+        await ChatLog.findOneAndUpdate(
+          { sessionId },
+          {
+            $set: {
+              messages: [...messages, { role: 'assistant', content: result.reply }],
+              lastMessageAt: new Date(),
+            },
+            $max: { leadCaptured },
+          },
+          { upsert: true }
+        );
+      })().catch(e => console.error('[chatbot] log persist error:', e));
     }
 
     return NextResponse.json({

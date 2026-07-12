@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { softwareProducts } from '@/lib/data/software';
+import { getLiveSoftwareProduct, getLiveSoftwareProducts } from '@/lib/data/live-software';
 import { PageHero } from '@/components/shared/PageHero';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { ReviewsSection } from '@/components/widgets/ReviewsSection';
@@ -11,15 +11,18 @@ import { Check, Cloud, Server, ShieldCheck, Headphones, RefreshCcw, Award, Play,
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
 
-export const dynamic = 'force-static';
-export const dynamicParams = false;
+// Re-generated every 5 minutes (and on-demand for slugs not pre-rendered at
+// build time) so Admin → Products edits (price, description, active/hidden)
+// show up without a full redeploy.
+export const revalidate = 300;
 
-export function generateStaticParams() {
-  return softwareProducts.map(p => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  const products = await getLiveSoftwareProducts();
+  return products.map(p => ({ slug: p.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
-  const p = softwareProducts.find(x => x.slug === params.slug);
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const p = await getLiveSoftwareProduct(params.slug);
   if (!p) return { title: 'Product not found' };
   const title = `${p.name} — Buy or Rent, Free Live Demo`;
   const url = `${SITE}/software/${p.slug}`;
@@ -32,13 +35,16 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
 }
 
 export default async function ProductPage({ params }: { params: { slug: string } }) {
-  const product = softwareProducts.find(p => p.slug === params.slug);
+  const [product, allProducts] = await Promise.all([
+    getLiveSoftwareProduct(params.slug),
+    getLiveSoftwareProducts(),
+  ]);
   if (!product) notFound();
 
   const cloudPrice = product.price;
   const onPremPrice = Math.round(product.price * 1.5);
   const monthlyRent = product.monthlyRent;
-  const related = softwareProducts.filter(p => p.slug !== product.slug).slice(0, 3);
+  const related = allProducts.filter(p => p.slug !== product.slug).slice(0, 3);
 
   let ratingValue = 0;
   let reviewCount = 0;

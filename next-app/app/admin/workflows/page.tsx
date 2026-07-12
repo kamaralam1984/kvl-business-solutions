@@ -9,6 +9,7 @@ const TRIGGERS = [
   { id: 'order_paid', label: 'Order payment received' },
   { id: 'lead_inactive_3d', label: 'Lead inactive for 3 days' },
   { id: 'cart_abandoned', label: 'Cart abandoned (24h)' },
+  { id: 'call_back_requested', label: 'Call Me Back requested' },
   { id: 'deal_won', label: 'Deal marked Won' },
   { id: 'deal_lost', label: 'Deal marked Lost' },
   { id: 'proposal_sent', label: 'Deal moved to Proposal stage' },

@@ -24,6 +24,7 @@ export function Chatbot() {
   const [listening, setListening] = useState(false);
   const recRef = useRef<any>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
+  const sessionIdRef = useRef<string>(crypto.randomUUID());
 
   // Proactive popup after 30 seconds
   useEffect(() => {
@@ -52,7 +53,7 @@ export function Chatbot() {
       const res = await fetch('/api/chatbot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ history: [...messages, { role: 'user', content: text }] }),
+        body: JSON.stringify({ history: [...messages, { role: 'user', content: text }], sessionId: sessionIdRef.current }),
       });
       const data = await res.json();
       setMessages(m => [...m, { role: 'assistant', content: data.reply || 'Sorry, please try again.' }]);

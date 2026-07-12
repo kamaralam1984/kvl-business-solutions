@@ -5,6 +5,7 @@ import { sendFollowUpWhatsApp } from '@/lib/whatsapp';
 import { sendNotification } from '@/lib/email';
 import { initiateCall } from '@/lib/vapi';
 import { requireCronAuth } from '@/lib/cron-auth';
+import { logCronRun } from '@/lib/cron-log';
 
 // Follow-up stages:
 // 1 → call at 1hr
@@ -93,14 +94,20 @@ async function runFollowUp(lead: any) {
 export async function GET(req: Request) {
   const unauth = requireCronAuth(req); if (unauth) return unauth;
 
-  await connectDB();
-  const due = await Lead.find({
-    followUpDone: { $ne: true },
-    followUpNextAt: { $lte: new Date() },
-    followUpStage: { $gte: 1, $lte: 3 },
-    status: { $nin: ['won', 'lost'] },
-  }).limit(20).lean();
+  try {
+    await connectDB();
+    const due = await Lead.find({
+      followUpDone: { $ne: true },
+      followUpNextAt: { $lte: new Date() },
+      followUpStage: { $gte: 1, $lte: 3 },
+      status: { $nin: ['won', 'lost'] },
+    }).limit(20).lean();
 
-  await Promise.allSettled(due.map(runFollowUp));
-  return NextResponse.json({ ok: true, processed: due.length });
+    await Promise.allSettled(due.map(runFollowUp));
+    await logCronRun('lead-followup', 'success', `Processed ${due.length} lead(s)`);
+    return NextResponse.json({ ok: true, processed: due.length });
+  } catch (e: any) {
+    await logCronRun('lead-followup', 'error', 'Run failed', e.message);
+    return NextResponse.json({ ok: false, error: e.message }, { status: 500 });
+  }
 }

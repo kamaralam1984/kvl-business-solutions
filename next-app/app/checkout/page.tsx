@@ -3,7 +3,7 @@ import { useEffect, useState, Suspense } from 'react';
 import Script from 'next/script';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { softwareProducts } from '@/lib/data/software';
+import type { Software } from '@/lib/data/software';
 import { formatINR } from '@/lib/utils';
 import { Check, ShieldCheck, CreditCard, Lock, Tag, X, Loader2 } from 'lucide-react';
 
@@ -15,7 +15,8 @@ function CheckoutInner() {
   const { data: session, status } = useSession();
   const productSlug = sp.get('product') || '';
   const hosting = (sp.get('host') as 'cloud' | 'on-premise') || 'cloud';
-  const product = softwareProducts.find(p => p.slug === productSlug);
+  const [product, setProduct] = useState<Software | null>(null);
+  const [productLoading, setProductLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState('');
 
@@ -26,6 +27,16 @@ function CheckoutInner() {
 
   useEffect(() => { if (status === 'unauthenticated') router.push(`/login?callbackUrl=/checkout?product=${productSlug}&host=${hosting}`); }, [status, productSlug, hosting, router]);
 
+  // Live price/description — fetched instead of imported statically so an
+  // Admin → Products edit shows the same numbers the customer is charged.
+  useEffect(() => {
+    fetch('/api/products')
+      .then(r => r.json())
+      .then(d => setProduct((d.products || []).find((p: Software) => p.slug === productSlug) || null))
+      .finally(() => setProductLoading(false));
+  }, [productSlug]);
+
+  if (productLoading) return <div className="container py-20 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-text2" /></div>;
   if (!product) return <div className="container py-20 text-center">Invalid product.</div>;
   const base = Math.round(product.price * (hosting === 'on-premise' ? 1.5 : 1));
   const subtotal = base - (applied?.discount || 0);

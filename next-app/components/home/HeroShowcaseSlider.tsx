@@ -4,27 +4,31 @@ import Link from 'next/link';
 import Image from 'next/image';
 import * as Icons from 'lucide-react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { softwareProducts } from '@/lib/data/software';
+import type { Software } from '@/lib/data/software';
 import { caseStudies } from '@/lib/data/case-studies';
 
 const shortLabel = (name: string) =>
   name.replace(/ Software$/, '').replace(/ Management$/, '').replace(/ System$/, '');
 
-const slides = [
-  ...caseStudies.map(c => ({
-    kind: 'live' as const,
-    key: c.slug,
-    name: c.name,
-    image: c.images.hero,
-    category: c.industry,
-    addressBar: c.url.replace(/^https?:\/\//, ''),
-    icon: 'Globe',
-    features: c.keyFeatures.slice(0, 3).map(f => ({ title: f.title, icon: f.icon as string | null })),
-    detailHref: `/projects/${c.slug}`,
-    demoHref: c.url,
-    demoExternal: true,
-  })),
-  ...softwareProducts.map(p => ({
+const liveSlides = caseStudies.map(c => ({
+  kind: 'live' as const,
+  key: c.slug,
+  name: c.name,
+  image: c.images.hero,
+  category: c.industry,
+  addressBar: c.url.replace(/^https?:\/\//, ''),
+  icon: 'Globe',
+  features: c.keyFeatures.slice(0, 3).map(f => ({ title: f.title, icon: f.icon as string | null })),
+  detailHref: `/projects/${c.slug}`,
+  demoHref: c.url,
+  demoExternal: true,
+}));
+
+// Software slides come from the live, admin-editable catalog (fetched below) —
+// not the static file — so a price/name/image edit in Admin → Products shows
+// up here too.
+function buildSoftwareSlides(products: Software[]) {
+  return products.map(p => ({
     kind: 'software' as const,
     key: p.slug,
     name: shortLabel(p.name),
@@ -36,22 +40,30 @@ const slides = [
     detailHref: `/software/${p.slug}`,
     demoHref: `/software/${p.slug}/demo`,
     demoExternal: false,
-  })),
-];
+  }));
+}
 
 export function HeroShowcaseSlider() {
+  const [products, setProducts] = useState<Software[] | null>(null);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
-  const total = slides.length;
+
+  useEffect(() => {
+    fetch('/api/products').then(r => r.json()).then(d => setProducts(d.products || [])).catch(() => setProducts([]));
+  }, []);
+
+  const slides = products == null ? null : [...liveSlides, ...buildSoftwareSlides(products)];
+  const total = slides?.length || 0;
 
   const go = useCallback((dir: 1 | -1) => setIndex(i => (i + dir + total) % total), [total]);
 
   useEffect(() => {
-    if (paused || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!total || paused || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const t = setInterval(() => setIndex(i => (i + 1) % total), 4500);
     return () => clearInterval(t);
   }, [paused, total]);
 
+  if (!slides || slides.length === 0) return null;
   const slide = slides[index];
   const FooterIcon = (Icons as any)[slide.icon] || Icons.Box;
 

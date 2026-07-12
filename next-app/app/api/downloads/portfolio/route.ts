@@ -1,8 +1,10 @@
 import { getSiteSettings } from '@/lib/models/SiteSettings';
 import { renderDownloadShell } from '@/lib/download-page';
 import { caseStudies } from '@/lib/data/case-studies';
+import { logDownload } from '@/lib/models/DownloadLog';
 
 export async function GET() {
+  logDownload('portfolio');
   const settings = await getSiteSettings();
 
   const body = `

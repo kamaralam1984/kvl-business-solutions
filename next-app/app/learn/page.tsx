@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { courses } from '@/lib/data/courses';
+import { getLiveCourses } from '@/lib/data/live-courses';
 import { PageHero } from '@/components/shared/PageHero';
 import * as Icons from 'lucide-react';
 import { BookOpen, Clock, GraduationCap, ArrowRight } from 'lucide-react';
@@ -9,7 +9,8 @@ export const metadata = {
   description: 'Free video and text courses on business software, GST, sales and practical business skills from KVL Business Solutions — learn at your own pace, earn a certificate.',
 };
 
-export default function LearnPage() {
+export default async function LearnPage() {
+  const courses = await getLiveCourses();
   const cats = [...new Set(courses.map(c => c.category))];
 
   return (

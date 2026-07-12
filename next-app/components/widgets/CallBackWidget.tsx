@@ -9,6 +9,7 @@ export function CallBackWidget() {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [callInitiated, setCallInitiated] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,7 +21,7 @@ export function CallBackWidget() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: name || 'Customer', phone }),
       }).then(x => x.json());
-      if (r.ok) setDone(true);
+      if (r.ok) { setCallInitiated(Boolean(r.callInitiated)); setDone(true); }
       else alert(r.error || 'Error. Please try again.');
     } finally {
       setLoading(false);
@@ -60,8 +61,12 @@ export function CallBackWidget() {
             {done ? (
               <div className="text-center py-4">
                 <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-2" />
-                <p className="font-bold text-sm">Your call is on its way</p>
-                <p className="text-[11px] text-text2 mt-1">Our team will call you shortly — please keep your phone nearby.</p>
+                <p className="font-bold text-sm">{callInitiated ? 'Your call is on its way' : 'Request received'}</p>
+                <p className="text-[11px] text-text2 mt-1">
+                  {callInitiated
+                    ? 'Our team will call you shortly — please keep your phone nearby.'
+                    : 'Our team has been notified and will call you back soon.'}
+                </p>
               </div>
             ) : (
               <form onSubmit={submit} className="space-y-2.5">

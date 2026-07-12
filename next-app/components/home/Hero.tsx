@@ -1,13 +1,13 @@
 import Link from 'next/link';
-import { ShieldCheck, Award, Star, Sparkles, ArrowUpRight } from 'lucide-react';
+import { ShieldCheck, Award, Sparkles, ArrowUpRight } from 'lucide-react';
 import { HeroShowcaseSlider } from './HeroShowcaseSlider';
+import { LiveRatingBadge } from './LiveRatingBadge';
 
 /* ── Static data ─────────────────────────────────────── */
 const trustBadges = [
   { Icon: ShieldCheck, label: 'ISO 27001 Certified',      color: '#10b981' },
   { Icon: Award,       label: 'MSME Registered',          color: '#c8a870' },
   { Icon: Sparkles,    label: 'Razorpay Verified Partner', color: '#c8a870' },
-  { Icon: Star,        label: '4.8/5 Client Rating',       color: '#f59e0b' },
 ];
 
 /* ── Component ──────────────────────────────────────── */
@@ -116,6 +116,7 @@ export function Hero() {
                   {b.label}
                 </div>
               ))}
+              <LiveRatingBadge />
             </div>
           </div>
 

@@ -8,7 +8,9 @@ import { DeferredWidgets } from '@/components/widgets/DeferredWidgets';
 // Standalone demo mini-sites (client-facing product showcases under /demo/*)
 // render their own full-page chrome and must not show KVL's own header/footer/
 // chat widgets — that would break the illusion of a real, separate product
-// being demoed.
+// being demoed. The admin panel (/admin/*) has its own sidebar shell (see
+// app/admin/layout.tsx) and must not get the public header/footer/chat
+// widgets stacked underneath it either.
 export function SiteChrome({
   children, settings, banner, cookieConsentEnabled,
 }: {
@@ -16,8 +18,9 @@ export function SiteChrome({
 }) {
   const pathname = usePathname();
   const isStandaloneDemo = pathname?.startsWith('/demo/');
+  const isAdmin = pathname?.startsWith('/admin');
 
-  if (isStandaloneDemo) {
+  if (isStandaloneDemo || isAdmin) {
     return <>{children}</>;
   }
 

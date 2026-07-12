@@ -5,6 +5,9 @@ import { rateLimit, clientIp } from '@/lib/rate-limit';
 import { initiateCall } from '@/lib/vapi';
 import { connectDB } from '@/lib/mongodb';
 import { Lead } from '@/lib/models/Lead';
+import { sendNotification, callBackEmail } from '@/lib/email';
+import { sendCustomWhatsApp } from '@/lib/whatsapp';
+import { fireTrigger } from '@/lib/workflows/runner';
 
 const schema = z.object({
   name: z.string().min(1).default('Customer'),
@@ -34,15 +37,30 @@ export async function POST(req: Request) {
       });
     }
 
-    const { callId } = await initiateCall({
-      name: body.name,
-      phone: body.phone,
-      leadId: lead._id.toString(),
-    });
+    // Admin alerts fire immediately — independent of whether the AI voice call below
+    // succeeds, so a missing/misconfigured Vapi key never silently loses a lead.
+    sendNotification(`📞 Call Back Requested — ${body.name}`, callBackEmail({ name: body.name, phone: body.phone }));
+    if (process.env.ADMIN_WHATSAPP_PHONE) {
+      sendCustomWhatsApp({
+        phone: process.env.ADMIN_WHATSAPP_PHONE,
+        message: `🔔 *Call Me Back Request!*\n\n👤 Name: ${body.name}\n📞 Phone: ${body.phone}\n\n_Customer is expecting a call within 30 seconds — call them now._`,
+      }).catch(() => {});
+    }
+    fireTrigger('call_back_requested', { name: body.name, phone: body.phone, leadId: lead._id.toString() });
 
-    await Lead.findByIdAndUpdate(lead._id, { callStatus: 'calling', callId, calledAt: new Date() });
+    // AI voice call — best-effort. A missing/failing Vapi key must not block the
+    // lead capture or admin alerts above, which have already happened by this point.
+    let callId: string | null = null;
+    try {
+      const result = await initiateCall({ name: body.name, phone: body.phone, leadId: lead._id.toString() });
+      callId = result.callId;
+      await Lead.findByIdAndUpdate(lead._id, { callStatus: 'calling', callId, calledAt: new Date() });
+    } catch (e: any) {
+      console.error('[call-back] AI call failed:', e.message);
+      await Lead.findByIdAndUpdate(lead._id, { callStatus: 'failed' });
+    }
 
-    return NextResponse.json({ ok: true, callId });
+    return NextResponse.json({ ok: true, callId, callInitiated: Boolean(callId) });
   } catch (e) {
     return apiError(e);
   }

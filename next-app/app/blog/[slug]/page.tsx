@@ -2,7 +2,8 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import * as Icons from 'lucide-react';
 import { ChevronRight, ArrowUpRight, Clock, Calendar, User, List } from 'lucide-react';
-import { blogPosts, DEFAULT_BLOG_AUTHOR, BlogPost } from '@/lib/data/blog';
+import { DEFAULT_BLOG_AUTHOR, type BlogPost } from '@/lib/data/blog';
+import { getLiveBlogPost, getLiveBlogPosts } from '@/lib/data/live-blog';
 import { services } from '@/lib/data/services';
 import { industries } from '@/lib/data/industries';
 import { JsonLd } from '@/components/shared/JsonLd';
@@ -12,16 +13,18 @@ import { slugify } from '@/lib/utils';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
 
-export const dynamic = 'force-static';
-export const dynamicParams = false;
+// Re-generated every 5 minutes (and on-demand for slugs not pre-rendered at
+// build time) so Admin → Blog posts show up without a full redeploy.
+export const revalidate = 300;
 
 function Icon({ name, className }: { name: string; className?: string }) {
   const Cmp = (Icons as any)[name] || Icons.Box;
   return <Cmp className={className} />;
 }
 
-export function generateStaticParams() {
-  return blogPosts.map(p => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  const posts = await getLiveBlogPosts();
+  return posts.map(p => ({ slug: p.slug }));
 }
 
 // Ranks other posts against the current one so "Keep Reading" shows the most relevant
@@ -42,8 +45,8 @@ function rankRelatedPosts(current: BlogPost, all: BlogPost[], limit = 3): BlogPo
     .map(entry => entry.p);
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
-  const post = blogPosts.find(p => p.slug === params.slug);
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const post = await getLiveBlogPost(params.slug);
   if (!post) return { title: 'Article not found' };
   return {
     title: post.seo.title,
@@ -59,8 +62,11 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
   };
 }
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = blogPosts.find(p => p.slug === params.slug);
+export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+  const [post, allPosts] = await Promise.all([
+    getLiveBlogPost(params.slug),
+    getLiveBlogPosts(),
+  ]);
   if (!post) notFound();
 
   const relatedServices = post.relatedServiceSlugs
@@ -71,7 +77,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
     .map(slug => industries.find(i => i.slug === slug))
     .filter((i): i is (typeof industries)[number] => Boolean(i));
 
-  const related = rankRelatedPosts(post, blogPosts, 3);
+  const related = rankRelatedPosts(post, allPosts, 3);
 
   const author = post.author || DEFAULT_BLOG_AUTHOR;
 

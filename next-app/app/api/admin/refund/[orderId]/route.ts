@@ -27,7 +27,10 @@ export async function POST(req: Request, { params }: { params: { orderId: string
     if (order.status !== 'paid') return NextResponse.json({ ok: false, error: 'Only paid orders can be refunded' }, { status: 400 });
     if (!order.razorpayPaymentId) return NextResponse.json({ ok: false, error: 'No payment ID on order' }, { status: 400 });
 
-    const refundAmountPaise = amount ?? order.amount * 100;
+    // order.amount is already stored in paise (see create-order route) — do
+    // not multiply by 100 again, or a full refund would request 100x the
+    // original payment and Razorpay would reject it.
+    const refundAmountPaise = amount ?? order.amount;
     const refund = await rzp.payments.refund(order.razorpayPaymentId, {
       amount: refundAmountPaise,
       notes: { orderId: order.orderId, reason: reason || 'Admin-initiated refund' },

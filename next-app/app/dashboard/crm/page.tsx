@@ -55,16 +55,21 @@ export default function CrmPage() {
     const r = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(editing) });
     const d = await r.json();
     if (d.ok) { setEditing(null); load(); }
+    else alert(d.error || 'Failed to save deal');
   };
 
   const moveStage = async (d: Deal, stage: string) => {
-    await fetch(`/api/crm/deals/${d._id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ stage }) });
+    const r = await fetch(`/api/crm/deals/${d._id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ stage }) });
+    const res = await r.json();
+    if (!res.ok) alert(res.error || 'Failed to move deal');
     load();
   };
 
   const del = async (d: Deal) => {
     if (!confirm(`Delete deal "${d.title}"?`)) return;
-    await fetch(`/api/crm/deals/${d._id}`, { method: 'DELETE' });
+    const r = await fetch(`/api/crm/deals/${d._id}`, { method: 'DELETE' });
+    const res = await r.json();
+    if (!res.ok) alert(res.error || 'Failed to delete deal');
     load();
   };
 

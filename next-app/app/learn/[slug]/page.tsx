@@ -1,14 +1,17 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { courses, getCourse } from '@/lib/data/courses';
+import { getLiveCourse, getLiveCourses } from '@/lib/data/live-courses';
 import { ArrowLeft, Clock, GraduationCap, CheckCircle2, BookOpen } from 'lucide-react';
 
-export function generateStaticParams() {
+export const revalidate = 300;
+
+export async function generateStaticParams() {
+  const courses = await getLiveCourses();
   return courses.map(c => ({ slug: c.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
-  const c = getCourse(params.slug);
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const c = await getLiveCourse(params.slug);
   return { title: c ? `${c.title} — KVL Learn` : 'Course not found' };
 }
 
@@ -35,8 +38,8 @@ function inline(s: string) {
     .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
 }
 
-export default function CoursePage({ params, searchParams }: { params: { slug: string }; searchParams: { lesson?: string } }) {
-  const course = getCourse(params.slug);
+export default async function CoursePage({ params, searchParams }: { params: { slug: string }; searchParams: { lesson?: string } }) {
+  const course = await getLiveCourse(params.slug);
   if (!course) notFound();
 
   const activeId = searchParams.lesson || course.lessons[0].id;

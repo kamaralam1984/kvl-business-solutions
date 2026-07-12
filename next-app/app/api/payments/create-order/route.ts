@@ -7,7 +7,7 @@ import { Order } from '@/lib/models/Order';
 import { User } from '@/lib/models/User';
 import { rzp } from '@/lib/razorpay';
 import { generateOrderId } from '@/lib/license';
-import { softwareProducts } from '@/lib/data/software';
+import { getLiveSoftwareProduct } from '@/lib/data/live-software';
 import { Coupon, evaluateCoupon } from '@/lib/models/Coupon';
 import { fireTrigger } from '@/lib/workflows/runner';
 
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     if (!session?.user?.email) return NextResponse.json({ ok: false, error: 'Login required' }, { status: 401 });
 
     const { productSlug, hosting = 'cloud', couponCode } = await req.json();
-    const product = softwareProducts.find(p => p.slug === productSlug);
+    const product = await getLiveSoftwareProduct(productSlug);
     if (!product) return NextResponse.json({ ok: false, error: 'Invalid product' }, { status: 400 });
 
     const mult = hosting === 'on-premise' ? 1.5 : 1;

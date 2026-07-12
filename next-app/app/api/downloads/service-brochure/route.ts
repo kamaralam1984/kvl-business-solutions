@@ -1,8 +1,10 @@
 import { getSiteSettings } from '@/lib/models/SiteSettings';
 import { renderDownloadShell } from '@/lib/download-page';
 import { services } from '@/lib/data/services';
+import { logDownload } from '@/lib/models/DownloadLog';
 
 export async function GET() {
+  logDownload('service-brochure');
   const settings = await getSiteSettings();
 
   const body = `
