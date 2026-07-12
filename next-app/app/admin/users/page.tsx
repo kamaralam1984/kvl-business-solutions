@@ -170,8 +170,8 @@ export default function AdminUsersPage() {
               <div>
                 <label className="block text-xs font-semibold text-text2 mb-1">Role</label>
                 <select value={form.role} onChange={e => setForm(f => ({ ...f, role: e.target.value as 'user' | 'admin' }))} className="form-control w-full">
-                  <option value="user">User</option>
-                  <option value="admin">Admin</option>
+                  <option value="user" style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>User</option>
+                  <option value="admin" style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>Admin</option>
                 </select>
               </div>
 

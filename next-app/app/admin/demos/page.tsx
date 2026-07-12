@@ -151,12 +151,12 @@ export default function AdminDemosPage() {
               <div className="grid grid-cols-2 gap-2">
                 <div><label className="text-xs text-text2 mb-1 block">Category</label>
                   <select className="form-control" value={editing.category} onChange={e => setEditing({ ...editing, category: e.target.value })}>
-                    {DEMO_CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
+                    {DEMO_CATEGORIES.map(c => <option key={c.id} value={c.id} style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>{c.label}</option>)}
                   </select>
                 </div>
                 <div><label className="text-xs text-text2 mb-1 block">Icon</label>
                   <select className="form-control" value={editing.iconName} onChange={e => setEditing({ ...editing, iconName: e.target.value })}>
-                    {ICON_OPTIONS.map(i => <option key={i} value={i}>{i}</option>)}
+                    {ICON_OPTIONS.map(i => <option key={i} value={i} style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>{i}</option>)}
                   </select>
                 </div>
               </div>

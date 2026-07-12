@@ -206,7 +206,7 @@ export default function AdminLeads() {
                   <td className="px-4 py-3">
                     <select value={l.status || 'new'} onChange={e => updateStatus(l._id, e.target.value)}
                       className={`text-[10px] font-bold px-2 py-1 rounded-full border-0 cursor-pointer ${STATUS_COLOR[l.status || 'new']}`}>
-                      {STATUS_OPTS.map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
+                      {STATUS_OPTS.map(s => <option key={s} value={s} style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>{s.toUpperCase()}</option>)}
                     </select>
                   </td>
                   <td className="px-4 py-3">

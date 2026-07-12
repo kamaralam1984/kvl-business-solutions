@@ -95,10 +95,10 @@ export default function AdminBannersPage() {
                 <input className="form-control" placeholder="Link text" value={editing.linkText || ''} onChange={e => setEditing({ ...editing, linkText: e.target.value })} />
               </div>
               <select className="form-control" value={editing.variant} onChange={e => setEditing({ ...editing, variant: e.target.value as any })}>
-                <option value="promo">Promo (primary color)</option>
-                <option value="info">Info (blue)</option>
-                <option value="success">Success (green)</option>
-                <option value="warning">Warning (yellow)</option>
+                <option value="promo" style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>Promo (primary color)</option>
+                <option value="info" style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>Info (blue)</option>
+                <option value="success" style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>Success (green)</option>
+                <option value="warning" style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>Warning (yellow)</option>
               </select>
               <div className="flex gap-4">
                 <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={editing.active} onChange={e => setEditing({ ...editing, active: e.target.checked })} /> Active</label>

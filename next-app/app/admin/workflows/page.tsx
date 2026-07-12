@@ -154,12 +154,12 @@ export default function WorkflowsPage() {
 
               <label className="text-xs text-text2">WHEN (trigger)</label>
               <select className="form-control" value={editing.trigger} onChange={e => setEditing({ ...editing, trigger: e.target.value })}>
-                {TRIGGERS.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
+                {TRIGGERS.map(t => <option key={t.id} value={t.id} style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>{t.label}</option>)}
               </select>
 
               <label className="text-xs text-text2">THEN (action)</label>
               <select className="form-control" value={editing.action} onChange={e => setEditing({ ...editing, action: e.target.value })}>
-                {ACTIONS.map(a => <option key={a.id} value={a.id}>{a.label}</option>)}
+                {ACTIONS.map(a => <option key={a.id} value={a.id} style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>{a.label}</option>)}
               </select>
 
               {editing.action === 'send_email' && (

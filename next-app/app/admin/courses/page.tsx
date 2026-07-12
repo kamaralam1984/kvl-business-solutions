@@ -98,9 +98,9 @@ export default function AdminCoursesPage() {
               <textarea className="form-control" rows={2} placeholder="Description" value={editing.description} onChange={e => setEditing({ ...editing, description: e.target.value })} />
               <div className="grid grid-cols-3 gap-2">
                 <select className="form-control" value={editing.level} onChange={e => setEditing({ ...editing, level: e.target.value as Course['level'] })}>
-                  <option value="Beginner">Beginner</option>
-                  <option value="Intermediate">Intermediate</option>
-                  <option value="Advanced">Advanced</option>
+                  <option value="Beginner" style={{ background: '#0f0f12', color: '#f0ede6' }}>Beginner</option>
+                  <option value="Intermediate" style={{ background: '#0f0f12', color: '#f0ede6' }}>Intermediate</option>
+                  <option value="Advanced" style={{ background: '#0f0f12', color: '#f0ede6' }}>Advanced</option>
                 </select>
                 <input className="form-control" placeholder="Category" value={editing.category} onChange={e => setEditing({ ...editing, category: e.target.value })} />
                 <input className="form-control" placeholder="Duration (e.g. 2 hours)" value={editing.duration} onChange={e => setEditing({ ...editing, duration: e.target.value })} />

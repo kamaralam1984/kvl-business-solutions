@@ -95,8 +95,8 @@ export default function AdminCouponsPage() {
               <input className="form-control" placeholder="Description (internal)" value={editing.description || ''} onChange={e => setEditing({ ...editing, description: e.target.value })} />
               <div className="grid grid-cols-2 gap-2">
                 <select className="form-control" value={editing.type} onChange={e => setEditing({ ...editing, type: e.target.value as any })}>
-                  <option value="percent">Percent off</option>
-                  <option value="fixed">Fixed ₹ off</option>
+                  <option value="percent" style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>Percent off</option>
+                  <option value="fixed" style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>Fixed ₹ off</option>
                 </select>
                 <input className="form-control" type="number" placeholder={editing.type === 'percent' ? '10' : '500'} value={editing.value || ''} onChange={e => setEditing({ ...editing, value: parseFloat(e.target.value) || 0 })} />
               </div>

@@ -110,7 +110,7 @@ export default function AdminQuotes() {
                 <td className="p-3">
                   <select value={q.status || 'submitted'} onChange={e => updateStatus(q._id, e.target.value)}
                     className={`text-[10px] font-bold px-2 py-1 rounded-full border-0 cursor-pointer ${STATUS_COLOR[q.status || 'submitted']}`}>
-                    {STATUS_OPTS.map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
+                    {STATUS_OPTS.map(s => <option key={s} value={s} style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>{s.toUpperCase()}</option>)}
                   </select>
                 </td>
                 <td className="p-3">

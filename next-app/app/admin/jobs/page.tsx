@@ -97,7 +97,9 @@ export default function AdminJobsPage() {
               <div className="grid grid-cols-2 gap-2">
                 <input className="form-control" placeholder="Department" value={editing.department} onChange={e => setEditing({ ...editing, department: e.target.value })} />
                 <select className="form-control" value={editing.type} onChange={e => setEditing({ ...editing, type: e.target.value })}>
-                  <option>Full-time</option><option>Part-time</option><option>Contract</option><option>Internship</option>
+                  {['Full-time', 'Part-time', 'Contract', 'Internship'].map(t => (
+                    <option key={t} style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>{t}</option>
+                  ))}
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-2">
