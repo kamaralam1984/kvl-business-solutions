@@ -22,7 +22,12 @@ export async function POST(req: Request) {
   }
 
   const timestamp = Math.round(Date.now() / 1000);
-  const paramsToSign = { timestamp, folder: safeFolder };
+  // Compress every upload at ingest — auto quality + a sane max dimension —
+  // so a 10MB photo lands in Cloudinary storage as a much smaller derivative
+  // instead of keeping the original file size. Non-image files (PDFs, etc.)
+  // pass through resource_type=auto unaffected since these only apply to images.
+  const transformation = 'q_auto:good,w_1920,c_limit,f_auto';
+  const paramsToSign = { timestamp, folder: safeFolder, transformation };
   const signature = cloudinary.utils.api_sign_request(paramsToSign, process.env.CLOUDINARY_API_SECRET!);
 
   return NextResponse.json({
@@ -30,6 +35,7 @@ export async function POST(req: Request) {
     signature,
     timestamp,
     folder: safeFolder,
+    transformation,
     cloudName: process.env.CLOUDINARY_CLOUD_NAME,
     apiKey: process.env.CLOUDINARY_API_KEY,
   });

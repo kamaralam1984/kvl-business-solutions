@@ -181,7 +181,7 @@ export default function AdminDemosPage() {
               </div>
               <div>
                 <label className="text-xs text-text2 mb-1 block">Preview image (optional)</label>
-                <FileUploader folder="kvl/products" multiple={false} accept="image/*" maxSizeMB={2}
+                <FileUploader folder="kvl/products" multiple={false} accept="image/*" maxSizeMB={10}
                   value={editing.image ? [{ url: editing.image, publicId: editing.imagePublicId || '', name: 'image', size: 0, format: 'jpg' }] : []}
                   onChange={files => setEditing({ ...editing, image: files[0]?.url || '', imagePublicId: files[0]?.publicId || '' })}
                 />

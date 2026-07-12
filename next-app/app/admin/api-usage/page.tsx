@@ -39,7 +39,7 @@ export default function ApiUsagePage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="card-base p-5">
           <div className="flex items-center gap-2 mb-2"><Cpu className="w-4 h-4 text-primary" /><span className="text-[10px] uppercase tracking-wider text-text2">Providers</span></div>
-          <div className="text-3xl font-extrabold">{s.totalProvidersAvailable}</div>
+          <div className="text-3xl font-extrabold">{s.totalProvidersAvailable} / {s.totalProvidersKnown}</div>
           <div className="text-xs text-text2 mt-1">configured & active</div>
         </div>
         <div className="card-base p-5">
@@ -87,7 +87,7 @@ export default function ApiUsagePage() {
           </thead>
           <tbody>
             {data.providers.map((p: any, i: number) => (
-              <tr key={p.name} className="border-b border-tint last:border-b-0 hover:bg-primary/5">
+              <tr key={p.name} className={`border-b border-tint last:border-b-0 hover:bg-primary/5 ${!p.configured ? 'opacity-50' : ''}`}>
                 <td className="p-3 text-text2 text-xs font-mono">{i + 1}</td>
                 <td className="p-3 font-semibold">
                   {p.name}
@@ -100,7 +100,9 @@ export default function ApiUsagePage() {
                 <td className="p-3 text-right font-bold">{p.calls}</td>
                 <td className="p-3 text-right text-xs">{p.failures > 0 ? <span className="text-red-500">{p.failures}</span> : '0'}</td>
                 <td className="p-3">
-                  {p.lastError ? (
+                  {!p.configured ? (
+                    <span className="text-[10px] text-text2 inline-flex items-center gap-1" title={`Set ${p.envKey} to enable`}><XCircle className="w-3 h-3" /> not configured</span>
+                  ) : p.lastError ? (
                     <span className="text-[10px] text-red-500 inline-flex items-center gap-1"><XCircle className="w-3 h-3" /> error</span>
                   ) : (
                     <span className="text-[10px] text-green-500 inline-flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> ready</span>

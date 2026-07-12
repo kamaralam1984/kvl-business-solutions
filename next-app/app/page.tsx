@@ -17,22 +17,26 @@ export const metadata: Metadata = {
 // code-split into its own chunk so it doesn't block initial JS parse/hydration.
 // Core Services lives on its own /services page (linked from the navbar) —
 // not duplicated here.
+const StatsBar          = dynamic(() => import('@/components/home/StatsBar').then(m => m.StatsBar));
 const IndustriesGrid    = dynamic(() => import('@/components/home/IndustriesGrid').then(m => m.IndustriesGrid));
 const CaseStudies       = dynamic(() => import('@/components/home/CaseStudies').then(m => m.CaseStudies));
 const Certifications    = dynamic(() => import('@/components/home/Certifications').then(m => m.Certifications));
 const Process           = dynamic(() => import('@/components/home/Process').then(m => m.Process));
 const Testimonials      = dynamic(() => import('@/components/home/Testimonials').then(m => m.Testimonials));
+const HomeFAQ           = dynamic(() => import('@/components/home/HomeFAQ').then(m => m.HomeFAQ));
 const CtaBanner         = dynamic(() => import('@/components/home/CtaBanner').then(m => m.CtaBanner));
 
 export default function HomePage() {
   return (
     <>
       <Hero />
+      <StatsBar />
       <IndustriesGrid />
       <CaseStudies />
       <Certifications />
       <Process />
       <Testimonials />
+      <HomeFAQ />
       <CtaBanner />
     </>
   );

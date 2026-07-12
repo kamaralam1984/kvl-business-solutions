@@ -35,6 +35,18 @@ export async function POST(req: Request) {
         source: 'call-back-widget',
         message: 'Customer requested immediate callback via website widget',
       });
+      // AI scoring — fire & forget. Call-back requests are high-intent (the
+      // visitor explicitly asked to be called right now), but previously only
+      // the main lead form triggered scoring, leaving these permanently
+      // unscored ("?") in Admin → Leads.
+      import('@/lib/ai/lead-scorer').then(({ scoreLeadAsync }) =>
+        scoreLeadAsync(lead._id.toString(), {
+          name: body.name,
+          email: lead.email,
+          phone: body.phone,
+          message: 'Customer requested an immediate callback via the website widget.',
+        }).catch(() => {})
+      );
     }
 
     // Admin alerts fire immediately — independent of whether the AI voice call below
@@ -43,7 +55,7 @@ export async function POST(req: Request) {
     if (process.env.ADMIN_WHATSAPP_PHONE) {
       sendCustomWhatsApp({
         phone: process.env.ADMIN_WHATSAPP_PHONE,
-        message: `🔔 *Call Me Back Request!*\n\n👤 Name: ${body.name}\n📞 Phone: ${body.phone}\n\n_Customer is expecting a call within 30 seconds — call them now._`,
+        message: `🔔 *Call Me Back Request!*\n\n👤 Name: ${body.name}\n📞 Phone: ${body.phone}\n\n_Customer was promised a call back within 4 hours — call them soon._`,
       }).catch(() => {});
     }
     fireTrigger('call_back_requested', { name: body.name, phone: body.phone, leadId: lead._id.toString() });

@@ -13,7 +13,7 @@ type Props = {
   onChange: (files: UploadedFile[]) => void;
 };
 
-export function FileUploader({ folder = 'kvl/tickets', multiple = true, accept = 'image/*,application/pdf', maxSizeMB = 5, value, onChange }: Props) {
+export function FileUploader({ folder = 'kvl/tickets', multiple = true, accept = 'image/*,application/pdf', maxSizeMB = 10, value, onChange }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [err, setErr] = useState('');
@@ -44,6 +44,9 @@ export function FileUploader({ folder = 'kvl/tickets', multiple = true, accept =
         fd.append('timestamp', String(sig.timestamp));
         fd.append('signature', sig.signature);
         fd.append('folder', sig.folder);
+        // Must match exactly what the server signed (lib/api/upload/sign) —
+        // any mismatch here and Cloudinary rejects the signature outright.
+        fd.append('transformation', sig.transformation);
 
         const up = await fetch(`https://api.cloudinary.com/v1_1/${sig.cloudName}/auto/upload`, { method: 'POST', body: fd });
         const data = await up.json();
@@ -76,7 +79,7 @@ export function FileUploader({ folder = 'kvl/tickets', multiple = true, accept =
       {value.length > 0 && (
         <div className="grid grid-cols-2 gap-2">
           {value.map(f => {
-            const isImg = f.format && ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(f.format);
+            const isImg = f.format && ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'avif', 'bmp', 'tiff', 'heic'].includes(f.format);
             return (
               <div key={f.publicId} className="surface-tint rounded-lg p-2 flex items-center gap-2 text-xs">
                 {isImg

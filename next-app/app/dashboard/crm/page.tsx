@@ -19,7 +19,7 @@ type Deal = {
   title: string; contactName?: string; value: number;
   stage: string; probability: number;
   source?: string; notes?: string; aiSuggestion?: string;
-  tags?: string[]; ownerEmail?: string; createdAt?: string;
+  tags?: string[]; ownerEmail?: string; createdAt?: string; updatedAt?: string;
 };
 
 const empty: Deal = { title: '', contactName: '', value: 0, stage: 'lead', probability: 20, source: '', notes: '', tags: [] };
@@ -45,6 +45,10 @@ export default function CrmPage() {
   const [bulkStage, setBulkStage] = useState('');
   const [bulkBusy, setBulkBusy] = useState(false);
 
+  // --- Drag-and-drop kanban ---
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [dragOverStage, setDragOverStage] = useState<string | null>(null);
+
   const load = () => fetch('/api/crm/deals').then(r => r.json()).then(d => d.ok && setDeals(d.deals));
   useEffect(() => { load(); }, []);
 
@@ -59,10 +63,16 @@ export default function CrmPage() {
   };
 
   const moveStage = async (d: Deal, stage: string) => {
+    if (d.stage === stage) return;
+    // Optimistic update — the card jumps to the new column immediately instead
+    // of waiting for the round-trip, which is what makes drag-and-drop feel
+    // real. Reverted if the request actually fails.
+    const prevDeals = deals;
+    setDeals(ds => ds.map(x => (x._id === d._id ? { ...x, stage } : x)));
     const r = await fetch(`/api/crm/deals/${d._id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ stage }) });
     const res = await r.json();
-    if (!res.ok) alert(res.error || 'Failed to move deal');
-    load();
+    if (!res.ok) { setDeals(prevDeals); alert(res.error || 'Failed to move deal'); }
+    else load();
   };
 
   const del = async (d: Deal) => {
@@ -190,16 +200,16 @@ export default function CrmPage() {
           <input className="form-control w-full pl-9" placeholder="Search title or contact name…" value={search} onChange={e => setSearch(e.target.value)} />
         </div>
         <select className="form-control w-auto" value={stageFilter} onChange={e => setStageFilter(e.target.value)}>
-          <option value="">All stages</option>
-          {STAGES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
+          <option value="" style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>All stages</option>
+          {STAGES.map(s => <option key={s.id} value={s.id} style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>{s.label}</option>)}
         </select>
         <input className="form-control w-auto" placeholder="Owner email" value={ownerFilter} onChange={e => setOwnerFilter(e.target.value)} list="crm-owners" />
         <datalist id="crm-owners">{allOwners.map(o => <option key={o} value={o} />)}</datalist>
         <input className="form-control w-auto" placeholder="Source" value={sourceFilter} onChange={e => setSourceFilter(e.target.value)} />
         {allTags.length > 0 && (
           <select className="form-control w-auto" value={tagFilter} onChange={e => setTagFilter(e.target.value)}>
-            <option value="">All tags</option>
-            {allTags.map(t => <option key={t} value={t}>{t}</option>)}
+            <option value="" style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>All tags</option>
+            {allTags.map(t => <option key={t} value={t} style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>{t}</option>)}
           </select>
         )}
         <input type="date" className="form-control w-auto" value={dateFrom} onChange={e => setDateFrom(e.target.value)} title="From date" />
@@ -208,7 +218,7 @@ export default function CrmPage() {
       </div>
 
       {/* Quick filters + export + bulk-select toggle */}
-      <div className="flex flex-wrap items-center gap-2 mb-4">
+      <div className="flex flex-wrap items-center gap-2 mb-2">
         <span className="text-[11px] text-text2 font-bold flex items-center gap-1"><Filter className="w-3 h-3" /> Quick:</span>
         {(['won', 'lost', 'repeat'] as const).map(stg => {
           const s = STAGES.find(x => x.id === stg)!;
@@ -227,14 +237,15 @@ export default function CrmPage() {
           {selectMode ? <CheckSquare className="w-3.5 h-3.5" /> : <Square className="w-3.5 h-3.5" />} {selectMode ? 'Exit select' : 'Select deals'}
         </button>
       </div>
+      <p className="text-[10.5px] text-text2 mb-4">💡 Drag any card into a different column to change its stage.</p>
 
       {/* Bulk action bar */}
       {selectMode && (
         <div className="card-base p-3 mb-4 flex flex-wrap items-center gap-2">
           <span className="text-xs font-bold">{selectedIds.size} selected</span>
           <select className="form-control w-auto" value={bulkStage} onChange={e => setBulkStage(e.target.value)} disabled={selectedIds.size === 0}>
-            <option value="">Change stage to…</option>
-            {STAGES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
+            <option value="" style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>Change stage to…</option>
+            {STAGES.map(s => <option key={s.id} value={s.id} style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>{s.label}</option>)}
           </select>
           <button onClick={applyBulkStage} disabled={!bulkStage || selectedIds.size === 0 || bulkBusy} className="btn btn-primary text-xs disabled:opacity-50">
             {bulkBusy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null} Apply
@@ -250,8 +261,22 @@ export default function CrmPage() {
         {STAGES.map(s => {
           const stageDeals = filtered.filter(d => d.stage === s.id);
           const stageValue = stageDeals.reduce((sum, d) => sum + d.value, 0);
+          const isDragOver = dragOverStage === s.id;
           return (
-            <div key={s.id} className="card-base p-3 min-h-[400px]">
+            <div
+              key={s.id}
+              className="card-base p-3 min-h-[400px] transition-all duration-150"
+              style={isDragOver ? { outline: `2px dashed ${s.color}`, outlineOffset: 2, background: `${s.color}0d` } : undefined}
+              onDragOver={e => { e.preventDefault(); setDragOverStage(s.id); }}
+              onDragLeave={() => setDragOverStage(prev => (prev === s.id ? null : prev))}
+              onDrop={e => {
+                e.preventDefault();
+                setDragOverStage(null);
+                const deal = deals.find(x => x._id === draggingId);
+                if (deal) moveStage(deal, s.id);
+                setDraggingId(null);
+              }}
+            >
               <div className="flex items-center justify-between mb-2 pb-2 border-b border-tint">
                 <h3 className="font-bold text-sm flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full" style={{ background: s.color }} />
@@ -262,14 +287,30 @@ export default function CrmPage() {
               <div className="text-[10px] text-text2 mb-3">{formatINR(stageValue)}</div>
 
               <div className="space-y-2">
-                {stageDeals.map(d => (
-                  <div key={d._id} className="surface-tint p-3 rounded-lg cursor-pointer hover:bg-primary/10 group">
+                {stageDeals.map(d => {
+                  const daysInStage = d.updatedAt ? Math.floor((Date.now() - new Date(d.updatedAt).getTime()) / 86_400_000) : 0;
+                  const isStale = daysInStage >= 7 && !['won', 'lost', 'repeat'].includes(d.stage);
+                  return (
+                  <div
+                    key={d._id}
+                    draggable={!selectMode}
+                    onDragStart={() => setDraggingId(d._id!)}
+                    onDragEnd={() => setDraggingId(null)}
+                    className={`surface-tint p-3 rounded-lg group ${selectMode ? 'cursor-pointer' : 'cursor-grab active:cursor-grabbing'} hover:bg-primary/10 transition-opacity ${draggingId === d._id ? 'opacity-40' : ''}`}
+                  >
                     <div className="flex items-start gap-2">
                       {selectMode && (
                         <input type="checkbox" className="mt-1 shrink-0" checked={selectedIds.has(d._id!)} onChange={() => toggleSelect(d._id!)} />
                       )}
                       <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-sm mb-1">{d.title}</div>
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <div className="font-semibold text-sm flex-1 min-w-0">{d.title}</div>
+                          {isStale && (
+                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500 shrink-0" title={`No stage change in ${daysInStage} days`}>
+                              ⏳ {daysInStage}d
+                            </span>
+                          )}
+                        </div>
                         {d.contactName && <div className="text-[10px] text-text2 mb-1">{d.contactName}</div>}
                         <div className="text-xs font-bold text-primary">{formatINR(d.value)}</div>
                         <div className="text-[10px] text-text2 mt-1">{d.probability}% chance</div>
@@ -309,7 +350,8 @@ export default function CrmPage() {
                       ))}
                     </div>
                   </div>
-                ))}
+                  );
+                })}
 
                 {stageDeals.length === 0 && <div className="text-[10px] text-text2 text-center py-4">No deals</div>}
               </div>
@@ -334,7 +376,7 @@ export default function CrmPage() {
                 <input className="form-control" type="number" placeholder="% chance" value={editing.probability} onChange={e => setEditing({ ...editing, probability: parseInt(e.target.value) || 0 })} />
               </div>
               <select className="form-control" value={editing.stage} onChange={e => setEditing({ ...editing, stage: e.target.value })}>
-                {STAGES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
+                {STAGES.map(s => <option key={s.id} value={s.id} style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>{s.label}</option>)}
               </select>
               <input className="form-control" placeholder="Source (e.g., website, referral)" value={editing.source || ''} onChange={e => setEditing({ ...editing, source: e.target.value })} />
               <input className="form-control" placeholder="Tags (comma separated, e.g. vip, renewal)" value={(editing.tags || []).join(', ')}

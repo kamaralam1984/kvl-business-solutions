@@ -39,7 +39,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
         dealId: d._id.toString(), title: d.title, name: d.contactName, email: undefined,
         amount: d.value, stage: d.stage, ownerEmail: d.ownerEmail, source: d.source,
       };
-      if (data.stage === 'won') fireTrigger('deal_won', ctx);
+      if (data.stage === 'won' || data.stage === 'repeat') fireTrigger('deal_won', ctx);
       else if (data.stage === 'lost') fireTrigger('deal_lost', ctx);
       else if (data.stage === 'proposal') fireTrigger('proposal_sent', ctx);
     }

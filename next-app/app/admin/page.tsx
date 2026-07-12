@@ -21,6 +21,14 @@ const CRON_JOBS = [
 
 function pctChange(recent: number, prev: number): { text: string; up: boolean } {
   if (prev === 0) return recent > 0 ? { text: 'New', up: true } : { text: '—', up: true };
+  // A tiny baseline (e.g. 1 → 43) produces a mathematically "correct" but
+  // absurd swing like +4200% — not meaningful at that sample size, so fall
+  // back to a qualitative label instead of a wild percentage.
+  if (prev < 5) {
+    if (recent > prev) return { text: '↑ Growing', up: true };
+    if (recent < prev) return { text: '↓ Slowing', up: false };
+    return { text: '→ Flat', up: true };
+  }
   const change = Math.round(((recent - prev) / prev) * 100);
   return { text: `${change >= 0 ? '+' : ''}${change}%`, up: change >= 0 };
 }

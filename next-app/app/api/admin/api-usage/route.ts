@@ -1,17 +1,18 @@
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin-guard';
-import { getAvailableProviders } from '@/lib/ai/providers';
+import { providers as allProviders, getAvailableProviders } from '@/lib/ai/providers';
 import { getUsageStats } from '@/lib/ai/router';
 import { getCacheStats } from '@/lib/ai/cache';
 
 export async function GET() {
   const g = await requireAdmin(); if (!g.ok) return g.response;
 
-  const available = getAvailableProviders();
   const stats = getUsageStats();
   const cache = await getCacheStats();
 
-  const providers = available.map(p => {
+  // Show every known provider (not just configured ones) so the admin can
+  // see what's available to add, instead of a blank table when nothing is set up.
+  const providers = allProviders.map(p => {
     const s = stats[p.name] || { calls: 0, failures: 0 };
     return {
       name: p.name,
@@ -22,6 +23,8 @@ export async function GET() {
       calls: s.calls,
       failures: s.failures,
       lastError: (s as any).lastError,
+      configured: p.available(),
+      envKey: p.envKey,
     };
   });
 
@@ -39,7 +42,8 @@ export async function GET() {
     ok: true,
     providers,
     summary: {
-      totalProvidersAvailable: available.length,
+      totalProvidersAvailable: getAvailableProviders().length,
+      totalProvidersKnown: providers.length,
       totalCalls,
       freeCalls,
       freePercentage: totalCalls > 0 ? Math.round((freeCalls / totalCalls) * 100) : 0,
