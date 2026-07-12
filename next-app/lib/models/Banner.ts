@@ -13,7 +13,13 @@ const BannerSchema = new Schema({
 
 export const Banner = models.Banner || model('Banner', BannerSchema);
 
+// Cached like getSiteSettings() — this is read on every page via the root
+// layout, so an uncached DB hit here runs on every single request.
+let cache: { data: any; ts: number } | null = null;
+const TTL = 30_000;
+
 export async function getActiveBanner(): Promise<any | null> {
+  if (cache && Date.now() - cache.ts < TTL) return cache.data;
   try {
     const { connectDB } = await import('../mongodb');
     await connectDB();
@@ -25,8 +31,15 @@ export async function getActiveBanner(): Promise<any | null> {
         { $or: [{ endsAt: { $gte: now } }, { endsAt: null }, { endsAt: { $exists: false } }] },
       ],
     }).sort({ createdAt: -1 }).lean();
-    return banner;
+    // Serialize to a plain object — the lean doc's _id is an ObjectId (has a
+    // toJSON method), which React rejects when passed as a prop into the
+    // client-component tree below (SiteChrome).
+    const data = banner ? JSON.parse(JSON.stringify(banner)) : null;
+    cache = { data, ts: Date.now() };
+    return data;
   } catch {
     return null;
   }
 }
+
+export function invalidateBannerCache() { cache = null; }

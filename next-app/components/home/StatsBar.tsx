@@ -1,12 +1,14 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { Box, Sparkles, CalendarDays, Users } from 'lucide-react';
-import { softwareProducts } from '@/lib/data/software';
-import { caseStudies } from '@/lib/data/case-studies';
 
 const FOUNDED_YEAR = 2019;
 
-export function StatsBar() {
+// productCount/caseStudyCount come from the server (page.tsx) instead of
+// importing the catalog data files directly here — those files are large
+// enough that pulling them into a client component ships their full content
+// to the browser just to read `.length`.
+export function StatsBar({ productCount, caseStudyCount }: { productCount: number; caseStudyCount: number }) {
   const [visitors, setVisitors] = useState<number | null>(null);
 
   useEffect(() => {
@@ -19,8 +21,8 @@ export function StatsBar() {
   // counter) — no invented client counts or ratings, matching the rest of
   // the site's "nothing here is inflated" stance.
   const stats = [
-    { Icon: Box, value: `${softwareProducts.length}`, label: 'Software Products' },
-    { Icon: Sparkles, value: `${caseStudies.length}`, label: 'Live Products Built' },
+    { Icon: Box, value: `${productCount}`, label: 'Software Products' },
+    { Icon: Sparkles, value: `${caseStudyCount}`, label: 'Live Products Built' },
     { Icon: CalendarDays, value: `${years}+`, label: 'Years in Business' },
     { Icon: Users, value: visitors != null ? visitors.toLocaleString('en-IN') : '—', label: 'Website Visitors' },
   ];

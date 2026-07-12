@@ -2,8 +2,6 @@ import type { Metadata } from 'next';
 import { Inter, Poppins } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import { SiteChrome } from '@/components/layout/SiteChrome';
-import { RouteLoader } from '@/components/widgets/RouteLoader';
-import { BootLoader } from '@/components/widgets/BootLoader';
 import { SessionProviderWrapper } from '@/components/providers/SessionProviderWrapper';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics';
@@ -189,8 +187,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         )}
         <SessionProviderWrapper>
           <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-            <BootLoader />
-            <RouteLoader />
             <SiteChrome settings={settings} banner={banner} cookieConsentEnabled={settings?.features?.cookieConsent !== false}>
               {children}
             </SiteChrome>

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import { Hero } from '@/components/home/Hero';
+import { getLiveSoftwareProducts } from '@/lib/data/live-software';
+import { getLiveCaseStudies } from '@/lib/data/live-case-studies';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
 const title = 'Custom Software Development Company in India — Enterprise ERP, CRM & AI Automation | KVL Business Solutions';
@@ -26,11 +28,16 @@ const Testimonials      = dynamic(() => import('@/components/home/Testimonials')
 const HomeFAQ           = dynamic(() => import('@/components/home/HomeFAQ').then(m => m.HomeFAQ));
 const CtaBanner         = dynamic(() => import('@/components/home/CtaBanner').then(m => m.CtaBanner));
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [products, caseStudies] = await Promise.all([
+    getLiveSoftwareProducts().catch(() => []),
+    getLiveCaseStudies().catch(() => []),
+  ]);
+
   return (
     <>
       <Hero />
-      <StatsBar />
+      <StatsBar productCount={products.length} caseStudyCount={caseStudies.length} />
       <IndustriesGrid />
       <CaseStudies />
       <Certifications />

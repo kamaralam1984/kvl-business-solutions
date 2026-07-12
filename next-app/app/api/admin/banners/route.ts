@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { apiError } from '@/lib/api-response';
 import { z } from 'zod';
 import { connectDB } from '@/lib/mongodb';
-import { Banner } from '@/lib/models/Banner';
+import { Banner, invalidateBannerCache } from '@/lib/models/Banner';
 import { requireAdmin } from '@/lib/admin-guard';
 import { logActivity } from '@/lib/activity';
 
@@ -30,6 +30,7 @@ export async function POST(req: Request) {
     const data = schema.parse(await req.json());
     await connectDB();
     const b = await Banner.create(data);
+    invalidateBannerCache();
     logActivity({ action: 'banner.create', actorEmail: g.session?.user?.email || undefined, actorRole: 'admin', target: 'Banner', targetId: b._id.toString(), details: { text: data.text }, req });
     return NextResponse.json({ ok: true, banner: b });
   } catch (e) {

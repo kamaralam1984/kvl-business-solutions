@@ -10,6 +10,11 @@ import { caseStudies } from '@/lib/data/case-studies';
 const shortLabel = (name: string) =>
   name.replace(/ Software$/, '').replace(/ Management$/, '').replace(/ System$/, '');
 
+// Rotating VFX accent per slide — picked deterministically from the slide
+// index (not Math.random()) so the first-render color matches on the server
+// and client and doesn't cause a hydration mismatch.
+const GLOW_COLORS = ['#c8a870', '#10b981', '#3b82f6', '#f43f5e', '#8b5cf6', '#f59e0b'];
+
 const liveSlides = caseStudies.map(c => ({
   kind: 'live' as const,
   key: c.slug,
@@ -46,6 +51,7 @@ function buildSoftwareSlides(products: Software[]) {
 export function HeroShowcaseSlider() {
   const [products, setProducts] = useState<Software[] | null>(null);
   const [index, setIndex] = useState(0);
+  const [direction, setDirection] = useState<1 | -1>(1);
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
@@ -55,17 +61,19 @@ export function HeroShowcaseSlider() {
   const slides = products == null ? null : [...liveSlides, ...buildSoftwareSlides(products)];
   const total = slides?.length || 0;
 
-  const go = useCallback((dir: 1 | -1) => setIndex(i => (i + dir + total) % total), [total]);
+  const go = useCallback((dir: 1 | -1) => { setDirection(dir); setIndex(i => (i + dir + total) % total); }, [total]);
 
   useEffect(() => {
     if (!total || paused || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const t = setInterval(() => setIndex(i => (i + 1) % total), 4500);
+    const t = setInterval(() => { setDirection(1); setIndex(i => (i + 1) % total); }, 4500);
     return () => clearInterval(t);
   }, [paused, total]);
 
   if (!slides || slides.length === 0) return null;
   const slide = slides[index];
   const FooterIcon = (Icons as any)[slide.icon] || Icons.Box;
+  const glowA = GLOW_COLORS[index % GLOW_COLORS.length];
+  const glowB = GLOW_COLORS[(index + 3) % GLOW_COLORS.length];
 
   return (
     <div
@@ -73,9 +81,43 @@ export function HeroShowcaseSlider() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
+      {/* VFX glow — two blurred blobs drifting behind the card, recolored per
+          slide and transitioning smoothly (CSS-only, no animation library —
+          keeps this section's JS payload small). */}
+      <div className="absolute -inset-10 pointer-events-none" aria-hidden>
+        <div
+          key={`glowA-${index}`}
+          className="absolute top-0 left-1/4 w-56 h-56 rounded-full"
+          style={{
+            background: glowA,
+            filter: 'blur(60px)',
+            opacity: 0.55,
+            transition: 'background 0.7s ease',
+            animation: 'vfxGlowDrift 7s ease-in-out infinite',
+          }}
+        />
+        <div
+          key={`glowB-${index}`}
+          className="absolute bottom-0 right-1/4 w-64 h-64 rounded-full"
+          style={{
+            background: glowB,
+            filter: 'blur(70px)',
+            opacity: 0.45,
+            transition: 'background 0.7s ease',
+            animation: 'vfxGlowDriftAlt 9s ease-in-out infinite',
+          }}
+        />
+      </div>
+
       <div
-        className="rounded-3xl overflow-hidden"
-        style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.08)', boxShadow: '0 30px 70px rgba(0,0,0,0.10)' }}
+        key={`card-${slide.key}`}
+        className="relative rounded-3xl overflow-hidden"
+        style={{
+          background: 'rgb(var(--bg-2))',
+          border: '1px solid rgba(var(--border) / 0.08)',
+          boxShadow: '0 30px 70px rgba(0,0,0,0.10)',
+          animation: `${direction === 1 ? 'slideInRight' : 'slideInLeft'} 0.5s cubic-bezier(0.22,1,0.36,1) both`,
+        }}
       >
         {/* Browser chrome */}
         <div className="flex items-center gap-2 px-4 py-3" style={{ borderBottom: '1px solid rgba(var(--border) / 0.08)' }}>
@@ -184,7 +226,7 @@ export function HeroShowcaseSlider() {
           <button
             key={s.key}
             aria-label={`Go to ${s.name}`}
-            onClick={() => setIndex(i)}
+            onClick={() => { setDirection(i > index ? 1 : -1); setIndex(i); }}
             className="rounded-full transition-all duration-300"
             style={{ width: i === index ? 16 : 6, height: 6, background: i === index ? '#c8a870' : 'rgba(var(--text) / 0.15)' }}
           />
