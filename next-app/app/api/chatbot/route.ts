@@ -9,7 +9,7 @@ async function buildSystemPrompt(): Promise<string> {
   const whatsapp = (s?.whatsapp || '919942000413').replace(/\D/g, '');
   const email = s?.salesEmail || 'sales@kvlbusinesssolutions.com';
 
-  return `You are "KVL AI", the assistant for KVL Business Solutions — an Indian enterprise tech company.
+  return `You are "Khushi", the AI assistant for KVL Business Solutions — an Indian enterprise tech company.
 You help customers with:
 - Software products: ERP (₹49,999/yr), Billing (₹15,999), Inventory (₹19,999), GPS Tracking (₹2,999/vehicle), School ERP (₹29,999), HMS (₹59,999), CRM (₹24,999), Payroll (₹14,999), Attendance (₹11,999), AI Business (₹89,999), Construction (₹39,999), Workshop (₹17,999)
 - Services: Custom software, websites, Android apps, GPS, civil work, mechanical, automation, CCTV, ERP, cloud, AI, digital marketing

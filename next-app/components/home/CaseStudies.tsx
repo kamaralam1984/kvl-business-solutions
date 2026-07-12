@@ -6,16 +6,19 @@ import { motion, useInView } from 'framer-motion';
 import { ArrowUpRight, ExternalLink } from 'lucide-react';
 import { caseStudies } from '@/lib/data/case-studies';
 
-const projects = caseStudies.map(c => ({
-  name: c.name,
-  slug: c.slug,
-  url: c.url,
-  problem: c.challenge.body,
-  solution: c.solution.body,
-  tech: c.tech,
-  impact: c.benefits[0]?.desc || c.overview,
-  image: c.images.hero,
-}));
+const FEATURED_SLUGS = ['aapkaplot', 'restro-os', 'vidyt'];
+
+const projects = FEATURED_SLUGS
+  .map(slug => caseStudies.find(c => c.slug === slug))
+  .filter((c): c is (typeof caseStudies)[number] => Boolean(c))
+  .map(c => ({
+    name: c.name,
+    slug: c.slug,
+    url: c.url,
+    overview: c.overview,
+    tech: c.tech,
+    image: c.images.hero,
+  }));
 
 export function CaseStudies() {
   const ref    = useRef<HTMLDivElement>(null);
@@ -37,7 +40,7 @@ export function CaseStudies() {
         {/* Project cards */}
         <motion.div
           ref={ref}
-          className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
           initial="hidden"
           animate={inView ? 'visible' : 'hidden'}
           variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.1 } } }}
@@ -51,13 +54,13 @@ export function CaseStudies() {
               }}
             >
               <div className="card-premium h-full flex flex-col overflow-hidden group">
-                <Link href={`/projects/${p.slug}`} className="relative block overflow-hidden" style={{ height: 180 }}>
+                <Link href={`/projects/${p.slug}`} className="relative block overflow-hidden aspect-[16/10]">
                   <Image
                     src={p.image}
                     alt={`${p.name} — live project built by KVL Business Solutions`}
                     fill
-                    sizes="(max-width: 640px) 100vw, 50vw"
-                    className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <span
                     className="absolute top-3 left-4 text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full"
@@ -79,17 +82,9 @@ export function CaseStudies() {
                     </h3>
                   </Link>
 
-                  <div className="mb-3">
-                    <div className="text-[10px] font-bold tracking-[0.12em] uppercase mb-1" style={{ color: 'rgb(var(--text-3))' }}>Problem</div>
-                    <p className="text-[13px] leading-[1.6]" style={{ color: 'rgb(var(--text-2))' }}>{p.problem}</p>
-                  </div>
+                  <p className="text-[13.5px] leading-[1.65] mb-4" style={{ color: 'rgb(var(--text-2))' }}>{p.overview}</p>
 
-                  <div className="mb-3">
-                    <div className="text-[10px] font-bold tracking-[0.12em] uppercase mb-1" style={{ color: 'rgb(var(--text-3))' }}>Solution</div>
-                    <p className="text-[13px] leading-[1.6]" style={{ color: 'rgb(var(--text-2))' }}>{p.solution}</p>
-                  </div>
-
-                  <div className="flex flex-wrap gap-1.5 mb-4">
+                  <div className="flex flex-wrap gap-1.5 mb-6">
                     {p.tech.map(t => (
                       <span key={t} className="text-[10.5px] font-medium px-2 py-0.5 rounded-full"
                         style={{ background: 'rgba(200,168,112,0.08)', color: '#a3814f', border: '1px solid rgba(200,168,112,0.2)' }}>
@@ -97,10 +92,6 @@ export function CaseStudies() {
                       </span>
                     ))}
                   </div>
-
-                  <p className="text-[13px] leading-[1.6] font-medium mb-6" style={{ color: 'rgb(var(--text))' }}>
-                    {p.impact}
-                  </p>
 
                   <div className="mt-auto pt-5 flex items-center justify-between" style={{ borderTop: '1px solid rgba(var(--border) / 0.07)' }}>
                     <Link href={`/projects/${p.slug}`} className="inline-flex items-center gap-1.5 text-[13px] font-semibold group/link" style={{ color: '#c8a870' }}>

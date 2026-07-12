@@ -5,14 +5,14 @@ import { motion, useInView } from 'framer-motion';
 import { Hospital, School, Banknote, UtensilsCrossed, Building2, HardHat, Factory, Landmark } from 'lucide-react';
 
 const industries = [
-  { Icon: Hospital,        title: 'Healthcare',  desc: 'One patient record across OPD, IPD, pharmacy, lab and billing — less paperwork, faster care.', href: '/industries/hospitals' },
-  { Icon: School,          title: 'Education',   desc: 'Admissions, fees, attendance and exams on one platform — freeing staff from manual tracking.', href: '/industries/schools' },
-  { Icon: Banknote,        title: 'Finance',     desc: 'Books, compliance and transactions kept audit-ready by design — reporting season, without the scramble.', href: '/industries' },
-  { Icon: UtensilsCrossed, title: 'Restaurant',  desc: 'Billing, tables, inventory and delivery synced in real time — nothing lost between kitchen and till.', href: '/industries/restaurant-hospitality' },
-  { Icon: Building2,       title: 'Real Estate', desc: 'Leads, site visits, bookings and channel partners in one pipeline — so no enquiry goes cold.', href: '/industries/realestate' },
-  { Icon: HardHat,         title: 'Construction',desc: 'BOQ, materials, labor and site progress tracked live — catch cost overruns before they happen.', href: '/industries/construction' },
-  { Icon: Factory,         title: 'Manufacturing',desc: 'PLC, SCADA, IoT and OEE data unified — the shop floor visible in real time, not at month-end.', href: '/industries/manufacturing' },
-  { Icon: Landmark,        title: 'Government',  desc: 'e-Tenders, GEM listings and compliance tracked end-to-end — so nothing is ever missed.', href: '/industries/government' },
+  { Icon: Hospital,        title: 'Healthcare',   desc: 'One patient record across OPD, IPD, pharmacy and billing.', href: '/industries/hospitals' },
+  { Icon: School,          title: 'Education',    desc: 'Admissions, fees, attendance and exams on one platform.', href: '/industries/schools' },
+  { Icon: Banknote,        title: 'Finance',      desc: 'Books and compliance kept audit-ready by design.', href: '/industries' },
+  { Icon: UtensilsCrossed, title: 'Restaurant',   desc: 'Billing, tables and delivery synced in real time.', href: '/industries/restaurant-hospitality' },
+  { Icon: Building2,       title: 'Real Estate',  desc: 'Leads, site visits and bookings in one pipeline.', href: '/industries/realestate' },
+  { Icon: HardHat,         title: 'Construction', desc: 'Materials, labor and site progress tracked live.', href: '/industries/construction' },
+  { Icon: Factory,         title: 'Manufacturing',desc: 'PLC, SCADA and IoT data unified on one dashboard.', href: '/industries/manufacturing' },
+  { Icon: Landmark,        title: 'Government',   desc: 'e-Tenders, GEM listings and compliance tracked end-to-end.', href: '/industries/government' },
 ];
 
 export function IndustriesGrid() {

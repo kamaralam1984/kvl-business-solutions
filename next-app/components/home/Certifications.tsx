@@ -4,12 +4,12 @@ import { motion, useInView } from 'framer-motion';
 import { ShieldCheck, Sparkles, Layers, LayoutDashboard, FileCheck, Headset } from 'lucide-react';
 
 const reasons = [
-  { Icon: ShieldCheck,      title: 'Verified Credentials',    desc: 'ISO 27001 certified, MSME-registered, and a Razorpay Verified Partner — rated 4.8/5 by the businesses we work with.' },
-  { Icon: Sparkles,         title: 'AI Failover, Built In',   desc: 'A 9-provider AI failover chain keeps lead scoring, voice outreach, and content tools running without interruption.' },
-  { Icon: Layers,           title: 'Modern Engineering Stack',desc: 'Built on Next.js, React, TypeScript, and MongoDB — the stack serious product teams standardize on.' },
-  { Icon: LayoutDashboard,  title: 'Working Software Suite',  desc: 'A full admin panel, customer dashboard, and no-code workflow engine — not a prototype, real software already running in production.' },
-  { Icon: FileCheck,        title: 'Straightforward Terms',   desc: 'Fixed, transparent pricing and a 30-day money-back guarantee — no hidden costs, no surprises.' },
-  { Icon: Headset,          title: 'Fast, Human Support',     desc: 'Free training, guided onboarding, and support that typically responds within 20-25 minutes.' },
+  { Icon: ShieldCheck,      title: 'Verified Credentials',     desc: 'ISO 27001 certified, MSME-registered, rated 4.8/5.' },
+  { Icon: Sparkles,         title: 'AI Failover, Built In',    desc: 'Multi-provider AI chain — no downtime on lead scoring or outreach.' },
+  { Icon: Layers,           title: 'Modern Engineering Stack', desc: 'Next.js, React, TypeScript, and MongoDB.' },
+  { Icon: LayoutDashboard,  title: 'Working Software Suite',   desc: 'Real production software — not a prototype.' },
+  { Icon: FileCheck,        title: 'Straightforward Terms',    desc: 'Fixed pricing, 30-day money-back guarantee.' },
+  { Icon: Headset,          title: 'Fast, Human Support',      desc: 'Free onboarding, response typically within 20-25 minutes.' },
 ];
 
 export function Certifications() {

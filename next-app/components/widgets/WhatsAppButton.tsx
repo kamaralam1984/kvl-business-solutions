@@ -40,7 +40,7 @@ export function WhatsAppButton() {
       </button>
 
       {open && (
-        <div className="absolute bottom-16 right-0 w-80 card-base shadow-card-hover overflow-hidden animate-in fade-in slide-in-from-bottom-2">
+        <div className="absolute bottom-16 left-0 w-80 card-base shadow-card-hover overflow-hidden animate-in fade-in slide-in-from-bottom-2">
           <div className="p-4 text-white" style={{ background: 'linear-gradient(135deg, #25d366, #128c7e)' }}>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-white/20 grid place-items-center">{WHATSAPP_ICON}</div>

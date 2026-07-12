@@ -15,8 +15,8 @@ export const metadata: Metadata = {
 
 // Hero is the only section guaranteed above the fold — everything below is
 // code-split into its own chunk so it doesn't block initial JS parse/hydration.
-// Exactly the 8 sections in the approved homepage spec — no extras.
-const ServicesPreview   = dynamic(() => import('@/components/home/ServicesPreview').then(m => m.ServicesPreview));
+// Core Services lives on its own /services page (linked from the navbar) —
+// not duplicated here.
 const IndustriesGrid    = dynamic(() => import('@/components/home/IndustriesGrid').then(m => m.IndustriesGrid));
 const CaseStudies       = dynamic(() => import('@/components/home/CaseStudies').then(m => m.CaseStudies));
 const Certifications    = dynamic(() => import('@/components/home/Certifications').then(m => m.Certifications));
@@ -28,7 +28,6 @@ export default function HomePage() {
   return (
     <>
       <Hero />
-      <ServicesPreview />
       <IndustriesGrid />
       <CaseStudies />
       <Certifications />

@@ -47,7 +47,7 @@ export function CallBackWidget() {
             initial={{ opacity: 0, y: 10, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.9 }}
-            className="absolute bottom-14 right-0 w-72 bg-app2 rounded-2xl shadow-2xl border border-tint p-4 z-[110]"
+            className="absolute bottom-14 left-0 w-72 bg-app2 rounded-2xl shadow-2xl border border-tint p-4 z-[110]"
           >
             <div className="flex justify-between items-center mb-3">
               <div>

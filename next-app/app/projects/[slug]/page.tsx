@@ -361,13 +361,13 @@ export default function CaseStudyPage({ params }: { params: { slug: string } }) 
             <div className="grid sm:grid-cols-3 gap-6">
               {related.map(r => (
                 <Link key={r.slug} href={`/projects/${r.slug}`} className="card-premium overflow-hidden group block">
-                  <div className="relative overflow-hidden" style={{ height: 160 }}>
+                  <div className="relative overflow-hidden aspect-[16/10]">
                     <Image
                       src={r.images.hero}
                       alt={`${r.name} preview`}
                       fill
                       sizes="(max-width: 640px) 100vw, 33vw"
-                      className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                   </div>
                   <div className="p-5">

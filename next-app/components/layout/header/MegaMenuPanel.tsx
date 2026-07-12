@@ -76,6 +76,16 @@ export function MegaMenuPanel({ menuKey, open }: { menuKey: MegaMenuKey; open: b
                 ))}
               </div>
             </div>
+
+            {menuKey === 'Services' && (
+              <Link
+                href="/services"
+                className="flex items-center justify-center gap-1.5 mt-3 pt-3 text-[12.5px] font-semibold transition-colors duration-150"
+                style={{ borderTop: '1px solid rgba(var(--border) / 0.08)', color: '#c8a870' }}
+              >
+                View All Core Services →
+              </Link>
+            )}
           </div>
         </motion.div>
       )}

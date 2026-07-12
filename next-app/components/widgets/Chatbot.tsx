@@ -1,18 +1,22 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, X, Send, Mic, MicOff, Sparkles } from 'lucide-react';
+import Image from 'next/image';
+import { X, Send, Mic, MicOff } from 'lucide-react';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
 
-const PRIYA_GREETING = 'Hello! 👋 I\'m Priya, KVL Business Solutions\' AI assistant. I can help you with software, services, pricing, or a free demo — in any language you prefer!';
+const ASSISTANT_NAME = 'Khushi';
+const ASSISTANT_AVATAR = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80&auto=format&fit=crop';
+
+const KHUSHI_GREETING = 'Hello! 👋 I\'m Khushi, KVL Business Solutions\' AI assistant. I can help you with software, services, pricing, or a free demo — in any language you prefer!';
 
 export function Chatbot() {
   const [open, setOpen] = useState(false);
   const [showBubble, setShowBubble] = useState(false);
   const [proactiveDone, setProactiveDone] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([
-    { role: 'assistant', content: 'Hi 👋 I\'m Priya, KVL AI. How can I help you today?' },
+    { role: 'assistant', content: 'Hi 👋 I\'m Khushi, KVL AI. How can I help you today?' },
     { role: 'assistant', content: 'Ask me anything — pricing, demo, services, GPS tracking, or a quote. I speak your language!' },
   ]);
   const [input, setInput] = useState('');
@@ -29,7 +33,7 @@ export function Chatbot() {
       if (!open) {
         setOpen(true);
         setShowBubble(false);
-        setMessages(m => m[0]?.content === PRIYA_GREETING ? m : [{ role: 'assistant', content: PRIYA_GREETING }, ...m]);
+        setMessages(m => m[0]?.content === KHUSHI_GREETING ? m : [{ role: 'assistant', content: KHUSHI_GREETING }, ...m]);
       }
       setProactiveDone(true);
     }, 38_000);
@@ -92,11 +96,11 @@ export function Chatbot() {
             onClick={() => { setOpen(true); setShowBubble(false); setProactiveDone(true); }}
           >
             <div className="flex items-start gap-2">
-              <div className="w-8 h-8 rounded-full bg-primary/10 grid place-items-center shrink-0">
-                <Sparkles className="w-4 h-4 text-primary" />
+              <div className="w-8 h-8 rounded-full overflow-hidden relative shrink-0">
+                <Image src={ASSISTANT_AVATAR} alt={ASSISTANT_NAME} fill sizes="32px" className="object-cover" />
               </div>
               <div>
-                <p className="text-[12px] font-bold text-text">Priya - KVL AI</p>
+                <p className="text-[12px] font-bold text-text">{ASSISTANT_NAME} - KVL AI</p>
                 <p className="text-[11px] text-text2 leading-relaxed mt-0.5">Hi! Need a free demo? I can help you in any language 🌍</p>
               </div>
             </div>
@@ -108,13 +112,12 @@ export function Chatbot() {
 
       <button
         onClick={() => { setOpen(o => !o); setShowBubble(false); setProactiveDone(true); }}
-        className="w-14 h-14 rounded-full grid place-items-center text-white shadow-card relative"
-        style={{ background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)' }}
-        aria-label="AI Assistant"
+        className="w-14 h-14 rounded-full overflow-hidden relative shadow-card"
+        aria-label={`${ASSISTANT_NAME} — AI Assistant`}
       >
-        <Bot className="w-6 h-6" />
-        <span className="absolute inset-0 rounded-full border-2 border-current opacity-50 animate-pulse-ring" />
-        {showBubble && <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white text-[8px] text-white font-bold grid place-items-center">1</span>}
+        <Image src={ASSISTANT_AVATAR} alt={ASSISTANT_NAME} fill sizes="56px" className="object-cover" />
+        <span className="absolute inset-0 rounded-full border-2 border-white/70 opacity-50 animate-pulse-ring" />
+        {showBubble && <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white text-[8px] text-white font-bold grid place-items-center z-10">1</span>}
       </button>
 
       <AnimatePresence>
@@ -126,12 +129,12 @@ export function Chatbot() {
             className="fixed bottom-24 right-4 sm:right-6 w-[calc(100vw-32px)] sm:w-[340px] h-[480px] rounded-2xl border border-tint bg-app2 shadow-2xl z-[100] flex flex-col overflow-hidden"
           >
             <div className="p-4 bg-gradient-to-br from-primary to-primary-600 text-white flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white/20 grid place-items-center relative">
-                <Bot className="w-5 h-5" />
+              <div className="w-10 h-10 rounded-full overflow-hidden relative shrink-0">
+                <Image src={ASSISTANT_AVATAR} alt={ASSISTANT_NAME} fill sizes="40px" className="object-cover" />
                 <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-primary-600" />
               </div>
               <div className="flex-1">
-                <h4 className="font-bold text-sm">KVL AI Assistant</h4>
+                <h4 className="font-bold text-sm">{ASSISTANT_NAME} - KVL AI Assistant</h4>
                 <p className="text-[11px] opacity-80">Powered by Claude · Online</p>
               </div>
               <button onClick={() => setOpen(false)}><X className="w-5 h-5" /></button>
