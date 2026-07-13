@@ -1,17 +1,24 @@
 import type { MetadataRoute } from 'next';
-import { softwareProducts } from '@/lib/data/software';
 import { docArticles } from '@/lib/data/docs';
-import { courses } from '@/lib/data/courses';
-import { caseStudies } from '@/lib/data/case-studies';
 import { industries } from '@/lib/data/industries';
 import { services } from '@/lib/data/services';
-import { blogPosts } from '@/lib/data/blog';
 import { countryPages } from '@/lib/data/country-pages';
 import { industryLandingPages } from '@/lib/data/industry-landing-pages';
+import { getLiveSoftwareProducts } from '@/lib/data/live-software';
+import { getLiveCaseStudies } from '@/lib/data/live-case-studies';
+import { getLiveCourses } from '@/lib/data/live-courses';
+import { getLiveBlogPosts } from '@/lib/data/live-blog';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const site = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
   const now = new Date();
+
+  const [softwareProducts, caseStudies, courses, blogPosts] = await Promise.all([
+    getLiveSoftwareProducts(),
+    getLiveCaseStudies(),
+    getLiveCourses(),
+    getLiveBlogPosts(),
+  ]);
 
   const staticPaths = [
     '', 'about', 'services', 'software', 'industries', 'projects', 'clients',
