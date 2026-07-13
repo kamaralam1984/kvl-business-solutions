@@ -7,7 +7,10 @@ const csp = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
-  "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://api.razorpay.com https://lumberjack.razorpay.com",
+  // api.cloudinary.com: FileUploader.tsx uploads directly from the browser
+  // to Cloudinary (signed direct upload) — without this, the browser blocks
+  // the request and it surfaces as a generic "Failed to fetch".
+  "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://api.razorpay.com https://lumberjack.razorpay.com https://api.cloudinary.com",
   "frame-src 'self' https://checkout.razorpay.com https://api.razorpay.com https://www.openstreetmap.org",
   "object-src 'none'",
   "base-uri 'self'",
