@@ -28,11 +28,11 @@ export function Testimonials() {
   const hasReviews = reviews && reviews.length > 0;
 
   return (
-    <section className="py-28" style={{ background: 'rgb(var(--bg))' }}>
+    <section className={hasReviews ? 'py-28' : 'py-16'} style={{ background: 'rgb(var(--bg))' }}>
       <div className="container">
 
         {/* Section header */}
-        <div className="max-w-2xl mx-auto text-center mb-16">
+        <div className={`max-w-2xl mx-auto text-center ${hasReviews ? 'mb-16' : 'mb-10'}`}>
           <span className="eyebrow mb-4 block">Reviews</span>
           <h2 className="heading-lg" style={{ color: 'rgb(var(--text))' }}>
             Client reviews,<br />
