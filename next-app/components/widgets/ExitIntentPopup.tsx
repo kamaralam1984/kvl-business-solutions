@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Zap, MessageSquare, ArrowRight } from 'lucide-react';
+import { X, ArrowRight, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { trackEvent } from '@/components/analytics/GoogleAnalytics';
 
 export function ExitIntentPopup() {
@@ -66,54 +66,62 @@ export function ExitIntentPopup() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
           onClick={e => e.target === e.currentTarget && dismiss()}
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.85, y: 30 }}
+            initial={{ opacity: 0, scale: 0.95, y: 14 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.85, y: 30 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            className="bg-app2 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative"
+            exit={{ opacity: 0, scale: 0.96, y: 10 }}
+            transition={{ type: 'spring', stiffness: 340, damping: 30 }}
+            className="relative w-full max-w-md rounded-2xl overflow-hidden bg-bg2 border border-border/10"
+            style={{ boxShadow: '0 1px 0 rgba(255,255,255,0.06) inset, 0 30px 80px rgba(0,0,0,0.45)' }}
           >
-            <button onClick={dismiss} className="absolute top-4 right-4 z-10 text-text2 hover:text-text bg-tint rounded-full p-1">
+            <button onClick={dismiss}
+              className="absolute top-5 right-5 z-10 grid place-items-center w-8 h-8 rounded-full text-text2 hover:text-text transition-colors"
+              style={{ background: 'rgba(var(--text) / 0.06)' }}>
               <X className="w-4 h-4" />
             </button>
 
-            {/* Top banner */}
-            <div className="bg-gradient-to-br from-primary to-blue-700 p-6 text-white text-center relative overflow-hidden">
-              <div className="absolute inset-0 opacity-10">
-                {[...Array(6)].map((_, i) => (
-                  <div key={i} className="absolute w-20 h-20 rounded-full bg-white"
-                    style={{ top: `${Math.random() * 100}%`, left: `${Math.random() * 100}%`, transform: 'translate(-50%,-50%)' }} />
-                ))}
-              </div>
+            {/* Subtle textured header — no stock gradient blobs */}
+            <div className="relative px-7 pt-8 pb-6 text-center overflow-hidden">
+              <div className="absolute inset-0 pointer-events-none" aria-hidden style={{
+                backgroundImage: 'radial-gradient(circle, rgba(var(--gold-rgb),0.4) 1px, transparent 1px)',
+                backgroundSize: '22px 22px',
+                opacity: 0.15,
+                maskImage: 'radial-gradient(ellipse 100% 100% at 50% 0%, black 0%, transparent 75%)',
+              }} />
               <div className="relative">
-                <div className="flex justify-center mb-3">
-                  <div className="w-14 h-14 rounded-2xl bg-white/20 grid place-items-center">
-                    <MessageSquare className="w-7 h-7" />
+                <div className="flex justify-center mb-4">
+                  <div className="w-11 h-11 rounded-full grid place-items-center font-display font-bold text-[14px]"
+                    style={{ background: 'rgba(var(--gold-rgb),0.10)', border: '1px solid rgba(var(--gold-rgb),0.28)', color: '#c8a870' }}>
+                    KA
                   </div>
                 </div>
-                <p className="text-xs font-bold uppercase tracking-widest opacity-80 mb-1">Before You Go</p>
-                <h2 className="text-2xl font-extrabold">Get a Free Consultation</h2>
-                <p className="text-sm opacity-80 mt-1">Leave your email and a solution architect will reach out.</p>
+                <span className="eyebrow eyebrow-dot justify-center mb-3">Before You Go</span>
+                <h2 className="heading-md" style={{ color: 'rgb(var(--text))' }}>
+                  Talk to a solution architect —<br className="hidden sm:block" /> not a sales rep.
+                </h2>
+                <p className="text-[13.5px] mt-3 leading-[1.7]" style={{ color: 'rgb(var(--text-2))' }}>
+                  Leave your email and we'll set up a free 30-minute call to talk through what you're building.
+                </p>
               </div>
             </div>
 
-            <div className="p-6">
+            <div className="divider-premium" />
+
+            <div className="px-7 pt-6 pb-7">
               {submitted ? (
-                <div className="text-center py-4">
-                  <div className="w-14 h-14 rounded-full bg-green-500/10 grid place-items-center mx-auto mb-3">
-                    <Zap className="w-7 h-7 text-green-500" />
+                <div className="text-center py-3">
+                  <div className="w-12 h-12 rounded-full grid place-items-center mx-auto mb-3"
+                    style={{ background: 'rgba(var(--gold-rgb),0.10)', border: '1px solid rgba(var(--gold-rgb),0.28)' }}>
+                    <CheckCircle2 className="w-6 h-6" style={{ color: '#c8a870' }} />
                   </div>
-                  <h3 className="font-bold text-lg">Thank you</h3>
-                  <p className="text-text2 text-sm mt-1">Our team will be in touch shortly.</p>
+                  <h3 className="font-display font-bold text-lg" style={{ color: 'rgb(var(--text))' }}>You're on the list</h3>
+                  <p className="text-[13px] mt-1" style={{ color: 'rgb(var(--text-2))' }}>Someone from our team will reach out shortly.</p>
                 </div>
               ) : (
                 <>
-                  <p className="text-text2 text-sm text-center mb-4">
-                    Share your email and we'll set up a <strong>free strategy call</strong> to talk through your project — no pressure, no obligation.
-                  </p>
                   <form onSubmit={submit} className="space-y-3">
                     <input
                       type="email" required
@@ -122,11 +130,14 @@ export function ExitIntentPopup() {
                       className="form-control w-full"
                     />
                     <button type="submit"
-                      className="w-full btn-primary flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm">
+                      className="w-full btn-gold-solid flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm">
                       Get My Free Consultation <ArrowRight className="w-4 h-4" />
                     </button>
                   </form>
-                  <p className="text-[11px] text-text2 text-center mt-3">No spam — just one call from our team.</p>
+                  <div className="flex items-center justify-center gap-1.5 mt-4 text-[11.5px]" style={{ color: 'rgb(var(--text-3))' }}>
+                    <ShieldCheck className="w-3.5 h-3.5 shrink-0" style={{ color: '#c8a870' }} />
+                    No spam. One call from our team, nothing else.
+                  </div>
                 </>
               )}
             </div>
