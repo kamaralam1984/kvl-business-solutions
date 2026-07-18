@@ -50,11 +50,10 @@ export function IndustriesGrid() {
   return (
     <section className="py-28" style={{ background: 'rgb(var(--bg))' }}>
       <div className="container">
-        <div className="max-w-2xl mx-auto text-center mb-16">
+        <div className="max-w-full mx-auto text-center mb-16 px-2">
           <span className="eyebrow mb-4 block">Industries</span>
-          <h2 className="heading-lg" style={{ color: 'rgb(var(--text))' }}>
-            Different sectors, different rules.<br />
-            <span style={{ color: '#c8a870' }}>We already know the difference.</span>
+          <h2 className="heading-lg sm:whitespace-nowrap" style={{ color: 'rgb(var(--text))', fontSize: 'clamp(0.95rem, 1.75vw, 1.5rem)' }}>
+            Different sectors, different rules. <span style={{ color: '#c8a870' }}>We already know the difference.</span>
           </h2>
         </div>
 
