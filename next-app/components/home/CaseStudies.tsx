@@ -27,11 +27,10 @@ export function CaseStudies() {
       <div className="container">
 
         {/* Section header */}
-        <div className="max-w-2xl mx-auto text-center mb-16">
+        <div className="max-w-full mx-auto text-center mb-16 px-2">
           <span className="eyebrow mb-4 block">Live Products, Not Mockups</span>
-          <h2 className="heading-lg" style={{ color: 'rgb(var(--text))' }}>
-            Real products. Real users.<br />
-            <span style={{ color: '#c8a870' }}>Verifiable today, not case studies we wrote ourselves.</span>
+          <h2 className="heading-lg sm:whitespace-nowrap" style={{ color: 'rgb(var(--text))', fontSize: 'clamp(0.95rem, 1.75vw, 1.5rem)' }}>
+            Real products. Real users. <span style={{ color: '#c8a870' }}>Verifiable today, not case studies we wrote ourselves.</span>
           </h2>
         </div>
 
