@@ -42,11 +42,11 @@ export function Hero() {
       <div className="container relative z-10">
 
         {/* Eyebrow */}
-        <div className="mb-8">
+        <div className="mb-8 animate-fade-up">
           <span className="inline-flex items-center gap-3 text-[11px] tracking-[0.2em] font-semibold uppercase"
             style={{ color: '#c8a870' }}
           >
-            <span style={{ width: 24, height: 1, background: 'linear-gradient(90deg, #c8a870, transparent)', display: 'inline-block' }} />
+            <span className="animate-line-draw" style={{ width: 24, height: 1, background: 'linear-gradient(90deg, #c8a870, transparent)', display: 'inline-block' }} />
             Enterprise Software, Engineered in India
           </span>
         </div>
