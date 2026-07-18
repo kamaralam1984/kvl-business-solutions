@@ -30,7 +30,13 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     title,
     description: p.description,
     alternates: { canonical: url },
-    openGraph: { title, description: p.description, url, type: 'website' },
+    openGraph: {
+      title,
+      description: p.description,
+      url,
+      type: 'website',
+      images: [{ url: `/og?title=${encodeURIComponent(p.name)}`, width: 1200, height: 630, alt: p.name }],
+    },
   };
 }
 

@@ -58,6 +58,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       url: `${SITE}/blog/${post.slug}`,
       type: 'article',
       publishedTime: post.publishedAt,
+      images: [{ url: `/og?title=${encodeURIComponent(post.title)}`, width: 1200, height: 630, alt: post.title }],
     },
   };
 }

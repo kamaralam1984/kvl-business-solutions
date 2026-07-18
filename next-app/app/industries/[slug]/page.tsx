@@ -247,6 +247,9 @@ const industryDetails: Record<string, IndustryDetail> = {
   },
 };
 
+export const dynamic = 'force-static';
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return industries.map(i => ({ slug: i.slug }));
 }
@@ -264,6 +267,7 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
       description: detail.metaDescription,
       url: `${SITE}/industries/${ind.slug}`,
       type: 'website',
+      images: [{ url: `/og?title=${encodeURIComponent(ind.name)}`, width: 1200, height: 630, alt: ind.name }],
     },
   };
 }

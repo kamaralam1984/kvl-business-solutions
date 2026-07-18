@@ -28,6 +28,9 @@ function Icon({ name, className }: { name: string; className?: string }) {
   return <Cmp className={className} />;
 }
 
+export const dynamic = 'force-static';
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return services.map(s => ({ slug: s.slug }));
 }
@@ -45,6 +48,7 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
       description: detail.metaDescription,
       url: `${SITE}/services/${service.slug}`,
       type: 'website',
+      images: [{ url: `/og?title=${encodeURIComponent(service.name)}`, width: 1200, height: 630, alt: service.name }],
     },
   };
 }
