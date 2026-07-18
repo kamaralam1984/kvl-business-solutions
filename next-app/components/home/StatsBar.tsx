@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Box, Sparkles, CalendarDays, Users } from 'lucide-react';
 import { useReveal, revealStyle } from '@/lib/hooks/useReveal';
 
-const FOUNDED_YEAR = 2019;
+const FOUNDED_YEAR = 2015;
 
 function useCounter(target: number, active: boolean) {
   const [val, setVal] = useState(0);

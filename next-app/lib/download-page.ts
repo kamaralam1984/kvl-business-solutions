@@ -37,7 +37,7 @@ export function renderDownloadShell(opts: { title: string; tag: string; bodyHtml
 </div>
 ${opts.bodyHtml}
 <div class="foot">
-  KVL Business Solutions · Founded 2019 · Patna, India · ISO 27001 &amp; MSME Certified<br/>
+  KVL Business Solutions · Founded 2015 · Patna, India · MSME Registered<br/>
   kvlbusinesssolutions.com · ${email} · ${phone}
 </div>
 </body></html>`;

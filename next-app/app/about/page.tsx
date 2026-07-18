@@ -7,9 +7,9 @@ import { Target, Eye, Heart, Trophy } from 'lucide-react';
 import Link from 'next/link';
 
 const timeline = [
-  { year: '2019', title: 'Company Founded', desc: 'Started in Patna with a focus on custom enterprise software — purpose-built systems, not off-the-shelf templates.' },
+  { year: '2015', title: 'Company Founded', desc: 'Started in Patna with a focus on custom enterprise software — purpose-built systems, not off-the-shelf templates.' },
   { year: '2021', title: 'Infrastructure & Industrial Systems', desc: 'Expanded into GPS fleet visibility, civil engineering, and industrial automation — bringing physical operations onto digital systems.' },
-  { year: '2023', title: 'ISO 27001 & MSME Certified', desc: 'Formalized our security and quality practices with ISO 27001 certification and MSME (Govt. of India) registration.' },
+  { year: '2023', title: 'MSME Registered', desc: 'Formalized our quality practices with MSME (Govt. of India) registration — an NDA is available on request before any project discussion.' },
   { year: '2025', title: 'AI Automation Platform Launched', desc: 'Built a multi-provider AI failover platform that keeps lead scoring, chat, and voice outreach running without interruption for clients.' },
 ];
 
@@ -67,7 +67,7 @@ export default function AboutPage() {
             className="inline-flex items-center gap-2 mt-4 mb-5 px-4 py-1.5 rounded-full border"
             style={{ borderColor: 'rgba(200,169,110,0.3)', background: 'rgba(200,169,110,0.06)' }}
           >
-            <span className="text-xs font-bold tracking-widest uppercase" style={{ color: '#c8a96e' }}>Since 2019</span>
+            <span className="text-xs font-bold tracking-widest uppercase" style={{ color: '#c8a96e' }}>Since 2015</span>
             <span className="w-1 h-1 rounded-full" style={{ background: '#c8a96e' }} />
             <span className="text-xs tracking-wide" style={{ color: 'rgba(var(--text) / 0.4)' }}>Patna, India</span>
           </motion.div>
@@ -102,7 +102,7 @@ export default function AboutPage() {
               Built for<br />Indian Businesses
             </h2>
             <p className="leading-relaxed text-sm text-text2">
-              KVL Business Solutions started in 2019 as a software-services team. Today, we're a full-stack technology and automation partner — enterprise software, infrastructure, GPS and industrial systems, civil engineering and digital marketing, delivered by one accountable team instead of five disconnected vendors.
+              KVL Business Solutions started in 2015 as a software-services team. Today, we're a full-stack technology and automation partner — enterprise software, infrastructure, GPS and industrial systems, civil engineering and digital marketing, delivered by one accountable team instead of five disconnected vendors.
             </p>
             <p className="mt-4 leading-relaxed text-sm text-text2">
               Our mission is simple: combine world-class engineering with deep understanding of how Indian businesses actually operate, so the systems we build fit the way you work — not the other way around.
@@ -135,9 +135,9 @@ export default function AboutPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
             {[
               { num: '14+', label: 'Services Offered' },
-              { num: '2019', label: 'Founded' },
-              { num: 'ISO 27001', label: 'Certified' },
-              { num: '4.8/5', label: 'Client Rating' },
+              { num: '2015', label: 'Founded' },
+              { num: 'MSME', label: 'Registered' },
+              { num: 'NDA', label: 'On Request' },
             ].map((s, i) => (
               <FadeIn key={s.label} delay={i * 0.08}>
                 <div className="text-center">
@@ -156,7 +156,7 @@ export default function AboutPage() {
           <FadeIn className="text-center mb-16">
             <span className="eyebrow">OUR JOURNEY</span>
             <h2 className="text-4xl md:text-5xl font-extrabold my-4 text-text" style={{ fontFamily: 'Poppins, sans-serif' }}>
-              Built Since 2019
+              Built Since 2015
             </h2>
             <p className="max-w-xl mx-auto text-sm text-text2">From a software-services team to a full-stack technology and automation partner.</p>
           </FadeIn>

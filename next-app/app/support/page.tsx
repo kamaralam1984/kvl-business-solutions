@@ -11,7 +11,7 @@ const faqs = [
   { q: 'Do you provide installation and training?', a: 'Yes. Every product includes free installation, configuration, and 2 hours of online team training.' },
   { q: 'What is the pricing structure?', a: 'We offer annual subscription or one-time perpetual license. All pricing is transparent — no hidden fees.' },
   { q: 'Do you offer cloud and on-premise hosting?', a: 'Both. You can run our software on KVL Cloud, AWS/Azure/GCP, or on-premise servers.' },
-  { q: 'What about data security and backups?', a: 'ISO 27001 certified. All data encrypted at rest and in transit. Automated daily backups with 30-day retention.' },
+  { q: 'What about data security and backups?', a: 'All data is encrypted at rest and in transit, with an NDA available on request before any project discussion. Automated daily backups with 30-day retention.' },
   { q: 'How does GPS tracking installation work?', a: 'Our technician visits, installs the GPS hardware (30 min/vehicle), configures the dashboard and trains your team.' },
   { q: 'Do you handle civil and mechanical work too?', a: 'Yes — dedicated civil engineering and mechanical divisions. From factory construction to fabrication.' },
   { q: 'What is your refund policy?', a: 'All software comes with 7-day free trial. If unhappy in first 30 days of subscription, 100% refund.' },

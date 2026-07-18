@@ -5,7 +5,7 @@ import { LiveRatingBadge } from './LiveRatingBadge';
 
 /* ── Static data ─────────────────────────────────────── */
 const trustBadges = [
-  { Icon: ShieldCheck, label: 'ISO 27001 Certified',      color: '#10b981' },
+  { Icon: ShieldCheck, label: 'NDA on Request',           color: '#10b981' },
   { Icon: Award,       label: 'MSME Registered',          color: '#c8a870' },
   { Icon: Sparkles,    label: 'Razorpay Verified Partner', color: '#c8a870' },
 ];

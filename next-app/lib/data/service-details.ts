@@ -35,7 +35,7 @@ export const serviceDetails: ServiceDetail[] = [
   {
     slug: 'website',
     metaTitle: 'Website Development Company in India | KVL Business Solutions',
-    metaDescription: 'Custom-coded, SEO-ready websites built for speed and conversions by KVL Business Solutions, an ISO 27001 & MSME certified software company based in Patna, Bihar.',
+    metaDescription: 'Custom-coded, SEO-ready websites built for speed and conversions by KVL Business Solutions, an MSME registered software company based in Patna, Bihar.',
     extendedDescription: "We build websites engineered for speed, search visibility and conversions — not just visual design. That covers everything from a company's public marketing site to a property portal with live map search, built on modern frameworks with SEO and performance handled from the first sprint, not bolted on afterward.",
     includes: [
       'Custom-coded websites (not drag-and-drop builders) for speed and control',
@@ -126,7 +126,7 @@ export const serviceDetails: ServiceDetail[] = [
   {
     slug: 'cctv',
     metaTitle: 'CCTV & Security System Installation Company in India | KVL Business Solutions',
-    metaDescription: 'HD/4K surveillance and biometric access systems installed and monitored by KVL Business Solutions, an ISO 27001 certified company in Patna, Bihar.',
+    metaDescription: 'HD/4K surveillance and biometric access systems installed and monitored by KVL Business Solutions, an MSME registered company in Patna, Bihar.',
     extendedDescription: 'We design and install HD/4K surveillance and biometric access systems engineered to protect people, assets and premises around the clock — covering everything from camera placement and cabling to remote monitoring access and biometric attendance integration.',
     includes: [
       'Site survey and camera placement planning for full coverage',

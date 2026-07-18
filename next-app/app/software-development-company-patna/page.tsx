@@ -18,7 +18,7 @@ const RELATED_CASE_STUDY_SLUGS = ['vidyt', 'aapkaplot', 'restro-os'];
 
 const whyChooseReasons = [
   'A real, visitable office in Patna — meet the engineering team in person, not just over a video call.',
-  "ISO 27001 certified and MSME registered — the same security and compliance standards we'd offer an enterprise client anywhere.",
+  "MSME registered, with an NDA available on request — the same security and compliance standards we'd offer an enterprise client anywhere.",
   'GST-compliant invoicing and pricing that makes sense for a Bihar-based business, not a US/UK enterprise budget.',
   'Direct access to the engineers building your system — no relationship manager relaying messages from a different city.',
   'Local business context — we already understand the compliance, vendor and customer realities of running a business in Bihar.',

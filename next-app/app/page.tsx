@@ -6,7 +6,7 @@ import { getLiveCaseStudies } from '@/lib/data/live-case-studies';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
 const title = 'Custom Software Development Company in India — Enterprise ERP, CRM & AI Automation | KVL Business Solutions';
-const description = 'KVL Business Solutions builds custom software, enterprise ERP, CRM and AI automation for hospitals, schools, factories and government offices across India — ISO 27001 certified, one accountable team from discovery to support.';
+const description = 'KVL Business Solutions builds custom software, enterprise ERP, CRM and AI automation for hospitals, schools, factories and government offices across India — MSME registered, one accountable team from discovery to support.';
 
 export const metadata: Metadata = {
   title,

@@ -24,7 +24,7 @@ const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.c
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings().catch(() => null);
   const title = settings?.metaTitle || 'KVL Business Solutions — Enterprise Software, ERP, CRM & AI Automation';
-  const desc = settings?.metaDescription || 'Custom software, ERP, CRM, and AI automation built for hospitals, schools, factories, and government offices across India. ISO 27001 certified.';
+  const desc = settings?.metaDescription || 'Custom software, ERP, CRM, and AI automation built for hospitals, schools, factories, and government offices across India. MSME registered, NDA on request.';
 
   return {
     metadataBase: new URL(SITE),
@@ -78,7 +78,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     url: SITE,
     logo: `${SITE}/og`,
     description: settings?.tagline || 'Custom software, ERP, CRM, and AI automation for businesses that run on real systems.',
-    foundingDate: '2019',
+    foundingDate: '2015',
     email: settings?.email || 'info@kvlbusinesssolutions.com',
     telephone: settings?.phone || '+919942000413',
     address: {
@@ -104,7 +104,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       availableLanguage: ['English', 'Hindi'],
     }],
     hasCredential: [
-      { '@type': 'EducationalOccupationalCredential', credentialCategory: 'certification', name: 'ISO 27001' },
       { '@type': 'EducationalOccupationalCredential', credentialCategory: 'certification', name: 'MSME Registration' },
     ],
   };

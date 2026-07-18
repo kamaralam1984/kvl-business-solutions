@@ -3,7 +3,7 @@ import { useReveal, revealStyle } from '@/lib/hooks/useReveal';
 import { ShieldCheck, Sparkles, Layers, LayoutDashboard, FileCheck, Headset } from 'lucide-react';
 
 const reasons = [
-  { Icon: ShieldCheck,      title: 'Verified Credentials',     desc: 'ISO 27001 certified, MSME-registered, rated 4.8/5.' },
+  { Icon: ShieldCheck,      title: 'Verified Credentials',     desc: 'MSME-registered, with an NDA available on request before any project discussion.' },
   { Icon: Sparkles,         title: 'AI Failover, Built In',    desc: 'Multi-provider AI chain — no downtime on lead scoring or outreach.' },
   { Icon: Layers,           title: 'Modern Engineering Stack', desc: 'Next.js, React, TypeScript, and MongoDB.' },
   { Icon: LayoutDashboard,  title: 'Working Software Suite',   desc: 'Real production software — not a prototype.' },

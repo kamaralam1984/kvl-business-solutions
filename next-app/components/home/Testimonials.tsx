@@ -83,7 +83,7 @@ export function Testimonials() {
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </Link>
               <p className="text-[12px] mt-6" style={{ color: 'rgb(var(--text-3))' }}>
-                Founded 2019. Every product shown above is live and checkable today — no quotes required.
+                Founded 2015. Every product shown above is live and checkable today — no quotes required.
               </p>
             </div>
           </div>
