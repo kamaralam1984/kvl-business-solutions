@@ -12,6 +12,17 @@
 
 **2026-07-19 update:** A full feature audit (real vs. demo across every section of the site) was written up — see `FEATURE-AUDIT-REAL-VS-FAKE.md` at the repo root. Alongside it, four fixes shipped: (1) the site's ISO 27001 claim was removed everywhere (metadata, About page, FAQs, download pages) since it was never actually certified — replaced with the real MSME registration + an on-request NDA, and the founding year was corrected from 2019 to 2015; (2) `/blog/[slug]`, `/industries/[slug]`, `/services/[slug]`, `/services`, and `/software/[slug]` were missing a page-specific `openGraph.images`, so social share cards fell back to the generic default image — now point at the per-page `/og` endpoint; (3) `/industries/[slug]` and `/services/[slug]` were force-static'd (`dynamic = 'force-static'`, `dynamicParams = false`), matching the same fix already applied to `/software/[slug]` and `/blog/[slug]` in §1.6; (4) CRM Development and Digital Marketing were added to the header mega menu — both service pages already existed but had no menu entry point.
 
+**2026-07-19 update (Phase 21 — Revenue & Client Acquisition Infrastructure):** A large growth-engineering build across 4 phases, each verified with a clean `tsc --noEmit` (same 2 pre-existing unrelated errors, no new ones) and a full isolated `next build`.
+- **Analytics/tracking:** added the missing pieces on top of the already-real GA4/GTM/Meta Pixel/Clarity/LinkedIn setup — a Google Ads conversion component (`components/analytics/GoogleAdsConversion.tsx`, env-gated, was missing entirely), scroll-depth tracking, and a centralized `trackEvent()` module (`components/analytics/track.ts`) that now fans out to GA4 + Ads conversions + a first-party event log. Added `trackEvent` calls to the forms that didn't have one yet (QuoteModal, CallBackWidget, Newsletter, Register, Support ticket, Hero CTAs).
+- **First-party Conversion Events dashboard** (`/admin/conversion-events`) — real CTA-click/lead-source/landing-page numbers from this site's own DB, no GA4 Data API credentials needed.
+- **IndexNow** now actively pings on blog/case-study publish or update, instead of only serving the key file.
+- **Lead-magnet CTAs** — "Free Website Audit" and "Free AI Automation Consultation" modal (`LeadMagnetModal.tsx`), plus a per-page "Smart CTA" band (`SmartCTA.tsx`) above the footer that changes copy contextually (AI-automation pages vs. everywhere else).
+- **Review-request automation** — Deal model got a real `contactEmail` field (the pre-existing `contactId` ref to `Contact` was declared but never actually populated anywhere in the codebase, so it couldn't have worked); when a deal moves to `won`/`repeat` with a contact email on file, a real email goes out asking for a testimonial, linking to a new no-login-required public page (`/reviews`) that feeds the existing (previously-empty) `Review` model. Manual "Request Review" resend button added to the CRM Kanban card. **Note:** this is separate from the pre-existing `app/api/cron/review-request` job, which asks `Lead`s (not `Deal`s) for an external Google review 7 days after `status: 'won'` — that one was already live and wasn't touched; the two don't share a dedupe path, so the same client could in principle get both a Google-review ask and an on-site-testimonial ask.
+- **Internal Outreach CRM** (`/admin/outreach`) — drafts-only cold email/LinkedIn campaign manager (`OutreachCampaign` + `OutreachProspect` models). Generates a filled-in draft from a template, opens it in the admin's own email client via `mailto:` or the prospect's LinkedIn profile — never sends anything itself. Status (sent/replied/meeting booked/etc.) is tracked manually since there's no inbox/LinkedIn API integration to auto-detect replies. A "convert to deal" action links a replied prospect into the real CRM pipeline.
+- **Revenue Dashboard** (`/admin/revenue`) — daily visitors, qualified leads, meetings booked, proposals in flight, won deals/value, pipeline value, average deal size, lead→customer conversion rate, best lead sources, top requested services (a proxy for industry interest — Lead has no dedicated industry field), and top landing pages for leads — all computed from real Mongo data (Deal, Lead, Order, Booking, VisitDailyLog, AnalyticsEvent). Campaign ROI is explicitly shown as "not available" rather than estimated, since no ad account is connected yet.
+
+**Still open / needs Kamar's input (not a coding gap):** real GTM/Meta Pixel/Clarity/LinkedIn/Google Ads IDs; a real GSC verification code (Bing's was already set); real client testimonials/logos/awards (none fabricated — the trust-layer infra is ready, content is not); actually creating the Google Business Profile/Clutch/GoodFirms accounts (needs Kamar's own phone/postcard verification, not something this session can do); an ad account, once one exists, for Campaign ROI to become computable.
+
 This file is the single source of truth for what's actually been built vs. what's still open. Nothing below is aspirational — every "Done" item was verified with a production build and/or a live HTTP check; every "Gap" item is something that was found missing and deliberately not fabricated a fix for.
 
 ---
@@ -105,6 +116,53 @@ Everything else tested this round — auth flows, CRM/Referral system (verified 
 ### 1.6.1 Round 2 Closure — Verification (2026-07-11)
 All 6 fixes above were verified together: `npx tsc --noEmit` showed only the same 2 pre-existing, unrelated errors (`Header.tsx` TS4104, `DownloadGate.tsx` TS2322) with zero new errors; a clean isolated `rm -rf .next && npm run build` completed successfully with all routes generated; a real `next start` production server (not dev mode) confirmed `/support`, `/contact`, `/dashboard`, `/dashboard/referrals`, and the 4 new `/services/{gps,automation,cctv,ai}` links all resolve correctly, and that a manufacturing-themed blog post now surfaces a genuinely related automation post instead of the previous arbitrary first-3 order.
 
+### 1.7 Phase 21 — Revenue & Client Acquisition Infrastructure (2026-07-19)
+
+A 4-phase growth-engineering build. Each phase verified with a clean `npx tsc --noEmit` (same 2 pre-existing unrelated errors, zero new ones) and a full isolated `next build`.
+
+**Phase 1 — Analytics/tracking + SEO:**
+- `components/analytics/GoogleAdsConversion.tsx` — was missing entirely; env-gated (`NEXT_PUBLIC_GOOGLE_ADS_ID`), consent-respecting, matches the existing GA4/Meta/LinkedIn/Clarity component pattern.
+- `components/analytics/ScrollDepthTracker.tsx` — fires `scroll_depth` at 25/50/75/100% once per page view.
+- `components/analytics/track.ts` — new centralized `trackEvent()` that fans out to GA4/GTM, Google Ads conversions (for the subset of events mapped to a conversion label), and this site's own DB. `GoogleAnalytics.tsx` now re-exports from it so every existing call site kept working unchanged.
+- `trackEvent` calls added where missing: `QuoteModal.tsx` (`proposal_request`), `CallBackWidget.tsx`, `NewsletterForm.tsx`, `app/register/page.tsx`, `app/support/page.tsx`, and the two Hero CTAs via a new `components/analytics/TrackedLink.tsx`.
+- `lib/models/AnalyticsEvent.ts` + `app/api/events/route.ts` — first-party event log (rate-limited, validated), feeding a new admin page `app/admin/conversion-events/page.tsx` (CTA clicks, event breakdown, top converting pages — all real, no GA4 Data API needed).
+- `lib/indexnow.ts` — IndexNow now actively pings `https://api.indexnow.org/indexnow` on blog/case-study create or update (`app/api/admin/blog/route.ts`, `.../blog/[id]/route.ts`, `.../case-studies/route.ts`, `.../case-studies/[id]/route.ts`). Previously it only served the key file and never pushed anything.
+- Confirmed already-working and left untouched: GSC verification meta tag (`layout.tsx`'s `verification.google`, reads `NEXT_PUBLIC_GSC_VERIFICATION`) — the Explore-agent pass that scoped this work initially reported it missing, but it was already there.
+
+**Phase 2 — Lead capture + trust layer:**
+- `components/widgets/LeadMagnetModal.tsx` — "Free Website Audit" / "Free AI Automation Consultation" modal, posts to the existing real `/api/lead` (no new backend needed).
+- `components/shared/SmartCTA.tsx` — a CTA band above the footer on every public page except ones that are already a conversion flow (`/contact`, `/book-demo`, `/register`, `/login`, `/dashboard`, `/checkout`, `/support`); copy changes based on path (AI/automation pages get the AI-consultation offer, everything else gets the audit offer).
+- `lib/models/Deal.ts` gained a real `contactEmail` field (the pre-existing `contactId` ref to `Contact` was declared but never populated anywhere in the codebase — dead code, not usable) and `reviewRequestedAt`. Surfaced in the CRM Kanban edit form (`app/dashboard/crm/page.tsx`).
+- `lib/review-request.ts` + `lib/email.ts`'s `reviewRequestEmail()` — when a deal moves to `won`/`repeat` with a `contactEmail` on file, a real email goes out (`app/api/crm/deals/[id]/route.ts`) asking for a testimonial. Manual resend via a new "Request review" button on the Kanban card, backed by `app/api/crm/deals/[id]/request-review/route.ts`.
+- `app/reviews/page.tsx` — new, no-login-required public review submission page (posts to the existing `/api/reviews`, which was already public and unauthenticated). Review-request emails link here with `?name=&company=` prefilled.
+- **Important interaction to know about:** this is a *second*, independent review-request mechanism. `app/api/cron/review-request/route.ts` already existed and is untouched — it asks `Lead`s (not `Deal`s) for an external Google review, 7 days after `Lead.status` becomes `'won'`. The two don't share a dedupe path, so the same client could receive both a Google-review ask (from the old cron) and an on-site-testimonial ask (from the new Deal-based trigger). Not a bug, just worth knowing before it looks like a duplicate-email complaint from a client.
+
+**Phase 3 — Internal outreach CRM (`/admin/outreach`), drafts-only:**
+- `lib/models/OutreachCampaign.ts` + `lib/models/OutreachProspect.ts` — new models. A campaign has a message template (`{{name}}`/`{{company}}` placeholders); a prospect has manually-tracked status (`pending → drafted → sent → opened → replied → meeting_booked`, or `bounced`/`unsubscribed`) since there's no inbox/LinkedIn API integration to auto-detect opens or replies.
+- `app/admin/outreach/page.tsx` (campaign list/create) + `app/admin/outreach/[id]/page.tsx` (prospect table, bulk-paste add, per-prospect draft generation).
+- Sending is never automatic: the "draft" is filled-in text the admin copies, or a `mailto:` link that opens their own email client, or a link to the prospect's LinkedIn profile. The system holds no SMTP/LinkedIn credentials and never calls a send API.
+- "Convert to deal" (`app/api/admin/outreach/prospects/[id]/convert/route.ts`) creates a real `Deal` linked back to the prospect, so a reply that turns into a client shows up in the same CRM pipeline as inbound leads.
+
+**Phase 4 — Revenue Dashboard (`/admin/revenue`):**
+- `app/api/admin/revenue/route.ts` — daily visitors (from `VisitDailyLog`), qualified leads, meetings booked (`Booking`), proposals in flight, won deals/value, pipeline value, average deal size, lead→customer conversion rate, best lead sources (`Lead.source`), top requested services (proxy for industry interest — `Lead` has no dedicated industry field, so this reports what's actually tracked instead of inventing a taxonomy), and top landing pages for leads (`AnalyticsEvent`). All computed from this site's own Mongo data.
+- Campaign ROI is explicitly rendered as "not available — no ad platform connected yet" rather than estimated or left at a misleading 0.
+
+### 1.8 Phase 22 — KVL Visitor Intelligence Platform (VIP), Phase A (2026-07-19)
+
+A 16-module "visitor intelligence" system was scoped (full architecture doc: `PHASE22-VIP-ARCHITECTURE.md` at repo root). Per that doc's own build-vs-buy classification, 13 of 16 modules are honestly buildable in-house; **Module 10 (Company Intelligence — reverse-IP-to-company identification) was descoped entirely** (no vendor budget approved — this literally cannot be built without a paid provider like Clearbit/Leadfeeder, so it was not faked), and **device fingerprinting was rejected in favor of a first-party cookie visitor ID** (legal risk + declining real-world accuracy). Only **Phase A** of the roadmap was built this round — heatmaps, session replay, and the paid geo/ISP/proxy/VPN tier remain future phases pending a real legal review (session replay in particular needs a Privacy Policy rewrite first — see the architecture doc §2.8).
+
+**What's real and live:**
+- New Mongo collections: `VipVisitor`, `VipSession`, `VipPageView`, `VipEvent` (90-day TTL — real data-minimization, not just a storage-cost decision), `VipLeadScore`.
+- Client SDK `components/vip/VipTracker.tsx` — a separate pipeline from the Phase 21 marketing-pixel `trackEvent()` module by design (this one feeds KVL's own internal DB, not third parties). Cookie-based visitor/session identity (`vip_vid` 2yr, `vip_sid` 30min sliding), gated on the same `kvl_consent` cookie as everything else. Tracks real clicks (with rage-click detection), scroll milestones, form start/submit (never field *values* — masking by construction, nothing sensitive is ever captured, not redacted after the fact), copy/paste, JS errors, and classifies WhatsApp/call/download clicks from real `href` patterns. No mousemove/heatmap capture yet (that's Phase B).
+- `app/api/vip/events/route.ts` — public, rate-limited ingest endpoint. Geo (`country`/`city`/`region`/`timezone`/`lat`/`lng`) is read from Vercel's edge-network headers (`x-vercel-ip-*`, confirmed real since `vercel.json` shows this app runs behind Vercel) — real, attributed data (`source: 'vercel-edge'`), left entirely absent rather than guessed when those headers aren't present. `lib/vip/traffic-source.ts` classifies first-touch channel (google-organic, facebook-ads, direct, referral:host, etc.) from real UTM params/referrer — this closes a real, previously-total gap (the site had zero UTM tracking before this).
+- `lib/vip/link.ts` — links a `VipVisitor` to a real `Lead` the moment one is created, by reading the same `vip_vid` cookie the browser already sends (no frontend changes needed). Wired into `/api/lead`, `/api/quote`, `/api/booking`.
+- `lib/vip/lead-score.ts` — deterministic, fully explainable behavioural lead score (0-100, hot/warm/cold), same rubric style as the pre-existing `lib/lead-tier.ts`. Every point traces to a real signal (session count, pricing/portfolio visits, contact attempts, distinct services/industries viewed, time on site) — this is a different, complementary signal from the pre-existing AI *intent* scorer (`lib/ai/lead-scorer.ts`, which reads free-text message content), not a replacement for it. Recomputed live whenever an admin opens a visitor's timeline, and batch-recomputed daily for all known visitors via `app/api/cron/vip-lead-scoring/route.ts` (added to `vercel.json`).
+- Admin UI: `/admin/vip` (live-ish overview — 30s polling, not a true live stream; top pages/channels/countries; known-visitor list with scores) and `/admin/vip/visitors/[vid]` (Module 8 lead-journey timeline — every session, every page in order, notable events, score breakdown).
+
+**Deliberately not built this round (see `PHASE22-VIP-ARCHITECTURE.md` for the full reasoning):** heatmaps and session replay (Phase B — needs the masking/consent-tier work live first); ISP/ASN/proxy/VPN detection and Company Intelligence (Phase C — needs a paid-vendor budget decision); granular consent UI, RBAC/audit log for admin replay access, and the Privacy Policy rewrite (Phase D — needs real legal review, especially given the site already serves UK/Germany/EU-adjacent markets via the Phase-earlier country pages).
+
+Verified with a clean `npx tsc --noEmit` (same 2 pre-existing unrelated errors, zero new) and a full isolated `next build` (all new routes — `/admin/vip`, `/admin/vip/visitors/[vid]`, `/api/vip/events`, `/api/admin/vip/*`, `/api/cron/vip-lead-scoring` — generated with no errors).
+
 ---
 
 ## 2. Known Gaps — Not Yet Done
@@ -117,15 +175,20 @@ All 6 fixes above were verified together: `npx tsc --noEmit` showed only the sam
 | ~~Case study `industrySlug` field never rendered~~ / ~~blog still 5 posts, no byline~~ | Both resolved as part of the 20-task closure (real author byline added, blog expanded to 21 posts) | — |
 | ~~The 6 items found in the Round 2 fresh audit~~ (`QuoteModal` false-success, referral discoverability, Contact/Support error display, blog related-post ranking, chatbot digit-strip, mega-menu links) | All fixed same-day, 2026-07-11 — see §1.6/§1.6.1 for details | — |
 
-### 2.2 Search Engine / Verification (needs real credentials, not more code)
-- Google Search Console: not verified — needs a real verification code from Kamar's GSC account, set as `NEXT_PUBLIC_GSC_VERIFICATION`.
-- Bing Webmaster Tools: not verified — same pattern, `NEXT_PUBLIC_BING_VERIFICATION`.
-- IndexNow: no key generated yet — needs `INDEXNOW_KEY` set once Kamar generates one.
+### 2.2 Search Engine / Verification &amp; Marketing Pixels (needs real credentials, not more code)
+- Google Search Console: not verified — needs a real verification code from Kamar's GSC account, set as `NEXT_PUBLIC_GSC_VERIFICATION`. The meta tag itself is already wired up in `layout.tsx` — just the value is missing.
+- Bing Webmaster Tools: already verified (`NEXT_PUBLIC_BING_VERIFICATION` set).
+- IndexNow: per the 2026-07-18 feature audit, `INDEXNOW_KEY` is already set on the VPS — the key-file route and (as of Phase 21, §1.7) the active ping-on-publish should both already be working in production. Not independently re-verified against the live VPS in this session.
+- Google Ads conversion tracking, GTM, Meta Pixel, Microsoft Clarity, LinkedIn Insight Tag: all code-complete and env-gated (Phase 21 added the missing Google Ads piece; the rest already existed) — need real IDs in `NEXT_PUBLIC_GOOGLE_ADS_ID` / `NEXT_PUBLIC_GTM_ID` / `NEXT_PUBLIC_META_PIXEL_ID` / `NEXT_PUBLIC_CLARITY_ID` / `NEXT_PUBLIC_LINKEDIN_PARTNER_ID` to actually start tracking.
 
 ### 2.3 CRM / Automation
 - ~~Lead → Deal handoff unclear~~ / ~~missing `proposal_sent`/`deal_won`/`deal_lost` Workflow triggers~~ / ~~no referral tracking system~~ / ~~no Meta Pixel~~ — all resolved as part of the 20-task closure (`Lead.dealId`, `fireTrigger()` calls on real stage transitions, full referral-code system, marketing pixels wired up). The one remaining gap is referral **discoverability**, not functionality — see §1.6.
 
-### 2.4 External Platforms (copy is ready, nothing is live)
+### 2.4 Trust Layer &amp; Outreach — content/adoption gaps, not code gaps
+- No real client testimonials, client logos, awards, or tech-partner badges exist — none were fabricated. The infrastructure to collect and display them is real and live (`/reviews` submission page, `Review` model, the Deal-based review-request email in §1.7) — it just has no real content yet because no client has gone through the new flow since it shipped.
+- The Outreach CRM (`/admin/outreach`, §1.7) has zero campaigns/prospects in it yet — it's a real, working tool, but someone has to actually create a campaign and paste in a prospect list before it does anything.
+
+### 2.5 External Platforms (copy is ready, nothing is live)
 - Google Business Profile — not yet set up/optimized with the prepared copy.
 - Clutch profile — not yet created.
 - GoodFirms profile — not yet created.
@@ -135,6 +198,10 @@ All 6 fixes above were verified together: `npx tsc --noEmit` showed only the sam
 - LinkedIn Company Page and Kamar's founder profile — copy is ready but not confirmed as pasted into the real profiles yet.
 - Cold email outreach — templates exist, campaign not yet running.
 
+### 2.6 Visitor Intelligence Platform (VIP) — Phases B/C/D not built
+- Heatmaps, session replay, ISP/ASN/proxy/VPN detection, Company Intelligence, granular consent UI, RBAC/audit log for replay access, and the Privacy Policy rewrite are all **not built** — see §1.8 and `PHASE22-VIP-ARCHITECTURE.md`. Company Intelligence specifically needs a paid-vendor decision (Clearbit/Leadfeeder-class); session replay needs real legal review first, not just code.
+- The new `/api/cron/vip-lead-scoring` job was added to `vercel.json`, but 3 of the 7 pre-existing cron routes in this codebase (`lead-followup`, `review-request`, `lead-nurture`) are **not** listed in `vercel.json` — meaning production cron scheduling for at least some jobs happens through an external mechanism (likely a real VPS crontab hitting these URLs with the `CRON_SECRET` bearer token, matching `lib/cron-auth.ts`'s dual-path design) that this session has no visibility into. **Not verified that the new VIP scoring cron actually fires in production** — confirm it's wired into whatever the real external scheduler is, the same way the other 3 are.
+
 ---
 
 ## 3. Suggested Next Priorities (in order)
@@ -142,7 +209,11 @@ All 6 fixes above were verified together: `npx tsc --noEmit` showed only the sam
 1. ~~Clean up the QA test data in the production MongoDB~~ — **done 2026-07-11** (both audit rounds).
 2. ~~Confirm the Lead → Deal handoff behavior~~ / ~~fix the 9 Medium/Low QA items~~ — **done** as part of the 20-task closure round.
 3. ~~Fix the 6 small non-blocking items from the Round 2 fresh audit~~ — **done 2026-07-11** (§1.6.1). No open website-code gaps remain from either QA audit round.
-4. Get real GSC + Bing verification codes and an IndexNow key from Kamar and drop them into env vars — this is a 10-minute task that unlocks search-console visibility.
-5. Actually set up Google Business Profile (highest ROI-for-effort of the external platforms) using the prepared copy.
-6. Paste the LinkedIn Company Page and founder profile copy into the real profiles.
-7. Start the cold email + LinkedIn outreach system (templates are ready) to generate the first real leads through this whole system.
+4. ~~Get real GSC + Bing verification codes and an IndexNow key from Kamar~~ — Bing and IndexNow are done; only `NEXT_PUBLIC_GSC_VERIFICATION` is still missing.
+5. Get real GTM / Meta Pixel / Microsoft Clarity / LinkedIn Insight / Google Ads IDs from Kamar and drop them into env vars — all the code is ready and waiting (§1.7, §2.2), this is purely a config step.
+6. Actually set up Google Business Profile (highest ROI-for-effort of the external platforms) using the prepared copy.
+7. Paste the LinkedIn Company Page and founder profile copy into the real profiles.
+8. Create the first real Outreach CRM campaign (`/admin/outreach`) and start using the cold email/LinkedIn drafts-only flow (§1.7) to generate the first real leads through this whole system.
+9. As real deals start closing, watch `/admin/revenue` and `/admin/conversion-events` for real numbers instead of the currently-empty charts — and confirm the first real review comes in through `/reviews` once a `Deal` hits `won`/`repeat` with a `contactEmail` on file.
+10. Confirm `/api/cron/vip-lead-scoring` is actually wired into production's real cron scheduler (§2.6) — otherwise the known-visitor score list in `/admin/vip` only updates when someone opens a visitor's individual timeline, not on the daily batch.
+11. Watch `/admin/vip` for a few days once real traffic hits it, then decide on the Phase B/C/D questions in `PHASE22-VIP-ARCHITECTURE.md` §4 (heatmap/session-replay legal review, Company Intelligence vendor budget) with real usage data in hand instead of guessing upfront.

@@ -77,6 +77,16 @@ export function verifyEmail(name: string, link: string) {
     <p style="font-size:12px;color:#64748b">Or copy this link: ${link}</p>`);
 }
 
+export function reviewRequestEmail(data: { name: string; company?: string; dealTitle?: string }) {
+  const link = `${SITE}/reviews?name=${encodeURIComponent(data.name)}${data.company ? `&company=${encodeURIComponent(data.company)}` : ''}`;
+  return wrap('How was your experience?', `<h2>Hi ${data.name || 'there'} 👋</h2>
+    <p>Thank you for working with KVL Business Solutions${data.dealTitle ? ` on <b>${data.dealTitle}</b>` : ''}. We'd genuinely appreciate 2 minutes of your time to share how it went — it helps other businesses considering us, and helps us improve.</p>
+    <p style="text-align:center;margin:24px 0">
+      <a href="${link}" style="background:#1d4ed8;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600">Leave a Review</a>
+    </p>
+    <p style="font-size:12px;color:#64748b">Takes 2 minutes. Your review is moderated before it goes live. Link: ${link}</p>`);
+}
+
 export function resetEmail(name: string, link: string) {
   return wrap('Password Reset', `<h2>Reset your password</h2>
     <p>Hi ${name || 'there'}, we got a request to reset your password. This link expires in 1 hour.</p>

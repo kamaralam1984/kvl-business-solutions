@@ -5,6 +5,7 @@ import { connectDB } from '@/lib/mongodb';
 import { BlogPost } from '@/lib/models/BlogPost';
 import { requireAdmin } from '@/lib/admin-guard';
 import { logActivity } from '@/lib/activity';
+import { submitToIndexNow } from '@/lib/indexnow';
 
 const schema = z.object({
   slug: z.string().min(2).regex(/^[a-z0-9-]+$/, 'Lowercase letters, numbers and hyphens only'),
@@ -36,6 +37,7 @@ export async function POST(req: Request) {
     await connectDB();
     const post = await BlogPost.create(data);
     logActivity({ action: 'blog.create', actorEmail: g.session?.user?.email || undefined, actorRole: 'admin', target: 'BlogPost', targetId: post._id.toString(), details: { title: data.title }, req });
+    submitToIndexNow([`/blog/${post.slug}`]);
     return NextResponse.json({ ok: true, post });
   } catch (e) {
     return apiError(e);

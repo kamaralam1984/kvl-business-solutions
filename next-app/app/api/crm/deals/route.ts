@@ -9,6 +9,7 @@ import { Deal, DEAL_STAGES } from '@/lib/models/Deal';
 const schema = z.object({
   title: z.string().min(2),
   contactName: z.string().optional(),
+  contactEmail: z.string().email().optional().or(z.literal('')),
   value: z.number().nonnegative().default(0),
   stage: z.enum(DEAL_STAGES).default('lead'),
   probability: z.number().min(0).max(100).default(20),

@@ -45,9 +45,8 @@ export function GoogleAnalytics({ gaId }: { gaId: string }) {
   );
 }
 
-// Helper to track events from anywhere
-export function trackEvent(name: string, params?: Record<string, any>) {
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', name, params);
-  }
-}
+// The real implementation lives in the centralized analytics module
+// (components/analytics/track.ts) — re-exported here so every existing
+// `import { trackEvent } from '@/components/analytics/GoogleAnalytics'` call
+// site keeps working unchanged.
+export { trackEvent } from './track';

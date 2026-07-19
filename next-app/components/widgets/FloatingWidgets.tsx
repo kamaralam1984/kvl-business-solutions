@@ -5,6 +5,7 @@ import { WhatsAppButton } from './WhatsAppButton';
 import { ExitIntentPopup } from './ExitIntentPopup';
 import { CallBackWidget } from './CallBackWidget';
 import { MobileStickyBar } from './MobileStickyBar';
+import { LeadMagnetModal } from './LeadMagnetModal';
 
 export function FloatingWidgets() {
   return (
@@ -31,6 +32,7 @@ export function FloatingWidgets() {
       <MobileStickyBar />
 
       <QuoteModal />
+      <LeadMagnetModal />
     </>
   );
 }

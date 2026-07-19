@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Mail, Send, Check } from 'lucide-react';
+import { trackEvent } from '@/components/analytics/track';
 
 export function NewsletterForm({ source = 'footer' }: { source?: string }) {
   const [email, setEmail] = useState('');
@@ -17,6 +18,7 @@ export function NewsletterForm({ source = 'footer' }: { source?: string }) {
       setState('ok');
       setMsg(d.already ? 'You\'re already subscribed — thanks!' : 'Subscribed! Check your inbox for updates.');
       setEmail('');
+      trackEvent('newsletter_signup', { source });
     } catch (e: any) { setState('error'); setMsg(e.message); }
   };
 

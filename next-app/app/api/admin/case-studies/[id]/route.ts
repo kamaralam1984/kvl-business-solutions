@@ -5,6 +5,7 @@ import { connectDB } from '@/lib/mongodb';
 import { CaseStudy } from '@/lib/models/CaseStudy';
 import { requireAdmin } from '@/lib/admin-guard';
 import { logActivity } from '@/lib/activity';
+import { submitToIndexNow } from '@/lib/indexnow';
 
 const updateSchema = z.object({
   name: z.string().min(2).optional(),
@@ -38,6 +39,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     const study = await CaseStudy.findByIdAndUpdate(params.id, data, { new: true });
     if (!study) return NextResponse.json({ ok: false, error: 'Not found' }, { status: 404 });
     logActivity({ action: 'case-study.update', actorEmail: g.session?.user?.email || undefined, actorRole: 'admin', target: 'CaseStudy', targetId: params.id, details: { name: study.name }, req });
+    submitToIndexNow([`/projects/${study.slug}`]);
     return NextResponse.json({ ok: true, study });
   } catch (e) {
     return apiError(e);

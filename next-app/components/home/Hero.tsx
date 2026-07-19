@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ShieldCheck, Award, Sparkles, ArrowUpRight } from 'lucide-react';
 import { HeroShowcaseSlider } from './HeroShowcaseSlider';
 import { LiveRatingBadge } from './LiveRatingBadge';
+import { TrackedLink } from '@/components/analytics/TrackedLink';
 
 /* ── Static data ─────────────────────────────────────── */
 const trustBadges = [
@@ -87,22 +88,26 @@ export function Hero() {
 
             {/* CTA buttons */}
             <div className="flex flex-wrap gap-3 mb-10">
-              <Link
+              <TrackedLink
                 href="/book-demo"
+                label="Talk to a Solution Architect"
+                placement="hero-primary"
                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-bold text-[14px] transition-shadow duration-200 group hover:shadow-[0_10px_30px_rgba(0,0,0,0.24)]"
                 style={{ background: '#0a0a0a', color: '#ffffff', boxShadow: '0 4px 20px rgba(0,0,0,0.16)' }}
               >
                 Talk to a Solution Architect
                 <ArrowUpRight className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-              </Link>
+              </TrackedLink>
 
-              <Link
+              <TrackedLink
                 href="/software"
+                label="See Live Case Studies"
+                placement="hero-secondary"
                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-[14px] transition-colors duration-200 border hover:border-[#c8a870] hover:bg-[rgba(200,168,112,0.06)]"
                 style={{ borderColor: 'rgba(var(--border) / 0.15)', color: 'rgb(var(--text))', background: 'transparent' }}
               >
                 See Live Case Studies
-              </Link>
+              </TrackedLink>
             </div>
 
             {/* Trust strip */}

@@ -5,6 +5,7 @@ import { PageHero } from '@/components/shared/PageHero';
 import { TiltCard } from '@/components/shared/TiltCard';
 import { FileUploader, UploadedFile } from '@/components/widgets/FileUploader';
 import { useSession } from 'next-auth/react';
+import { trackEvent } from '@/components/analytics/track';
 
 const faqs = [
   { q: 'How fast can you deploy a software or website?', a: 'Most ready-made software products go live in 24–48 hours. Custom software takes 4–12 weeks depending on scope.' },
@@ -38,6 +39,7 @@ export default function SupportPage() {
         return;
       }
       setStatus('success');
+      trackEvent('support_ticket_submit', { product: form.product, priority: form.priority });
       setForm({ name: '', email: '', product: 'ERP Software', priority: 'Medium', description: '' });
       setAttachments([]);
     } catch {

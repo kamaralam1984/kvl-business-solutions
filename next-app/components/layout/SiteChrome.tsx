@@ -4,6 +4,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { DeferredBanner } from '@/components/layout/DeferredBanner';
 import { DeferredWidgets } from '@/components/widgets/DeferredWidgets';
+import { SmartCTA } from '@/components/shared/SmartCTA';
 
 // Standalone demo mini-sites (client-facing product showcases under /demo/*)
 // render their own full-page chrome and must not show KVL's own header/footer/
@@ -29,6 +30,7 @@ export function SiteChrome({
       <DeferredBanner banner={banner} />
       <Header />
       <main>{children}</main>
+      <SmartCTA />
       <Footer settings={settings} />
       <DeferredWidgets showCookieConsent={cookieConsentEnabled} />
     </>

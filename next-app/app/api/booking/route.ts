@@ -5,6 +5,7 @@ import { connectDB } from '@/lib/mongodb';
 import { Booking } from '@/lib/models/Booking';
 import { sendNotification } from '@/lib/email';
 import { rateLimit, clientIp } from '@/lib/rate-limit';
+import { linkVisitorToLead } from '@/lib/vip/link';
 
 const schema = z.object({
   name: z.string().min(2),
@@ -41,6 +42,7 @@ export async function POST(req: Request) {
        <p>Need to chat sooner? WhatsApp <a href="https://wa.me/919942000413">+91 99420 00413</a>.</p>`,
       data.email);
 
+    linkVisitorToLead({ name: data.name, email: data.email }).catch(() => {});
     return NextResponse.json({ ok: true, id: b._id });
   } catch (e) {
     return apiError(e);

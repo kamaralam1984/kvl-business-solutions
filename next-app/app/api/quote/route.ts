@@ -5,6 +5,7 @@ import { connectDB } from '@/lib/mongodb';
 import { Quote } from '@/lib/models/Quote';
 import { sendNotification, quoteEmail } from '@/lib/email';
 import { rateLimit, clientIp } from '@/lib/rate-limit';
+import { linkVisitorToLead } from '@/lib/vip/link';
 
 const schema = z.object({
   type: z.string(),
@@ -24,6 +25,7 @@ export async function POST(req: Request) {
     await connectDB();
     const q = await Quote.create(data);
     sendNotification(`New Quote — ${data.contact.email}`, quoteEmail(data));
+    linkVisitorToLead({ name: data.contact.name, email: data.contact.email }).catch(() => {});
     return NextResponse.json({ ok: true, id: q._id });
   } catch (e) {
     return apiError(e);

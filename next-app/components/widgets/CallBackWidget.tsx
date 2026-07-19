@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Phone, X, Loader2, CheckCircle } from 'lucide-react';
+import { trackEvent } from '@/components/analytics/track';
 
 export function CallBackWidget() {
   const [open, setOpen] = useState(false);
@@ -21,7 +22,7 @@ export function CallBackWidget() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: name || 'Customer', phone }),
       }).then(x => x.json());
-      if (r.ok) { setCallInitiated(Boolean(r.callInitiated)); setDone(true); }
+      if (r.ok) { setCallInitiated(Boolean(r.callInitiated)); setDone(true); trackEvent('lead_submit', { source: 'callback-widget' }); }
       else alert(r.error || 'Error. Please try again.');
     } finally {
       setLoading(false);

@@ -6,12 +6,14 @@ import dynamic from 'next/dynamic';
 // don't add to the server-rendered HTML or the critical JS bundle.
 const FloatingWidgets = dynamic(() => import('./FloatingWidgets').then(m => m.FloatingWidgets), { ssr: false });
 const CookieConsent    = dynamic(() => import('./CookieConsent').then(m => m.CookieConsent), { ssr: false });
+const VipTracker       = dynamic(() => import('../vip/VipTracker').then(m => m.VipTracker), { ssr: false });
 
 export function DeferredWidgets({ showCookieConsent }: { showCookieConsent: boolean }) {
   return (
     <>
       <FloatingWidgets />
       {showCookieConsent && <CookieConsent />}
+      <VipTracker />
     </>
   );
 }

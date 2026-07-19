@@ -5,6 +5,7 @@ import { connectDB } from '@/lib/mongodb';
 import { BlogPost } from '@/lib/models/BlogPost';
 import { requireAdmin } from '@/lib/admin-guard';
 import { logActivity } from '@/lib/activity';
+import { submitToIndexNow } from '@/lib/indexnow';
 
 const updateSchema = z.object({
   title: z.string().min(3).optional(),
@@ -29,6 +30,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     const post = await BlogPost.findByIdAndUpdate(params.id, data, { new: true });
     if (!post) return NextResponse.json({ ok: false, error: 'Not found' }, { status: 404 });
     logActivity({ action: 'blog.update', actorEmail: g.session?.user?.email || undefined, actorRole: 'admin', target: 'BlogPost', targetId: params.id, details: { title: post.title }, req });
+    submitToIndexNow([`/blog/${post.slug}`]);
     return NextResponse.json({ ok: true, post });
   } catch (e) {
     return apiError(e);

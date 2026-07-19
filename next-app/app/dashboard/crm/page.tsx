@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useMemo, useState } from 'react';
-import { Plus, Trash2, X, Save, Sparkles, Briefcase, Loader2, Search, Download, CheckSquare, Square, Filter } from 'lucide-react';
+import { Plus, Trash2, X, Save, Sparkles, Briefcase, Loader2, Search, Download, CheckSquare, Square, Filter, Star } from 'lucide-react';
 import { formatINR } from '@/lib/utils';
 import { toCSV } from '@/lib/csv';
 
@@ -16,13 +16,14 @@ const STAGES = [
 
 type Deal = {
   _id?: string;
-  title: string; contactName?: string; value: number;
+  title: string; contactName?: string; contactEmail?: string; value: number;
   stage: string; probability: number;
   source?: string; notes?: string; aiSuggestion?: string;
   tags?: string[]; ownerEmail?: string; createdAt?: string; updatedAt?: string;
+  reviewRequestedAt?: string;
 };
 
-const empty: Deal = { title: '', contactName: '', value: 0, stage: 'lead', probability: 20, source: '', notes: '', tags: [] };
+const empty: Deal = { title: '', contactName: '', contactEmail: '', value: 0, stage: 'lead', probability: 20, source: '', notes: '', tags: [] };
 
 export default function CrmPage() {
   const [deals, setDeals] = useState<Deal[]>([]);
@@ -90,6 +91,14 @@ export default function CrmPage() {
       const data = await r.json();
       if (data.ok) load();
     } finally { setAiLoading(null); }
+  };
+
+  const requestReview = async (d: Deal) => {
+    const r = await fetch(`/api/crm/deals/${d._id}/request-review`, { method: 'POST' });
+    const data = await r.json();
+    if (!data.ok) { alert(data.error || 'Could not send review request'); return; }
+    alert(`Review request sent to ${d.contactEmail}`);
+    load();
   };
 
   // Distinct facet values, derived from the loaded deals
@@ -339,6 +348,16 @@ export default function CrmPage() {
                       </button>
                       <button onClick={() => { setEditing(d); setIsNew(false); }} className="text-[10px] text-text2 hover:text-primary">Edit</button>
                       <button onClick={() => del(d)} className="text-[10px] text-text2 hover:text-red-500">Del</button>
+                      {(d.stage === 'won' || d.stage === 'repeat') && (
+                        <button
+                          onClick={() => requestReview(d)}
+                          disabled={!d.contactEmail}
+                          title={d.contactEmail ? (d.reviewRequestedAt ? `Already sent ${new Date(d.reviewRequestedAt).toLocaleDateString('en-IN')} — click to resend` : 'Email the client asking for a testimonial') : 'Add a contact email first (Edit)'}
+                          className="text-[10px] text-text2 hover:text-primary disabled:opacity-40 disabled:hover:text-text2 flex items-center gap-0.5"
+                        >
+                          <Star className="w-3 h-3" /> {d.reviewRequestedAt ? 'Resend review req.' : 'Request review'}
+                        </button>
+                      )}
                     </div>
 
                     {/* Move to next/prev stage */}
@@ -370,7 +389,10 @@ export default function CrmPage() {
             </div>
             <div className="space-y-3">
               <input className="form-control" placeholder="Deal title *" value={editing.title} onChange={e => setEditing({ ...editing, title: e.target.value })} />
-              <input className="form-control" placeholder="Contact name" value={editing.contactName || ''} onChange={e => setEditing({ ...editing, contactName: e.target.value })} />
+              <div className="grid grid-cols-2 gap-2">
+                <input className="form-control" placeholder="Contact name" value={editing.contactName || ''} onChange={e => setEditing({ ...editing, contactName: e.target.value })} />
+                <input className="form-control" type="email" placeholder="Contact email" value={editing.contactEmail || ''} onChange={e => setEditing({ ...editing, contactEmail: e.target.value })} />
+              </div>
               <div className="grid grid-cols-2 gap-2">
                 <input className="form-control" type="number" placeholder="Value ₹" value={editing.value || ''} onChange={e => setEditing({ ...editing, value: parseInt(e.target.value) || 0 })} />
                 <input className="form-control" type="number" placeholder="% chance" value={editing.probability} onChange={e => setEditing({ ...editing, probability: parseInt(e.target.value) || 0 })} />

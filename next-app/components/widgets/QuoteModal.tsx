@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowLeft, ArrowRight, Send, Globe, LaptopMinimal, Smartphone, Satellite, Sprout, Leaf, TreePine, Crown, Zap, Calendar, CalendarDays, Clock } from 'lucide-react';
 import { formatINR } from '@/lib/utils';
+import { trackEvent } from '@/components/analytics/track';
 
 const types = [
   { label: 'Website', price: 25000, Icon: Globe },
@@ -60,6 +61,7 @@ export function QuoteModal() {
         return;
       }
       setDone(true);
+      trackEvent('proposal_request', { type: sel.type?.label, scope: sel.scope?.label });
     } catch {
       setError('Could not send your quote request. Please try again or WhatsApp us.');
     } finally { setSubmitting(false); }

@@ -5,6 +5,7 @@ import { connectDB } from '@/lib/mongodb';
 import { CaseStudy } from '@/lib/models/CaseStudy';
 import { requireAdmin } from '@/lib/admin-guard';
 import { logActivity } from '@/lib/activity';
+import { submitToIndexNow } from '@/lib/indexnow';
 
 const schema = z.object({
   slug: z.string().min(2).regex(/^[a-z0-9-]+$/, 'Lowercase letters, numbers and hyphens only'),
@@ -45,6 +46,7 @@ export async function POST(req: Request) {
     await connectDB();
     const study = await CaseStudy.create(data);
     logActivity({ action: 'case-study.create', actorEmail: g.session?.user?.email || undefined, actorRole: 'admin', target: 'CaseStudy', targetId: study._id.toString(), details: { name: data.name }, req });
+    submitToIndexNow([`/projects/${study.slug}`]);
     return NextResponse.json({ ok: true, study });
   } catch (e) {
     return apiError(e);

@@ -10,6 +10,8 @@ import { GoogleTagManager } from '@/components/analytics/GoogleTagManager';
 import { MetaPixel } from '@/components/analytics/MetaPixel';
 import { LinkedInInsight } from '@/components/analytics/LinkedInInsight';
 import { MicrosoftClarity } from '@/components/analytics/MicrosoftClarity';
+import { GoogleAdsConversion } from '@/components/analytics/GoogleAdsConversion';
+import { ScrollDepthTracker } from '@/components/analytics/ScrollDepthTracker';
 import { getSiteSettings } from '@/lib/models/SiteSettings';
 import { getActiveBanner } from '@/lib/models/Banner';
 import { services } from '@/lib/data/services';
@@ -185,6 +187,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {process.env.NEXT_PUBLIC_CLARITY_ID && (
           <MicrosoftClarity clarityId={process.env.NEXT_PUBLIC_CLARITY_ID} />
         )}
+        {process.env.NEXT_PUBLIC_GOOGLE_ADS_ID && (
+          <GoogleAdsConversion adsId={process.env.NEXT_PUBLIC_GOOGLE_ADS_ID} />
+        )}
+        <Suspense fallback={null}>
+          <ScrollDepthTracker />
+        </Suspense>
         <SessionProviderWrapper>
           <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
             <BootLoader />

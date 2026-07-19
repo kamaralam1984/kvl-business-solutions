@@ -7,10 +7,12 @@ import { connectDB } from '@/lib/mongodb';
 import { Deal, DEAL_STAGES } from '@/lib/models/Deal';
 import { chatRouted } from '@/lib/ai/router';
 import { fireTrigger } from '@/lib/workflows/runner';
+import { requestReviewForDeal } from '@/lib/review-request';
 
 const schema = z.object({
   title: z.string().optional(),
   contactName: z.string().optional(),
+  contactEmail: z.string().email().optional().or(z.literal('')),
   value: z.number().nonnegative().optional(),
   stage: z.enum(DEAL_STAGES).optional(),
   probability: z.number().min(0).max(100).optional(),
@@ -39,7 +41,10 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
         dealId: d._id.toString(), title: d.title, name: d.contactName, email: undefined,
         amount: d.value, stage: d.stage, ownerEmail: d.ownerEmail, source: d.source,
       };
-      if (data.stage === 'won' || data.stage === 'repeat') fireTrigger('deal_won', ctx);
+      if (data.stage === 'won' || data.stage === 'repeat') {
+        fireTrigger('deal_won', ctx);
+        requestReviewForDeal(d).catch(e => console.error('[review-request]', e));
+      }
       else if (data.stage === 'lost') fireTrigger('deal_lost', ctx);
       else if (data.stage === 'proposal') fireTrigger('proposal_sent', ctx);
     }

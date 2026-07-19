@@ -10,6 +10,7 @@ import { rateLimit, clientIp } from '@/lib/rate-limit';
 import { fireTrigger } from '@/lib/workflows/runner';
 import { sendLeadWhatsApp, notifyAdminWhatsApp } from '@/lib/whatsapp';
 import { computeLeadTier } from '@/lib/lead-tier';
+import { linkVisitorToLead } from '@/lib/vip/link';
 
 const schema = z.object({
   name: z.string().min(2),
@@ -66,6 +67,7 @@ export async function POST(req: Request) {
       service: data.service, message: data.message, source: data.source,
       leadId: lead._id.toString(),
     });
+    linkVisitorToLead({ leadId: lead._id.toString(), name: data.name, email: data.email }).catch(() => {});
     return NextResponse.json({ ok: true, id: lead._id });
   } catch (e) {
     return apiError(e);

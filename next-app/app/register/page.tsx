@@ -7,6 +7,7 @@ import { UserPlus, MailCheck, User, Mail, Lock, Phone, Building2 } from 'lucide-
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { GoogleSignInButton } from '@/components/widgets/GoogleSignInButton';
+import { trackEvent } from '@/components/analytics/track';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -23,6 +24,7 @@ export default function RegisterPage() {
     setLoading(false);
     if (!data.ok) { setErr(data.error || 'Failed'); return; }
     await signIn('credentials', { email: form.email, password: form.password, redirect: false });
+    trackEvent('register_submit', {});
     setSent(true);
     setTimeout(() => router.push('/dashboard'), 2500);
   };
