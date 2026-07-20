@@ -12,7 +12,9 @@ import { SmartCTA } from '@/components/shared/SmartCTA';
 // being demoed. The admin panel (/admin/*) has its own sidebar shell (see
 // app/admin/layout.tsx) and must not get the public header/footer/chat
 // widgets stacked underneath it either. /login is a standalone full-screen
-// auth page and should show nothing but the login form.
+// auth page and should show nothing but the login form. /dashboard/* is the
+// logged-in user area — keeps the Header for navigation, but drops the
+// marketing footer and floating chat/WhatsApp/call-back widgets.
 export function SiteChrome({
   children, settings, banner, cookieConsentEnabled,
 }: {
@@ -22,9 +24,19 @@ export function SiteChrome({
   const isStandaloneDemo = pathname?.startsWith('/demo/');
   const isAdmin = pathname?.startsWith('/admin');
   const isLogin = pathname?.startsWith('/login');
+  const isDashboard = pathname?.startsWith('/dashboard');
 
   if (isStandaloneDemo || isAdmin || isLogin) {
     return <>{children}</>;
+  }
+
+  if (isDashboard) {
+    return (
+      <>
+        <Header />
+        <main>{children}</main>
+      </>
+    );
   }
 
   return (
