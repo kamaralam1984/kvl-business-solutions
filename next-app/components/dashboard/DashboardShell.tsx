@@ -5,14 +5,12 @@ import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { signOut } from 'next-auth/react';
 import {
-  LayoutDashboard, HeartHandshake, Sparkles, Gift, Building2,
+  LayoutDashboard, Gift, Building2,
   Settings, LogOut, PanelLeftClose, PanelLeftOpen,
 } from 'lucide-react';
 
 const links = [
   { href: '/dashboard', label: 'Overview & Orders', Icon: LayoutDashboard },
-  { href: '/dashboard/crm', label: 'CRM Pipeline', Icon: HeartHandshake },
-  { href: '/dashboard/analytics', label: 'AI Analytics', Icon: Sparkles },
   { href: '/dashboard/referrals', label: 'Referrals', Icon: Gift },
   { href: '/dashboard/franchise', label: 'Franchise', Icon: Building2 },
   { href: '/dashboard/settings', label: 'Settings', Icon: Settings },
