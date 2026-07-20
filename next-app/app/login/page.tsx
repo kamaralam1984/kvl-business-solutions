@@ -21,7 +21,7 @@ function LoginForm() {
     const res = await signIn('credentials', { email, password, redirect: false });
     setLoading(false);
     if (res?.error) { setErr('Invalid email or password'); return; }
-    const callback = sp.get('callbackUrl') || '/dashboard';
+    const callback = sp.get('callbackUrl') || '/';
     router.push(callback);
   };
 

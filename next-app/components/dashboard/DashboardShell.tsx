@@ -41,19 +41,9 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
               animate={{ x: 0, opacity: 1, width: 240 }}
               exit={{ x: -40, opacity: 0, width: 0 }}
               transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-              className="card-premium shrink-0 sticky overflow-hidden"
-              style={{ top: 92, padding: 14 }}
+              className="shrink-0 sticky overflow-hidden"
+              style={{ top: 92 }}
             >
-              {/* Ambient gold glow, matches the login/admin premium look */}
-              <div
-                className="absolute pointer-events-none"
-                style={{
-                  top: -60, right: -60, width: 160, height: 160, borderRadius: '50%',
-                  background: 'radial-gradient(circle, rgba(200,168,112,0.14) 0%, transparent 70%)',
-                }}
-                aria-hidden
-              />
-
               <div className="relative flex items-center justify-between mb-3 px-1">
                 <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'rgba(200,168,112,0.9)' }}>
                   Dashboard
@@ -63,7 +53,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setOpen(false)}
                   className="w-6 h-6 rounded-lg flex items-center justify-center"
-                  style={{ color: 'rgba(var(--text-2) / 1)', background: 'rgba(var(--surface) / 0.05)' }}
+                  style={{ color: 'rgba(var(--text-2) / 1)' }}
                   aria-label="Hide sidebar"
                   title="Hide sidebar"
                 >
@@ -134,8 +124,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.92 }}
             onClick={() => setOpen(true)}
-            className="card-premium sticky shrink-0 flex items-center justify-center"
-            style={{ top: 92, width: 40, height: 40 }}
+            className="sticky shrink-0 flex items-center justify-center"
+            style={{ top: 92, width: 32, height: 32 }}
             aria-label="Show sidebar"
             title="Show sidebar"
           >
