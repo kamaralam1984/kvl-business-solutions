@@ -87,7 +87,7 @@ export default function RegisterPage() {
               'Free account — no credit card required',
               'Access to all 15 software demos',
               'Dedicated support from day one',
-              'ISO 9001 certified service delivery',
+              'MSME registered — NDA available on request',
             ].map((b, i) => (
               <div key={i} className="flex items-center gap-3 text-sm" style={{ color: '#888' }}>
                 <span className="text-xs shrink-0" style={{ color: '#c8a96e' }}>✓</span>

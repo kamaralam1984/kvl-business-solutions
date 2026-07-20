@@ -56,7 +56,7 @@ function LoginForm() {
           </p>
 
           <div className="mt-10 grid grid-cols-2 gap-4">
-            {[['1000+', 'Businesses'], ['500+', 'Projects'], ['14+', 'Services'], ['ISO', 'Certified']].map(([val, label]) => (
+            {[['1000+', 'Businesses'], ['500+', 'Projects'], ['14+', 'Services'], ['MSME', 'Registered']].map(([val, label]) => (
               <div key={label} className="card-premium p-4 text-center">
                 <div className="text-2xl font-extrabold text-text" style={{ fontFamily: 'Poppins, sans-serif' }}>{val}</div>
                 <div className="text-xs mt-1 uppercase tracking-wider text-text2">{label}</div>

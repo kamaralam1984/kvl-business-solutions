@@ -190,7 +190,7 @@ export default function ServicesPage() {
               'Transparent, fixed pricing', 'GST compliant invoicing',
               '30-day money-back guarantee', 'Free training & onboarding',
               'Lifetime technical support', 'Regular updates & improvements',
-              'ISO 9001 quality processes',
+              'MSME registered — NDA on request',
             ].map((b, i) => (
               <FadeIn key={b} delay={i * 0.04}>
                 <div className="card-premium flex items-center gap-3 px-5 py-4">

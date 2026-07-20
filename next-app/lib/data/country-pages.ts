@@ -28,7 +28,7 @@ export const countryPages: CountryPage[] = [
       'Weekly progress demos on working software, not status decks — so you can see the build, not just hear about it.',
       'A cost structure that lets US companies fund a full engineering team for what one senior local hire would cost.',
       'One year of free post-launch support and bug fixes built into every project, not sold as a separate add-on.',
-      'ISO 27001-aligned security practices and NDAs signed before any technical discussion begins.',
+      'MSME (Govt. of India) registered, with an NDA signed before any technical discussion begins.',
     ],
     timezoneOverlap: "India (IST) sits 9.5–13.5 hours ahead of the continental US depending on the coast and daylight saving, so we don't pretend there's a full working-day overlap — there isn't. What works in practice is a structured async rhythm: our team works your requirements and build queue during the US night, and we hold a live overlap call in the India evening (US morning, Eastern or Central time) for standups, demos, and decisions that need a real conversation. Every task, decision, and blocker is logged in a shared tracker so nothing depends on catching someone awake at the right hour.",
     relatedServiceSlugs: ['custom-software', 'ai', 'cloud', 'erp', 'consultancy'],
@@ -176,7 +176,7 @@ export const countryPages: CountryPage[] = [
       { q: 'What is the working time overlap between India and the UAE?', a: "Very close — India is only around 1.5 hours ahead, so almost your entire working day overlaps ours. Live standups and same-day turnaround on questions are standard, not an exception." },
       { q: 'Can you work with UAE government or semi-government entity procurement processes?', a: "Yes — we're familiar with the more formal, documentation-heavy proposal and approval cycles typical of government and enterprise procurement in the UAE, and we build that timeline into project planning from the outset." },
       { q: 'How is pricing structured for a UAE-based client — AED, USD, or another currency?', a: 'We can quote and invoice in AED or USD depending on your preference — pricing is fixed and milestone-based, agreed in writing before development starts.' },
-      { q: 'Is our data and IP protected during the engagement?', a: 'Yes — an NDA is signed before technical discussions begin, and we follow ISO 27001-aligned security practices around access control, code repository security, and confidential handling of your business requirements.' },
+      { q: 'Is our data and IP protected during the engagement?', a: 'Yes — an NDA is signed before technical discussions begin, and we follow strict access control, code repository security, and confidential handling of your business requirements.' },
     ],
     seo: {
       title: 'Software Development Company in UAE',
@@ -278,7 +278,7 @@ export const countryPages: CountryPage[] = [
       { q: 'What is the working overlap between India and Saudi Arabia?', a: "About 2.5 hours, which supports a large real-time overlap across the business day for standups, demos, and live decisions rather than working purely async." },
       { q: 'Can you build hospital or healthcare management systems aligned with Vision 2030 health sector transformation?', a: 'Yes — unifying patient records, OPD/IPD workflows, and operational systems into one modern platform is core engineering work we do; specific interoperability and compliance requirements are scoped during discovery.' },
       { q: 'How is pricing structured — SAR, USD, or another currency?', a: 'We can quote and invoice in SAR or USD depending on your preference, on a fixed-price, milestone basis agreed in writing before development begins.' },
-      { q: 'Is our data and IP protected throughout the engagement?', a: 'Yes — an NDA is signed before technical discussions begin, and we follow ISO 27001-aligned security practices across access control and confidential handling of your requirements and code.' },
+      { q: 'Is our data and IP protected throughout the engagement?', a: 'Yes — an NDA is signed before technical discussions begin, and we follow strict access control and confidential handling of your requirements and code.' },
     ],
     seo: {
       title: 'Software Development Company in Saudi Arabia',

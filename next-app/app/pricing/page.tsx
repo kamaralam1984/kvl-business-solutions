@@ -333,7 +333,7 @@ export default function PricingPage() {
             {[
               { Icon: Shield, title: '30-Day Money-Back', desc: 'Not satisfied? Full refund, no questions asked.' },
               { Icon: Clock, title: '1-Hour Response', desc: 'Our support team replies within 60 minutes during business hours.' },
-              { Icon: Award, title: 'ISO 9001 Certified', desc: 'Quality management certified for software delivery.' },
+              { Icon: Award, title: 'MSME Registered', desc: 'Govt. of India registered, with an NDA available on request.' },
             ].map((t, i) => (
               <FadeIn key={t.title} delay={i * 0.1}>
                 <div className="card-premium p-6 text-center">
