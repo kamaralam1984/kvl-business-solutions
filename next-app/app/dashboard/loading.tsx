@@ -1,6 +1,6 @@
 export default function DashboardLoading() {
   return (
-    <div className="container py-10">
+    <div className="py-10">
       <div className="h-8 w-64 surface-tint rounded-lg animate-pulse mb-2" />
       <div className="h-4 w-40 surface-tint rounded-lg animate-pulse mb-8" />
       <div className="grid sm:grid-cols-3 gap-4 mb-8">

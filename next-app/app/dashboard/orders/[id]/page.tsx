@@ -25,7 +25,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
   };
 
   return (
-    <div className="container py-10 max-w-4xl">
+    <div className="py-10 max-w-4xl mx-auto">
       <Link href="/dashboard" className="text-sm text-text2 hover:text-primary inline-flex items-center gap-1 mb-4"><ArrowLeft className="w-4 h-4" /> Back to Dashboard</Link>
       <div className="grid lg:grid-cols-[1fr_280px] gap-5">
       <div className="card-base p-7">

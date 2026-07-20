@@ -20,7 +20,7 @@ export default async function FranchisePage() {
 
   if (!franchise) {
     return (
-      <div className="container py-10 max-w-3xl">
+      <div className="py-10 max-w-3xl mx-auto">
         <div className="card-base p-8 text-center">
           <Building2 className="w-12 h-12 mx-auto text-primary mb-3" />
           <h1 className="text-2xl font-extrabold mb-2">Franchise Dashboard</h1>
@@ -56,7 +56,7 @@ export default async function FranchisePage() {
   const progress = Math.min(100, (revenue / franchise.monthlyTarget) * 100);
 
   return (
-    <div className="container py-10">
+    <div className="py-10">
       <div className="flex justify-between items-end mb-6 flex-wrap gap-3">
         <div>
           <h1 className="text-3xl font-extrabold flex items-center gap-2"><Building2 className="w-7 h-7 text-primary" /> {franchise.name}</h1>

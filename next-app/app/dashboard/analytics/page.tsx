@@ -18,7 +18,7 @@ export default function AnalyticsPage() {
   useEffect(() => { load(); }, []);
 
   return (
-    <div className="container py-8">
+    <div className="py-8">
       <div className="flex justify-between items-end mb-6">
         <div>
           <h1 className="text-3xl font-extrabold flex items-center gap-2"><Sparkles className="w-7 h-7 text-primary" /> AI Analytics</h1>

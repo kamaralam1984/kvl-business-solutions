@@ -15,7 +15,7 @@ export default async function ReferralsPage() {
 
   if (!email) {
     return (
-      <div className="container py-10">
+      <div className="py-10">
         <p className="text-text2">Please sign in to view your referral link.</p>
       </div>
     );
@@ -28,7 +28,7 @@ export default async function ReferralsPage() {
   const link = `${SITE}/?ref=${referral.code}`;
 
   return (
-    <div className="container py-10">
+    <div className="py-10">
       <h1 className="text-3xl font-extrabold mb-1">Your Referral Program</h1>
       <p className="text-text2 mb-8">Share your link — clicks, signups, and won deals update here in real time.</p>
 

@@ -189,7 +189,7 @@ export default function CrmPage() {
   };
 
   return (
-    <div className="container py-8">
+    <div className="py-8">
       <div className="flex justify-between items-end mb-6 flex-wrap gap-3">
         <div>
           <h1 className="text-3xl font-extrabold flex items-center gap-2"><Briefcase className="w-7 h-7 text-primary" /> AI CRM</h1>

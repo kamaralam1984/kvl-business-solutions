@@ -44,11 +44,11 @@ export default function SettingsPage() {
     } finally { setPwLoading(false); }
   };
 
-  if (!u) return <div className="container py-10">Loading…</div>;
+  if (!u) return <div className="py-10">Loading…</div>;
   const addr = u.address || {};
 
   return (
-    <div className="container py-10 max-w-3xl">
+    <div className="py-10 max-w-3xl mx-auto">
       <h1 className="text-3xl font-extrabold mb-1">Settings</h1>
       <p className="text-text2 mb-8">Manage your profile, billing info, and password.</p>
 

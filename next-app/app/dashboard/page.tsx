@@ -15,7 +15,7 @@ export default async function DashboardPage() {
   const orders = await Order.find({ email: session?.user?.email }).sort({ createdAt: -1 }).lean();
 
   return (
-    <div className="container py-10">
+    <div className="py-10">
       <h1 className="text-3xl font-extrabold mb-1">Welcome, {session?.user?.name || session?.user?.email}</h1>
       <p className="text-text2 mb-8">Your KVL dashboard</p>
 
