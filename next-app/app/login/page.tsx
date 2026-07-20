@@ -6,7 +6,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { LogIn, Mail, Lock } from 'lucide-react';
-import { GoogleSignInButton } from '@/components/widgets/GoogleSignInButton';
 
 function LoginForm() {
   const router = useRouter();
@@ -78,14 +77,6 @@ function LoginForm() {
           <div className="text-center mb-8">
             <h1 className="text-3xl font-extrabold" style={{ color: '#f5f5f0', fontFamily: 'Poppins, sans-serif' }}>Welcome back</h1>
             <p className="text-sm mt-2" style={{ color: '#888' }}>Login to your KVL account</p>
-          </div>
-
-          <GoogleSignInButton />
-
-          <div className="flex items-center gap-3 my-5">
-            <div className="h-px flex-1" style={{ background: 'rgba(255,255,255,0.07)' }} />
-            <span className="text-xs" style={{ color: '#888' }}>or continue with email</span>
-            <div className="h-px flex-1" style={{ background: 'rgba(255,255,255,0.07)' }} />
           </div>
 
           <form onSubmit={submit} className="space-y-4">
