@@ -1,6 +1,6 @@
 'use client';
 import { Suspense, useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -10,6 +10,7 @@ import { LogIn, Mail, Lock } from 'lucide-react';
 function LoginForm() {
   const router = useRouter();
   const sp = useSearchParams();
+  const { update } = useSession();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [err, setErr] = useState('');
@@ -21,6 +22,10 @@ function LoginForm() {
     const res = await signIn('credentials', { email, password, redirect: false });
     setLoading(false);
     if (res?.error) { setErr('Invalid email or password'); return; }
+    // SessionProvider has refetchOnWindowFocus/refetchInterval disabled, so
+    // the Header's useSession() would otherwise keep showing "logged out"
+    // until a hard refresh — force it to pick up the new session now.
+    await update();
     const callback = sp.get('callbackUrl') || '/';
     router.push(callback);
   };

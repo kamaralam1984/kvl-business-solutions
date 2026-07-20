@@ -4,12 +4,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { UserPlus, MailCheck, User, Mail, Lock, Phone, Building2 } from 'lucide-react';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { trackEvent } from '@/components/analytics/track';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { update } = useSession();
   const [form, setForm] = useState({ name: '', email: '', password: '', phone: '', company: '' });
   const [err, setErr] = useState('');
   const [loading, setLoading] = useState(false);
@@ -23,6 +24,10 @@ export default function RegisterPage() {
     setLoading(false);
     if (!data.ok) { setErr(data.error || 'Failed'); return; }
     await signIn('credentials', { email: form.email, password: form.password, redirect: false });
+    // SessionProvider has refetchOnWindowFocus/refetchInterval disabled, so
+    // the Header's useSession() would otherwise keep showing "logged out"
+    // until a hard refresh — force it to pick up the new session now.
+    await update();
     trackEvent('register_submit', {});
     setSent(true);
     setTimeout(() => router.push('/dashboard'), 2500);
