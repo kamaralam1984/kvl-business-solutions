@@ -1,12 +1,11 @@
 'use client';
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { UserPlus, MailCheck, User, Mail, Lock, Phone, Building2 } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { GoogleSignInButton } from '@/components/widgets/GoogleSignInButton';
 import { trackEvent } from '@/components/analytics/track';
 
 export default function RegisterPage() {
@@ -109,14 +108,6 @@ export default function RegisterPage() {
           <div className="text-center mb-7">
             <h1 className="text-3xl font-extrabold" style={{ color: '#f5f5f0', fontFamily: 'Poppins, sans-serif' }}>Create your account</h1>
             <p className="text-sm mt-2" style={{ color: '#888' }}>Free forever — no credit card needed</p>
-          </div>
-
-          <Suspense fallback={null}><GoogleSignInButton /></Suspense>
-
-          <div className="flex items-center gap-3 my-5">
-            <div className="h-px flex-1" style={{ background: 'rgba(255,255,255,0.07)' }} />
-            <span className="text-xs" style={{ color: '#888' }}>or sign up with email</span>
-            <div className="h-px flex-1" style={{ background: 'rgba(255,255,255,0.07)' }} />
           </div>
 
           <form onSubmit={submit} className="space-y-3">
