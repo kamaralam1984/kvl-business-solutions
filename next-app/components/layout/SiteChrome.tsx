@@ -11,7 +11,8 @@ import { SmartCTA } from '@/components/shared/SmartCTA';
 // chat widgets — that would break the illusion of a real, separate product
 // being demoed. The admin panel (/admin/*) has its own sidebar shell (see
 // app/admin/layout.tsx) and must not get the public header/footer/chat
-// widgets stacked underneath it either.
+// widgets stacked underneath it either. /login is a standalone full-screen
+// auth page and should show nothing but the login form.
 export function SiteChrome({
   children, settings, banner, cookieConsentEnabled,
 }: {
@@ -20,8 +21,9 @@ export function SiteChrome({
   const pathname = usePathname();
   const isStandaloneDemo = pathname?.startsWith('/demo/');
   const isAdmin = pathname?.startsWith('/admin');
+  const isLogin = pathname?.startsWith('/login');
 
-  if (isStandaloneDemo || isAdmin) {
+  if (isStandaloneDemo || isAdmin || isLogin) {
     return <>{children}</>;
   }
 
