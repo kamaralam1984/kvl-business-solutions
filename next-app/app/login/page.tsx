@@ -19,15 +19,22 @@ function LoginForm() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true); setErr('');
-    const res = await signIn('credentials', { email, password, redirect: false });
-    setLoading(false);
-    if (res?.error) { setErr('Invalid email or password'); return; }
-    // SessionProvider has refetchOnWindowFocus/refetchInterval disabled, so
-    // the Header's useSession() would otherwise keep showing "logged out"
-    // until a hard refresh — force it to pick up the new session now.
-    await update();
-    const callback = sp.get('callbackUrl') || '/';
-    router.push(callback);
+    try {
+      const res = await signIn('credentials', { email, password, redirect: false });
+      if (res?.error) { setErr('Invalid email or password'); return; }
+      // SessionProvider has refetchOnWindowFocus/refetchInterval disabled, so
+      // the Header's useSession() would otherwise keep showing "logged out"
+      // until a hard refresh — force it to pick up the new session now.
+      await update();
+      const callback = sp.get('callbackUrl') || '/';
+      router.push(callback);
+    } catch {
+      // A network hiccup (common on mobile data) otherwise leaves the button
+      // stuck disabled forever with no feedback — surface it instead.
+      setErr('Could not reach the server. Check your connection and try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

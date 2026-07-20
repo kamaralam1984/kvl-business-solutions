@@ -19,18 +19,25 @@ export default function RegisterPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true); setErr('');
-    const res = await fetch('/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
-    const data = await res.json();
-    setLoading(false);
-    if (!data.ok) { setErr(data.error || 'Failed'); return; }
-    await signIn('credentials', { email: form.email, password: form.password, redirect: false });
-    // SessionProvider has refetchOnWindowFocus/refetchInterval disabled, so
-    // the Header's useSession() would otherwise keep showing "logged out"
-    // until a hard refresh — force it to pick up the new session now.
-    await update();
-    trackEvent('register_submit', {});
-    setSent(true);
-    setTimeout(() => router.push('/dashboard'), 2500);
+    try {
+      const res = await fetch('/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
+      const data = await res.json();
+      if (!data.ok) { setErr(data.error || 'Failed'); return; }
+      await signIn('credentials', { email: form.email, password: form.password, redirect: false });
+      // SessionProvider has refetchOnWindowFocus/refetchInterval disabled, so
+      // the Header's useSession() would otherwise keep showing "logged out"
+      // until a hard refresh — force it to pick up the new session now.
+      await update();
+      trackEvent('register_submit', {});
+      setSent(true);
+      setTimeout(() => router.push('/dashboard'), 2500);
+    } catch {
+      // A network hiccup (common on mobile data) otherwise leaves the button
+      // stuck disabled forever with no feedback — surface it instead.
+      setErr('Could not reach the server. Check your connection and try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (sent) return (
