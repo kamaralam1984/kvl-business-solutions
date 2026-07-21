@@ -202,9 +202,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </SiteChrome>
           </ThemeProvider>
         </SessionProviderWrapper>
-        {process.env.NEXT_PUBLIC_CHATBOT_WIDGET_URL && (
-          <Script src={process.env.NEXT_PUBLIC_CHATBOT_WIDGET_URL} strategy="afterInteractive" />
-        )}
+        <Script
+          src={process.env.NEXT_PUBLIC_CHATBOT_WIDGET_URL || 'https://superai.kvlbusinesssolutions.com/widget.js'}
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
