@@ -16,6 +16,7 @@ import { getSiteSettings } from '@/lib/models/SiteSettings';
 import { getActiveBanner } from '@/lib/models/Banner';
 import { services } from '@/lib/data/services';
 import { Suspense } from 'react';
+import Script from 'next/script';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
@@ -201,6 +202,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </SiteChrome>
           </ThemeProvider>
         </SessionProviderWrapper>
+        {process.env.NEXT_PUBLIC_CHATBOT_WIDGET_URL && (
+          <Script src={process.env.NEXT_PUBLIC_CHATBOT_WIDGET_URL} strategy="afterInteractive" />
+        )}
       </body>
     </html>
   );
