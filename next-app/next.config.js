@@ -3,7 +3,13 @@ const csp = [
   // 'unsafe-inline'/'unsafe-eval' are required by Next.js's own hydration scripts and
   // several existing third-party embeds (GA, Razorpay checkout) — tightening further
   // would need per-script nonces, which is a larger change than this fix covers.
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://checkout.razorpay.com",
+  // https://superai.kvlbusinesssolutions.com: the AI chat widget loader
+  // (widget.js) — the widget's own chat UI runs inside an iframe (see
+  // frame-src below) served from that same origin, so its *own* fetch/
+  // WebSocket calls are governed by its own page, not this CSP at all;
+  // this parent page only ever directly loads the one <script> tag and
+  // creates the one <iframe>.
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://checkout.razorpay.com https://superai.kvlbusinesssolutions.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
@@ -11,7 +17,7 @@ const csp = [
   // to Cloudinary (signed direct upload) — without this, the browser blocks
   // the request and it surfaces as a generic "Failed to fetch".
   "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://api.razorpay.com https://lumberjack.razorpay.com https://api.cloudinary.com",
-  "frame-src 'self' https://checkout.razorpay.com https://api.razorpay.com https://www.openstreetmap.org",
+  "frame-src 'self' https://checkout.razorpay.com https://api.razorpay.com https://www.openstreetmap.org https://superai.kvlbusinesssolutions.com",
   "object-src 'none'",
   "base-uri 'self'",
 ].join('; ');
