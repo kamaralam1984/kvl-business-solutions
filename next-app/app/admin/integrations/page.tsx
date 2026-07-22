@@ -25,10 +25,10 @@ export default function AdminIntegrationsPage() {
     <div className="space-y-6 max-w-5xl">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="font-display font-black text-[1.8rem] tracking-tight leading-none" style={{ color: '#f0ede6' }}>
+          <h1 className="font-display font-black text-[1.8rem] tracking-tight leading-none" style={{ color: 'rgb(var(--text))' }}>
             Integration Status
           </h1>
-          <p className="text-[13px] mt-2" style={{ color: 'rgba(255,255,255,0.3)' }}>
+          <p className="text-[13px] mt-2" style={{ color: 'rgba(var(--text) / 0.3)' }}>
             Which third-party services are wired up — a missing key means that feature silently no-ops instead of failing.
           </p>
         </div>
@@ -45,7 +45,7 @@ export default function AdminIntegrationsPage() {
       {loading ? (
         <div className="grid md:grid-cols-2 gap-4">
           {[0, 1].map(i => (
-            <div key={i} className="rounded-2xl p-5" style={{ background: 'linear-gradient(135deg, #0f0f12 0%, #111114 100%)', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div key={i} className="rounded-2xl p-5" style={{ background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)', border: '1px solid rgba(var(--border) / 0.06)' }}>
               <AdminSkeleton rows={4} />
             </div>
           ))}
@@ -56,22 +56,22 @@ export default function AdminIntegrationsPage() {
             <div
               key={group.category}
               className="admin-card-hover kpi-enter rounded-2xl p-5"
-              style={{ background: 'linear-gradient(135deg, #0f0f12 0%, #111114 100%)', border: '1px solid rgba(255,255,255,0.06)' }}
+              style={{ background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)', border: '1px solid rgba(var(--border) / 0.06)' }}
             >
-              <h2 className="text-[13px] font-bold mb-3.5" style={{ color: '#f0ede6' }}>{group.category}</h2>
+              <h2 className="text-[13px] font-bold mb-3.5" style={{ color: 'rgb(var(--text))' }}>{group.category}</h2>
               <div className="space-y-2">
                 {group.items.map(item => (
                   <div key={item.key} className="flex items-center justify-between gap-3 py-1.5">
                     <div className="min-w-0">
-                      <div className="text-[12.5px] font-medium truncate" style={{ color: 'rgba(255,255,255,0.7)' }}>{item.label}</div>
-                      <div className="text-[10.5px] font-mono truncate" style={{ color: 'rgba(255,255,255,0.25)' }}>{item.key}</div>
+                      <div className="text-[12.5px] font-medium truncate" style={{ color: 'rgba(var(--text) / 0.7)' }}>{item.label}</div>
+                      <div className="text-[10.5px] font-mono truncate" style={{ color: 'rgba(var(--text) / 0.25)' }}>{item.key}</div>
                     </div>
                     {item.configured ? (
                       <span className="flex items-center gap-1 text-[11px] font-semibold shrink-0" style={{ color: '#4ade80' }}>
                         <CheckCircle2 className="w-3.5 h-3.5" /> Configured
                       </span>
                     ) : (
-                      <span className="flex items-center gap-1 text-[11px] font-semibold shrink-0" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                      <span className="flex items-center gap-1 text-[11px] font-semibold shrink-0" style={{ color: 'rgba(var(--text) / 0.3)' }}>
                         <XCircle className="w-3.5 h-3.5" /> Missing
                       </span>
                     )}

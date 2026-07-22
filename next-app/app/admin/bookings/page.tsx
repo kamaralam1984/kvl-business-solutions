@@ -57,17 +57,17 @@ export default function AdminBookings() {
       {/* Page header */}
       <div>
         <p className="eyebrow mb-2">SALES</p>
-        <h1 className="text-2xl font-extrabold text-white">Bookings</h1>
+        <h1 className="text-2xl font-extrabold text-text">Bookings</h1>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {statCards.map(s => (
-          <div key={s.label} className="p-4 flex items-center gap-3" style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px' }}>
+          <div key={s.label} className="p-4 flex items-center gap-3" style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.07)', borderRadius: '12px' }}>
             <div className={`w-10 h-10 rounded-xl grid place-items-center ${s.bg}`}>
               <s.icon className={`w-5 h-5 ${s.color}`} />
             </div>
-            <div><div className="text-2xl font-extrabold text-white">{s.value}</div><div className="text-xs text-text2">{s.label}</div></div>
+            <div><div className="text-2xl font-extrabold text-text">{s.value}</div><div className="text-xs text-text2">{s.label}</div></div>
           </div>
         ))}
       </div>
@@ -79,8 +79,8 @@ export default function AdminBookings() {
             <button key={s} onClick={() => filterBy(s)}
               className="px-3 py-1 rounded-full text-xs font-bold transition-all"
               style={{
-                background: statusFilter === s ? 'rgba(200,169,110,0.12)' : 'rgba(255,255,255,0.04)',
-                border: `1px solid ${statusFilter === s ? 'rgba(200,169,110,0.35)' : 'rgba(255,255,255,0.08)'}`,
+                background: statusFilter === s ? 'rgba(200,169,110,0.12)' : 'rgba(var(--surface) / 0.04)',
+                border: `1px solid ${statusFilter === s ? 'rgba(200,169,110,0.35)' : 'rgba(var(--border) / 0.08)'}`,
                 color: statusFilter === s ? '#c8a96e' : '#888',
               }}>
               {s ? s.toUpperCase() : `ALL (${stats.total || 0})`}
@@ -92,16 +92,16 @@ export default function AdminBookings() {
           <Search className="absolute left-3 top-2.5 w-4 h-4" style={{ color: 'rgba(148,163,184,0.5)' }} />
           <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search name, email…"
             className="pl-9 w-64 text-sm rounded-lg px-3 py-2 outline-none transition-all"
-            style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.85)' }}
+            style={{ background: 'rgba(var(--surface) / 0.04)', border: '1px solid rgba(var(--border) / 0.08)', color: 'rgba(var(--text) / 0.85)' }}
             onFocus={e => (e.target.style.borderColor = 'rgba(200,169,110,0.4)')}
-            onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.08)')} />
+            onBlur={e => (e.target.style.borderColor = 'rgba(var(--border) / 0.08)')} />
         </form>
       </div>
 
       {/* Table */}
-      <div style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', overflow: 'hidden' }}>
+      <div style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.07)', borderRadius: '12px', overflow: 'hidden' }}>
         <table className="w-full text-sm">
-          <thead style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+          <thead style={{ borderBottom: '1px solid rgba(var(--border) / 0.07)' }}>
             <tr>
               {['Date', 'Name', 'Contact', 'Product', 'Preferred Slot', 'Status', 'Actions'].map(h => (
                 <th key={h} className="px-4 py-3 text-left text-[11px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.6)' }}>{h}</th>
@@ -110,16 +110,16 @@ export default function AdminBookings() {
           </thead>
           <tbody>
             {bookings.map((b: any) => (
-              <tr key={b._id} className="transition-colors" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
-                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.025)')}
+              <tr key={b._id} className="transition-colors" style={{ borderBottom: '1px solid rgba(var(--border) / 0.04)' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(var(--surface) / 0.025)')}
                 onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
                 <td className="px-4 py-3 text-xs whitespace-nowrap" style={{ color: 'rgba(148,163,184,0.6)' }}>{new Date(b.createdAt).toLocaleDateString('en-IN')}</td>
                 <td className="px-4 py-3">
-                  <div className="font-semibold text-white">{b.name}</div>
+                  <div className="font-semibold text-text">{b.name}</div>
                   {b.company && <div className="text-xs text-text2">{b.company}</div>}
                 </td>
-                <td className="px-4 py-3 text-xs"><div style={{ color: 'rgba(255,255,255,0.8)' }}>{b.email}</div><div className="text-text2">{b.phone}</div></td>
-                <td className="px-4 py-3 text-xs font-medium text-white">{b.product || '—'}</td>
+                <td className="px-4 py-3 text-xs"><div style={{ color: 'rgba(var(--text) / 0.8)' }}>{b.email}</div><div className="text-text2">{b.phone}</div></td>
+                <td className="px-4 py-3 text-xs font-medium text-text">{b.product || '—'}</td>
                 <td className="px-4 py-3 text-xs text-text2">
                   {b.preferredDate ? `${new Date(b.preferredDate).toLocaleDateString('en-IN')} ${b.preferredTime || ''}` : 'Flexible'}
                 </td>

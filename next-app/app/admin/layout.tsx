@@ -11,6 +11,7 @@ import {
   MousePointerClick, Send, IndianRupee, Radio,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ThemeToggle } from '@/components/widgets/ThemeToggle';
 
 const sections = [
   {
@@ -86,7 +87,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     : 'Dashboard';
 
   return (
-    <div className="flex min-h-screen relative" style={{ background: '#08080a' }}>
+    <div className="flex min-h-screen relative" style={{ background: 'rgb(var(--bg))' }}>
 
       {/* Ambient background glow — subtle, gives the dark shell depth instead of flat black */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden>
@@ -98,8 +99,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <aside
         className="w-[260px] flex-shrink-0 flex flex-col sticky top-0 h-screen"
         style={{
-          background: 'linear-gradient(180deg, #0a0a0c 0%, #080809 100%)',
-          borderRight: '1px solid rgba(255,255,255,0.055)',
+          background: 'linear-gradient(180deg, rgb(var(--bg-2)) 0%, rgb(var(--bg)) 100%)',
+          borderRight: '1px solid rgba(var(--border) / 0.1)',
         }}
       >
         {/* Top glow line */}
@@ -109,7 +110,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         }} />
 
         {/* Logo & nav link */}
-        <div className="px-5 pt-6 pb-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <div className="px-5 pt-6 pb-5" style={{ borderBottom: '1px solid rgba(var(--border) / 0.1)' }}>
           <Link href="/" className="flex items-center gap-3 group mb-4">
             <span
               className="relative rounded-lg overflow-hidden shrink-0"
@@ -117,7 +118,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             >
               <Image src="/brand-logo.png" alt="KVL Business Solutions" fill sizes="120px" className="object-cover" />
             </span>
-            <div className="text-[10px] font-semibold tracking-wide" style={{ color: 'rgba(255,255,255,0.3)' }}>Admin</div>
+            <div className="text-[10px] font-semibold tracking-wide" style={{ color: 'rgba(var(--text) / 0.4)' }}>Admin</div>
           </Link>
 
           {/* System health */}
@@ -125,7 +126,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             {systemStatus.map(s => (
               <div key={s.label} className="flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: s.color, boxShadow: `0 0 6px ${s.color}` }} />
-                <span className="text-[10px] font-medium" style={{ color: 'rgba(255,255,255,0.25)' }}>{s.label}</span>
+                <span className="text-[10px] font-medium" style={{ color: 'rgba(var(--text) / 0.4)' }}>{s.label}</span>
               </div>
             ))}
           </div>
@@ -173,15 +174,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link
             href="/"
             className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[12px] font-medium transition-all duration-150 group"
-            style={{ color: 'rgba(255,255,255,0.3)', border: '1px solid rgba(255,255,255,0.05)' }}
+            style={{ color: 'rgba(var(--text) / 0.4)', border: '1px solid rgba(var(--border) / 0.1)' }}
             onMouseEnter={e => {
-              (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.7)';
-              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.1)';
-              (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.03)';
+              (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.8)';
+              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(var(--border) / 0.2)';
+              (e.currentTarget as HTMLElement).style.background = 'rgba(var(--surface) / 0.04)';
             }}
             onMouseLeave={e => {
-              (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.3)';
-              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.05)';
+              (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.4)';
+              (e.currentTarget as HTMLElement).style.borderColor = 'rgba(var(--border) / 0.1)';
               (e.currentTarget as HTMLElement).style.background = 'transparent';
             }}
           >
@@ -192,7 +193,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         {/* User info at bottom */}
-        <div className="px-3 py-4" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+        <div className="px-3 py-4" style={{ borderTop: '1px solid rgba(var(--border) / 0.1)' }}>
           <div className="flex items-center gap-3 px-2">
             <div
               className="w-8 h-8 rounded-full flex items-center justify-center text-[13px] font-bold shrink-0"
@@ -206,12 +207,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               A
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[13px] font-semibold text-white leading-tight">Admin</p>
-              <p className="text-[10px] leading-tight" style={{ color: 'rgba(255,255,255,0.25)' }}>KVL Business Solutions</p>
+              <p className="text-[13px] font-semibold text-text leading-tight">Admin</p>
+              <p className="text-[10px] leading-tight" style={{ color: 'rgba(var(--text) / 0.35)' }}>KVL Business Solutions</p>
             </div>
             <button
               className="w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-150 shrink-0"
-              style={{ color: 'rgba(255,255,255,0.25)', border: '1px solid rgba(255,255,255,0.06)' }}
+              style={{ color: 'rgba(var(--text) / 0.35)', border: '1px solid rgba(var(--border) / 0.12)' }}
               title="Logout"
               onMouseEnter={e => {
                 (e.currentTarget as HTMLElement).style.color = '#f87171';
@@ -219,8 +220,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 (e.currentTarget as HTMLElement).style.background = 'rgba(239,68,68,0.06)';
               }}
               onMouseLeave={e => {
-                (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.25)';
-                (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.06)';
+                (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.35)';
+                (e.currentTarget as HTMLElement).style.borderColor = 'rgba(var(--border) / 0.12)';
                 (e.currentTarget as HTMLElement).style.background = 'transparent';
               }}
             >
@@ -238,17 +239,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           className="sticky top-0 z-10 flex items-center justify-between px-7"
           style={{
             height: 60,
-            background: 'rgba(8,8,10,0.9)',
+            background: 'rgba(var(--bg) / 0.9)',
             backdropFilter: 'blur(16px)',
-            borderBottom: '1px solid rgba(255,255,255,0.055)',
+            borderBottom: '1px solid rgba(var(--border) / 0.1)',
             boxShadow: '0 1px 0 rgba(200,169,110,0.12)',
           }}
         >
           {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 text-[13px]">
-            <span style={{ color: 'rgba(255,255,255,0.25)' }}>Admin</span>
-            <ChevronRight className="w-3 h-3" style={{ color: 'rgba(255,255,255,0.15)' }} />
-            <span className="font-semibold capitalize" style={{ color: 'rgba(255,255,255,0.75)' }}>
+            <span style={{ color: 'rgba(var(--text) / 0.35)' }}>Admin</span>
+            <ChevronRight className="w-3 h-3" style={{ color: 'rgba(var(--text) / 0.2)' }} />
+            <span className="font-semibold capitalize" style={{ color: 'rgba(var(--text) / 0.85)' }}>
               {pageLabel}
             </span>
           </div>
@@ -266,42 +267,44 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div
               className="hidden md:flex items-center gap-2 px-3.5 py-2 rounded-xl text-[12px] cursor-pointer transition-all duration-200"
               style={{
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.07)',
-                color: 'rgba(255,255,255,0.35)',
+                background: 'rgba(var(--surface) / 0.04)',
+                border: '1px solid rgba(var(--border) / 0.1)',
+                color: 'rgba(var(--text) / 0.35)',
               }}
               onMouseEnter={e => {
-                (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.12)';
-                (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.6)';
+                (e.currentTarget as HTMLElement).style.borderColor = 'rgba(var(--border) / 0.2)';
+                (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.6)';
               }}
               onMouseLeave={e => {
-                (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.07)';
-                (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.35)';
+                (e.currentTarget as HTMLElement).style.borderColor = 'rgba(var(--border) / 0.1)';
+                (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.35)';
               }}
             >
               <Search className="w-3.5 h-3.5" />
               <span>Search anything...</span>
               <kbd className="ml-2 px-1.5 py-0.5 rounded-md text-[10px] font-mono"
-                style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.35)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                style={{ background: 'rgba(var(--surface) / 0.06)', color: 'rgba(var(--text) / 0.35)', border: '1px solid rgba(var(--border) / 0.12)' }}>
                 ⌘K
               </kbd>
             </div>
+
+            <ThemeToggle />
 
             {/* Notifications */}
             <button
               className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 relative hover:scale-110 active:scale-95"
               style={{
-                color: 'rgba(255,255,255,0.35)',
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.07)',
+                color: 'rgba(var(--text) / 0.35)',
+                background: 'rgba(var(--surface) / 0.04)',
+                border: '1px solid rgba(var(--border) / 0.1)',
               }}
               onMouseEnter={e => {
-                (e.currentTarget as HTMLElement).style.color = '#f0ede6';
-                (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.12)';
+                (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text))';
+                (e.currentTarget as HTMLElement).style.borderColor = 'rgba(var(--border) / 0.2)';
               }}
               onMouseLeave={e => {
-                (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.35)';
-                (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.07)';
+                (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.35)';
+                (e.currentTarget as HTMLElement).style.borderColor = 'rgba(var(--border) / 0.1)';
               }}
             >
               <Bell className="w-3.5 h-3.5" />

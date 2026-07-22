@@ -90,7 +90,7 @@ export default function AdminLeads() {
       {/* Page header */}
       <div>
         <p className="eyebrow mb-2">SALES</p>
-        <h1 className="text-2xl font-extrabold text-white">Leads</h1>
+        <h1 className="text-2xl font-extrabold text-text">Leads</h1>
       </div>
 
       {/* Hot leads alert */}
@@ -107,11 +107,11 @@ export default function AdminLeads() {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {statCards.map(s => (
-          <div key={s.label} className="p-4 flex items-center gap-3" style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px' }}>
+          <div key={s.label} className="p-4 flex items-center gap-3" style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.07)', borderRadius: '12px' }}>
             <div className={`w-10 h-10 rounded-xl grid place-items-center ${s.bg}`}>
               <s.icon className={`w-5 h-5 ${s.color}`} />
             </div>
-            <div><div className="text-2xl font-extrabold text-white">{s.value}</div><div className="text-xs text-text2">{s.label}</div></div>
+            <div><div className="text-2xl font-extrabold text-text">{s.value}</div><div className="text-xs text-text2">{s.label}</div></div>
           </div>
         ))}
       </div>
@@ -123,20 +123,20 @@ export default function AdminLeads() {
             <button key={s} onClick={() => { setStatusFilter(s); load(q, s, intentFilter); }}
               className="px-3 py-1 rounded-full text-xs font-bold transition-all"
               style={{
-                background: statusFilter === s ? 'rgba(200,169,110,0.12)' : 'rgba(255,255,255,0.04)',
-                border: `1px solid ${statusFilter === s ? 'rgba(200,169,110,0.35)' : 'rgba(255,255,255,0.08)'}`,
+                background: statusFilter === s ? 'rgba(200,169,110,0.12)' : 'rgba(var(--surface) / 0.04)',
+                border: `1px solid ${statusFilter === s ? 'rgba(200,169,110,0.35)' : 'rgba(var(--border) / 0.08)'}`,
                 color: statusFilter === s ? '#c8a96e' : '#888',
               }}>
               {s ? s.toUpperCase() : `ALL (${stats.total || 0})`}
             </button>
           ))}
-          <span className="w-px h-5 mx-1 self-center" style={{ background: 'rgba(255,255,255,0.08)' }} />
+          <span className="w-px h-5 mx-1 self-center" style={{ background: 'rgba(var(--border) / 0.08)' }} />
           {['', 'hot', 'warm', 'cold'].map(i => (
             <button key={i} onClick={() => { setIntentFilter(i); load(q, statusFilter, i); }}
               className="px-3 py-1 rounded-full text-xs font-bold transition-all"
               style={{
-                background: intentFilter === i ? 'rgba(200,169,110,0.12)' : 'rgba(255,255,255,0.04)',
-                border: `1px solid ${intentFilter === i ? 'rgba(200,169,110,0.35)' : 'rgba(255,255,255,0.08)'}`,
+                background: intentFilter === i ? 'rgba(200,169,110,0.12)' : 'rgba(var(--surface) / 0.04)',
+                border: `1px solid ${intentFilter === i ? 'rgba(200,169,110,0.35)' : 'rgba(var(--border) / 0.08)'}`,
                 color: intentFilter === i ? '#c8a96e' : '#888',
               }}>
               {i ? INTENT_CONFIG[i].label : 'All Intent'}
@@ -148,18 +148,18 @@ export default function AdminLeads() {
             <Search className="absolute left-3 top-2.5 w-4 h-4" style={{ color: 'rgba(148,163,184,0.5)' }} />
             <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search name, email, phone…"
               className="pl-9 w-64 text-sm rounded-lg px-3 py-2 outline-none transition-all"
-              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.85)' }}
+              style={{ background: 'rgba(var(--surface) / 0.04)', border: '1px solid rgba(var(--border) / 0.08)', color: 'rgba(var(--text) / 0.85)' }}
               onFocus={e => (e.target.style.borderColor = 'rgba(200,169,110,0.4)')}
-              onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.08)')} />
+              onBlur={e => (e.target.style.borderColor = 'rgba(var(--border) / 0.08)')} />
           </form>
           <ExportButton type="leads" />
         </div>
       </div>
 
       {/* Table */}
-      <div style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', overflow: 'hidden' }}>
+      <div style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.07)', borderRadius: '12px', overflow: 'hidden' }}>
         <table className="w-full text-sm">
-          <thead style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+          <thead style={{ borderBottom: '1px solid rgba(var(--border) / 0.07)' }}>
             <tr>
               <th className="px-4 py-3 text-left text-[11px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.6)' }}>AI Score</th>
               <th className="px-4 py-3 text-left text-[11px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.6)' }}>Lead</th>
@@ -172,8 +172,8 @@ export default function AdminLeads() {
           <tbody style={{ borderTop: 'none' }}>
             {leads.map((l: any) => (
               <>
-                <tr key={l._id} className="transition-colors" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', background: l.intent === 'hot' && l.status === 'new' ? 'rgba(239,68,68,0.04)' : 'transparent' }}
-                  onMouseEnter={e => (e.currentTarget.style.background = l.intent === 'hot' && l.status === 'new' ? 'rgba(239,68,68,0.07)' : 'rgba(255,255,255,0.025)')}
+                <tr key={l._id} className="transition-colors" style={{ borderBottom: '1px solid rgba(var(--border) / 0.04)', background: l.intent === 'hot' && l.status === 'new' ? 'rgba(239,68,68,0.04)' : 'transparent' }}
+                  onMouseEnter={e => (e.currentTarget.style.background = l.intent === 'hot' && l.status === 'new' ? 'rgba(239,68,68,0.07)' : 'rgba(var(--surface) / 0.025)')}
                   onMouseLeave={e => (e.currentTarget.style.background = l.intent === 'hot' && l.status === 'new' ? 'rgba(239,68,68,0.04)' : 'transparent')}>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
@@ -187,18 +187,18 @@ export default function AdminLeads() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1.5">
-                      <div className="font-semibold text-white">{l.name}</div>
+                      <div className="font-semibold text-text">{l.name}</div>
                       {l.source === 'chatbot' && <Bot className="w-3.5 h-3.5 text-primary" aria-label="Auto-captured from chatbot" />}
                     </div>
                     <div className="text-xs text-text2">{l.source || 'contact-form'}</div>
                     {l.aiInsights?.summary && <div className="text-[11px] text-text2 mt-0.5 italic">{l.aiInsights.summary}</div>}
                   </td>
                   <td className="px-4 py-3 text-xs">
-                    <div style={{ color: 'rgba(255,255,255,0.8)' }}>{l.email?.startsWith('chat_') ? '—' : l.email}</div>
+                    <div style={{ color: 'rgba(var(--text) / 0.8)' }}>{l.email?.startsWith('chat_') ? '—' : l.email}</div>
                     <div className="text-text2">{l.phone}</div>
                   </td>
                   <td className="px-4 py-3 text-xs">
-                    <div className="font-medium" style={{ color: 'rgba(255,255,255,0.8)' }}>{l.service || '—'}</div>
+                    <div className="font-medium" style={{ color: 'rgba(var(--text) / 0.8)' }}>{l.service || '—'}</div>
                     {l.aiInsights?.nextAction && (
                       <div className="text-[10px] text-primary mt-0.5">→ {l.aiInsights.nextAction}</div>
                     )}
@@ -248,7 +248,7 @@ export default function AdminLeads() {
                 </tr>
                 {/* AI Insights Expanded Row */}
                 {expanded === l._id && (
-                  <tr key={`${l._id}-exp`} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', background: 'rgba(200,169,110,0.04)' }}>
+                  <tr key={`${l._id}-exp`} style={{ borderBottom: '1px solid rgba(var(--border) / 0.04)', background: 'rgba(200,169,110,0.04)' }}>
                     <td colSpan={6} className="px-4 py-3">
                       <div className="grid sm:grid-cols-3 gap-4 text-xs">
                         <div className="space-y-1">
@@ -291,10 +291,10 @@ export default function AdminLeads() {
       {/* Message Preview Modal */}
       {preview && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)' }}>
-          <div className="rounded-2xl shadow-2xl w-full max-w-md p-6" style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px' }}>
+          <div className="rounded-2xl shadow-2xl w-full max-w-md p-6" style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.1)', borderRadius: '16px' }}>
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h3 className="font-bold text-lg text-white">{preview.name}</h3>
+                <h3 className="font-bold text-lg text-text">{preview.name}</h3>
                 <p className="text-xs text-text2">{preview.email} · {preview.phone}</p>
               </div>
               <button onClick={() => setPreview(null)} style={{ color: 'rgba(148,163,184,0.6)' }}><X className="w-5 h-5" /></button>
@@ -303,15 +303,15 @@ export default function AdminLeads() {
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {preview.chatMessages.map((m: any, i: number) => (
                   <div key={i} className={`text-xs p-2 rounded-lg ${m.role === 'user' ? 'ml-4' : 'mr-4'}`}
-                    style={{ background: m.role === 'user' ? 'rgba(200,169,110,0.1)' : 'rgba(255,255,255,0.05)', color: m.role === 'user' ? '#c8a96e' : 'rgba(245,245,240,0.7)' }}>
+                    style={{ background: m.role === 'user' ? 'rgba(200,169,110,0.1)' : 'rgba(var(--surface) / 0.05)', color: m.role === 'user' ? '#c8a96e' : 'rgba(var(--text) / 0.7)' }}>
                     <span className="font-bold">{m.role === 'user' ? 'Customer' : 'AI'}: </span>{m.content}
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="rounded-xl p-4 text-sm whitespace-pre-wrap" style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(148,163,184,0.8)' }}>{preview.message}</div>
+              <div className="rounded-xl p-4 text-sm whitespace-pre-wrap" style={{ background: 'rgba(var(--surface) / 0.04)', color: 'rgba(148,163,184,0.8)' }}>{preview.message}</div>
             )}
-            {preview.service && <p className="mt-3 text-xs text-text2">Service: <span className="font-semibold text-white">{preview.service}</span></p>}
+            {preview.service && <p className="mt-3 text-xs text-text2">Service: <span className="font-semibold text-text">{preview.service}</span></p>}
           </div>
         </div>
       )}

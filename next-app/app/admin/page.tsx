@@ -110,10 +110,10 @@ export default async function AdminHome() {
       {/* Page header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="font-display font-black text-[1.8rem] tracking-tight leading-none" style={{ color: '#f0ede6' }}>
+          <h1 className="font-display font-black text-[1.8rem] tracking-tight leading-none" style={{ color: 'rgb(var(--text))' }}>
             Command Center
           </h1>
-          <p className="text-[13px] mt-2" style={{ color: 'rgba(255,255,255,0.3)' }}>{dateStr}</p>
+          <p className="text-[13px] mt-2" style={{ color: 'rgba(var(--text) / 0.3)' }}>{dateStr}</p>
         </div>
         <a
           href="/admin/leads"
@@ -127,7 +127,7 @@ export default async function AdminHome() {
       <div
         className="relative overflow-hidden rounded-2xl p-7"
         style={{
-          background: 'linear-gradient(135deg, #0f0f12 0%, #111114 100%)',
+          background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)',
           border: '1px solid rgba(200,169,110,0.15)',
         }}
       >
@@ -211,10 +211,10 @@ export default async function AdminHome() {
 
       {/* Quick actions */}
       <div className="rounded-2xl p-6"
-        style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
+        style={{ background: 'rgba(var(--surface) / 0.02)', border: '1px solid rgba(var(--border) / 0.06)' }}>
         <div className="flex items-center gap-2 mb-5">
           <Zap className="w-3.5 h-3.5" style={{ color: '#c8a870' }} />
-          <span className="text-[11px] font-bold tracking-[0.15em] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>
+          <span className="text-[11px] font-bold tracking-[0.15em] uppercase" style={{ color: 'rgba(var(--text) / 0.3)' }}>
             Quick Actions
           </span>
         </div>
@@ -244,32 +244,32 @@ export default async function AdminHome() {
       {/* System status row — real automation + integration health, not placeholder numbers */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <a href="/admin/automation" className="admin-card-hover rounded-xl p-5 block"
-          style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          style={{ background: 'rgba(var(--surface) / 0.02)', border: '1px solid rgba(var(--border) / 0.06)' }}>
           <div className="flex items-center gap-2.5 mb-3">
             <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'rgba(34,197,94,0.1)' }}>
               <HeartPulse className="w-3.5 h-3.5" style={{ color: '#22c55e' }} />
             </div>
-            <span className="text-[11px] font-semibold" style={{ color: 'rgba(255,255,255,0.4)' }}>Automation Health</span>
+            <span className="text-[11px] font-semibold" style={{ color: 'rgba(var(--text) / 0.4)' }}>Automation Health</span>
           </div>
-          <div className="font-black text-[1.6rem] leading-none mb-1" style={{ color: '#f0ede6', letterSpacing: '-0.02em' }}>
+          <div className="font-black text-[1.6rem] leading-none mb-1" style={{ color: 'rgb(var(--text))', letterSpacing: '-0.02em' }}>
             {cronHealthyCount} / {CRON_JOBS.length}
           </div>
-          <div className="text-[11px]" style={{ color: 'rgba(255,255,255,0.25)' }}>
+          <div className="text-[11px]" style={{ color: 'rgba(var(--text) / 0.25)' }}>
             Marketing automation jobs last ran successfully — {CRON_JOBS.length - cronLatest.length} have never run yet
           </div>
         </a>
         <a href="/admin/integrations" className="admin-card-hover rounded-xl p-5 block"
-          style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          style={{ background: 'rgba(var(--surface) / 0.02)', border: '1px solid rgba(var(--border) / 0.06)' }}>
           <div className="flex items-center gap-2.5 mb-3">
             <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'rgba(96,165,250,0.1)' }}>
               <Plug className="w-3.5 h-3.5" style={{ color: '#60a5fa' }} />
             </div>
-            <span className="text-[11px] font-semibold" style={{ color: 'rgba(255,255,255,0.4)' }}>Integrations Configured</span>
+            <span className="text-[11px] font-semibold" style={{ color: 'rgba(var(--text) / 0.4)' }}>Integrations Configured</span>
           </div>
-          <div className="font-black text-[1.6rem] leading-none mb-1" style={{ color: '#f0ede6', letterSpacing: '-0.02em' }}>
+          <div className="font-black text-[1.6rem] leading-none mb-1" style={{ color: 'rgb(var(--text))', letterSpacing: '-0.02em' }}>
             {integrations.configuredCount} / {integrations.total}
           </div>
-          <div className="text-[11px]" style={{ color: 'rgba(255,255,255,0.25)' }}>
+          <div className="text-[11px]" style={{ color: 'rgba(var(--text) / 0.25)' }}>
             Email, WhatsApp, AI, payments & analytics keys
           </div>
         </a>

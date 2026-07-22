@@ -36,10 +36,10 @@ export default function VisitorStatsPage() {
   return (
     <div className="space-y-6 max-w-5xl">
       <div>
-        <h1 className="font-display font-black text-[1.8rem] tracking-tight leading-none" style={{ color: '#f0ede6' }}>
+        <h1 className="font-display font-black text-[1.8rem] tracking-tight leading-none" style={{ color: 'rgb(var(--text))' }}>
           Visitor Stats
         </h1>
-        <p className="text-[13px] mt-2" style={{ color: 'rgba(255,255,255,0.3)' }}>
+        <p className="text-[13px] mt-2" style={{ color: 'rgba(var(--text) / 0.3)' }}>
           Every page load counts once per browser tab session (a refresh doesn't inflate the number).
         </p>
       </div>
@@ -47,7 +47,7 @@ export default function VisitorStatsPage() {
       {loading ? (
         <div className="grid sm:grid-cols-3 gap-4">
           {[0, 1, 2].map(i => (
-            <div key={i} className="rounded-2xl p-5" style={{ background: 'linear-gradient(135deg, #0f0f12 0%, #111114 100%)', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div key={i} className="rounded-2xl p-5" style={{ background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)', border: '1px solid rgba(var(--border) / 0.06)' }}>
               <AdminSkeleton rows={2} />
             </div>
           ))}
@@ -56,24 +56,24 @@ export default function VisitorStatsPage() {
         <>
           <div className="grid sm:grid-cols-3 gap-4 stagger-children">
             {kpis.map(k => (
-              <div key={k.label} className="admin-card-hover kpi-enter rounded-2xl p-5" style={{ background: 'linear-gradient(135deg, #0f0f12 0%, #111114 100%)', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <div key={k.label} className="admin-card-hover kpi-enter rounded-2xl p-5" style={{ background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)', border: '1px solid rgba(var(--border) / 0.06)' }}>
                 <div className="flex items-center gap-2 mb-2">
                   <k.Icon className="w-4 h-4" style={{ color: k.color }} />
-                  <span className="text-[11px] font-semibold" style={{ color: 'rgba(255,255,255,0.4)' }}>{k.label}</span>
+                  <span className="text-[11px] font-semibold" style={{ color: 'rgba(var(--text) / 0.4)' }}>{k.label}</span>
                 </div>
-                <div className="text-2xl font-extrabold" style={{ color: '#f0ede6' }}>{k.val}</div>
+                <div className="text-2xl font-extrabold" style={{ color: 'rgb(var(--text))' }}>{k.val}</div>
               </div>
             ))}
           </div>
 
-          <div className="kpi-enter rounded-2xl p-5" style={{ background: 'linear-gradient(135deg, #0f0f12 0%, #111114 100%)', border: '1px solid rgba(255,255,255,0.06)' }}>
-            <h2 className="text-[13px] font-bold mb-4" style={{ color: '#f0ede6' }}>Last 30 Days</h2>
+          <div className="kpi-enter rounded-2xl p-5" style={{ background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)', border: '1px solid rgba(var(--border) / 0.06)' }}>
+            <h2 className="text-[13px] font-bold mb-4" style={{ color: 'rgb(var(--text))' }}>Last 30 Days</h2>
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
-                <XAxis dataKey="label" tick={{ fill: 'rgba(255,255,255,0.35)', fontSize: 11 }} interval={2} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: 'rgba(255,255,255,0.35)', fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
-                <Tooltip contentStyle={{ background: '#0f0f12', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12 }} labelStyle={{ color: '#f0ede6' }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(var(--border) / 0.06)" vertical={false} />
+                <XAxis dataKey="label" tick={{ fill: 'rgba(var(--text) / 0.35)', fontSize: 11 }} interval={2} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: 'rgba(var(--text) / 0.35)', fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
+                <Tooltip contentStyle={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.1)', borderRadius: 8, fontSize: 12 }} labelStyle={{ color: 'rgb(var(--text))' }} />
                 <Bar dataKey="count" name="Visits" fill="#c8a96e" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>

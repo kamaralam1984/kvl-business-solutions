@@ -60,32 +60,32 @@ export default function AdminCaseStudiesPage() {
   return (
     <div className="max-w-4xl">
       <div className="flex justify-between items-end mb-4">
-        <h1 className="text-2xl font-extrabold" style={{ color: '#f0ede6' }}>Case Studies ({studies.length})</h1>
+        <h1 className="text-2xl font-extrabold" style={{ color: 'rgb(var(--text))' }}>Case Studies ({studies.length})</h1>
         <button onClick={() => { setEditing(empty); setIsNew(true); }} className="btn btn-primary"><Plus className="w-4 h-4" /> New Case Study</button>
       </div>
-      <p className="text-[12.5px] mb-4" style={{ color: 'rgba(255,255,255,0.35)' }}>
+      <p className="text-[12.5px] mb-4" style={{ color: 'rgba(var(--text) / 0.35)' }}>
         This lists only case studies created here — the existing live products (VidYT, AapKaPlot, etc.) stay in code, but any new one below appears on /projects alongside them. Only one hero image is captured here (no separate desktop/tablet/mobile shots).
       </p>
-      {msg && <div className="text-xs mb-3" style={{ color: 'rgba(255,255,255,0.5)' }}>{msg}</div>}
+      {msg && <div className="text-xs mb-3" style={{ color: 'rgba(var(--text) / 0.5)' }}>{msg}</div>}
 
-      <div className="card-base overflow-hidden kpi-enter" style={{ background: 'linear-gradient(135deg, #0f0f12 0%, #111114 100%)', border: '1px solid rgba(255,255,255,0.06)' }}>
+      <div className="card-base overflow-hidden kpi-enter" style={{ background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)', border: '1px solid rgba(var(--border) / 0.06)' }}>
         <table className="w-full text-sm">
-          <thead className="text-left text-xs uppercase" style={{ color: 'rgba(255,255,255,0.35)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+          <thead className="text-left text-xs uppercase" style={{ color: 'rgba(var(--text) / 0.35)', borderBottom: '1px solid rgba(var(--border) / 0.06)' }}>
             <tr><th className="p-3">Name</th><th className="p-3">Slug</th><th className="p-3">Industry</th><th className="p-3"></th></tr>
           </thead>
           <tbody>
             {studies.map(s => (
-              <tr key={s._id} className="transition-colors duration-150 hover:bg-white/[0.025]" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                <td className="p-3 font-semibold" style={{ color: '#f0ede6' }}>{s.name}</td>
-                <td className="p-3 font-mono text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>{s.slug}</td>
-                <td className="p-3" style={{ color: 'rgba(255,255,255,0.6)' }}>{s.industry}</td>
+              <tr key={s._id} className="transition-colors duration-150 hover:bg-surface/[0.025]" style={{ borderBottom: '1px solid rgba(var(--border) / 0.05)' }}>
+                <td className="p-3 font-semibold" style={{ color: 'rgb(var(--text))' }}>{s.name}</td>
+                <td className="p-3 font-mono text-xs" style={{ color: 'rgba(var(--text) / 0.4)' }}>{s.slug}</td>
+                <td className="p-3" style={{ color: 'rgba(var(--text) / 0.6)' }}>{s.industry}</td>
                 <td className="p-3 text-right">
-                  <button onClick={() => { setEditing(s); setIsNew(false); }} className="p-1" style={{ color: 'rgba(255,255,255,0.4)' }}><Edit3 className="w-4 h-4" /></button>
-                  <button onClick={() => del(s._id)} className="p-1" style={{ color: 'rgba(255,255,255,0.4)' }}><Trash2 className="w-4 h-4" /></button>
+                  <button onClick={() => { setEditing(s); setIsNew(false); }} className="p-1" style={{ color: 'rgba(var(--text) / 0.4)' }}><Edit3 className="w-4 h-4" /></button>
+                  <button onClick={() => del(s._id)} className="p-1" style={{ color: 'rgba(var(--text) / 0.4)' }}><Trash2 className="w-4 h-4" /></button>
                 </td>
               </tr>
             ))}
-            {studies.length === 0 && <tr><td colSpan={4} className="p-8 text-center" style={{ color: 'rgba(255,255,255,0.3)' }}>No admin-created case studies yet.</td></tr>}
+            {studies.length === 0 && <tr><td colSpan={4} className="p-8 text-center" style={{ color: 'rgba(var(--text) / 0.3)' }}>No admin-created case studies yet.</td></tr>}
           </tbody>
         </table>
       </div>
@@ -94,12 +94,12 @@ export default function AdminCaseStudiesPage() {
         <div className="fixed inset-0 z-50 grid place-items-center p-4 bg-black/60 backdrop-blur" onClick={() => setEditing(null)}>
           <div
             className="p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto rounded-2xl"
-            style={{ background: '#0f0f12', border: '1px solid rgba(255,255,255,0.08)' }}
+            style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.08)' }}
             onClick={e => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-extrabold" style={{ color: '#f0ede6' }}>{isNew ? 'New Case Study' : 'Edit Case Study'}</h2>
-              <button onClick={() => setEditing(null)} style={{ color: 'rgba(255,255,255,0.5)' }}><X className="w-5 h-5" /></button>
+              <h2 className="text-xl font-extrabold" style={{ color: 'rgb(var(--text))' }}>{isNew ? 'New Case Study' : 'Edit Case Study'}</h2>
+              <button onClick={() => setEditing(null)} style={{ color: 'rgba(var(--text) / 0.5)' }}><X className="w-5 h-5" /></button>
             </div>
             <div className="space-y-3">
               {isNew && <input className="form-control" placeholder="slug (e.g., my-new-product)" value={editing.slug} onChange={e => setEditing({ ...editing, slug: e.target.value.toLowerCase() })} />}
@@ -113,14 +113,14 @@ export default function AdminCaseStudiesPage() {
               <textarea className="form-control" rows={2} placeholder="Overview (1-2 sentences)" value={editing.overview} onChange={e => setEditing({ ...editing, overview: e.target.value })} />
               <input className="form-control" placeholder="Hero image URL" value={editing.heroImage} onChange={e => setEditing({ ...editing, heroImage: e.target.value })} />
 
-              <div className="p-3 rounded-lg space-y-1.5" style={{ background: 'rgba(255,255,255,0.03)' }}>
-                <label className="text-[11px] font-semibold uppercase" style={{ color: 'rgba(255,255,255,0.4)' }}>Business Challenge</label>
+              <div className="p-3 rounded-lg space-y-1.5" style={{ background: 'rgba(var(--surface) / 0.03)' }}>
+                <label className="text-[11px] font-semibold uppercase" style={{ color: 'rgba(var(--text) / 0.4)' }}>Business Challenge</label>
                 <input className="form-control" placeholder="Headline" value={editing.challenge.headline} onChange={e => setEditing({ ...editing, challenge: { ...editing.challenge, headline: e.target.value } })} />
                 <textarea className="form-control" rows={2} placeholder="Body" value={editing.challenge.body} onChange={e => setEditing({ ...editing, challenge: { ...editing.challenge, body: e.target.value } })} />
               </div>
 
-              <div className="p-3 rounded-lg space-y-1.5" style={{ background: 'rgba(255,255,255,0.03)' }}>
-                <label className="text-[11px] font-semibold uppercase" style={{ color: 'rgba(255,255,255,0.4)' }}>Solution</label>
+              <div className="p-3 rounded-lg space-y-1.5" style={{ background: 'rgba(var(--surface) / 0.03)' }}>
+                <label className="text-[11px] font-semibold uppercase" style={{ color: 'rgba(var(--text) / 0.4)' }}>Solution</label>
                 <input className="form-control" placeholder="Headline" value={editing.solution.headline} onChange={e => setEditing({ ...editing, solution: { ...editing.solution, headline: e.target.value } })} />
                 <textarea className="form-control" rows={2} placeholder="Body" value={editing.solution.body} onChange={e => setEditing({ ...editing, solution: { ...editing.solution, body: e.target.value } })} />
               </div>

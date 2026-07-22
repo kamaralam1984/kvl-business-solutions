@@ -37,10 +37,10 @@ export default function AutomationHealthPage() {
   return (
     <div className="space-y-6 max-w-5xl">
       <div>
-        <h1 className="font-display font-black text-[1.8rem] tracking-tight leading-none" style={{ color: '#f0ede6' }}>
+        <h1 className="font-display font-black text-[1.8rem] tracking-tight leading-none" style={{ color: 'rgb(var(--text))' }}>
           Automation Health
         </h1>
-        <p className="text-[13px] mt-2" style={{ color: 'rgba(255,255,255,0.3)' }}>
+        <p className="text-[13px] mt-2" style={{ color: 'rgba(var(--text) / 0.3)' }}>
           Last run status for every scheduled marketing automation job.
         </p>
       </div>
@@ -48,7 +48,7 @@ export default function AutomationHealthPage() {
       {loading ? (
         <div className="space-y-3">
           {[0, 1, 2].map(i => (
-            <div key={i} className="rounded-2xl p-5" style={{ background: 'linear-gradient(135deg, #0f0f12 0%, #111114 100%)', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div key={i} className="rounded-2xl p-5" style={{ background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)', border: '1px solid rgba(var(--border) / 0.06)' }}>
               <AdminSkeleton rows={2} />
             </div>
           ))}
@@ -63,12 +63,12 @@ export default function AutomationHealthPage() {
               <div
                 key={j.job}
                 className="admin-card-hover kpi-enter rounded-2xl p-5"
-                style={{ background: 'linear-gradient(135deg, #0f0f12 0%, #111114 100%)', border: '1px solid rgba(255,255,255,0.06)' }}
+                style={{ background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)', border: '1px solid rgba(var(--border) / 0.06)' }}
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-2.5">
-                      <h2 className="text-[14px] font-bold" style={{ color: '#f0ede6' }}>{LABELS[j.job] || j.job}</h2>
+                      <h2 className="text-[14px] font-bold" style={{ color: 'rgb(var(--text))' }}>{LABELS[j.job] || j.job}</h2>
                       {neverRun ? (
                         <span className="flex items-center gap-1 text-[11px] font-semibold" style={{ color: '#fbbf24' }}>
                           <AlertTriangle className="w-3.5 h-3.5" /> Never run yet
@@ -83,14 +83,14 @@ export default function AutomationHealthPage() {
                         </span>
                       )}
                     </div>
-                    <div className="text-[11.5px] font-mono mt-1" style={{ color: 'rgba(255,255,255,0.25)' }}>{j.job} · {j.schedule}</div>
+                    <div className="text-[11.5px] font-mono mt-1" style={{ color: 'rgba(var(--text) / 0.25)' }}>{j.job} · {j.schedule}</div>
                   </div>
                   {last && (
                     <div className="text-right shrink-0">
-                      <div className="flex items-center gap-1.5 text-[11px] font-medium justify-end" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                      <div className="flex items-center gap-1.5 text-[11px] font-medium justify-end" style={{ color: 'rgba(var(--text) / 0.4)' }}>
                         <Clock className="w-3 h-3" /> {timeAgo(last.ranAt)}
                       </div>
-                      <div className="text-[11.5px] mt-1" style={{ color: ok ? 'rgba(255,255,255,0.5)' : '#f87171' }}>
+                      <div className="text-[11.5px] mt-1" style={{ color: ok ? 'rgba(var(--text) / 0.5)' : '#f87171' }}>
                         {ok ? last.summary : (last.error || last.summary)}
                       </div>
                     </div>

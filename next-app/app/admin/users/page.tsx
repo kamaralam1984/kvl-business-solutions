@@ -83,7 +83,7 @@ export default function AdminUsersPage() {
       <div className="flex justify-between items-end gap-4">
         <div>
           <p className="eyebrow mb-2">SYSTEM</p>
-          <h1 className="text-2xl font-extrabold text-white">Users ({users.length})</h1>
+          <h1 className="text-2xl font-extrabold text-text">Users ({users.length})</h1>
         </div>
         <div className="flex items-center gap-3">
           <ExportButton type="users" />
@@ -91,9 +91,9 @@ export default function AdminUsersPage() {
             <Search className="absolute left-3 top-2.5 w-4 h-4" style={{ color: 'rgba(148,163,184,0.5)' }} />
             <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search name or email"
               className="pl-9 w-full text-sm rounded-lg px-3 py-2 outline-none transition-all"
-              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.85)' }}
+              style={{ background: 'rgba(var(--surface) / 0.04)', border: '1px solid rgba(var(--border) / 0.08)', color: 'rgba(var(--text) / 0.85)' }}
               onFocus={e => (e.target.style.borderColor = 'rgba(200,169,110,0.4)')}
-              onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.08)')} />
+              onBlur={e => (e.target.style.borderColor = 'rgba(var(--border) / 0.08)')} />
           </form>
           <button onClick={openAdd} className="btn-primary flex items-center gap-2 whitespace-nowrap">
             <UserPlus className="w-4 h-4" /> Add User
@@ -101,9 +101,9 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      <div style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', overflow: 'hidden' }}>
+      <div style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.07)', borderRadius: '12px', overflow: 'hidden' }}>
         <table className="w-full text-sm">
-          <thead style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+          <thead style={{ borderBottom: '1px solid rgba(var(--border) / 0.07)' }}>
             <tr>
               {['Joined', 'Email', 'Name', 'Phone', 'Role', 'Verified', ''].map((h, i) => (
                 <th key={i} className="px-4 py-3 text-left text-[11px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.6)' }}>{h}</th>
@@ -112,15 +112,18 @@ export default function AdminUsersPage() {
           </thead>
           <tbody>
             {users.map(u => (
-              <tr key={u._id} className="transition-colors" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
-                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.025)')}
+              <tr key={u._id} className="transition-colors" style={{ borderBottom: '1px solid rgba(var(--border) / 0.04)' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(var(--surface) / 0.025)')}
                 onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
                 <td className="px-4 py-3 text-xs" style={{ color: 'rgba(148,163,184,0.6)' }}>{new Date(u.createdAt).toLocaleDateString('en-IN')}</td>
-                <td className="px-4 py-3 font-semibold text-white">{u.email}</td>
+                <td className="px-4 py-3 font-semibold text-text">{u.email}</td>
                 <td className="px-4 py-3 text-text2">{u.name || '—'}</td>
                 <td className="px-4 py-3 text-text2 text-xs">{u.phone || '—'}</td>
                 <td className="px-4 py-3">
-                  <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full inline-flex items-center gap-1 ${u.role === 'admin' ? 'bg-amber-500/10 text-amber-400' : 'bg-white/[0.06] text-[#888]'}`}>
+                  <span
+                    className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full inline-flex items-center gap-1 ${u.role === 'admin' ? 'bg-amber-500/10 text-amber-400' : 'text-[#888]'}`}
+                    style={u.role === 'admin' ? undefined : { background: 'rgba(var(--surface) / 0.06)' }}
+                  >
                     {u.role === 'admin' ? <ShieldCheck className="w-3 h-3" /> : <Shield className="w-3 h-3" />} {u.role.toUpperCase()}
                   </span>
                 </td>
@@ -130,7 +133,7 @@ export default function AdminUsersPage() {
                 <td className="px-4 py-3 text-right flex items-center justify-end gap-1">
                   <button onClick={() => openEdit(u)} className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors"
                     style={{ color: 'rgba(148,163,184,0.5)' }}
-                    onMouseEnter={e => (e.currentTarget.style.color = '#f5f5f0')}
+                    onMouseEnter={e => (e.currentTarget.style.color = 'rgb(var(--text))')}
                     onMouseLeave={e => (e.currentTarget.style.color = 'rgba(136,136,136,0.6)')}>
                     <Pencil className="w-4 h-4" />
                   </button>
@@ -153,9 +156,9 @@ export default function AdminUsersPage() {
       {/* Modal */}
       {modal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)' }}>
-          <div className="rounded-2xl shadow-2xl w-full max-w-md" style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.1)' }}>
-            <div className="flex items-center justify-between p-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-              <h2 className="text-lg font-bold text-white">{modal === 'add' ? 'Add New User' : 'Edit User'}</h2>
+          <div className="rounded-2xl shadow-2xl w-full max-w-md" style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.1)' }}>
+            <div className="flex items-center justify-between p-5" style={{ borderBottom: '1px solid rgba(var(--border) / 0.07)' }}>
+              <h2 className="text-lg font-bold text-text">{modal === 'add' ? 'Add New User' : 'Edit User'}</h2>
               <button onClick={closeModal} style={{ color: 'rgba(148,163,184,0.6)' }}><X className="w-5 h-5" /></button>
             </div>
             <div className="p-5 space-y-4">

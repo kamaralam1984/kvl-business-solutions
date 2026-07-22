@@ -57,54 +57,54 @@ export default function AdminTickets() {
   return (
     <div>
       <div className="flex justify-between items-end mb-4">
-        <h1 className="text-2xl font-extrabold" style={{ color: '#f0ede6' }}>Tickets ({tickets.length})</h1>
+        <h1 className="text-2xl font-extrabold" style={{ color: 'rgb(var(--text))' }}>Tickets ({tickets.length})</h1>
         <ExportButton type="tickets" />
       </div>
 
       {loading ? (
         <div className="space-y-3">
           {[0, 1, 2].map(i => (
-            <div key={i} className="rounded-2xl p-4" style={{ background: 'linear-gradient(135deg, #0f0f12 0%, #111114 100%)', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div key={i} className="rounded-2xl p-4" style={{ background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)', border: '1px solid rgba(var(--border) / 0.06)' }}>
               <AdminSkeleton rows={2} />
             </div>
           ))}
         </div>
       ) : tickets.length === 0 ? (
-        <p className="text-[13px]" style={{ color: 'rgba(255,255,255,0.3)' }}>No tickets yet.</p>
+        <p className="text-[13px]" style={{ color: 'rgba(var(--text) / 0.3)' }}>No tickets yet.</p>
       ) : (
         <div className="space-y-2 stagger-children">
           {tickets.map(t => {
             const isOpen = expanded === t._id;
             return (
-              <div key={t._id} className="admin-card-hover kpi-enter rounded-2xl overflow-hidden" style={{ background: 'linear-gradient(135deg, #0f0f12 0%, #111114 100%)', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <div key={t._id} className="admin-card-hover kpi-enter rounded-2xl overflow-hidden" style={{ background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)', border: '1px solid rgba(var(--border) / 0.06)' }}>
                 <button onClick={() => setExpanded(isOpen ? null : t._id)} className="w-full flex items-center justify-between gap-3 p-4 text-left">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-semibold text-sm" style={{ color: '#f0ede6' }}>{t.name}</span>
-                      <span className="text-[11px]" style={{ color: 'rgba(255,255,255,0.35)' }}>{t.email}</span>
+                      <span className="font-semibold text-sm" style={{ color: 'rgb(var(--text))' }}>{t.name}</span>
+                      <span className="text-[11px]" style={{ color: 'rgba(var(--text) / 0.35)' }}>{t.email}</span>
                     </div>
-                    <div className="text-[12.5px] truncate" style={{ color: 'rgba(255,255,255,0.5)' }}>{t.description}</div>
+                    <div className="text-[12.5px] truncate" style={{ color: 'rgba(var(--text) / 0.5)' }}>{t.description}</div>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${priorityColor[t.priority]}`}>{t.priority.toUpperCase()}</span>
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${statusColor[t.status]}`}>{t.status.toUpperCase()}</span>
                     {t.replies?.length > 0 && (
-                      <span className="text-[10px] font-semibold" style={{ color: 'rgba(255,255,255,0.35)' }}>{t.replies.length} reply</span>
+                      <span className="text-[10px] font-semibold" style={{ color: 'rgba(var(--text) / 0.35)' }}>{t.replies.length} reply</span>
                     )}
-                    {isOpen ? <ChevronUp className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.3)' }} /> : <ChevronDown className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.3)' }} />}
+                    {isOpen ? <ChevronUp className="w-4 h-4" style={{ color: 'rgba(var(--text) / 0.3)' }} /> : <ChevronDown className="w-4 h-4" style={{ color: 'rgba(var(--text) / 0.3)' }} />}
                   </div>
                 </button>
 
                 {isOpen && (
-                  <div className="px-4 pb-4 space-y-3" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                  <div className="px-4 pb-4 space-y-3" style={{ borderTop: '1px solid rgba(var(--border) / 0.05)' }}>
                     <div className="pt-3 flex items-center gap-2 flex-wrap">
-                      <span className="text-[11px]" style={{ color: 'rgba(255,255,255,0.35)' }}>Status:</span>
+                      <span className="text-[11px]" style={{ color: 'rgba(var(--text) / 0.35)' }}>Status:</span>
                       {(['open', 'in-progress', 'resolved', 'closed'] as const).map(s => (
                         <button
                           key={s}
                           onClick={() => updateStatus(t._id, s)}
                           className={`text-[10px] font-bold px-2.5 py-1 rounded-full transition-all ${t.status === s ? statusColor[s] : 'opacity-40 hover:opacity-70'}`}
-                          style={t.status !== s ? { background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.5)' } : {}}
+                          style={t.status !== s ? { background: 'rgba(var(--surface) / 0.05)', color: 'rgba(var(--text) / 0.5)' } : {}}
                         >
                           {s.toUpperCase()}
                         </button>
@@ -112,8 +112,8 @@ export default function AdminTickets() {
                     </div>
 
                     {t.replies?.map((r, i) => (
-                      <div key={i} className="p-3 rounded-lg text-[12.5px]" style={{ background: r.isAdmin ? 'rgba(200,169,110,0.08)' : 'rgba(255,255,255,0.03)', color: 'rgba(255,255,255,0.75)' }}>
-                        <div className="text-[10.5px] font-semibold mb-1" style={{ color: r.isAdmin ? '#c8a96e' : 'rgba(255,255,255,0.4)' }}>
+                      <div key={i} className="p-3 rounded-lg text-[12.5px]" style={{ background: r.isAdmin ? 'rgba(200,169,110,0.08)' : 'rgba(var(--surface) / 0.03)', color: 'rgba(var(--text) / 0.75)' }}>
+                        <div className="text-[10.5px] font-semibold mb-1" style={{ color: r.isAdmin ? '#c8a96e' : 'rgba(var(--text) / 0.4)' }}>
                           {r.isAdmin ? 'You (admin)' : t.name} · {new Date(r.createdAt).toLocaleString('en-IN')}
                         </div>
                         {r.message}
