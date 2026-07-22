@@ -204,7 +204,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </SessionProviderWrapper>
         <Script
           src={process.env.NEXT_PUBLIC_CHATBOT_WIDGET_URL || 'https://superai.kvlbusinesssolutions.com/widget.js'}
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
       </body>
     </html>

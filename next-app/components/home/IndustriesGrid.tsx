@@ -133,7 +133,8 @@ export function IndustriesGrid() {
                       src={ind.image}
                       alt={`${ind.title} software overview`}
                       fill
-                      sizes="(max-width: 1024px) 60vw, 460px"
+                      sizes="(max-width: 640px) 55vw, (max-width: 1024px) 60vw, 460px"
+                      quality={65}
                       className="object-cover"
                       priority={i === 0}
                     />
