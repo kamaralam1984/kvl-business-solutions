@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { Loader } from './Loader';
 
-const VISIBLE_MS = 3000;
+const VISIBLE_MS = 1500;
 
 // Starts visible so it's part of the server-rendered HTML — it appears the
 // instant the browser paints, before hydration or client JS finishes, which
