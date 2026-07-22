@@ -16,7 +16,7 @@ export const dynamic = 'force-dynamic';
 
 const CRON_JOBS = [
   'lead-followup', 'lead-nurture', 'review-request', 'abandoned-orders',
-  'renewal-reminders', 'workflow-triggers', 'expire-coupons',
+  'renewal-reminders', 'workflow-triggers', 'expire-coupons', 'vip-lead-scoring',
 ];
 
 function pctChange(recent: number, prev: number): { text: string; up: boolean } {

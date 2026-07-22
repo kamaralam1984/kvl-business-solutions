@@ -11,6 +11,7 @@ const JOBS = [
   { job: 'renewal-reminders', schedule: 'Daily 9:30am' },
   { job: 'workflow-triggers', schedule: 'Daily 8am' },
   { job: 'expire-coupons', schedule: 'Daily midnight' },
+  { job: 'vip-lead-scoring', schedule: 'Daily 6am' },
 ];
 
 export async function GET() {

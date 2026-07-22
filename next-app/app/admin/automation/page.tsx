@@ -14,6 +14,7 @@ const LABELS: Record<string, string> = {
   'renewal-reminders': 'License Renewal Reminders',
   'workflow-triggers': 'Time-Based Workflow Triggers',
   'expire-coupons': 'Coupon Expiry Cleanup',
+  'vip-lead-scoring': 'VIP Lead Scoring Recompute',
 };
 
 function timeAgo(iso: string) {

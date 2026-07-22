@@ -18,6 +18,7 @@ export async function GET(req: Request) {
   const stats = {
     total: await Lead.countDocuments(),
     new: await Lead.countDocuments({ status: 'new' }),
+    hot: await Lead.countDocuments({ intent: 'hot' }),
     contacted: await Lead.countDocuments({ status: { $in: ['contacted', 'qualified'] } }),
     won: await Lead.countDocuments({ status: 'won' }),
     lost: await Lead.countDocuments({ status: 'lost' }),
