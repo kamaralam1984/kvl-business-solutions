@@ -10,7 +10,7 @@ export default function VipOverviewPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  const load = () => fetch('/api/admin/vip/overview').then(r => r.json()).then(d => d.ok && setData(d));
+  const load = () => fetch('/api/admin/vip/overview').then(r => r.json()).then(d => d.ok && setData(d)).finally(() => setLoading(false));
   useEffect(() => {
     load();
     const t = setInterval(load, 30_000); // polling "live" view — see route.ts comment
