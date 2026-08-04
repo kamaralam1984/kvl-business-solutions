@@ -29,6 +29,7 @@ function mergeOne(staticP: Software | undefined, db: any): Software | null {
     c2: staticP?.c2 || '#334155',
     category: staticP?.category || 'Custom Software',
     demoNav: staticP?.demoNav || [],
+    benefits: staticP?.benefits || [],
   };
 }
 

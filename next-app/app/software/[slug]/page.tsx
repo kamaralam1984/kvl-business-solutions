@@ -1,5 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
+import * as Icons from 'lucide-react';
 import { getLiveSoftwareProduct, getLiveSoftwareProducts } from '@/lib/data/live-software';
 import { PageHero } from '@/components/shared/PageHero';
 import { JsonLd } from '@/components/shared/JsonLd';
@@ -103,9 +105,66 @@ export default async function ProductPage({ params }: { params: { slug: string }
         breadcrumbPath={[{ label: 'Software', href: '/software' }, { label: product.name }]}
       />
 
+      {product.image && (
+        <section className="section pb-0">
+          <div className="container">
+            <div className="relative rounded-3xl overflow-hidden" style={{ height: 320 }}>
+              <Image
+                src={product.image}
+                alt={product.name}
+                fill
+                sizes="(min-width: 1024px) 1100px, 100vw"
+                style={{ objectFit: 'cover' }}
+                priority
+              />
+              <div
+                className="absolute inset-0"
+                style={{ background: `linear-gradient(100deg, ${product.c1}e6 0%, ${product.c2}99 42%, transparent 78%)` }}
+              />
+              <div className="absolute inset-0 flex flex-col justify-end p-7 md:p-10">
+                <div className="flex flex-wrap gap-2">
+                  {product.tag && (
+                    <span className="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full text-white" style={{ background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(6px)' }}>
+                      {product.tag}
+                    </span>
+                  )}
+                  <span className="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full text-white" style={{ background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(6px)' }}>
+                    {product.category}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       <section className="section">
         <div className="container grid lg:grid-cols-[2fr_1fr] gap-8">
           <div className="space-y-8">
+            {product.benefits.length > 0 && (
+              <div className="card-base p-7">
+                <h2 className="text-xl font-bold mb-1">Why this helps your business</h2>
+                <p className="text-text2 text-sm mb-5">Not just features — real, measurable impact on how you operate day to day.</p>
+                <div className="grid sm:grid-cols-3 gap-4">
+                  {product.benefits.map(b => {
+                    const BenefitIcon = (Icons as any)[b.icon] || Icons.Zap;
+                    return (
+                      <div key={b.title} className="p-4 rounded-xl" style={{ background: 'rgba(var(--text) / 0.03)' }}>
+                        <div
+                          className="w-9 h-9 rounded-lg grid place-items-center mb-3"
+                          style={{ background: `linear-gradient(135deg, ${product.c1}, ${product.c2})` }}
+                        >
+                          <BenefitIcon className="w-[18px] h-[18px] text-white" />
+                        </div>
+                        <div className="font-bold text-sm mb-1">{b.title}</div>
+                        <div className="text-xs text-text2 leading-relaxed">{b.desc}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             <div className="card-base p-7">
               <h2 className="text-xl font-bold mb-4">Key Features</h2>
               <ul className="grid sm:grid-cols-2 gap-3">
