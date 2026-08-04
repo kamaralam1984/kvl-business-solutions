@@ -10,7 +10,7 @@ export function DownloadGate({
   downloadHref,
   downloadType,
 }: {
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
   title: string;
   desc: string;
   downloadHref: string;

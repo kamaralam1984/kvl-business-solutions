@@ -23,13 +23,13 @@ function UnsubView() {
         <>
           <CheckCircle2 className="w-14 h-14 mx-auto text-green-500" />
           <h1 className="text-2xl font-extrabold mt-3">Unsubscribed</h1>
-          <p className="text-text2 mt-2 text-sm">You won't receive newsletter emails from us. Sorry to see you go.</p>
+          <p className="text-text2 mt-2 text-sm">You won&apos;t receive newsletter emails from us. Sorry to see you go.</p>
         </>
       )}
       {state === 'error' && (
         <>
           <XCircle className="w-14 h-14 mx-auto text-red-500" />
-          <h1 className="text-2xl font-extrabold mt-3">Couldn't unsubscribe</h1>
+          <h1 className="text-2xl font-extrabold mt-3">Couldn&apos;t unsubscribe</h1>
           <p className="text-text2 mt-2 text-sm">Invalid link. Email us at <a href="mailto:info@kvlbusinesssolutions.com" className="text-primary">info@kvlbusinesssolutions.com</a> to opt out.</p>
         </>
       )}

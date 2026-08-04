@@ -7,7 +7,7 @@ export function MobileMenu({
   open, navItems, pathname, hasSession,
 }: {
   open: boolean;
-  navItems: { label: string; href: string }[];
+  navItems: readonly { label: string; href: string }[];
   pathname: string | null;
   hasSession: boolean;
 }) {

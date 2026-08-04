@@ -58,7 +58,7 @@ export default function AdminJobsPage() {
             <tr><th className="p-3">Title</th><th className="p-3">Department</th><th className="p-3">Location</th><th className="p-3 text-right">Applications</th><th className="p-3">Status</th><th className="p-3"></th></tr>
           </thead>
           <tbody>
-            {jobs.length === 0 && <tr><td colSpan={6} className="p-8 text-center text-text2">No jobs yet. Click "New Job" to add.</td></tr>}
+            {jobs.length === 0 && <tr><td colSpan={6} className="p-8 text-center text-text2">No jobs yet. Click &quot;New Job&quot; to add.</td></tr>}
             {jobs.map(j => (
               <tr key={j._id} className="border-b border-tint last:border-b-0 hover:bg-primary/5">
                 <td className="p-3 font-semibold">

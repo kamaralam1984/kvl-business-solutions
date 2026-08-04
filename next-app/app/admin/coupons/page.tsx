@@ -78,7 +78,7 @@ export default function AdminCouponsPage() {
                 </td>
               </tr>
             ))}
-            {coupons.length === 0 && <tr><td colSpan={7} className="p-8 text-center text-text2">No coupons yet. Click "New Coupon" to create one.</td></tr>}
+            {coupons.length === 0 && <tr><td colSpan={7} className="p-8 text-center text-text2">No coupons yet. Click &quot;New Coupon&quot; to create one.</td></tr>}
           </tbody>
         </table>
       </div>

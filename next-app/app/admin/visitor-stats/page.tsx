@@ -40,7 +40,7 @@ export default function VisitorStatsPage() {
           Visitor Stats
         </h1>
         <p className="text-[13px] mt-2" style={{ color: 'rgba(var(--text) / 0.3)' }}>
-          Every page load counts once per browser tab session (a refresh doesn't inflate the number).
+          Every page load counts once per browser tab session (a refresh doesn&apos;t inflate the number).
         </p>
       </div>
 

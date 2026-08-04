@@ -53,7 +53,7 @@ export default function BrandPage() {
           <h2 className="text-2xl font-extrabold mb-2 flex items-center gap-2">
             <FileImage className="w-6 h-6 text-primary" /> Logo variants
           </h2>
-          <p className="text-text2 text-sm mb-8">10 variants — SVG (vector) and PNG (transparent). Right-click → "Save image as" or click Download.</p>
+          <p className="text-text2 text-sm mb-8">10 variants — SVG (vector) and PNG (transparent). Right-click → &quot;Save image as&quot; or click Download.</p>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {variants.map(v => (
@@ -116,10 +116,10 @@ export default function BrandPage() {
               <li>✓ Use the <b>light (white) version</b> on dark backgrounds or photos.</li>
               <li>✓ Use the <b>dark version</b> on light printed materials (newspaper, etc.).</li>
               <li>✓ Keep minimum clear space around the logo (at least 1× the K-letter height).</li>
-              <li>✓ Always download the original — don't take screenshots.</li>
-              <li>✗ Don't stretch, recolor, or add effects to the logo.</li>
-              <li>✗ Don't remove "BUSINESS SOLUTIONS" from the horizontal versions.</li>
-              <li>✗ Don't rotate or skew the logo.</li>
+              <li>✓ Always download the original — don&apos;t take screenshots.</li>
+              <li>✗ Don&apos;t stretch, recolor, or add effects to the logo.</li>
+              <li>✗ Don&apos;t remove &quot;BUSINESS SOLUTIONS&quot; from the horizontal versions.</li>
+              <li>✗ Don&apos;t rotate or skew the logo.</li>
             </ul>
 
             <div className="mt-6 pt-6 border-t border-tint">

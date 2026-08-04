@@ -115,10 +115,10 @@ export default function VoiceAssistantPage() {
           <div className="card-base p-4 mt-6 text-xs text-text2">
             <div className="font-bold mb-2 flex items-center gap-1"><Sparkles className="w-3.5 h-3.5 text-primary" /> Try saying:</div>
             <ul className="space-y-1 list-disc pl-5">
-              <li>"What software do you have?"</li>
-              <li>"ERP ka price kya hai?"</li>
-              <li>"How do I book a demo?"</li>
-              <li>"Mujhe GPS tracking chahiye"</li>
+              <li>&quot;What software do you have?&quot;</li>
+              <li>&quot;ERP ka price kya hai?&quot;</li>
+              <li>&quot;How do I book a demo?&quot;</li>
+              <li>&quot;Mujhe GPS tracking chahiye&quot;</li>
             </ul>
           </div>
         </div>

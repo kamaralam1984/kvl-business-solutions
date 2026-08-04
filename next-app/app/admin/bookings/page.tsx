@@ -30,6 +30,7 @@ export default function AdminBookings() {
     if (d.ok) { setBookings(d.bookings); setStats(d.stats); }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load(); }, []);
 
   const updateStatus = async (id: string, status: string) => {

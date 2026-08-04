@@ -60,7 +60,7 @@ export default function AdminBannersPage() {
       </div>
 
       <div className="space-y-3">
-        {banners.length === 0 && <div className="card-base p-8 text-center text-text2">No banners yet. Create one — example: "🎉 25% off this month — code LAUNCH25"</div>}
+        {banners.length === 0 && <div className="card-base p-8 text-center text-text2">No banners yet. Create one — example: &quot;🎉 25% off this month — code LAUNCH25&quot;</div>}
         {banners.map(b => (
           <div key={b._id} className="card-base p-4 flex items-start gap-4">
             <div className="flex-1 min-w-0">

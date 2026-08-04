@@ -45,7 +45,7 @@ export function CtaBanner({ title, desc }: { title?: string; desc?: string }) {
 
         <div className="container relative z-10">
           <div ref={ref} style={revealStyle(inView, 0, { durationMs: 800, distance: 36 })} className="text-center max-w-3xl mx-auto">
-            <span className="eyebrow mb-8 block">Let's Talk</span>
+            <span className="eyebrow mb-8 block">Let&apos;s Talk</span>
 
             {/* Headline */}
             <h2 className="heading-xl mb-6" style={{ color: 'rgb(var(--text))' }}>

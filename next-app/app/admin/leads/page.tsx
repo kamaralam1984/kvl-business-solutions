@@ -45,6 +45,7 @@ export default function AdminLeads() {
     if (d.ok) { setLeads(d.leads); setStats(d.stats); }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load(); }, []);
 
   const updateStatus = async (id: string, status: string) => {

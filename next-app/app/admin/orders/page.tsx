@@ -28,6 +28,7 @@ export default function AdminOrders() {
     if (d.ok) { setOrders(d.orders); setStats(d.stats); }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load(); }, []);
 
   const filterBy = (status: string) => { setStatusFilter(status); load(q, status); };

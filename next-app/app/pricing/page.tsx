@@ -96,7 +96,7 @@ export default function PricingPage() {
             className="text-xl max-w-2xl mx-auto"
             style={{ color: 'rgba(var(--text) / 0.55)' }}
           >
-            Know exactly what you're paying for and what you get — no hidden fees, no surprise renewals, 30-day money-back on everything.
+            Know exactly what you&apos;re paying for and what you get — no hidden fees, no surprise renewals, 30-day money-back on everything.
           </motion.p>
 
           {/* Annual toggle */}

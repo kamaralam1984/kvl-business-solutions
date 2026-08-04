@@ -92,7 +92,7 @@ export default function WorkflowsPage() {
       </div>
 
       <div className="space-y-3">
-        {items.length === 0 && <div className="card-base p-10 text-center text-text2"><Zap className="w-10 h-10 mx-auto opacity-30 mb-2" />No workflows yet. Click "New Workflow" to automate something.</div>}
+        {items.length === 0 && <div className="card-base p-10 text-center text-text2"><Zap className="w-10 h-10 mx-auto opacity-30 mb-2" />No workflows yet. Click &quot;New Workflow&quot; to automate something.</div>}
         {items.map(w => {
           const trig = TRIGGERS.find(t => t.id === w.trigger)?.label || w.trigger;
           const act = ACTIONS.find(a => a.id === w.action)?.label || w.action;
@@ -186,7 +186,7 @@ export default function WorkflowsPage() {
               </label>
 
               <button onClick={save} className="btn btn-primary w-full justify-center"><Save className="w-4 h-4" /> Save Workflow</button>
-              <p className="text-[10px] text-text2">✓ Live execution enabled. Use template vars: <code>{'{{name}}'}</code>, <code>{'{{email}}'}</code>, <code>{'{{amount}}'}</code>, <code>{'{{productName}}'}</code>, <code>{'{{orderId}}'}</code>, etc. Click "Test" to dry-run with mock data.</p>
+              <p className="text-[10px] text-text2">✓ Live execution enabled. Use template vars: <code>{'{{name}}'}</code>, <code>{'{{email}}'}</code>, <code>{'{{amount}}'}</code>, <code>{'{{productName}}'}</code>, <code>{'{{orderId}}'}</code>, etc. Click &quot;Test&quot; to dry-run with mock data.</p>
             </div>
           </div>
         </div>

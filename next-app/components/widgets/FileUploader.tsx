@@ -1,5 +1,6 @@
 'use client';
 import { useRef, useState } from 'react';
+import Image from 'next/image';
 import { Upload, X, Loader2, FileText, Image as ImageIcon } from 'lucide-react';
 
 export type UploadedFile = { url: string; publicId: string; name: string; size: number; format?: string };
@@ -83,7 +84,7 @@ export function FileUploader({ folder = 'kvl/tickets', multiple = true, accept =
             return (
               <div key={f.publicId} className="surface-tint rounded-lg p-2 flex items-center gap-2 text-xs">
                 {isImg
-                  ? <img src={f.url} alt={f.name} className="w-10 h-10 rounded object-cover" />
+                  ? <Image src={f.url} alt={f.name} width={40} height={40} className="w-10 h-10 rounded object-cover" />
                   : <div className="w-10 h-10 rounded bg-app2 grid place-items-center">{isImg ? <ImageIcon className="w-4 h-4" /> : <FileText className="w-4 h-4" />}</div>}
                 <div className="flex-1 min-w-0">
                   <div className="truncate font-semibold">{f.name}</div>

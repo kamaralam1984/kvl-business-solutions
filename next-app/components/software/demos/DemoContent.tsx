@@ -111,11 +111,11 @@ function CrmLeads({ c }: { c: string }) {
       cols={['#', 'Name', 'Phone', 'Source', 'Stage', 'Value', 'Follow-up']}
       color={c}
       rows={[
-        ['001', 'Ramesh Sharma', '9876543210', 'WhatsApp', <Badge label="Qualified" type="blue" />, '₹45,000', '29 May'],
-        ['002', 'Priya Gupta', '9812345678', 'Website', <Badge label="Proposal" type="purple" />, '₹1,20,000', '30 May'],
-        ['003', 'Suresh Kumar', '9988776655', 'Instagram', <Badge label="New" type="yellow" />, '₹18,000', '31 May'],
-        ['004', 'Anita Verma', '9765432109', 'Referral', <Badge label="Closed Won" type="green" />, '₹2,50,000', '—'],
-        ['005', 'Vikram Singh', '9654321098', 'Facebook', <Badge label="Cold" type="red" />, '₹30,000', '2 Jun'],
+        ['001', 'Ramesh Sharma', '9876543210', 'WhatsApp', <Badge key="b-114-59" label="Qualified" type="blue" />, '₹45,000', '29 May'],
+        ['002', 'Priya Gupta', '9812345678', 'Website', <Badge key="b-115-56" label="Proposal" type="purple" />, '₹1,20,000', '30 May'],
+        ['003', 'Suresh Kumar', '9988776655', 'Instagram', <Badge key="b-116-59" label="New" type="yellow" />, '₹18,000', '31 May'],
+        ['004', 'Anita Verma', '9765432109', 'Referral', <Badge key="b-117-57" label="Closed Won" type="green" />, '₹2,50,000', '—'],
+        ['005', 'Vikram Singh', '9654321098', 'Facebook', <Badge key="b-118-58" label="Cold" type="red" />, '₹30,000', '2 Jun'],
       ]}
     />
   );
@@ -147,11 +147,11 @@ function BillingInvoices({ c }: { c: string }) {
       cols={['Invoice #', 'Client', 'Amount', 'GST', 'Status', 'Date']}
       color={c}
       rows={[
-        ['INV-2405001', 'Sharma Traders', '₹45,000', '₹8,100', <Badge label="Paid" type="green" />, '15 May 2025'],
-        ['INV-2405002', 'Gupta Enterprises', '₹1,20,000', '₹21,600', <Badge label="Pending" type="yellow" />, '18 May 2025'],
-        ['INV-2405003', 'Kumar & Sons', '₹18,500', '₹3,330', <Badge label="Paid" type="green" />, '20 May 2025'],
-        ['INV-2405004', 'ABC Industries', '₹2,50,000', '₹45,000', <Badge label="Overdue" type="red" />, '10 May 2025'],
-        ['INV-2405005', 'Tech Solutions', '₹75,000', '₹13,500', <Badge label="Paid" type="green" />, '22 May 2025'],
+        ['INV-2405001', 'Sharma Traders', '₹45,000', '₹8,100', <Badge key="b-150-63" label="Paid" type="green" />, '15 May 2025'],
+        ['INV-2405002', 'Gupta Enterprises', '₹1,20,000', '₹21,600', <Badge key="b-151-69" label="Pending" type="yellow" />, '18 May 2025'],
+        ['INV-2405003', 'Kumar & Sons', '₹18,500', '₹3,330', <Badge key="b-152-61" label="Paid" type="green" />, '20 May 2025'],
+        ['INV-2405004', 'ABC Industries', '₹2,50,000', '₹45,000', <Badge key="b-153-66" label="Overdue" type="red" />, '10 May 2025'],
+        ['INV-2405005', 'Tech Solutions', '₹75,000', '₹13,500', <Badge key="b-154-64" label="Paid" type="green" />, '22 May 2025'],
       ]}
     />
   );
@@ -206,11 +206,11 @@ function GpsVehicles({ c }: { c: string }) {
       cols={['Vehicle No.', 'Driver', 'Status', 'Speed', 'Location', 'Last Update']}
       color={c}
       rows={[
-        ['MH-12-AB-1234', 'Raju Yadav', <Badge label="Moving" type="green" />, '62 km/h', 'Pune-Mumbai Highway', '2 sec ago'],
-        ['UP-16-CD-5678', 'Sunil Kumar', <Badge label="Moving" type="green" />, '48 km/h', 'NH-19, Agra', '5 sec ago'],
-        ['DL-01-EF-9012', 'Deepak Singh', <Badge label="Idle" type="yellow" />, '0 km/h', 'Delhi NCR', '1 min ago'],
-        ['KA-03-GH-3456', 'Ramesh B', <Badge label="Moving" type="green" />, '71 km/h', 'Bengaluru Outer Ring', '8 sec ago'],
-        ['TN-09-IJ-7890', 'Murugan P', <Badge label="Parked" type="blue" />, '0 km/h', 'Chennai Port', '25 min ago'],
+        ['MH-12-AB-1234', 'Raju Yadav', <Badge key="b-209-40" label="Moving" type="green" />, '62 km/h', 'Pune-Mumbai Highway', '2 sec ago'],
+        ['UP-16-CD-5678', 'Sunil Kumar', <Badge key="b-210-41" label="Moving" type="green" />, '48 km/h', 'NH-19, Agra', '5 sec ago'],
+        ['DL-01-EF-9012', 'Deepak Singh', <Badge key="b-211-42" label="Idle" type="yellow" />, '0 km/h', 'Delhi NCR', '1 min ago'],
+        ['KA-03-GH-3456', 'Ramesh B', <Badge key="b-212-38" label="Moving" type="green" />, '71 km/h', 'Bengaluru Outer Ring', '8 sec ago'],
+        ['TN-09-IJ-7890', 'Murugan P', <Badge key="b-213-39" label="Parked" type="blue" />, '0 km/h', 'Chennai Port', '25 min ago'],
       ]}
     />
   );
@@ -241,11 +241,11 @@ function InventoryProducts({ c }: { c: string }) {
       cols={['SKU', 'Product Name', 'Category', 'Qty', 'Reorder Level', 'Status']}
       color={c}
       rows={[
-        ['SKU-001', 'Bearing 6205', 'Spare Parts', '1,240', '200', <Badge label="In Stock" type="green" />],
-        ['SKU-002', 'Motor Oil 5W30', 'Lubricants', '89', '150', <Badge label="Low Stock" type="red" />],
-        ['SKU-003', 'LED Strip Light', 'Electrical', '450', '100', <Badge label="In Stock" type="green" />],
-        ['SKU-004', 'PVC Pipe 1"', 'Plumbing', '12', '50', <Badge label="Critical" type="red" />],
-        ['SKU-005', 'Drill Bit Set', 'Tools', '230', '30', <Badge label="In Stock" type="green" />],
+        ['SKU-001', 'Bearing 6205', 'Spare Parts', '1,240', '200', <Badge key="b-244-67" label="In Stock" type="green" />],
+        ['SKU-002', 'Motor Oil 5W30', 'Lubricants', '89', '150', <Badge key="b-245-65" label="Low Stock" type="red" />],
+        ['SKU-003', 'LED Strip Light', 'Electrical', '450', '100', <Badge key="b-246-67" label="In Stock" type="green" />],
+        ['SKU-004', 'PVC Pipe 1"', 'Plumbing', '12', '50', <Badge key="b-247-59" label="Critical" type="red" />],
+        ['SKU-005', 'Drill Bit Set', 'Tools', '230', '30', <Badge key="b-248-59" label="In Stock" type="green" />],
       ]}
     />
   );
@@ -283,11 +283,11 @@ function SchoolStudents({ c }: { c: string }) {
       cols={['Roll No.', 'Student Name', 'Class', 'Parent Phone', 'Fee Status', 'Attendance']}
       color={c}
       rows={[
-        ['2401', 'Aarav Sharma', 'Class 9-A', '9876543210', <Badge label="Paid" type="green" />, '96%'],
-        ['2402', 'Priya Gupta', 'Class 10-B', '9812345678', <Badge label="Paid" type="green" />, '92%'],
-        ['2403', 'Rohan Verma', 'Class 8-C', '9988776655', <Badge label="Pending" type="yellow" />, '88%'],
-        ['2404', 'Sneha Patel', 'Class 11-A', '9765432109', <Badge label="Paid" type="green" />, '98%'],
-        ['2405', 'Arjun Singh', 'Class 7-B', '9654321098', <Badge label="Overdue" type="red" />, '74%'],
+        ['2401', 'Aarav Sharma', 'Class 9-A', '9876543210', <Badge key="b-286-60" label="Paid" type="green" />, '96%'],
+        ['2402', 'Priya Gupta', 'Class 10-B', '9812345678', <Badge key="b-287-60" label="Paid" type="green" />, '92%'],
+        ['2403', 'Rohan Verma', 'Class 8-C', '9988776655', <Badge key="b-288-59" label="Pending" type="yellow" />, '88%'],
+        ['2404', 'Sneha Patel', 'Class 11-A', '9765432109', <Badge key="b-289-60" label="Paid" type="green" />, '98%'],
+        ['2405', 'Arjun Singh', 'Class 7-B', '9654321098', <Badge key="b-290-59" label="Overdue" type="red" />, '74%'],
       ]}
     />
   );
@@ -341,11 +341,11 @@ function PayrollDashboard({ c }: { c: string }) {
         cols={['Emp ID', 'Name', 'Department', 'Basic', 'HRA', 'Net Salary', 'Status']}
         color={c}
         rows={[
-          ['E001', 'Anil Kumar', 'Sales', '₹35,000', '₹14,000', '₹44,200', <Badge label="Processed" type="green" />],
-          ['E002', 'Meena Sharma', 'HR', '₹42,000', '₹16,800', '₹52,800', <Badge label="Processed" type="green" />],
-          ['E003', 'Raj Patel', 'IT', '₹65,000', '₹26,000', '₹81,400', <Badge label="Pending" type="yellow" />],
-          ['E004', 'Sunita Rao', 'Accounts', '₹38,000', '₹15,200', '₹47,600', <Badge label="Processed" type="green" />],
-          ['E005', 'Deepak Singh', 'Operations', '₹28,000', '₹11,200', '₹34,400', <Badge label="Pending" type="yellow" />],
+          ['E001', 'Anil Kumar', 'Sales', '₹35,000', '₹14,000', '₹44,200', <Badge key="b-344-75" label="Processed" type="green" />],
+          ['E002', 'Meena Sharma', 'HR', '₹42,000', '₹16,800', '₹52,800', <Badge key="b-345-74" label="Processed" type="green" />],
+          ['E003', 'Raj Patel', 'IT', '₹65,000', '₹26,000', '₹81,400', <Badge key="b-346-71" label="Pending" type="yellow" />],
+          ['E004', 'Sunita Rao', 'Accounts', '₹38,000', '₹15,200', '₹47,600', <Badge key="b-347-78" label="Processed" type="green" />],
+          ['E005', 'Deepak Singh', 'Operations', '₹28,000', '₹11,200', '₹34,400', <Badge key="b-348-82" label="Pending" type="yellow" />],
         ]}
       />
     </div>
@@ -366,11 +366,11 @@ function AttendanceDashboard({ c }: { c: string }) {
         cols={['Emp ID', 'Name', 'Punch In', 'Punch Out', 'Hours', 'Status']}
         color={c}
         rows={[
-          ['E001', 'Anil Kumar', '09:02 AM', '06:05 PM', '9h 3m', <Badge label="Present" type="green" />],
-          ['E002', 'Meena Sharma', '09:18 AM', 'Working...', '—', <Badge label="Late" type="yellow" />],
-          ['E003', 'Raj Patel', '—', '—', '—', <Badge label="Absent" type="red" />],
-          ['E004', 'Sunita Rao', '08:58 AM', '05:58 PM', '9h 0m', <Badge label="Present" type="green" />],
-          ['E005', 'Deepak Singh', '—', '—', '—', <Badge label="Leave" type="blue" />],
+          ['E001', 'Anil Kumar', '09:02 AM', '06:05 PM', '9h 3m', <Badge key="b-369-66" label="Present" type="green" />],
+          ['E002', 'Meena Sharma', '09:18 AM', 'Working...', '—', <Badge key="b-370-66" label="Late" type="yellow" />],
+          ['E003', 'Raj Patel', '—', '—', '—', <Badge key="b-371-47" label="Absent" type="red" />],
+          ['E004', 'Sunita Rao', '08:58 AM', '05:58 PM', '9h 0m', <Badge key="b-372-66" label="Present" type="green" />],
+          ['E005', 'Deepak Singh', '—', '—', '—', <Badge key="b-373-50" label="Leave" type="blue" />],
         ]}
       />
     </div>
@@ -391,11 +391,11 @@ function ConstructionDashboard({ c }: { c: string }) {
         cols={['Project', 'Client', 'Budget', 'Progress', 'Deadline', 'Status']}
         color={c}
         rows={[
-          ['Skyline Tower A', 'DLF Builders', '₹2.4Cr', '78%', '30 Jun 2025', <Badge label="On Track" type="green" />],
-          ['NH-48 Bridge', 'NHAI', '₹8.6Cr', '45%', '31 Dec 2025', <Badge label="On Track" type="green" />],
-          ['Green City Phase 2', 'Godrej', '₹14Cr', '22%', '30 Mar 2026', <Badge label="Planning" type="blue" />],
-          ['Metro Station', 'DMRC', '₹3.2Cr', '91%', '15 Jun 2025', <Badge label="Delayed" type="red" />],
-          ['Commercial Complex', 'Prestige', '₹6.8Cr', '55%', '30 Sep 2025', <Badge label="On Track" type="green" />],
+          ['Skyline Tower A', 'DLF Builders', '₹2.4Cr', '78%', '30 Jun 2025', <Badge key="b-394-78" label="On Track" type="green" />],
+          ['NH-48 Bridge', 'NHAI', '₹8.6Cr', '45%', '31 Dec 2025', <Badge key="b-395-67" label="On Track" type="green" />],
+          ['Green City Phase 2', 'Godrej', '₹14Cr', '22%', '30 Mar 2026', <Badge key="b-396-74" label="Planning" type="blue" />],
+          ['Metro Station', 'DMRC', '₹3.2Cr', '91%', '15 Jun 2025', <Badge key="b-397-68" label="Delayed" type="red" />],
+          ['Commercial Complex', 'Prestige', '₹6.8Cr', '55%', '30 Sep 2025', <Badge key="b-398-77" label="On Track" type="green" />],
         ]}
       />
     </div>
@@ -416,11 +416,11 @@ function WorkshopDashboard({ c }: { c: string }) {
         cols={['Job #', 'Vehicle', 'Customer', 'Work Type', 'Mechanic', 'Status']}
         color={c}
         rows={[
-          ['JC-2405-001', 'MH-12 AB 1234', 'Ramesh Sharma', 'Engine Overhaul', 'Suresh K', <Badge label="In Progress" type="blue" />],
-          ['JC-2405-002', 'DL-01 CD 5678', 'Priya Gupta', 'AC Service', 'Ravi M', <Badge label="Completed" type="green" />],
-          ['JC-2405-003', 'UP-16 EF 9012', 'Anil Verma', 'Denting & Paint', 'Mohan L', <Badge label="Waiting Parts" type="yellow" />],
-          ['JC-2405-004', 'KA-03 GH 3456', 'Sunita Roy', 'Tyre Change', 'Suresh K', <Badge label="Completed" type="green" />],
-          ['JC-2405-005', 'TN-09 IJ 7890', 'Vikram Das', 'Oil Change', 'Ravi M', <Badge label="Pending" type="yellow" />],
+          ['JC-2405-001', 'MH-12 AB 1234', 'Ramesh Sharma', 'Engine Overhaul', 'Suresh K', <Badge key="b-419-91" label="In Progress" type="blue" />],
+          ['JC-2405-002', 'DL-01 CD 5678', 'Priya Gupta', 'AC Service', 'Ravi M', <Badge key="b-420-82" label="Completed" type="green" />],
+          ['JC-2405-003', 'UP-16 EF 9012', 'Anil Verma', 'Denting & Paint', 'Mohan L', <Badge key="b-421-87" label="Waiting Parts" type="yellow" />],
+          ['JC-2405-004', 'KA-03 GH 3456', 'Sunita Roy', 'Tyre Change', 'Suresh K', <Badge key="b-422-84" label="Completed" type="green" />],
+          ['JC-2405-005', 'TN-09 IJ 7890', 'Vikram Das', 'Oil Change', 'Ravi M', <Badge key="b-423-81" label="Pending" type="yellow" />],
         ]}
       />
     </div>
@@ -535,11 +535,11 @@ function RealEstateDashboard({ c }: { c: string }) {
         cols={['Property', 'Type', 'Location', 'Price', 'Agent', 'Status']}
         color={c}
         rows={[
-          ['Sunrise Heights 3BHK', 'Residential', 'Bandra West, Mumbai', '₹2.8Cr', 'Amit Shah', <Badge label="Available" type="green" />],
-          ['Commercial Space 2000sqft', 'Commercial', 'Connaught Place, Delhi', '₹4.5Cr', 'Priya Verma', <Badge label="Negotiation" type="yellow" />],
-          ['Green Villa Plot 1200sqyd', 'Plot', 'Whitefield, Bangalore', '₹85L', 'Ravi Kumar', <Badge label="Available" type="green" />],
-          ['Lake View Apartment 2BHK', 'Residential', 'Powai, Mumbai', '₹1.2Cr', 'Amit Shah', <Badge label="Sold" type="blue" />],
-          ['IT Park Office Floor', 'Commercial', 'Hinjewadi, Pune', '₹6.2Cr', 'Sneha Das', <Badge label="Available" type="green" />],
+          ['Sunrise Heights 3BHK', 'Residential', 'Bandra West, Mumbai', '₹2.8Cr', 'Amit Shah', <Badge key="b-538-96" label="Available" type="green" />],
+          ['Commercial Space 2000sqft', 'Commercial', 'Connaught Place, Delhi', '₹4.5Cr', 'Priya Verma', <Badge key="b-539-105" label="Negotiation" type="yellow" />],
+          ['Green Villa Plot 1200sqyd', 'Plot', 'Whitefield, Bangalore', '₹85L', 'Ravi Kumar', <Badge key="b-540-95" label="Available" type="green" />],
+          ['Lake View Apartment 2BHK', 'Residential', 'Powai, Mumbai', '₹1.2Cr', 'Amit Shah', <Badge key="b-541-94" label="Sold" type="blue" />],
+          ['IT Park Office Floor', 'Commercial', 'Hinjewadi, Pune', '₹6.2Cr', 'Sneha Das', <Badge key="b-542-91" label="Available" type="green" />],
         ]}
       />
     </div>

@@ -171,7 +171,7 @@ export function IndustryLandingTemplate({ data }: { data: IndustryLandingPage })
         <div className="container">
           <div className="text-center mb-10 max-w-2xl mx-auto">
             <span className="eyebrow">Core Features</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold my-4">What's Included</h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold my-4">What&apos;s Included</h2>
           </div>
           <div className="grid sm:grid-cols-2 gap-3 max-w-3xl mx-auto">
             {data.coreFeatures.map(f => (
@@ -266,7 +266,7 @@ export function IndustryLandingTemplate({ data }: { data: IndustryLandingPage })
           <div className="container">
             <div className="text-center mb-10 max-w-2xl mx-auto">
               <span className="eyebrow">Proven Work</span>
-              <h2 className="text-3xl md:text-4xl font-extrabold my-4">A Real System We've Built</h2>
+              <h2 className="text-3xl md:text-4xl font-extrabold my-4">A Real System We&apos;ve Built</h2>
             </div>
             <Link href={`/projects/${caseStudy.slug}`} className="card-premium p-8 block hover:shadow-card-hover transition-all group max-w-3xl mx-auto">
               <div className="text-[11px] font-bold tracking-widest uppercase mb-2" style={{ color: '#a3814f' }}>{caseStudy.businessCategory}</div>

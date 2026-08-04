@@ -71,7 +71,7 @@ export default function DocArticlePage({ params }: { params: { slug: string } })
 
       <div className="mt-10 pt-6 border-t border-tint surface-tint p-5 rounded-xl">
         <p className="font-semibold text-sm mb-1">Was this helpful?</p>
-        <p className="text-xs text-text2 mb-3">If not, raise a ticket and we'll improve this article.</p>
+        <p className="text-xs text-text2 mb-3">If not, raise a ticket and we&apos;ll improve this article.</p>
         <Link href="/support" className="btn btn-ghost text-xs">Contact support →</Link>
       </div>
 

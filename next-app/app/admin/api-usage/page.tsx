@@ -8,10 +8,13 @@ export default function ApiUsagePage() {
 
   const load = async () => {
     setLoading(true);
-    const r = await fetch('/api/admin/api-usage');
-    const d = await r.json();
-    setData(d);
-    setLoading(false);
+    try {
+      const r = await fetch('/api/admin/api-usage');
+      const d = await r.json();
+      setData(d);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {

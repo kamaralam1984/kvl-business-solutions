@@ -37,7 +37,7 @@ export default function RevenueDashboardPage() {
       <div>
         <h1 className="font-display font-black text-[1.8rem] tracking-tight leading-none" style={{ color: 'rgb(var(--text))' }}>Revenue Dashboard</h1>
         <p className="text-[13px] mt-2" style={{ color: 'rgba(var(--text) / 0.3)' }}>
-          Every number below is computed from this site's real database — no ad-platform API, no estimates.
+          Every number below is computed from this site&apos;s real database — no ad-platform API, no estimates.
         </p>
       </div>
 

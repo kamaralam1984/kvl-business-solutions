@@ -204,6 +204,7 @@ export function VipTracker() {
       document.removeEventListener('paste', onPaste);
       window.removeEventListener('error', onError);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return null;

@@ -25,7 +25,7 @@ export default async function FranchisePage() {
           <Building2 className="w-12 h-12 mx-auto text-primary mb-3" />
           <h1 className="text-2xl font-extrabold mb-2">Franchise Dashboard</h1>
           <p className="text-text2 text-sm mb-6">
-            You're not registered as a franchise yet. Apply to become a KVL franchise partner — get exclusive territory, commissions, and full software support.
+            You&apos;re not registered as a franchise yet. Apply to become a KVL franchise partner — get exclusive territory, commissions, and full software support.
           </p>
           <div className="grid sm:grid-cols-3 gap-4 mb-6">
             {[

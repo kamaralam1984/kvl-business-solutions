@@ -82,7 +82,7 @@ export default function VipOverviewPage() {
               <h2 className="text-[13px] font-bold mb-4" style={{ color: 'rgb(var(--text))' }}>Top Countries (7d)</h2>
               <p className="text-[10px] mb-3" style={{ color: 'rgba(var(--text) / 0.3)' }}>From Vercel edge geo headers — real, not estimated.</p>
               <div className="space-y-2">
-                {data.topCountries.length === 0 && <p className="text-[12px]" style={{ color: 'rgba(var(--text) / 0.3)' }}>No geo data yet (only present when served via Vercel's edge network).</p>}
+                {data.topCountries.length === 0 && <p className="text-[12px]" style={{ color: 'rgba(var(--text) / 0.3)' }}>No geo data yet (only present when served via Vercel&apos;s edge network).</p>}
                 {data.topCountries.map((c: any) => (
                   <div key={c.country} className="flex items-center justify-between text-[12px]">
                     <span style={{ color: 'rgba(var(--text) / 0.6)' }}>{c.country}</span>

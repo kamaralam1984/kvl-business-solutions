@@ -24,7 +24,7 @@ export function HomeFAQ() {
           <span className="eyebrow mb-4 block">Common Questions</span>
           <h2 className="heading-lg" style={{ color: 'rgb(var(--text))' }}>
             Before you ask,<br />
-            <span style={{ color: '#c8a870' }}>here's what most people want to know.</span>
+            <span style={{ color: '#c8a870' }}>here&apos;s what most people want to know.</span>
           </h2>
         </div>
 

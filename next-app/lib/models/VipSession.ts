@@ -35,11 +35,10 @@ const VipSessionSchema = new Schema({
   },
   channel: String, // derived, human-readable classification (google-organic, facebook-ads, direct, referral, ...) — see lib/vip/traffic-source.ts
 
-  // Populated from Vercel's edge geo headers (x-vercel-ip-*), present on
-  // every request at zero cost since this app runs behind Vercel's edge
-  // network (confirmed via vercel.json's real cron config). Left entirely
-  // null/absent — never a guessed default — if those headers aren't present
-  // (e.g. local dev, or a non-Vercel host).
+  // Vercel edge headers (x-vercel-ip-*) when present, else a keyless IP
+  // lookup (lib/vip/geo.ts) — production runs on a self-hosted VPS, not
+  // Vercel, so the headers never fire there. Left entirely null/absent,
+  // never a guessed default, if both sources fail.
   geo: {
     country: String,
     region: String,
@@ -47,7 +46,7 @@ const VipSessionSchema = new Schema({
     timezone: String,
     latitude: String,
     longitude: String,
-    source: String, // e.g. 'vercel-edge'
+    source: String, // 'vercel-edge' or 'ipapi'
   },
 
   // ISP/ASN/proxy/VPN/bot detection — Module 2/Module 4's "verified" tier

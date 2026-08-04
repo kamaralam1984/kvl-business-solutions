@@ -52,11 +52,11 @@ export default async function CareersPage() {
 
           {/* Open positions */}
           <h2 className="text-2xl font-extrabold mb-2 flex items-center gap-2"><Briefcase className="w-6 h-6 text-primary" /> Open positions ({jobs.length})</h2>
-          <p className="text-text2 text-sm mb-6">All roles offer competitive salary, equity, hybrid work, and a real chance to shape India's business technology landscape.</p>
+          <p className="text-text2 text-sm mb-6">All roles offer competitive salary, equity, hybrid work, and a real chance to shape India&apos;s business technology landscape.</p>
 
           {jobs.length === 0 ? (
             <div className="card-base p-10 text-center">
-              <p className="text-text2 mb-3">No open positions right now — but we're always looking for great talent.</p>
+              <p className="text-text2 mb-3">No open positions right now — but we&apos;re always looking for great talent.</p>
               <Link href="/contact" className="btn btn-primary">Send us your resume</Link>
             </div>
           ) : (

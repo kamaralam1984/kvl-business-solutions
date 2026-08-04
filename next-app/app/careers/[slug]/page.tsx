@@ -39,7 +39,7 @@ export default async function JobPage({ params }: { params: { slug: string } }) 
 
           {job.responsibilities?.length > 0 && (
             <div className="mb-6">
-              <h2 className="font-bold mb-2">What you'll do</h2>
+              <h2 className="font-bold mb-2">What you&apos;ll do</h2>
               <ul className="space-y-1.5 text-sm">
                 {job.responsibilities.map((r: string, i: number) => (
                   <li key={i} className="flex gap-2"><span className="text-primary">•</span> {r}</li>
@@ -61,7 +61,7 @@ export default async function JobPage({ params }: { params: { slug: string } }) 
 
           <div className="card-base p-5 surface-tint">
             <h3 className="font-bold mb-2 flex items-center gap-2"><Sparkles className="w-4 h-4 text-primary" /> Want to practice for this interview?</h3>
-            <p className="text-text2 text-sm mb-3">Use our AI mock interview tool — set the role to "{job.title}" and get realistic practice + feedback.</p>
+            <p className="text-text2 text-sm mb-3">Use our AI mock interview tool — set the role to &quot;{job.title}&quot; and get realistic practice + feedback.</p>
             <Link href="/mock-interview" className="btn btn-ghost text-sm">Try AI Mock Interview →</Link>
           </div>
         </div>

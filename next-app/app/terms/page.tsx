@@ -5,7 +5,7 @@ export const metadata = { title: 'Terms of Service — KVL Business Solutions' }
 export default function TermsPage() {
   return (
     <LegalLayout title="Terms of Service" updated="May 2026">
-      <p>By accessing or using KVL Business Solutions ("the Service"), you agree to these terms. Please read them carefully.</p>
+      <p>By accessing or using KVL Business Solutions (&quot;the Service&quot;), you agree to these terms. Please read them carefully.</p>
 
       <h2>1. Account</h2>
       <p>You must provide accurate information when registering and keep your password confidential. You are responsible for all activity on your account.</p>

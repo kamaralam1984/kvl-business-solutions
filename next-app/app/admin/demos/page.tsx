@@ -74,7 +74,7 @@ export default function AdminDemosPage() {
       <div className="flex justify-between items-end mb-4">
         <div>
           <h1 className="text-2xl font-extrabold flex items-center gap-2"><Globe className="w-6 h-6 text-primary" /> Website Demos</h1>
-          <p className="text-text2 text-sm mt-1">Manage what's shown on /website-demos page. Real client work (LIVE badge) + design templates.</p>
+          <p className="text-text2 text-sm mt-1">Manage what&apos;s shown on /website-demos page. Real client work (LIVE badge) + design templates.</p>
         </div>
         <div className="flex gap-2">
           <button onClick={seedDefaults} className="btn btn-ghost text-xs" title="Add 11 default demos (Vidyt, Aapka Plot + 9 templates)"><Download className="w-3.5 h-3.5" /> Seed Defaults</button>
@@ -87,7 +87,7 @@ export default function AdminDemosPage() {
         {demos.length === 0 && (
           <div className="col-span-full card-base p-10 text-center">
             <Globe className="w-12 h-12 mx-auto text-text2 opacity-30 mb-3" />
-            <p className="text-text2 text-sm">No demos yet. Click "Add Website" to add your first one.</p>
+            <p className="text-text2 text-sm">No demos yet. Click &quot;Add Website&quot; to add your first one.</p>
             <p className="text-xs text-text2 mt-2">Example: vidyt.com, aapkaplote.com</p>
           </div>
         )}

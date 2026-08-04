@@ -29,6 +29,7 @@ export default function CampaignDetailPage() {
   const load = () => fetch(`/api/admin/outreach/campaigns/${id}`).then(r => r.json()).then(d => {
     if (d.ok) { setCampaign(d.campaign); setProspects(d.prospects); }
   });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load(); }, [id]);
 
   const addBulk = async () => {

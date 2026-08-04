@@ -36,7 +36,7 @@ export default function DocsPage() {
 
           {q.trim() ? (
             <div>
-              <h2 className="text-sm uppercase tracking-wider text-text2 mb-3">{results.length} result{results.length !== 1 ? 's' : ''} for "{q}"</h2>
+              <h2 className="text-sm uppercase tracking-wider text-text2 mb-3">{results.length} result{results.length !== 1 ? 's' : ''} for &quot;{q}&quot;</h2>
               {results.length === 0 ? (
                 <div className="card-base p-8 text-center">
                   <p className="text-text2 mb-4">No articles matched. Try a different search.</p>
@@ -103,7 +103,7 @@ export default function DocsPage() {
               })}
 
               <div className="card-base p-6 surface-tint text-center">
-                <p className="font-semibold mb-1">Can't find what you need?</p>
+                <p className="font-semibold mb-1">Can&apos;t find what you need?</p>
                 <p className="text-text2 text-sm mb-4">Our team responds within 4 business hours.</p>
                 <Link href="/support" className="btn btn-primary">Contact Support</Link>
               </div>

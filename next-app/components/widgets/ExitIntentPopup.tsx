@@ -103,7 +103,7 @@ export function ExitIntentPopup() {
                   Talk to a solution architect —<br className="hidden sm:block" /> not a sales rep.
                 </h2>
                 <p className="text-[13.5px] mt-3 leading-[1.7]" style={{ color: 'rgb(var(--text-2))' }}>
-                  Leave your email and we'll set up a free 30-minute call to talk through what you're building.
+                  Leave your email and we&apos;ll set up a free 30-minute call to talk through what you&apos;re building.
                 </p>
               </div>
             </div>
@@ -117,7 +117,7 @@ export function ExitIntentPopup() {
                     style={{ background: 'rgba(var(--gold-rgb),0.10)', border: '1px solid rgba(var(--gold-rgb),0.28)' }}>
                     <CheckCircle2 className="w-6 h-6" style={{ color: '#c8a870' }} />
                   </div>
-                  <h3 className="font-display font-bold text-lg" style={{ color: 'rgb(var(--text))' }}>You're on the list</h3>
+                  <h3 className="font-display font-bold text-lg" style={{ color: 'rgb(var(--text))' }}>You&apos;re on the list</h3>
                   <p className="text-[13px] mt-1" style={{ color: 'rgb(var(--text-2))' }}>Someone from our team will reach out shortly.</p>
                 </div>
               ) : (

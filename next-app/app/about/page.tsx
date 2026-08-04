@@ -86,7 +86,7 @@ export default function AboutPage() {
             transition={{ duration: 0.7, delay: 0.4 }}
             className="mt-6 text-xl max-w-2xl mx-auto text-text2"
           >
-            We're a digital transformation and business automation partner — built to give Indian businesses the enterprise-grade software, infrastructure and engineering that used to be out of reach.
+            We&apos;re a digital transformation and business automation partner — built to give Indian businesses the enterprise-grade software, infrastructure and engineering that used to be out of reach.
           </motion.p>
         </div>
       </section>
@@ -102,7 +102,7 @@ export default function AboutPage() {
               Built for<br />Indian Businesses
             </h2>
             <p className="leading-relaxed text-sm text-text2">
-              KVL Business Solutions started in 2015 as a software-services team. Today, we're a full-stack technology and automation partner — enterprise software, infrastructure, GPS and industrial systems, civil engineering and digital marketing, delivered by one accountable team instead of five disconnected vendors.
+              KVL Business Solutions started in 2015 as a software-services team. Today, we&apos;re a full-stack technology and automation partner — enterprise software, infrastructure, GPS and industrial systems, civil engineering and digital marketing, delivered by one accountable team instead of five disconnected vendors.
             </p>
             <p className="mt-4 leading-relaxed text-sm text-text2">
               Our mission is simple: combine world-class engineering with deep understanding of how Indian businesses actually operate, so the systems we build fit the way you work — not the other way around.
@@ -250,7 +250,7 @@ export default function AboutPage() {
         <div className="container text-center">
           <FadeIn>
             <h2 className="text-4xl font-extrabold mb-4 text-text" style={{ fontFamily: 'Poppins, sans-serif' }}>
-              Let's build what's next for your business.
+              Let&apos;s build what&apos;s next for your business.
             </h2>
             <p className="mb-8 max-w-lg mx-auto text-sm text-text2">Free consultation, no commitment — tell us what you&apos;re building and we&apos;ll tell you exactly how we&apos;d approach it.</p>
             <div className="flex gap-4 justify-center flex-wrap">

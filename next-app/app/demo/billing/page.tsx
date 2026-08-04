@@ -68,7 +68,7 @@ export default function BillingDemoLanding() {
               GST billing without<br />the <span className="text-green-600">month-end scramble.</span>
             </h1>
             <p className="text-lg text-slate-600 leading-relaxed mb-8 max-w-lg">
-              1-click e-invoicing, e-way bills and Tally-ready books — replace manual billing with a counter that's faster than cash, and books your CA will actually thank you for.
+              1-click e-invoicing, e-way bills and Tally-ready books — replace manual billing with a counter that&apos;s faster than cash, and books your CA will actually thank you for.
             </p>
             <div className="flex flex-wrap gap-3 mb-10">
               <Link href="/demo/billing/login" className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3.5 rounded-xl transition-colors shadow-lg shadow-green-600/20">

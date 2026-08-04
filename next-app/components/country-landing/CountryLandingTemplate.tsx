@@ -246,7 +246,7 @@ export function CountryLandingTemplate({ country }: { country: CountryPage }) {
           <div className="container">
             <div className="text-center mb-10 max-w-2xl mx-auto">
               <span className="eyebrow">Proven Work</span>
-              <h2 className="text-3xl md:text-4xl font-extrabold my-4">Real Products We've Built</h2>
+              <h2 className="text-3xl md:text-4xl font-extrabold my-4">Real Products We&apos;ve Built</h2>
             </div>
             <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
               {relatedCaseStudies.map(cs => (

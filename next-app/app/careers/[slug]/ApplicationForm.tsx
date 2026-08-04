@@ -32,7 +32,7 @@ export function ApplicationForm({ jobSlug, jobTitle }: { jobSlug: string; jobTit
     <div className="text-center py-4">
       <CheckCircle2 className="w-12 h-12 mx-auto text-green-500 mb-2" />
       <h3 className="font-bold">Application sent!</h3>
-      <p className="text-xs text-text2 mt-2">We'll review and respond within 5 business days.</p>
+      <p className="text-xs text-text2 mt-2">We&apos;ll review and respond within 5 business days.</p>
     </div>
   );
 

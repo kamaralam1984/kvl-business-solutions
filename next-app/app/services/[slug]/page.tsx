@@ -135,7 +135,7 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
           <div className="container">
             <div className="text-center mb-10">
               <span className="eyebrow">Where This Fits</span>
-              <h2 className="text-3xl md:text-4xl font-extrabold my-4">Industries We've Built This For</h2>
+              <h2 className="text-3xl md:text-4xl font-extrabold my-4">Industries We&apos;ve Built This For</h2>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {relatedIndustries.map(ind => (

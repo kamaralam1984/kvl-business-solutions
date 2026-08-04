@@ -5,7 +5,7 @@ export const metadata = { title: 'Privacy Policy — KVL Business Solutions' };
 export default function PrivacyPage() {
   return (
     <LegalLayout title="Privacy Policy" updated="May 2026">
-      <p>KVL Business Solutions ("we", "us", "our") respects your privacy. This policy explains what data we collect, how we use it, and your rights.</p>
+      <p>KVL Business Solutions (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) respects your privacy. This policy explains what data we collect, how we use it, and your rights.</p>
 
       <h2>1. Information we collect</h2>
       <ul>

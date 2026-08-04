@@ -116,7 +116,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
             </div>
 
             <div className="card-base p-7">
-              <h2 className="text-xl font-bold mb-4">What's included</h2>
+              <h2 className="text-xl font-bold mb-4">What&apos;s included</h2>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="flex gap-3"><Cloud className="w-5 h-5 text-primary shrink-0" /><div><div className="font-semibold text-sm">Free installation</div><div className="text-xs text-text2">Our team deploys it for you within 24 hours.</div></div></div>
                 <div className="flex gap-3"><Headphones className="w-5 h-5 text-primary shrink-0" /><div><div className="font-semibold text-sm">1-year support</div><div className="text-xs text-text2">Email, chat & phone support included.</div></div></div>
@@ -130,7 +130,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
             <div className="card-base p-7">
               <h2 className="text-xl font-bold mb-4">Frequently asked</h2>
               <div className="space-y-4 text-sm">
-                <div><div className="font-semibold">Is GST invoice provided?</div><div className="text-text2">Yes, you'll receive a GST-compliant invoice (18% GST) immediately after payment. Download from your dashboard.</div></div>
+                <div><div className="font-semibold">Is GST invoice provided?</div><div className="text-text2">Yes, you&apos;ll receive a GST-compliant invoice (18% GST) immediately after payment. Download from your dashboard.</div></div>
                 <div><div className="font-semibold">Can I cancel my subscription?</div><div className="text-text2">Yes, within 30 days for a full refund. See our refund policy.</div></div>
                 <div><div className="font-semibold">Do you offer custom features?</div><div className="text-text2">Yes — request a quote for custom modules.</div></div>
               </div>

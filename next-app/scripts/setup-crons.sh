@@ -2,7 +2,7 @@
 # KVL Marketing Cron Setup Script
 # Run this on VPS: CRON_SECRET=<value from .env.local> bash /var/www/kvl/next-app/next-app/scripts/setup-crons.sh
 
-PORT=3002
+PORT=3003
 
 if [ -z "$CRON_SECRET" ]; then
   echo "❌ CRON_SECRET is not set. Run with: CRON_SECRET=<value from .env.local> bash scripts/setup-crons.sh"
@@ -10,7 +10,7 @@ if [ -z "$CRON_SECRET" ]; then
 fi
 
 # Remove old KVL cron entries if any
-crontab -l 2>/dev/null | grep -v "kvl\|lead-followup\|lead-nurture\|review-request\|abandoned-orders\|renewal-reminders\|workflow-triggers\|expire-coupons" > /tmp/crontab_clean
+crontab -l 2>/dev/null | grep -v "kvl\|lead-followup\|lead-nurture\|review-request\|abandoned-orders\|renewal-reminders\|workflow-triggers\|expire-coupons\|vip-lead-scoring" > /tmp/crontab_clean
 
 # Add new KVL cron jobs — auth via Authorization: Bearer header (matches lib/cron-auth.ts), not a query-string secret
 cat >> /tmp/crontab_clean << EOF
@@ -30,6 +30,8 @@ cat >> /tmp/crontab_clean << EOF
 0 8 * * * curl -s -H "Authorization: Bearer $CRON_SECRET" "http://localhost:$PORT/api/cron/workflow-triggers" >> /var/log/kvl-cron.log 2>&1
 # Deactivate expired coupons (daily midnight)
 0 0 * * * curl -s -H "Authorization: Bearer $CRON_SECRET" "http://localhost:$PORT/api/cron/expire-coupons" >> /var/log/kvl-cron.log 2>&1
+# VIP visitor lead-score batch recompute (daily 6am)
+0 6 * * * curl -s -H "Authorization: Bearer $CRON_SECRET" "http://localhost:$PORT/api/cron/vip-lead-scoring" >> /var/log/kvl-cron.log 2>&1
 EOF
 
 crontab /tmp/crontab_clean

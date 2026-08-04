@@ -27,6 +27,7 @@ export default function AdminQuotes() {
     if (d.ok) { setQuotes(d.quotes); setStats(d.stats); }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load(); }, []);
 
   const updateStatus = async (id: string, status: string) => {

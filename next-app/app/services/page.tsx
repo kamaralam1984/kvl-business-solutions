@@ -100,7 +100,7 @@ export default function ServicesPage() {
             className="text-xl max-w-2xl mx-auto"
             style={{ color: 'rgba(var(--text) / 0.55)' }}
           >
-            One partner for every system your business runs on — software, infrastructure, automation and engineering — instead of five vendors who don't talk to each other.
+            One partner for every system your business runs on — software, infrastructure, automation and engineering — instead of five vendors who don&apos;t talk to each other.
           </motion.p>
         </div>
       </section>

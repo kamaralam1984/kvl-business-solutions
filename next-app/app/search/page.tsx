@@ -108,7 +108,7 @@ function SearchView() {
               )}
               {productResults.length === 0 && pageResults.length === 0 && projectResults.length === 0 && (
                 <div className="card-base p-8 text-center">
-                  <p className="text-text2">No results for <b>"{q}"</b>. Try a different search term.</p>
+                  <p className="text-text2">No results for <b>&quot;{q}&quot;</b>. Try a different search term.</p>
                   <Link href="/contact" className="btn btn-primary mt-4 inline-flex">Contact Us</Link>
                 </div>
               )}

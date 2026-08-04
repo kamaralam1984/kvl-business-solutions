@@ -60,7 +60,7 @@ export default function AdminProductsPage() {
                 </td>
               </tr>
             ))}
-            {products.length === 0 && <tr><td colSpan={5} className="p-8 text-center text-text2">No products yet. Click "Add Product" to create one.</td></tr>}
+            {products.length === 0 && <tr><td colSpan={5} className="p-8 text-center text-text2">No products yet. Click &quot;Add Product&quot; to create one.</td></tr>}
           </tbody>
         </table>
       </div>

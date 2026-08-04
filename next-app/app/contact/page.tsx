@@ -47,7 +47,7 @@ export default async function ContactPage() {
             Talk to a Solution Architect
           </h1>
           <p className="text-xl max-w-2xl mx-auto text-text2">
-            Tell us what you're building. We respond within 1 hour during business hours — free consultation, no obligation.
+            Tell us what you&apos;re building. We respond within 1 hour during business hours — free consultation, no obligation.
           </p>
         </div>
       </section>

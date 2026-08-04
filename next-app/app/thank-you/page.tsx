@@ -72,11 +72,11 @@ export default function ThankYouPage({ searchParams }: { searchParams: { type?: 
             {type === 'booking' ? (
               <>
                 <h3 className="font-bold text-lg mb-2">Need to change your slot?</h3>
-                <p className="text-text2 text-sm mb-5">Message us on WhatsApp and we'll adjust it — no need to fill the form again.</p>
+                <p className="text-text2 text-sm mb-5">Message us on WhatsApp and we&apos;ll adjust it — no need to fill the form again.</p>
               </>
             ) : (
               <>
-                <h3 className="font-bold text-lg mb-2">Don't want to wait?</h3>
+                <h3 className="font-bold text-lg mb-2">Don&apos;t want to wait?</h3>
                 <p className="text-text2 text-sm mb-5">Book a free strategy call directly and pick a time that works for you.</p>
               </>
             )}
@@ -111,7 +111,7 @@ export default function ThankYouPage({ searchParams }: { searchParams: { type?: 
             <a href="/api/downloads/portfolio" target="_blank" rel="noreferrer" className="card-base p-6 hover:shadow-card-hover transition-all block">
               <Briefcase className="w-6 h-6 mb-3" style={{ color: '#a3814f' }} />
               <h3 className="font-bold text-sm mb-1.5">Portfolio</h3>
-              <p className="text-text2 text-[12.5px] leading-[1.6]">Real, live projects we've built — with outcomes.</p>
+              <p className="text-text2 text-[12.5px] leading-[1.6]">Real, live projects we&apos;ve built — with outcomes.</p>
             </a>
             <a href="/api/downloads/service-brochure" target="_blank" rel="noreferrer" className="card-base p-6 hover:shadow-card-hover transition-all block">
               <BookOpen className="w-6 h-6 mb-3" style={{ color: '#a3814f' }} />

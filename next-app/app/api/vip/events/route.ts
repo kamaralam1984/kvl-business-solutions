@@ -5,9 +5,10 @@ import { VipVisitor } from '@/lib/models/VipVisitor';
 import { VipSession } from '@/lib/models/VipSession';
 import { VipPageView } from '@/lib/models/VipPageView';
 import { VipEvent, VIP_EVENT_TYPES } from '@/lib/models/VipEvent';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimit, clientIp } from '@/lib/rate-limit';
 import { classifyChannel } from '@/lib/vip/traffic-source';
 import { parseDevice } from '@/lib/vip/device';
+import { resolveGeo } from '@/lib/vip/geo';
 
 const eventSchema = z.object({
   type: z.enum(VIP_EVENT_TYPES),
@@ -30,21 +31,6 @@ const schema = z.object({
   }).optional(),
   events: z.array(eventSchema).min(1).max(50), // client SDK flushes at 20; 50 gives headroom
 });
-
-// Vercel's edge network stamps these headers on every request at zero cost
-// (confirmed via this repo's real vercel.json cron config, i.e. this app
-// does run behind Vercel). Only ever read, never defaulted to a guess — a
-// field stays absent if the header isn't present (e.g. local dev).
-function readVercelGeo(headers: Headers) {
-  const country = headers.get('x-vercel-ip-country') || undefined;
-  const region = headers.get('x-vercel-ip-country-region') || undefined;
-  const city = headers.get('x-vercel-ip-city') ? decodeURIComponent(headers.get('x-vercel-ip-city')!) : undefined;
-  const timezone = headers.get('x-vercel-ip-timezone') || undefined;
-  const latitude = headers.get('x-vercel-ip-latitude') || undefined;
-  const longitude = headers.get('x-vercel-ip-longitude') || undefined;
-  if (!country && !city) return undefined;
-  return { country, region, city, timezone, latitude, longitude, source: 'vercel-edge' };
-}
 
 export async function POST(req: Request) {
   let data: z.infer<typeof schema>;
@@ -84,7 +70,7 @@ export async function POST(req: Request) {
       device: parseDevice(ua),
       utm: data.utm,
       channel: classifyChannel({ utm: data.utm, referrer: data.referrer }),
-      geo: readVercelGeo(req.headers),
+      geo: await resolveGeo(req.headers, clientIp(req)),
     });
   } else {
     await VipSession.findOneAndUpdate(

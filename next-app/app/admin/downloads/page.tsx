@@ -22,7 +22,7 @@ export default function AdminDownloadsPage() {
           Downloads
         </h1>
         <p className="text-[13px] mt-2" style={{ color: 'rgba(var(--text) / 0.3)' }}>
-          These 3 documents are generated on the fly from your services/case-studies content — there's no file to swap, but here's who's downloading them.
+          These 3 documents are generated on the fly from your services/case-studies content — there&apos;s no file to swap, but here&apos;s who&apos;s downloading them.
         </p>
       </div>
 

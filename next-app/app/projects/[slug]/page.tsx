@@ -363,7 +363,7 @@ export default async function CaseStudyPage({ params }: { params: { slug: string
           <div className="container">
             <div className="text-center mb-10">
               <span className="eyebrow">More Real Projects</span>
-              <h2 className="text-3xl md:text-4xl font-extrabold my-4">Other Live Products We've Built</h2>
+              <h2 className="text-3xl md:text-4xl font-extrabold my-4">Other Live Products We&apos;ve Built</h2>
             </div>
             <div className="grid sm:grid-cols-3 gap-6">
               {related.map(r => (
