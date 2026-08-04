@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import { X, Send, Mic, MicOff } from 'lucide-react';
+import { X, Send, Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
 
@@ -22,9 +22,24 @@ export function Chatbot() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [listening, setListening] = useState(false);
+  const [muted, setMuted] = useState(false);
   const recRef = useRef<any>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const sessionIdRef = useRef<string>(crypto.randomUUID());
+
+  const speak = (text: string) => {
+    if (muted || typeof window === 'undefined') return;
+    const synth = window.speechSynthesis;
+    if (!synth) return;
+    synth.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = /[ऀ-ॿ]/.test(text) ? 'hi-IN' : 'en-IN';
+    u.rate = 1.0;
+    u.pitch = 1.0;
+    synth.speak(u);
+  };
+
+  useEffect(() => () => { if (typeof window !== 'undefined') window.speechSynthesis?.cancel(); }, []);
 
   // Proactive popup after 30 seconds
   useEffect(() => {
@@ -56,9 +71,13 @@ export function Chatbot() {
         body: JSON.stringify({ history: [...messages, { role: 'user', content: text }], sessionId: sessionIdRef.current }),
       });
       const data = await res.json();
-      setMessages(m => [...m, { role: 'assistant', content: data.reply || 'Sorry, please try again.' }]);
+      const reply = data.reply || 'Sorry, please try again.';
+      setMessages(m => [...m, { role: 'assistant', content: reply }]);
+      speak(reply);
     } catch {
-      setMessages(m => [...m, { role: 'assistant', content: 'A KVL expert will contact you soon!' }]);
+      const err = 'A KVL expert will contact you soon!';
+      setMessages(m => [...m, { role: 'assistant', content: err }]);
+      speak(err);
     } finally {
       setLoading(false);
     }
@@ -70,7 +89,11 @@ export function Chatbot() {
     if (listening) { recRef.current?.stop(); return; }
     const rec = new SR();
     rec.lang = navigator.language || 'en-IN'; rec.continuous = false;
-    rec.onresult = (e: any) => { setInput(e.results[0][0].transcript); };
+    rec.onresult = (e: any) => {
+      const heard = e.results[0][0].transcript;
+      setListening(false);
+      send(heard);
+    };
     rec.onend = () => setListening(false);
     rec.onerror = () => setListening(false);
     recRef.current = rec;
@@ -138,7 +161,10 @@ export function Chatbot() {
                 <h4 className="font-bold text-sm">{ASSISTANT_NAME} - KVL AI Assistant</h4>
                 <p className="text-[11px] opacity-80">Powered by Claude · Online</p>
               </div>
-              <button onClick={() => setOpen(false)}><X className="w-5 h-5" /></button>
+              <button onClick={() => setMuted(v => !v)} aria-label={muted ? 'Turn voice replies on' : 'Turn voice replies off'} className="opacity-80 hover:opacity-100">
+                {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+              </button>
+              <button onClick={() => { window.speechSynthesis?.cancel(); setOpen(false); }} aria-label="Close chat"><X className="w-5 h-5" /></button>
             </div>
 
             <div ref={bodyRef} className="flex-1 p-4 overflow-y-auto bg-app flex flex-col gap-2">

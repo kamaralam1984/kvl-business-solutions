@@ -1,14 +1,12 @@
 export const megaMenus = {
   Services: {
     featured: {
-      title: 'Custom ERP Software',
-      desc: 'Built for your exact workflow',
-      img: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=300&q=80&auto=format&fit=crop',
-      href: '/software',
+      title: 'AI Business Automation',
+      desc: 'Smart automation & insights, built in',
+      img: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=300&q=80&auto=format&fit=crop',
+      href: '/services/ai',
     },
     items: [
-      { label: 'Software Development', desc: 'ERP, CRM, inventory systems', href: '/software', icon: '⬡' },
-      { label: 'Website Development', desc: 'Fast, SEO-optimized sites', href: '/website-demos', icon: '◻' },
       { label: 'GPS Fleet Tracking', desc: 'Real-time vehicle management', href: '/services/gps', icon: '◈' },
       { label: 'Industrial Automation', desc: 'IoT, CCTV, civil work', href: '/services/automation', icon: '◉' },
       { label: 'CCTV & Security', desc: 'Surveillance solutions', href: '/services/cctv', icon: '◎' },
@@ -17,7 +15,7 @@ export const megaMenus = {
       { label: 'Digital Marketing', desc: 'SEO, ads & social growth', href: '/services/digital-marketing', icon: '◐' },
     ],
   },
-  Software: {
+  'Software & Website': {
     featured: {
       title: 'School Management System',
       desc: 'Admissions, fees, attendance, exams — one platform',
@@ -26,6 +24,7 @@ export const megaMenus = {
     },
     items: [
       { label: 'ERP Software', desc: 'Enterprise resource planning', href: '/software/erp', icon: '⬡' },
+      { label: 'Website Demo', desc: 'Fast, SEO-optimized sites', href: '/website-demos', icon: '◻' },
       { label: 'School Management', desc: 'Fee, attendance, reports', href: '/software/school', icon: '◻' },
       { label: 'Hospital Management', desc: 'Patient & billing system', href: '/software/hospital', icon: '◈' },
       { label: 'Restaurant POS', desc: 'Orders, KOT, inventory', href: '/software/restaurant', icon: '◉' },
