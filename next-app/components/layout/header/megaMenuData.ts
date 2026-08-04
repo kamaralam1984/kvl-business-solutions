@@ -1,11 +1,9 @@
-export const megaMenus = {
+type MegaMenuItem = { label: string; desc: string; href: string; icon: string };
+type MegaMenuFeatured = { title: string; desc: string; img: string; href: string };
+type MegaMenu = { featured?: MegaMenuFeatured; items: MegaMenuItem[] };
+
+export const megaMenus: Record<string, MegaMenu> = {
   Services: {
-    featured: {
-      title: 'AI Business Automation',
-      desc: 'Smart automation & insights, built in',
-      img: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=300&q=80&auto=format&fit=crop',
-      href: '/services/ai',
-    },
     items: [
       { label: 'GPS Fleet Tracking', desc: 'Real-time vehicle management', href: '/services/gps', icon: '◈' },
       { label: 'Industrial Automation', desc: 'IoT, CCTV, civil work', href: '/services/automation', icon: '◉' },
@@ -32,6 +30,6 @@ export const megaMenus = {
       { label: 'Inventory & Billing', desc: 'GST-ready billing system', href: '/software/inventory', icon: '◈' },
     ],
   },
-} as const;
+};
 
 export type MegaMenuKey = keyof typeof megaMenus;

@@ -15,7 +15,7 @@ export function MegaMenuPanel({ menuKey, open }: { menuKey: MegaMenuKey; open: b
           exit={{ opacity: 0, y: 10, scale: 0.97 }}
           transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
           className="absolute top-full left-0 z-50 pt-2"
-          style={{ minWidth: 580 }}
+          style={{ minWidth: menu.featured ? 580 : 360 }}
         >
           <div style={{
             background: 'rgb(var(--bg-2))',
@@ -24,31 +24,33 @@ export function MegaMenuPanel({ menuKey, open }: { menuKey: MegaMenuKey; open: b
             padding: 20,
             boxShadow: '0 30px 60px rgba(0,0,0,0.12)',
           }}>
-            <div className="grid grid-cols-[200px_1fr] gap-4">
+            <div className={menu.featured ? 'grid grid-cols-[200px_1fr] gap-4' : ''}>
               {/* Featured card */}
-              <Link
-                href={menu.featured.href}
-                className="rounded-xl overflow-hidden"
-                style={{ background: 'rgb(var(--bg-3))', border: '1px solid rgba(var(--border) / 0.07)' }}
-              >
-                <div className="relative" style={{ width: '100%', height: 120 }}>
-                  <Image
-                    src={menu.featured.img}
-                    alt={menu.featured.title}
-                    fill
-                    sizes="200px"
-                    style={{ objectFit: 'cover', opacity: 0.85 }}
-                  />
-                </div>
-                <div style={{ padding: '12px 14px' }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: 'rgb(var(--text))', lineHeight: 1.3 }}>
-                    {menu.featured.title}
+              {menu.featured && (
+                <Link
+                  href={menu.featured.href}
+                  className="rounded-xl overflow-hidden"
+                  style={{ background: 'rgb(var(--bg-3))', border: '1px solid rgba(var(--border) / 0.07)' }}
+                >
+                  <div className="relative" style={{ width: '100%', height: 120 }}>
+                    <Image
+                      src={menu.featured.img}
+                      alt={menu.featured.title}
+                      fill
+                      sizes="200px"
+                      style={{ objectFit: 'cover', opacity: 0.85 }}
+                    />
                   </div>
-                  <div style={{ fontSize: 11, color: 'rgba(var(--text) / 0.4)', marginTop: 4 }}>
-                    {menu.featured.desc}
+                  <div style={{ padding: '12px 14px' }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: 'rgb(var(--text))', lineHeight: 1.3 }}>
+                      {menu.featured.title}
+                    </div>
+                    <div style={{ fontSize: 11, color: 'rgba(var(--text) / 0.4)', marginTop: 4 }}>
+                      {menu.featured.desc}
+                    </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+              )}
 
               {/* Items grid */}
               <div className="grid grid-cols-2 gap-1">

@@ -83,9 +83,20 @@ export function Chatbot() {
     }
   };
 
+  const VOICE_ERROR_MESSAGES: Record<string, string> = {
+    'not-allowed': 'I need mic access to hear you — please allow microphone permission for this site and tap the mic again.',
+    'permission-denied': 'I need mic access to hear you — please allow microphone permission for this site and tap the mic again.',
+    'no-speech': "I didn't catch that — tap the mic and try speaking again.",
+    'audio-capture': 'No microphone found on this device — please type your message instead.',
+    network: 'Voice recognition needs an internet connection — please check your connection and try again.',
+  };
+
   const toggleVoice = () => {
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SR) return alert('Voice not supported in this browser');
+    if (!SR) {
+      setMessages(m => [...m, { role: 'assistant', content: 'Voice input isn\'t supported in this browser yet — please type your message, or try Chrome/Edge.' }]);
+      return;
+    }
     if (listening) { recRef.current?.stop(); return; }
     const rec = new SR();
     rec.lang = navigator.language || 'en-IN'; rec.continuous = false;
@@ -95,9 +106,18 @@ export function Chatbot() {
       send(heard);
     };
     rec.onend = () => setListening(false);
-    rec.onerror = () => setListening(false);
+    rec.onerror = (e: any) => {
+      setListening(false);
+      const msg = VOICE_ERROR_MESSAGES[e?.error] || 'Voice input hit a snag — please try again or type your message.';
+      setMessages(m => [...m, { role: 'assistant', content: msg }]);
+    };
     recRef.current = rec;
-    rec.start(); setListening(true);
+    try {
+      rec.start();
+      setListening(true);
+    } catch {
+      setMessages(m => [...m, { role: 'assistant', content: 'Voice input hit a snag — please try again or type your message.' }]);
+    }
   };
 
   const quickActions = [
