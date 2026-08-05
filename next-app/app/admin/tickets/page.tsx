@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { ChevronDown, ChevronUp, Send, Loader2 } from 'lucide-react';
+import { ChevronDown, ChevronUp, Send, Loader2, Trash2 } from 'lucide-react';
 import { ExportButton } from '@/components/admin/ExportButton';
 import { AdminSkeleton } from '@/components/admin/AdminSkeleton';
 
@@ -41,6 +41,12 @@ export default function AdminTickets() {
     load();
   };
 
+  const del = async (id: string, name: string) => {
+    if (!confirm(`Delete ticket from "${name}"?`)) return;
+    await fetch(`/api/admin/tickets/${id}`, { method: 'DELETE' });
+    load();
+  };
+
   const sendReply = async (id: string) => {
     if (!replyText.trim()) return;
     setSending(true);
@@ -77,7 +83,13 @@ export default function AdminTickets() {
             const isOpen = expanded === t._id;
             return (
               <div key={t._id} className="admin-card-hover kpi-enter rounded-2xl overflow-hidden" style={{ background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)', border: '1px solid rgba(var(--border) / 0.06)' }}>
-                <button onClick={() => setExpanded(isOpen ? null : t._id)} className="w-full flex items-center justify-between gap-3 p-4 text-left">
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setExpanded(isOpen ? null : t._id)}
+                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setExpanded(isOpen ? null : t._id); }}
+                  className="w-full flex items-center justify-between gap-3 p-4 text-left cursor-pointer"
+                >
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-semibold text-sm" style={{ color: 'rgb(var(--text))' }}>{t.name}</span>
@@ -91,9 +103,12 @@ export default function AdminTickets() {
                     {t.replies?.length > 0 && (
                       <span className="text-[10px] font-semibold" style={{ color: 'rgba(var(--text) / 0.35)' }}>{t.replies.length} reply</span>
                     )}
+                    <button onClick={e => { e.stopPropagation(); del(t._id, t.name); }} className="p-1 text-text2 hover:text-red-500" aria-label="Delete ticket">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                     {isOpen ? <ChevronUp className="w-4 h-4" style={{ color: 'rgba(var(--text) / 0.3)' }} /> : <ChevronDown className="w-4 h-4" style={{ color: 'rgba(var(--text) / 0.3)' }} />}
                   </div>
-                </button>
+                </div>
 
                 {isOpen && (
                   <div className="px-4 pb-4 space-y-3" style={{ borderTop: '1px solid rgba(var(--border) / 0.05)' }}>

@@ -55,3 +55,11 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     return apiError(e);
   }
 }
+
+export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+  const g = await requireAdmin(); if (!g.ok) return g.response;
+  await connectDB();
+  const ticket = await Ticket.findByIdAndDelete(params.id);
+  logActivity({ action: 'ticket.delete', actorEmail: g.session?.user?.email || undefined, actorRole: 'admin', target: 'Ticket', targetId: ticket?.email, req });
+  return NextResponse.json({ ok: true });
+}

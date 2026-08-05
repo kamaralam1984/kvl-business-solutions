@@ -1,6 +1,7 @@
 import { connectDB } from '@/lib/mongodb';
 import { Subscriber } from '@/lib/models/Subscriber';
 import { ExportButton } from '@/components/admin/ExportButton';
+import { DeleteSubscriberButton } from '@/components/admin/DeleteSubscriberButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,7 +25,7 @@ export default async function AdminSubscribersPage() {
       <div className="card-base overflow-hidden">
         <table className="w-full text-sm">
           <thead className="text-left text-text2 text-xs uppercase border-b border-tint">
-            <tr><th className="p-3">Date</th><th className="p-3">Email</th><th className="p-3">Source</th><th className="p-3">Status</th></tr>
+            <tr><th className="p-3">Date</th><th className="p-3">Email</th><th className="p-3">Source</th><th className="p-3">Status</th><th className="p-3"></th></tr>
           </thead>
           <tbody>
             {subscribers.map(s => (
@@ -37,9 +38,12 @@ export default async function AdminSubscribersPage() {
                     {s.active ? 'ACTIVE' : 'UNSUBSCRIBED'}
                   </span>
                 </td>
+                <td className="p-3 text-right">
+                  <DeleteSubscriberButton id={s._id.toString()} email={s.email} />
+                </td>
               </tr>
             ))}
-            {subscribers.length === 0 && <tr><td colSpan={4} className="p-8 text-center text-text2">No subscribers yet.</td></tr>}
+            {subscribers.length === 0 && <tr><td colSpan={5} className="p-8 text-center text-text2">No subscribers yet.</td></tr>}
           </tbody>
         </table>
       </div>
