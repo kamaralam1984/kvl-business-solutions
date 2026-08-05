@@ -18,7 +18,7 @@ const TRIGGERS = [
   { id: 'proposal_accepted', label: 'Proposal accepted (not yet wired to a feature)' },
   { id: 'amc_expiring', label: 'AMC expiring soon (not yet wired to a feature)' },
   { id: 'invoice_overdue', label: 'Invoice overdue (not yet wired to a feature)' },
-  { id: 'support_closed', label: 'Support ticket closed (not yet wired to a feature)' },
+  { id: 'support_closed', label: 'Support ticket closed' },
   { id: 'payment_received', label: 'Payment received (not yet wired to a feature)' },
 ];
 

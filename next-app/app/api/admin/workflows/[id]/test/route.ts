@@ -67,15 +67,16 @@ const mockContexts: Record<string, any> = {
     name: 'Test Contact', email: 'test@example.com', title: 'Test Deal', dealId: 'TEST-DEAL-001',
     amount: 49999, stage: 'proposal', ownerEmail: 'sales@kvlbusinesssolutions.com', source: 'website',
   },
-  // Registered triggers below have no real event source yet in this codebase (see Workflow.ts /
-  // runner.ts comments) — mock contexts are provided so "Test" still works once a real
-  // fireTrigger() call site is added for them.
+  // support_closed is real — fires from app/api/admin/tickets/[id]/route.ts on the
+  // open→closed transition. The rest below still have no real event source in this
+  // codebase (see Workflow.ts / runner.ts comments) — mock contexts are provided so
+  // "Test" still works once a real fireTrigger() call site is added for them.
+  support_closed: { name: 'Test Customer', email: 'test@example.com', product: 'ERP Software' },
   meeting_scheduled: { name: 'Test Contact', email: 'test@example.com', title: 'Test Deal' },
   proposal_viewed: { name: 'Test Contact', email: 'test@example.com', title: 'Test Deal' },
   proposal_accepted: { name: 'Test Contact', email: 'test@example.com', title: 'Test Deal' },
   amc_expiring: { name: 'Test Customer', email: 'test@example.com', product: 'ERP Software', daysLeft: 7 },
   invoice_overdue: { name: 'Test Customer', email: 'test@example.com', orderId: 'TEST-ORD-001', amount: 49999 },
-  support_closed: { name: 'Test Customer', email: 'test@example.com', product: 'ERP Software' },
   payment_received: { name: 'Test Customer', email: 'test@example.com', amount: 49999, orderId: 'TEST-ORD-001' },
 };
 

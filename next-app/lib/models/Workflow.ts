@@ -3,9 +3,10 @@ import { Schema, models, model } from 'mongoose';
 export const WORKFLOW_TRIGGERS = [
   'new_lead', 'new_order', 'new_ticket', 'order_paid', 'lead_inactive_3d', 'cart_abandoned',
   'call_back_requested',
-  // Added: deal-lifecycle + service-lifecycle triggers. See lib/workflows/runner.ts /
-  // app/api/crm/deals/[id]/route.ts for which of these have a real fireTrigger() call site
-  // wired up vs. which are registered-only (selectable in the admin UI, no backing event yet).
+  // Added: deal-lifecycle + service-lifecycle triggers. See lib/workflows/runner.ts,
+  // app/api/crm/deals/[id]/route.ts, and app/api/admin/tickets/[id]/route.ts (support_closed)
+  // for which of these have a real fireTrigger() call site wired up vs. which are
+  // registered-only (selectable in the admin UI, no backing event yet).
   'meeting_scheduled', 'proposal_sent', 'proposal_viewed', 'proposal_accepted',
   'deal_won', 'deal_lost', 'amc_expiring', 'invoice_overdue', 'support_closed', 'payment_received',
 ] as const;

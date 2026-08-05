@@ -6,6 +6,7 @@ import { Ticket } from '@/lib/models/Ticket';
 import { requireAdmin } from '@/lib/admin-guard';
 import { sendNotification, ticketReplyEmail } from '@/lib/email';
 import { logActivity } from '@/lib/activity';
+import { fireTrigger } from '@/lib/workflows/runner';
 
 const schema = z.object({
   status: z.enum(['open', 'in-progress', 'resolved', 'closed']).optional(),
@@ -26,6 +27,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
       update.$push = { replies: { message: reply, authorEmail: g.session?.user?.email, isAdmin: true } };
     }
 
+    const before: any = status ? await Ticket.findById(params.id).lean() : null;
     const { $push, ...setFields } = update;
     const ticket = await Ticket.findByIdAndUpdate(
       params.id,
@@ -38,6 +40,14 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     // unimplemented (admin could only view tickets, never respond).
     if (reply) {
       sendNotification(`Reply to your support ticket`, ticketReplyEmail(ticket, reply), ticket.email);
+    }
+
+    // Fires only on the actual open→closed transition, not every save while
+    // already closed — same one-shot pattern as the Deal stage-change triggers.
+    if (status === 'closed' && before && before.status !== 'closed') {
+      fireTrigger('support_closed', {
+        name: ticket.name, email: ticket.email, product: ticket.product, ticketId: ticket._id.toString(),
+      });
     }
 
     logActivity({
