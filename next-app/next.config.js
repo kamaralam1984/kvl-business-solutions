@@ -50,7 +50,11 @@ const nextConfig = {
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+          // microphone=(self): Khushi's voice input and /voice both use SpeechRecognition/
+          // getUserMedia(audio) — this header is enforced by the browser regardless of what
+          // the user clicks in site permissions, so leaving it () made mic access impossible
+          // to grant no matter what. Camera/geolocation stay blocked — genuinely unused.
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(self), geolocation=()' },
           { key: 'Content-Security-Policy', value: csp },
         ],
       },
