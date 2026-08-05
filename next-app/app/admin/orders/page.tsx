@@ -12,7 +12,7 @@ const STATUS_COLOR: Record<string, string> = {
   refunded: 'bg-slate-500/20 text-slate-500',
 };
 
-const fmt = (n: number) => `₹${(n / 100).toLocaleString('en-IN')}`;
+const fmt = (n: number) => `₹${n.toLocaleString('en-IN')}`;
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState<any[]>([]);

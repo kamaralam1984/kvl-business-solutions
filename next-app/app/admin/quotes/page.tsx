@@ -11,7 +11,7 @@ const STATUS_COLOR: Record<string, string> = {
   draft: 'bg-slate-500/20 text-slate-500',
 };
 
-const formatINR = (n: number) => n ? `₹${(n / 100).toLocaleString('en-IN')}` : '—';
+const formatINR = (n: number) => n ? `₹${n.toLocaleString('en-IN')}` : '—';
 
 export default function AdminQuotes() {
   const [quotes, setQuotes] = useState<any[]>([]);
