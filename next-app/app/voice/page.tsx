@@ -14,6 +14,9 @@ export default function VoiceAssistantPage() {
   ]);
   const [transcript, setTranscript] = useState('');
   const recRef = useRef<any>(null);
+  const transcriptRef = useRef('');
+
+  const MIC_BLOCKED_MSG = 'Microphone is blocked for this site in your browser. Click the 🔒 lock icon next to the address bar → Site settings/Permissions → set Microphone to Allow → then reload the page and tap the mic again.';
 
   const speak = (text: string) => {
     if (muted || typeof window === 'undefined') return;
@@ -46,10 +49,28 @@ export default function VoiceAssistantPage() {
     } finally { setThinking(false); }
   };
 
-  const startListening = () => {
+  const startListening = async () => {
     if (typeof window === 'undefined') return;
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SR) { alert('Voice input is not supported in this browser. Try Chrome.'); return; }
+    if (!SR) {
+      setHistory(h => [...h, { role: 'assistant', content: "Voice input isn't supported in this browser yet — please try Chrome or Edge." }]);
+      return;
+    }
+
+    // Request the real mic permission first — more reliable across browsers than
+    // relying on SpeechRecognition alone to trigger the Allow/Block prompt, and
+    // lets us tell the user exactly what went wrong instead of a silent failure.
+    if (navigator.mediaDevices?.getUserMedia) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach(t => t.stop());
+      } catch (e: any) {
+        const msg = e?.name === 'NotFoundError' ? 'No microphone found on this device.' : MIC_BLOCKED_MSG;
+        setHistory(h => [...h, { role: 'assistant', content: msg }]);
+        return;
+      }
+    }
+
     const rec = new SR();
     rec.lang = 'en-IN';
     rec.continuous = false;
@@ -57,17 +78,31 @@ export default function VoiceAssistantPage() {
     rec.onresult = (e: any) => {
       let text = '';
       for (let i = 0; i < e.results.length; i++) text += e.results[i][0].transcript;
+      transcriptRef.current = text;
       setTranscript(text);
     };
     rec.onend = () => {
       setListening(false);
-      if (transcript.trim()) sendToAI(transcript.trim());
+      const heard = transcriptRef.current.trim();
+      if (heard) sendToAI(heard);
+      transcriptRef.current = '';
       setTranscript('');
     };
-    rec.onerror = () => setListening(false);
-    rec.start();
+    rec.onerror = (e: any) => {
+      setListening(false);
+      const msg = e?.error === 'not-allowed' || e?.error === 'permission-denied' ? MIC_BLOCKED_MSG
+        : e?.error === 'audio-capture' ? 'No microphone found on this device.'
+        : e?.error === 'no-speech' ? "Didn't catch that — tap the mic and try again."
+        : null;
+      if (msg) setHistory(h => [...h, { role: 'assistant', content: msg }]);
+    };
     recRef.current = rec;
-    setListening(true);
+    try {
+      rec.start();
+      setListening(true);
+    } catch {
+      setHistory(h => [...h, { role: 'assistant', content: 'Voice input hit a snag — please try again.' }]);
+    }
   };
 
   const stopListening = () => { recRef.current?.stop(); setListening(false); };

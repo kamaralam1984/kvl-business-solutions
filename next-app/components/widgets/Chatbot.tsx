@@ -83,21 +83,41 @@ export function Chatbot() {
     }
   };
 
+  const MIC_BLOCKED_MSG = 'Microphone is blocked for this site in your browser. Click the 🔒 lock icon next to the address bar → Site settings/Permissions → set Microphone to Allow → then reload the page and tap the mic again.';
+
   const VOICE_ERROR_MESSAGES: Record<string, string> = {
-    'not-allowed': 'I need mic access to hear you — please allow microphone permission for this site and tap the mic again.',
-    'permission-denied': 'I need mic access to hear you — please allow microphone permission for this site and tap the mic again.',
+    'not-allowed': MIC_BLOCKED_MSG,
+    'permission-denied': MIC_BLOCKED_MSG,
     'no-speech': "I didn't catch that — tap the mic and try speaking again.",
     'audio-capture': 'No microphone found on this device — please type your message instead.',
     network: 'Voice recognition needs an internet connection — please check your connection and try again.',
   };
 
-  const toggleVoice = () => {
+  const toggleVoice = async () => {
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SR) {
       setMessages(m => [...m, { role: 'assistant', content: 'Voice input isn\'t supported in this browser yet — please type your message, or try Chrome/Edge.' }]);
       return;
     }
     if (listening) { recRef.current?.stop(); return; }
+
+    // Ask for the real mic permission first — this is what actually triggers the
+    // browser's Allow/Block prompt reliably (SpeechRecognition alone doesn't
+    // always surface it consistently across browsers), and lets us tell the user
+    // exactly what went wrong instead of a silent, unexplained failure.
+    if (navigator.mediaDevices?.getUserMedia) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach(t => t.stop());
+      } catch (e: any) {
+        const msg = e?.name === 'NotFoundError'
+          ? VOICE_ERROR_MESSAGES['audio-capture']
+          : MIC_BLOCKED_MSG;
+        setMessages(m => [...m, { role: 'assistant', content: msg }]);
+        return;
+      }
+    }
+
     const rec = new SR();
     rec.lang = navigator.language || 'en-IN'; rec.continuous = false;
     rec.onresult = (e: any) => {

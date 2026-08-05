@@ -3,16 +3,6 @@ type MegaMenuFeatured = { title: string; desc: string; img: string; href: string
 type MegaMenu = { featured?: MegaMenuFeatured; items: MegaMenuItem[] };
 
 export const megaMenus: Record<string, MegaMenu> = {
-  Services: {
-    items: [
-      { label: 'GPS Fleet Tracking', desc: 'Real-time vehicle management', href: '/services/gps', icon: '◈' },
-      { label: 'Industrial Automation', desc: 'IoT, CCTV, civil work', href: '/services/automation', icon: '◉' },
-      { label: 'CCTV & Security', desc: 'Surveillance solutions', href: '/services/cctv', icon: '◎' },
-      { label: 'AI Business Tools', desc: 'Smart automation & insights', href: '/services/ai', icon: '◈' },
-      { label: 'CRM Development', desc: 'Sales & customer pipelines', href: '/services/crm', icon: '◇' },
-      { label: 'Digital Marketing', desc: 'SEO, ads & social growth', href: '/services/digital-marketing', icon: '◐' },
-    ],
-  },
   'Software & Website': {
     featured: {
       title: 'School Management System',
