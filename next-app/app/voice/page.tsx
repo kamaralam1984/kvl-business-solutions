@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Mic, MicOff, Volume2, VolumeX, Loader2, Sparkles } from 'lucide-react';
 import { PageHero } from '@/components/shared/PageHero';
+import { speakNatural, cancelSpeaking } from '@/lib/voice-speak';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
 
@@ -19,15 +20,8 @@ export default function VoiceAssistantPage() {
   const MIC_BLOCKED_MSG = 'Microphone is blocked for this site in your browser. Click the 🔒 lock icon next to the address bar → Site settings/Permissions → set Microphone to Allow → then reload the page and tap the mic again.';
 
   const speak = (text: string) => {
-    if (muted || typeof window === 'undefined') return;
-    const synth = window.speechSynthesis;
-    if (!synth) return;
-    synth.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = /[ऀ-ॿ]/.test(text) ? 'hi-IN' : 'en-IN';
-    u.rate = 1.0;
-    u.pitch = 1.0;
-    synth.speak(u);
+    if (muted) return;
+    speakNatural(text);
   };
 
   const sendToAI = async (text: string) => {
@@ -107,7 +101,7 @@ export default function VoiceAssistantPage() {
 
   const stopListening = () => { recRef.current?.stop(); setListening(false); };
 
-  useEffect(() => () => { if (typeof window !== 'undefined') window.speechSynthesis?.cancel(); }, []);
+  useEffect(() => () => cancelSpeaking(), []);
 
   return (
     <>

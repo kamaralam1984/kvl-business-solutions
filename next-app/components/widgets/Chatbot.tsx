@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { X, Send, Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
+import { speakNatural, cancelSpeaking } from '@/lib/voice-speak';
 
 type Msg = { role: 'user' | 'assistant'; content: string };
 
@@ -28,18 +29,11 @@ export function Chatbot() {
   const sessionIdRef = useRef<string>(crypto.randomUUID());
 
   const speak = (text: string) => {
-    if (muted || typeof window === 'undefined') return;
-    const synth = window.speechSynthesis;
-    if (!synth) return;
-    synth.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = /[ऀ-ॿ]/.test(text) ? 'hi-IN' : 'en-IN';
-    u.rate = 1.0;
-    u.pitch = 1.0;
-    synth.speak(u);
+    if (muted) return;
+    speakNatural(text);
   };
 
-  useEffect(() => () => { if (typeof window !== 'undefined') window.speechSynthesis?.cancel(); }, []);
+  useEffect(() => () => cancelSpeaking(), []);
 
   // Proactive popup after 30 seconds
   useEffect(() => {
@@ -204,7 +198,7 @@ export function Chatbot() {
               <button onClick={() => setMuted(v => !v)} aria-label={muted ? 'Turn voice replies on' : 'Turn voice replies off'} className="opacity-80 hover:opacity-100">
                 {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
               </button>
-              <button onClick={() => { window.speechSynthesis?.cancel(); setOpen(false); }} aria-label="Close chat"><X className="w-5 h-5" /></button>
+              <button onClick={() => { cancelSpeaking(); setOpen(false); }} aria-label="Close chat"><X className="w-5 h-5" /></button>
             </div>
 
             <div ref={bodyRef} className="flex-1 p-4 overflow-y-auto bg-app flex flex-col gap-2">
