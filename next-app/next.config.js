@@ -9,14 +9,15 @@ const csp = [
   // WebSocket calls are governed by its own page, not this CSP at all;
   // this parent page only ever directly loads the one <script> tag and
   // creates the one <iframe>.
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://checkout.razorpay.com https://superai.kvlbusinesssolutions.com",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://checkout.razorpay.com https://superai.kvlbusinesssolutions.com https://connect.facebook.net",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
   // api.cloudinary.com: FileUploader.tsx uploads directly from the browser
   // to Cloudinary (signed direct upload) — without this, the browser blocks
   // the request and it surfaces as a generic "Failed to fetch".
-  "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://api.razorpay.com https://lumberjack.razorpay.com https://api.cloudinary.com",
+  // www.facebook.com: Meta Pixel (fbevents.js) sends its tracking beacon here.
+  "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://api.razorpay.com https://lumberjack.razorpay.com https://api.cloudinary.com https://www.facebook.com",
   "frame-src 'self' https://checkout.razorpay.com https://api.razorpay.com https://www.openstreetmap.org https://superai.kvlbusinesssolutions.com",
   "object-src 'none'",
   "base-uri 'self'",

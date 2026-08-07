@@ -17,9 +17,31 @@ export type Software = {
   category: string;
   /** Concrete business ROI, not feature restatements — shown on the product page's "Business Benefits" section. */
   benefits: { icon: string; title: string; desc: string }[];
+  /** Fixed one-time package — hides the Rent and Cloud/On-Premise pricing toggles wherever this product is shown. */
+  buyOnly?: boolean;
+  /** No interactive dashboard demo exists for this product — hides all "Live Demo" entry points. */
+  noDemo?: boolean;
+  /** Short display date for a time-boxed offer, e.g. "15 Aug" — shown next to the OFFER tag. */
+  offerValidTill?: string;
 };
 
 export const softwareProducts: Software[] = [
+  {
+    slug: 'independence-day-website',
+    name: 'Independence Day Website Offer',
+    description: 'Independence Day special — a clean, mobile-ready 3-page website for any business type (portfolio, restaurant, clinic, agency, personal, or any other niche), live in days. Hosting included free for 1 year; domain not included (connect your own, or we can help you buy one separately). Offer valid till 15 August.',
+    features: ['Any Website Type', '3 Pages Included', 'Free Hosting (1 Year)', 'Mobile Responsive Design', 'Basic SEO Setup', 'Contact Form'],
+    price: 999, monthlyRent: 149, unit: '/one-time', rentUnit: '/month',
+    tag: 'OFFER', icon: 'Globe', image: 'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=800&q=80&auto=format&fit=crop', c1: '#FF9933', c2: '#138808',
+    category: 'Website & Design',
+    offerValidTill: '15 Aug',
+    benefits: [
+      { icon: 'Layers', title: 'Fits any business type', desc: 'Portfolio, restaurant, clinic, agency, personal brand — the same 3-page package adapts to your niche.' },
+      { icon: 'Rocket', title: 'Live in days, not weeks', desc: 'A focused 3-page website ships fast — home, about and contact, ready to launch this week.' },
+      { icon: 'Cloud', title: 'Hosting free, no surprise bill', desc: '1 year of hosting is included in the ₹999 price — no separate hosting invoice to track.' },
+    ],
+    demoNav: [{ label: 'Preview', icon: 'Globe' }],
+  },
   {
     slug: 'crm',
     name: 'CRM Software',

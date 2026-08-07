@@ -26,7 +26,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const p = await getLiveSoftwareProduct(params.slug);
   if (!p) return { title: 'Product not found' };
-  const title = `${p.name} — Buy or Rent, Free Live Demo`;
+  const title = p.buyOnly ? `${p.name} — Limited Time Offer` : `${p.name} — Buy or Rent, Free Live Demo`;
   const url = `${SITE}/software/${p.slug}`;
   return {
     title,
@@ -51,7 +51,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
   const cloudPrice = product.price;
   const onPremPrice = Math.round(product.price * 1.5);
-  const monthlyRent = product.monthlyRent;
+  const monthlyRent = product.buyOnly ? null : product.monthlyRent;
   const related = allProducts.filter(p => p.slug !== product.slug).slice(0, 3);
 
   let ratingValue = 0;
@@ -80,8 +80,8 @@ export default async function ProductPage({ params }: { params: { slug: string }
       '@type': 'AggregateOffer',
       priceCurrency: 'INR',
       lowPrice: cloudPrice,
-      highPrice: onPremPrice,
-      offerCount: 2,
+      highPrice: product.buyOnly ? cloudPrice : onPremPrice,
+      offerCount: product.buyOnly ? 1 : 2,
       availability: 'https://schema.org/InStock',
     },
     provider: { '@id': `${SITE}/#organization` },
@@ -202,15 +202,19 @@ export default async function ProductPage({ params }: { params: { slug: string }
               <div className="text-4xl font-extrabold text-primary my-2">{formatINR(cloudPrice)}<span className="text-base text-text2 font-normal">{product.unit}</span></div>
 
               <div className="space-y-3 mt-5">
-                <Link href={`/software/${product.slug}/demo`} className="btn w-full justify-center bg-gradient-to-r from-violet-600 to-blue-600 text-white hover:opacity-90">
-                  <Play className="w-4 h-4" /> Launch Live Demo
-                </Link>
+                {!product.noDemo && (
+                  <Link href={`/software/${product.slug}/demo`} className="btn w-full justify-center bg-gradient-to-r from-violet-600 to-blue-600 text-white hover:opacity-90">
+                    <Play className="w-4 h-4" /> Launch Live Demo
+                  </Link>
+                )}
                 <Link href={`/checkout?product=${product.slug}&host=cloud`} className="btn btn-primary w-full justify-center">
-                  <Cloud className="w-4 h-4" /> Buy Cloud — {formatINR(cloudPrice)}
+                  <Cloud className="w-4 h-4" /> {product.buyOnly ? 'Buy Now' : 'Buy Cloud'} — {formatINR(cloudPrice)}
                 </Link>
-                <Link href={`/checkout?product=${product.slug}&host=on-premise`} className="btn btn-ghost w-full justify-center">
-                  <Server className="w-4 h-4" /> On-Premise — {formatINR(onPremPrice)}
-                </Link>
+                {!product.buyOnly && (
+                  <Link href={`/checkout?product=${product.slug}&host=on-premise`} className="btn btn-ghost w-full justify-center">
+                    <Server className="w-4 h-4" /> On-Premise — {formatINR(onPremPrice)}
+                  </Link>
+                )}
                 {monthlyRent && (
                   <Link href={`/checkout?product=${product.slug}&plan=monthly`} className="btn w-full justify-center border border-violet-500/50 text-violet-400 hover:bg-violet-500/10">
                     <Zap className="w-4 h-4" /> Rent — {formatINR(monthlyRent)}{product.rentUnit}

@@ -41,7 +41,7 @@ export default async function SoftwarePage() {
         <div className="absolute top-1/3 right-0 w-[500px] h-[500px] rounded-full opacity-10 blur-3xl pointer-events-none" style={{ background: 'radial-gradient(circle, #f59e0b, transparent)' }} />
         <div className="relative z-10 container text-center">
           <div className="inline-flex items-center gap-2 border border-border/20 rounded-full px-4 py-1.5 text-xs font-semibold mb-6 text-text/70" style={{ backdropFilter: 'blur(8px)', background: 'rgba(var(--text) / 0.05)' }}>
-            <Star className="w-3.5 h-3.5 text-amber-400" /> 15 Enterprise-Grade Software Products • Buy or Rent
+            <Star className="w-3.5 h-3.5 text-amber-400" /> {products.length} Enterprise-Grade Software Products • Buy or Rent
           </div>
           <h1 className="text-4xl sm:text-6xl font-extrabold mb-6 leading-tight text-text">
             Enterprise Software<br />
