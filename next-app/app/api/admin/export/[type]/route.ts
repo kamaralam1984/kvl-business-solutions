@@ -48,7 +48,9 @@ export async function GET(_: Request, { params }: { params: { type: string } }) 
       rows = data.map((l: any) => ({
         date: date(l.createdAt),
         name: l.name, email: l.email, phone: l.phone,
+        companyName: l.companyName || '', businessType: l.businessType || '',
         service: l.service || '', message: l.message || '', source: l.source || '',
+        status: l.status || '',
       }));
       break;
     }

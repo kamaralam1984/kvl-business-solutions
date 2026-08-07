@@ -17,6 +17,9 @@ import { DashboardShell } from '@/components/dashboard/DashboardShell';
 // /dashboard/* is the logged-in user area — keeps the Header for
 // navigation, but drops the marketing footer and floating
 // chat/WhatsApp/call-back widgets.
+// /get-quote and /website-offer are the two-step Independence Day ad funnel —
+// each ships its own self-contained header/footer matching that campaign's
+// design, so they render standalone here too (same treatment as /demo/*).
 export function SiteChrome({
   children, settings, banner, cookieConsentEnabled,
 }: {
@@ -27,8 +30,9 @@ export function SiteChrome({
   const isAdmin = pathname?.startsWith('/admin');
   const isAuthPage = pathname?.startsWith('/login') || pathname?.startsWith('/register');
   const isDashboard = pathname?.startsWith('/dashboard');
+  const isAdFunnel = pathname?.startsWith('/get-quote') || pathname?.startsWith('/website-offer');
 
-  if (isStandaloneDemo || isAdmin || isAuthPage) {
+  if (isStandaloneDemo || isAdmin || isAuthPage || isAdFunnel) {
     return <>{children}</>;
   }
 
