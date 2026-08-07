@@ -34,6 +34,7 @@ export const softwareProducts: Software[] = [
     price: 999, monthlyRent: 149, unit: '/one-time', rentUnit: '/month',
     tag: 'OFFER', icon: 'Globe', image: 'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=800&q=80&auto=format&fit=crop', c1: '#FF9933', c2: '#138808',
     category: 'Website & Design',
+    buyOnly: true,
     offerValidTill: '15 Aug',
     benefits: [
       { icon: 'Layers', title: 'Fits any business type', desc: 'Portfolio, restaurant, clinic, agency, personal brand — the same 3-page package adapts to your niche.' },

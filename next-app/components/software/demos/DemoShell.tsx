@@ -20,9 +20,11 @@ export function DemoShell({ product, children, activeNav, onNavChange }: { produ
           <Link href={`/checkout?product=${product.slug}&host=cloud`} className="bg-white text-slate-900 px-3 py-0.5 rounded-full text-[10px] font-bold hover:opacity-90 transition">
             Buy {formatINR(product.price)}{product.unit}
           </Link>
-          <Link href={`/checkout?product=${product.slug}&plan=monthly`} className="bg-white/20 border border-white/40 text-white px-3 py-0.5 rounded-full text-[10px] font-bold hover:bg-white/30 transition">
-            Rent {formatINR(product.monthlyRent)}{product.rentUnit}
-          </Link>
+          {!product.buyOnly && (
+            <Link href={`/checkout?product=${product.slug}&plan=monthly`} className="bg-white/20 border border-white/40 text-white px-3 py-0.5 rounded-full text-[10px] font-bold hover:bg-white/30 transition">
+              Rent {formatINR(product.monthlyRent)}{product.rentUnit}
+            </Link>
+          )}
           <Link href={`/software/${product.slug}`} className="opacity-70 hover:opacity-100"><X className="w-3.5 h-3.5" /></Link>
         </div>
       </div>
@@ -123,9 +125,11 @@ export function DemoShell({ product, children, activeNav, onNavChange }: { produ
         <Link href={`/checkout?product=${product.slug}&host=cloud`} className="btn btn-primary text-xs gap-1.5">
           <ShoppingCart className="w-3.5 h-3.5" /> Buy {formatINR(product.price)}{product.unit}
         </Link>
-        <Link href={`/checkout?product=${product.slug}&plan=monthly`} className="btn text-xs gap-1.5 text-white border border-violet-600 hover:bg-violet-600/20">
-          <Zap className="w-3.5 h-3.5 text-violet-400" /> Rent {formatINR(product.monthlyRent)}{product.rentUnit}
-        </Link>
+        {!product.buyOnly && (
+          <Link href={`/checkout?product=${product.slug}&plan=monthly`} className="btn text-xs gap-1.5 text-white border border-violet-600 hover:bg-violet-600/20">
+            <Zap className="w-3.5 h-3.5 text-violet-400" /> Rent {formatINR(product.monthlyRent)}{product.rentUnit}
+          </Link>
+        )}
       </div>
     </div>
   );
