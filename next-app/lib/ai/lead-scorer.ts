@@ -22,6 +22,7 @@ export interface LeadInsights {
     nextAction: string;
     summary: string;
   };
+  source: 'ai' | 'fallback';
 }
 
 const SCORER_SYSTEM = `You are a B2B sales lead scoring AI for KVL Business Solutions, an Indian enterprise software company.
@@ -62,12 +63,27 @@ export async function scoreLead(lead: LeadData): Promise<LeadInsights> {
     const result = await chatRouted({
       messages: [{ role: 'user', content: `Score this lead:\n\n${context}` }],
       system: SCORER_SYSTEM,
-      maxTokens: 300,
+      // 800, not 300: reasoning-capable free models (e.g. openrouter's gpt-oss-20b)
+      // spend a chunk of maxTokens on hidden reasoning before the JSON answer —
+      // at 300 the JSON reply was getting cut off mid-object and failing to parse.
+      maxTokens: 800,
       temperature: 0.2,
     });
 
+    if (result.provider === 'none') {
+      console.error('[lead-scorer] No AI provider API keys configured — falling back to rule-based score');
+      return ruleBasedScore(lead);
+    }
+    if (result.provider === 'all-failed') {
+      console.error(`[lead-scorer] All AI providers failed (tried: ${result.fallbackChain.join(', ')}) — falling back to rule-based score`);
+      return ruleBasedScore(lead);
+    }
+
     const jsonMatch = result.reply.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error('No JSON in response');
+    if (!jsonMatch) {
+      console.error(`[lead-scorer] ${result.provider} replied but with no JSON — falling back to rule-based score. Reply: ${result.reply.slice(0, 200)}`);
+      return ruleBasedScore(lead);
+    }
     const parsed = JSON.parse(jsonMatch[0]);
 
     return {
@@ -81,9 +97,10 @@ export async function scoreLead(lead: LeadData): Promise<LeadInsights> {
         nextAction: parsed.aiInsights?.nextAction || 'Follow up within 24 hours',
         summary: parsed.aiInsights?.summary || '',
       },
+      source: 'ai',
     };
-  } catch {
-    // Fallback: rule-based scoring
+  } catch (e: any) {
+    console.error(`[lead-scorer] Unexpected error scoring lead — falling back to rule-based score: ${e?.message || e}`);
     return ruleBasedScore(lead);
   }
 }
@@ -110,18 +127,19 @@ function ruleBasedScore(lead: LeadData): LeadInsights {
       nextAction: score >= 75 ? 'Call within 1 hour' : score >= 40 ? 'Follow up within 4 hours' : 'Send brochure email',
       summary: lead.service ? `Interested in ${lead.service}` : 'General inquiry',
     },
+    source: 'fallback',
   };
 }
 
 // Fire-and-forget: score lead in background after creation
 export async function scoreLeadAsync(leadId: string, data: LeadData) {
   try {
-    const insights = await scoreLead(data);
+    const { source, ...scoreFields } = await scoreLead(data);
     await connectDB();
     await Lead.findByIdAndUpdate(leadId, {
-      $set: { ...insights, aiScoredAt: new Date() },
+      $set: { ...scoreFields, aiScoreSource: source, aiScoredAt: new Date() },
     });
-    console.log(`[lead-scorer] Scored ${leadId}: ${insights.aiScore} (${insights.intent})`);
+    console.log(`[lead-scorer] Scored ${leadId}: ${scoreFields.aiScore} (${scoreFields.intent}, source=${source})`);
   } catch (e) {
     console.error('[lead-scorer] Error:', e);
   }

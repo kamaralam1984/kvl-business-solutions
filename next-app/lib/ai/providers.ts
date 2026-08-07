@@ -57,7 +57,7 @@ export const providers: Provider[] = [
     name: 'openrouter-free',
     envKey: 'OPENROUTER_API_KEY',
     endpoint: 'https://openrouter.ai/api/v1/chat/completions',
-    model: 'meta-llama/llama-3.1-8b-instruct:free',
+    model: 'openai/gpt-oss-20b:free',
     costPer1MInput: 0,           // Free routing through OpenRouter
     costPer1MOutput: 0,
     rateLimit: { rpm: 20, tpm: 100_000 },

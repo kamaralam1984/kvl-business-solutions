@@ -31,6 +31,11 @@ const LeadSchema = new Schema({
   },
   chatMessages: [{ role: String, content: String }], // for chatbot-sourced leads
   aiScoredAt: Date,
+  // 'ai' = real AI provider judged this lead. 'fallback' = every AI provider
+  // failed/unconfigured and this is the deterministic keyword-based estimate
+  // (see ruleBasedScore in lib/ai/lead-scorer.ts) — shown differently in admin
+  // so a fallback score is never mistaken for a real AI assessment.
+  aiScoreSource: { type: String, enum: ['ai', 'fallback'], default: 'fallback' },
 
   // AI Call tracking
   callStatus: { type: String, enum: ['not_called', 'calling', 'completed', 'failed', 'no_answer'], default: 'not_called' },

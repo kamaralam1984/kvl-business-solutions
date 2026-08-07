@@ -18,11 +18,19 @@ const INTENT_CONFIG: Record<string, { label: string; cls: string }> = {
   unknown: { label: '? N/A',   cls: 'bg-slate-500/20 text-slate-500' },
 };
 
-function ScoreBadge({ score }: { score: number }) {
+function ScoreBadge({ score, source }: { score: number; source?: string }) {
   const color = score >= 75 ? 'text-red-500 bg-red-500/10' : score >= 40 ? 'text-orange-500 bg-orange-500/10' : 'text-blue-400 bg-blue-400/10';
+  const isFallback = source === 'fallback';
   return (
-    <div className={`w-10 h-10 rounded-full grid place-items-center font-extrabold text-sm ${color} shrink-0`}>
+    <div
+      className={`relative w-10 h-10 rounded-full grid place-items-center font-extrabold text-sm ${color} shrink-0`}
+      style={isFallback ? { border: '1px dashed currentColor' } : undefined}
+      title={isFallback ? 'AI scoring unavailable — this is a rule-based estimate, not a real AI judgment' : 'Scored by AI'}
+    >
       {score || '?'}
+      {isFallback && (
+        <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-slate-500 text-white text-[8px] grid place-items-center font-bold">~</span>
+      )}
     </div>
   );
 }
@@ -178,7 +186,7 @@ export default function AdminLeads() {
                   onMouseLeave={e => (e.currentTarget.style.background = l.intent === 'hot' && l.status === 'new' ? 'rgba(239,68,68,0.04)' : 'transparent')}>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <ScoreBadge score={l.aiScore} />
+                      <ScoreBadge score={l.aiScore} source={l.aiScoreSource} />
                       {l.intent && l.intent !== 'unknown' && (
                         <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${INTENT_CONFIG[l.intent]?.cls}`}>
                           {INTENT_CONFIG[l.intent]?.label}
@@ -263,6 +271,9 @@ export default function AdminLeads() {
                           <p><span className="text-text2">Urgency:</span> <span className="font-semibold">{l.aiInsights?.urgency || '—'}</span></p>
                           <p><span className="text-text2">Next Action:</span> <span className="font-semibold text-primary">{l.aiInsights?.nextAction || '—'}</span></p>
                           <p><span className="text-text2">Scored:</span> <span className="font-semibold">{l.aiScoredAt ? new Date(l.aiScoredAt).toLocaleString('en-IN') : 'Pending...'}</span></p>
+                          {l.aiScoreSource === 'fallback' && (
+                            <p className="text-amber-500 font-semibold">⚠ Rule-based estimate — AI providers were unavailable when this lead was scored, not a real AI judgment.</p>
+                          )}
                         </div>
                         <div className="space-y-1">
                           <p className="font-bold text-text2 uppercase tracking-wider text-[10px]">Lead Info</p>
