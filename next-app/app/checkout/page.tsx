@@ -5,9 +5,10 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import type { Software } from '@/lib/data/software';
 import { formatINR } from '@/lib/utils';
-import { Check, ShieldCheck, CreditCard, Lock, Tag, X, Loader2 } from 'lucide-react';
+import { Check, ShieldCheck, CreditCard, Lock, Tag, X, Loader2, Mail, Phone } from 'lucide-react';
 
 const GST_RATE = 18;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function CheckoutInner() {
   const sp = useSearchParams();
@@ -26,7 +27,13 @@ function CheckoutInner() {
   const [couponLoading, setCouponLoading] = useState(false);
   const [couponErr, setCouponErr] = useState('');
 
-  useEffect(() => { if (status === 'unauthenticated') router.push(`/login?callbackUrl=/checkout?product=${productSlug}&host=${hosting}`); }, [status, productSlug, hosting, router]);
+  // Payment comes first, account creation after (see /checkout/success) — a
+  // guest just needs an email + phone to receive the license key and pay.
+  // Logged-in visitors skip this entirely and pay with their session details.
+  const [guestEmail, setGuestEmail] = useState('');
+  const [guestPhone, setGuestPhone] = useState('');
+  const isGuest = status === 'unauthenticated';
+  const guestDetailsValid = EMAIL_RE.test(guestEmail) && guestPhone.replace(/\D/g, '').length >= 10;
 
   // Live price/description — fetched instead of imported statically so an
   // Admin → Products edit shows the same numbers the customer is charged.
@@ -38,11 +45,15 @@ function CheckoutInner() {
   }, [productSlug]);
 
   const pay = async (couponCodeOverride?: string) => {
+    if (isGuest && !guestDetailsValid) { setErr('Enter a valid email and phone number first.'); return; }
     setLoading(true); setErr('');
     try {
       const res = await fetch('/api/payments/create-order', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productSlug, hosting, couponCode: couponCodeOverride ?? applied?.code }),
+        body: JSON.stringify({
+          productSlug, hosting, couponCode: couponCodeOverride ?? applied?.code,
+          ...(isGuest ? { guestEmail, guestPhone } : {}),
+        }),
       });
       const data = await res.json();
       if (!data.ok) throw new Error(data.error);
@@ -54,13 +65,20 @@ function CheckoutInner() {
         name: 'KVL Business Solutions',
         description: data.productName,
         order_id: data.razorpayOrderId,
-        prefill: { email: session?.user?.email, name: session?.user?.name },
+        prefill: {
+          email: session?.user?.email || guestEmail,
+          name: session?.user?.name,
+          contact: guestPhone || undefined,
+        },
         theme: { color: '#2563eb' },
         handler: async (resp: any) => {
           const verify = await fetch('/api/payments/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(resp) });
           const vd = await verify.json();
-          if (vd.ok) router.push(`/dashboard?success=${vd.orderId}`);
-          else setErr('Payment verification failed. Please contact support.');
+          if (!vd.ok) { setErr('Payment verification failed. Please contact support.'); return; }
+          // Logged-in buyers go straight to their dashboard. Guests paid
+          // first — now's when we offer to turn that into an account.
+          if (session?.user?.email) router.push(`/dashboard?success=${vd.orderId}`);
+          else router.push(`/checkout/success?order=${vd.orderId}&email=${encodeURIComponent(guestEmail)}`);
         },
         modal: { ondismiss: () => setLoading(false) },
       });
@@ -71,10 +89,11 @@ function CheckoutInner() {
     }
   };
 
-  // Order Now → Razorpay should open immediately, not wait for a second
-  // "Pay Now" click — this page still renders behind the modal (order
-  // summary, GST breakdown, coupon field) as a fallback if the visitor
-  // dismisses the popup or wants to apply a coupon before paying.
+  // Order Now → Razorpay should open immediately for a logged-in visitor, not
+  // wait for a second "Pay Now" click. Guests can't auto-open — Razorpay needs
+  // an email/phone to prefill, so they fill the short form below first and
+  // press "Pay Now" themselves. This page still renders behind the modal
+  // (order summary, GST breakdown, coupon field) as a fallback either way.
   const autoTriedRef = useRef(false);
   useEffect(() => {
     if (autoTriedRef.current) return;
@@ -154,7 +173,29 @@ function CheckoutInner() {
               </div>
             )}
 
-            <button disabled={loading} onClick={() => pay()} className="btn btn-primary w-full justify-center">
+            {isGuest && (
+              <div className="mb-4 space-y-2">
+                <p className="text-xs text-text2">We&apos;ll send your license key here — no account needed to pay.</p>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3.5 w-4 h-4 text-text2" />
+                  <input
+                    type="email" value={guestEmail} onChange={e => setGuestEmail(e.target.value)}
+                    placeholder="you@company.com" autoComplete="email"
+                    className="form-control pl-9 text-sm"
+                  />
+                </div>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-3.5 w-4 h-4 text-text2" />
+                  <input
+                    type="tel" value={guestPhone} onChange={e => setGuestPhone(e.target.value)}
+                    placeholder="+91 98765 43210" autoComplete="tel"
+                    className="form-control pl-9 text-sm"
+                  />
+                </div>
+              </div>
+            )}
+
+            <button disabled={loading || (isGuest && !guestDetailsValid)} onClick={() => pay()} className="btn btn-primary w-full justify-center">
               <CreditCard className="w-4 h-4" /> {loading ? 'Opening Razorpay...' : 'Pay Now'}
             </button>
             {err && <p className="text-red-500 text-xs mt-2">{err}</p>}

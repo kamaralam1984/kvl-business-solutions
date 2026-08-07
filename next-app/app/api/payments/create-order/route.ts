@@ -10,16 +10,35 @@ import { generateOrderId } from '@/lib/license';
 import { getLiveSoftwareProduct } from '@/lib/data/live-software';
 import { Coupon, evaluateCoupon } from '@/lib/models/Coupon';
 import { fireTrigger } from '@/lib/workflows/runner';
+import { rateLimit, clientIp } from '@/lib/rate-limit';
 
 const GST_RATE = 18;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(req: Request) {
   try {
     if (!rzp) return NextResponse.json({ ok: false, error: 'Razorpay not configured' }, { status: 500 });
     const session = await getServerSession(authOptions);
-    if (!session?.user?.email) return NextResponse.json({ ok: false, error: 'Login required' }, { status: 401 });
 
-    const { productSlug, hosting = 'cloud', couponCode } = await req.json();
+    const { productSlug, hosting = 'cloud', couponCode, guestEmail, guestPhone } = await req.json();
+
+    // Payment happens before account creation — a logged-in session is no
+    // longer required, but we still need somewhere to send the license key
+    // and match the order up if this person registers later (see
+    // app/checkout/success/page.tsx and dashboard/orders/[id], which looks
+    // up orders by email). Guests are rate-limited since this path is now
+    // reachable without auth.
+    let identityEmail = session?.user?.email;
+    let identityPhone: string | undefined;
+    if (!identityEmail) {
+      const limit = rateLimit(`guest-checkout:${clientIp(req)}`, 8, 10 * 60_000);
+      if (!limit.allowed) return NextResponse.json({ ok: false, error: 'Too many attempts, please try again shortly' }, { status: 429 });
+      if (!guestEmail || !EMAIL_RE.test(guestEmail)) return NextResponse.json({ ok: false, error: 'A valid email is required' }, { status: 400 });
+      if (!guestPhone || String(guestPhone).replace(/\D/g, '').length < 10) return NextResponse.json({ ok: false, error: 'A valid phone number is required' }, { status: 400 });
+      identityEmail = String(guestEmail).toLowerCase().trim();
+      identityPhone = String(guestPhone).trim();
+    }
+
     const product = await getLiveSoftwareProduct(productSlug);
     if (!product) return NextResponse.json({ ok: false, error: 'Invalid product' }, { status: 400 });
 
@@ -51,17 +70,19 @@ export async function POST(req: Request) {
       amount: amount * 100,
       currency: 'INR',
       receipt: orderId,
-      notes: { productSlug, email: session.user.email, hosting },
+      notes: { productSlug, email: identityEmail, hosting },
     });
 
-    const u: any = await User.findOne({ email: session.user.email }).lean();
-    const billing = u ? {
-      name: u.name, email: u.email, phone: u.phone, company: u.company, gstin: u.gstin, address: u.address,
-    } : { email: session.user.email };
+    // Guests aren't logged in, but may already have an account from a past
+    // order — link it if so (read-only lookup, does not sign them in).
+    const u: any = await User.findOne({ email: identityEmail }).lean();
+    const billing = u
+      ? { name: u.name, email: u.email, phone: u.phone, company: u.company, gstin: u.gstin, address: u.address }
+      : { email: identityEmail, phone: identityPhone };
 
     await Order.create({
       orderId,
-      email: session.user.email,
+      email: identityEmail,
       user: u?._id,
       productSlug,
       productName: product.name,
@@ -83,9 +104,9 @@ export async function POST(req: Request) {
     }
 
     fireTrigger('new_order', {
-      name: u?.name || session.user.email,
-      email: session.user.email,
-      phone: u?.phone || '',
+      name: u?.name || identityEmail,
+      email: identityEmail,
+      phone: u?.phone || identityPhone || '',
       amount,
       productName: product.name,
       orderId,

@@ -77,11 +77,14 @@ export default withAuth(
       // withAuth would redirect anonymous visitors to /login.
       authorized: ({ token, req }) => {
         const path = req.nextUrl.pathname;
+        // /checkout is intentionally NOT gated here — payment happens before
+        // account creation (guest checkout), so an anonymous visitor must be
+        // able to reach it. Guest identity is collected on the page itself
+        // and enforced server-side in /api/payments/create-order instead.
         const protectedPath =
           path.startsWith('/dashboard') ||
           path.startsWith('/admin') ||
-          path.startsWith('/api/admin') ||
-          path.startsWith('/checkout');
+          path.startsWith('/api/admin');
         return protectedPath ? !!token : true;
       },
     },
@@ -94,7 +97,8 @@ export const config = {
     '/dashboard/:path*',
     '/admin/:path*',
     '/api/admin/:path*',
-    '/checkout/:path*',
+    // /checkout is covered by the catch-all below (still needs referral-capture
+    // and maintenance-mode handling), just no longer auth-gated — see `authorized`.
     // Referral capture needs to run on ordinary landing pages too — everything
     // except static assets, Next internals, and API routes (which are already
     // covered explicitly above where needed).
