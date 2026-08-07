@@ -11,6 +11,12 @@ const CATEGORIES = [
   'Professional Services', 'Beauty / Salon', 'NGO / Trust', 'Other',
 ];
 
+// Explicit, theme-independent styling — this page is a standalone light-mode
+// campaign design, so inputs must not pick up the shared ".form-control"
+// class's html.dark override (near-white text on our white card would be
+// unreadable if a visitor's system/site theme is set to dark).
+const INPUT_CLS = 'w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-200 bg-white border border-gray-300 text-gray-900 placeholder-gray-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20';
+
 export function GetQuoteClient() {
   const router = useRouter();
   const [form, setForm] = useState({ name: '', phone: '', companyName: '', businessType: '', email: '' });
@@ -83,26 +89,26 @@ export function GetQuoteClient() {
         <form onSubmit={submit} className="bg-white rounded-2xl p-6 shadow-2xl space-y-3">
           <div>
             <label htmlFor="gq-name" className="sr-only">Full Name</label>
-            <input id="gq-name" autoComplete="name" className="form-control" placeholder="Full Name *" value={form.name} onChange={set('name')} required />
+            <input id="gq-name" autoComplete="name" className={INPUT_CLS} placeholder="Full Name *" value={form.name} onChange={set('name')} required />
           </div>
           <div>
             <label htmlFor="gq-phone" className="sr-only">Mobile Number</label>
-            <input id="gq-phone" type="tel" autoComplete="tel" className="form-control" placeholder="Mobile Number *" value={form.phone} onChange={set('phone')} required />
+            <input id="gq-phone" type="tel" autoComplete="tel" className={INPUT_CLS} placeholder="Mobile Number *" value={form.phone} onChange={set('phone')} required />
           </div>
           <div>
             <label htmlFor="gq-company" className="sr-only">Business Name</label>
-            <input id="gq-company" autoComplete="organization" className="form-control" placeholder="Business Name *" value={form.companyName} onChange={set('companyName')} required />
+            <input id="gq-company" autoComplete="organization" className={INPUT_CLS} placeholder="Business Name *" value={form.companyName} onChange={set('companyName')} required />
           </div>
           <div>
             <label htmlFor="gq-category" className="sr-only">Business Category</label>
-            <select id="gq-category" className="form-control" value={form.businessType} onChange={set('businessType')} required>
+            <select id="gq-category" className={INPUT_CLS} value={form.businessType} onChange={set('businessType')} required>
               <option value="">Select Business Category *</option>
               {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
           <div>
             <label htmlFor="gq-email" className="sr-only">Email Address</label>
-            <input id="gq-email" type="email" autoComplete="email" className="form-control" placeholder="Email Address *" value={form.email} onChange={set('email')} required />
+            <input id="gq-email" type="email" autoComplete="email" className={INPUT_CLS} placeholder="Email Address *" value={form.email} onChange={set('email')} required />
           </div>
 
           {error && <p className="text-red-600 text-xs">{error}</p>}
