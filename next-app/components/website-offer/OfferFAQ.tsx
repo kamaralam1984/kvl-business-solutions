@@ -3,11 +3,11 @@ import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 const FAQS = [
-  { q: 'Website banane me kitna time lagta hai?', a: 'Basic Starter plan (₹999) 3 din me live ho jata hai. Baaki plans 7 se 30 din tak lagte hain, scope ke hisaab se.' },
-  { q: 'Kya domain aur hosting included hai?', a: '₹999 plan me hosting free hai lekin domain included nahi hai — aap apna domain use kar sakte hain ya hum alag se dilwa sakte hain. ₹4,999 aur uske upar ke sabhi plans me domain included hai.' },
-  { q: 'Payment kaise kar sakte hain?', a: 'Razorpay ke through UPI, Credit/Debit Card, Net Banking — sab secure tarike se pay kar sakte hain.' },
-  { q: 'Kya future me website update kar sakte hain?', a: 'Haan, 30 din ka free support har plan me included hai. Uske baad bhi hum affordable maintenance plans offer karte hain.' },
-  { q: 'Kya aap content (text + images) provide karte hain?', a: 'Aap apna content bhej sakte hain, ya humari team basic content likhne me madad kar sakti hai — final scope order ke waqt confirm ho jata hai.' },
+  { q: 'How long does it take to build a website?', a: 'The Basic Starter plan (₹999) goes live in 3 days. Other plans take 7 to 30 days depending on scope.' },
+  { q: 'Is domain and hosting included?', a: 'The ₹999 plan includes free hosting but not a domain — you can use your own or we can help you buy one separately. All plans ₹4,999 and above include a domain.' },
+  { q: 'How can I make payment?', a: 'Pay securely via Razorpay — UPI, Credit/Debit Card, or Net Banking are all supported.' },
+  { q: 'Can I update the website later?', a: 'Yes, 30 days of free support is included with every plan. After that, we also offer affordable maintenance plans.' },
+  { q: 'Do you provide content (text + images)?', a: 'You can send us your own content, or our team can help write basic content for you — the final scope is confirmed at the time of ordering.' },
 ];
 
 export function OfferFAQ() {
