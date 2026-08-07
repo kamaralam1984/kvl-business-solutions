@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useRef, useState, Suspense } from 'react';
 import Script from 'next/script';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
@@ -19,6 +19,7 @@ function CheckoutInner() {
   const [productLoading, setProductLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState('');
+  const [rzpReady, setRzpReady] = useState(false);
 
   const [code, setCode] = useState('');
   const [applied, setApplied] = useState<{ code: string; discount: number } | null>(null);
@@ -36,31 +37,12 @@ function CheckoutInner() {
       .finally(() => setProductLoading(false));
   }, [productSlug]);
 
-  if (productLoading) return <div className="container py-20 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-text2" /></div>;
-  if (!product) return <div className="container py-20 text-center">Invalid product.</div>;
-  const base = Math.round(product.price * (hosting === 'on-premise' ? 1.5 : 1));
-  const subtotal = base - (applied?.discount || 0);
-  const gst = Math.round((subtotal * GST_RATE) / 100);
-  const total = subtotal + gst;
-
-  const applyCoupon = async () => {
-    setCouponErr(''); setCouponLoading(true);
-    try {
-      const r = await fetch('/api/coupon/validate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code, productSlug, hosting }) });
-      const d = await r.json();
-      if (!d.ok) throw new Error(d.error || 'Invalid coupon');
-      setApplied({ code: d.code, discount: d.discount });
-      setCode('');
-    } catch (e: any) { setCouponErr(e.message); }
-    finally { setCouponLoading(false); }
-  };
-
-  const pay = async () => {
+  const pay = async (couponCodeOverride?: string) => {
     setLoading(true); setErr('');
     try {
       const res = await fetch('/api/payments/create-order', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productSlug, hosting, couponCode: applied?.code }),
+        body: JSON.stringify({ productSlug, hosting, couponCode: couponCodeOverride ?? applied?.code }),
       });
       const data = await res.json();
       if (!data.ok) throw new Error(data.error);
@@ -89,9 +71,41 @@ function CheckoutInner() {
     }
   };
 
+  // Order Now → Razorpay should open immediately, not wait for a second
+  // "Pay Now" click — this page still renders behind the modal (order
+  // summary, GST breakdown, coupon field) as a fallback if the visitor
+  // dismisses the popup or wants to apply a coupon before paying.
+  const autoTriedRef = useRef(false);
+  useEffect(() => {
+    if (autoTriedRef.current) return;
+    if (status !== 'authenticated' || !product || !rzpReady) return;
+    autoTriedRef.current = true;
+    pay();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, product, rzpReady]);
+
+  if (productLoading) return <div className="container py-20 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-text2" /></div>;
+  if (!product) return <div className="container py-20 text-center">Invalid product.</div>;
+  const base = Math.round(product.price * (hosting === 'on-premise' ? 1.5 : 1));
+  const subtotal = base - (applied?.discount || 0);
+  const gst = Math.round((subtotal * GST_RATE) / 100);
+  const total = subtotal + gst;
+
+  const applyCoupon = async () => {
+    setCouponErr(''); setCouponLoading(true);
+    try {
+      const r = await fetch('/api/coupon/validate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code, productSlug, hosting }) });
+      const d = await r.json();
+      if (!d.ok) throw new Error(d.error || 'Invalid coupon');
+      setApplied({ code: d.code, discount: d.discount });
+      setCode('');
+    } catch (e: any) { setCouponErr(e.message); }
+    finally { setCouponLoading(false); }
+  };
+
   return (
     <>
-      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" onLoad={() => setRzpReady(true)} />
       <div className="container py-12 max-w-3xl">
         <h1 className="text-3xl font-extrabold mb-6">Checkout</h1>
         <div className="grid md:grid-cols-[2fr_1fr] gap-6">
@@ -140,8 +154,8 @@ function CheckoutInner() {
               </div>
             )}
 
-            <button disabled={loading} onClick={pay} className="btn btn-primary w-full justify-center">
-              <CreditCard className="w-4 h-4" /> {loading ? 'Processing...' : 'Pay Now'}
+            <button disabled={loading} onClick={() => pay()} className="btn btn-primary w-full justify-center">
+              <CreditCard className="w-4 h-4" /> {loading ? 'Opening Razorpay...' : 'Pay Now'}
             </button>
             {err && <p className="text-red-500 text-xs mt-2">{err}</p>}
             <div className="mt-4 pt-4 border-t border-tint space-y-1.5 text-[11px] text-text2">
