@@ -9,7 +9,11 @@ const csp = [
   // WebSocket calls are governed by its own page, not this CSP at all;
   // this parent page only ever directly loads the one <script> tag and
   // creates the one <iframe>.
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://checkout.razorpay.com https://superai.kvlbusinesssolutions.com https://connect.facebook.net",
+  // cdn.razorpay.com: the risk-detection bundle Razorpay's checkout.js loads
+  // itself once the payment modal opens — without it Razorpay silently loses
+  // some fraud-signal collection, not a checkout-breaking error, but worth
+  // allowing so it runs as intended.
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://checkout.razorpay.com https://cdn.razorpay.com https://superai.kvlbusinesssolutions.com https://connect.facebook.net",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
