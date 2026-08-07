@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { connectDB } from '@/lib/mongodb';
 import { Lead } from '@/lib/models/Lead';
 import { Referral } from '@/lib/models/Referral';
-import { sendNotification, leadEmail } from '@/lib/email';
+import { sendNotification, leadEmail, leadConfirmationEmail } from '@/lib/email';
 import { rateLimit, clientIp } from '@/lib/rate-limit';
 import { fireTrigger } from '@/lib/workflows/runner';
 import { sendLeadWhatsApp, notifyAdminWhatsApp } from '@/lib/whatsapp';
@@ -59,6 +59,7 @@ export async function POST(req: Request) {
       scoreLeadAsync(lead._id.toString(), data).catch(() => {})
     );
     sendNotification(`New Lead — ${data.name}`, leadEmail(data));
+    sendNotification('We got your request — KVL Business Solutions', leadConfirmationEmail(data), data.email);
     // WhatsApp auto-message — fire & forget
     sendLeadWhatsApp({ name: data.name, phone: data.phone, service: data.service }).catch(() => {});
     notifyAdminWhatsApp({ name: data.name, phone: data.phone, email: data.email, service: data.service, source: data.source }).catch(() => {});

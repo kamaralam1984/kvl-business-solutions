@@ -31,6 +31,16 @@ export function leadEmail(lead: any) {
     <p><b>Message:</b><br/>${lead.message || ''}</p>`);
 }
 
+// Sent to the customer themselves right after they submit a lead form —
+// leadEmail() above only ever goes to the sales inbox, so without this the
+// person who filled the form gets no email at all (only a WhatsApp message,
+// and only if WATI is configured).
+export function leadConfirmationEmail(lead: { name: string; service?: string }) {
+  return wrap('We got your request', `<h2>Thanks, ${lead.name}! 🙏</h2>
+    <p>We've received your request${lead.service ? ` for <b>${lead.service}</b>` : ''} — a member of our team will reach out within <b>1 hour</b> during business hours.</p>
+    <p>Need us sooner? Call <a href="tel:+919942000413" style="color:#1d4ed8">+91 99420 00413</a> or message us on <a href="https://wa.me/919942000413" style="color:#1d4ed8">WhatsApp</a>.</p>`);
+}
+
 export function callBackEmail(data: { name: string; phone: string }) {
   return wrap('Call Me Back Requested', `<h2>📞 Call Back Requested — ${data.name}</h2>
     <p><b>Phone:</b> ${data.phone}</p>
