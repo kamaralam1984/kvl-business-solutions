@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import { WebsiteOfferClient } from './WebsiteOfferClient';
 import { getLiveSoftwareProducts } from '@/lib/data/live-software';
 import { connectDB } from '@/lib/mongodb';
@@ -33,9 +32,5 @@ export default async function WebsiteOfferPage() {
     slug: c.slug, name: c.name, industry: c.industry, image: c.images.hero, tagline: c.tagline,
   }));
 
-  return (
-    <Suspense fallback={null}>
-      <WebsiteOfferClient plans={plans} reviews={reviews} portfolio={portfolio} />
-    </Suspense>
-  );
+  return <WebsiteOfferClient plans={plans} reviews={reviews} portfolio={portfolio} />;
 }

@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Loader2, ShieldCheck, Clock, Sparkles } from 'lucide-react';
 import { IndianFlag } from '@/components/shared/IndianFlag';
@@ -13,7 +13,6 @@ const CATEGORIES = [
 
 export function GetQuoteClient() {
   const router = useRouter();
-  const sp = useSearchParams();
   const [form, setForm] = useState({ name: '', phone: '', companyName: '', businessType: '', email: '' });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -47,7 +46,7 @@ export function GetQuoteClient() {
         return;
       }
       const qs = new URLSearchParams({ lead: d.id, name: form.name });
-      const utm = sp.toString();
+      const utm = typeof window !== 'undefined' ? window.location.search.replace(/^\?/, '') : '';
       router.push(`/website-offer?${qs.toString()}${utm ? `&${utm}` : ''}`);
     } catch {
       setError('Could not submit — please try again or WhatsApp us.');

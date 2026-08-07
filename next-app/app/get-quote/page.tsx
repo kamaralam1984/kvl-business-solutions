@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import { GetQuoteClient } from './GetQuoteClient';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
@@ -14,9 +13,5 @@ export const metadata = {
 };
 
 export default function GetQuotePage() {
-  return (
-    <Suspense fallback={null}>
-      <GetQuoteClient />
-    </Suspense>
-  );
+  return <GetQuoteClient />;
 }

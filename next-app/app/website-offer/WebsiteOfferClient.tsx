@@ -1,25 +1,20 @@
 'use client';
-import { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
   Users, ShieldCheck, Rocket, Smartphone, Heart, Palette, Search, Zap as ZapIcon,
-  MessageCircle, Headphones as HeadphonesIcon, Check, Loader2, Sparkles, Phone, Mail, MapPin,
+  MessageCircle, Headphones as HeadphonesIcon, Check, Sparkles, Phone, Mail, MapPin,
 } from 'lucide-react';
 import { IndianFlag } from '@/components/shared/IndianFlag';
 import { PortfolioCarousel } from '@/components/website-offer/PortfolioCarousel';
 import { PricingSection } from '@/components/website-offer/PricingSection';
 import { TestimonialsCarousel } from '@/components/website-offer/TestimonialsCarousel';
 import { OfferFAQ } from '@/components/website-offer/OfferFAQ';
+import { QuoteForm } from '@/components/website-offer/QuoteForm';
+import { HeroCapture } from '@/components/website-offer/HeroCapture';
 import { useReveal, revealStyle } from '@/lib/hooks/useReveal';
 import type { Software } from '@/lib/data/software';
-
-const CATEGORIES = [
-  'Retail / Shop', 'Restaurant / Cafe', 'Real Estate', 'Healthcare / Clinic',
-  'Education / Coaching', 'Manufacturing', 'IT / Software', 'Construction',
-  'Professional Services', 'Beauty / Salon', 'NGO / Trust', 'Other',
-];
 
 const NAV = [
   { label: 'Home', href: '#home' },
@@ -52,78 +47,11 @@ const WA_NUMBER = (process.env.NEXT_PUBLIC_WHATSAPP || '919942000413').replace(/
 const PHONE = '+91 99420 00413';
 const EMAIL = 'info@kvlbusinesssolutions.com';
 
-function QuoteForm({ onDone }: { onDone: (name: string) => void }) {
-  const [form, setForm] = useState({ name: '', phone: '', companyName: '', businessType: '', email: '' });
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState('');
-
-  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
-    setForm(f => ({ ...f, [k]: e.target.value }));
-
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    if (!form.name.trim() || form.phone.trim().length < 7 || !form.companyName.trim() || !form.businessType || !form.email.trim()) {
-      setError('Please fill in every field.');
-      return;
-    }
-    setSubmitting(true);
-    try {
-      const res = await fetch('/api/lead', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: form.name, phone: form.phone, email: form.email,
-          companyName: form.companyName, businessType: form.businessType,
-          service: 'Website (Independence Day Offer)',
-          source: 'independence-day-website-offer',
-        }),
-      });
-      const d = await res.json().catch(() => ({}));
-      if (!res.ok || !d.ok) { setError(d.error || 'Could not submit — please try again or WhatsApp us.'); setSubmitting(false); return; }
-      onDone(form.name);
-    } catch {
-      setError('Could not submit — please try again or WhatsApp us.');
-      setSubmitting(false);
-    }
-  };
-
-  return (
-    <form onSubmit={submit} className="bg-white rounded-2xl p-5 shadow-2xl space-y-2.5 w-full max-w-sm">
-      <div className="text-center mb-1">
-        <div className="text-sm font-extrabold text-gray-900">Get Your Free Quote</div>
-        <div className="text-[11px] text-gray-500">Share your details and we will contact you soon</div>
-      </div>
-      <input className="form-control" placeholder="Full Name *" value={form.name} onChange={set('name')} required />
-      <input type="tel" className="form-control" placeholder="Mobile Number *" value={form.phone} onChange={set('phone')} required />
-      <input className="form-control" placeholder="Business Name *" value={form.companyName} onChange={set('companyName')} required />
-      <select className="form-control" value={form.businessType} onChange={set('businessType')} required>
-        <option value="">Select Category *</option>
-        {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-      </select>
-      <input type="email" className="form-control" placeholder="Email Address" value={form.email} onChange={set('email')} required />
-      {error && <p className="text-red-600 text-xs">{error}</p>}
-      <button
-        type="submit" disabled={submitting}
-        className="w-full py-2.5 rounded-lg font-bold text-white text-sm flex items-center justify-center gap-2 disabled:opacity-60"
-        style={{ background: 'linear-gradient(90deg,#FF9933,#e07b1a)' }}
-      >
-        {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-        {submitting ? 'Submitting...' : 'Get Free Quote'}
-      </button>
-      <div className="text-center text-[10px] text-gray-400">100% Privacy Guaranteed</div>
-    </form>
-  );
-}
-
 export function WebsiteOfferClient({ plans, reviews, portfolio }: {
   plans: Software[];
   reviews: { name: string; company?: string; rating: number; title?: string; message: string }[];
   portfolio: { slug: string; name: string; industry: string; image: string; tagline: string }[];
 }) {
-  const sp = useSearchParams();
-  const [leadName, setLeadName] = useState(sp.get('name') || '');
-  const [captured, setCaptured] = useState(Boolean(sp.get('lead')));
   const { ref: heroRef, inView: heroInView } = useReveal('0px');
   const { ref: whyRef, inView: whyInView } = useReveal();
 
@@ -193,18 +121,9 @@ export function WebsiteOfferClient({ plans, reviews, portfolio }: {
           </div>
 
           <div id="quote-form" style={revealStyle(heroInView, 1)} className="flex justify-center lg:justify-end scroll-mt-24">
-            {captured ? (
-              <div className="bg-white rounded-2xl p-6 shadow-2xl w-full max-w-sm text-center">
-                <div className="text-4xl mb-2">🎉</div>
-                <div className="font-extrabold text-gray-900 mb-1">{leadName ? `Thanks, ${leadName}!` : 'Thanks!'}</div>
-                <p className="text-sm text-gray-600 mb-4">Our team will call you shortly with your free quote. Meanwhile, check out our plans below.</p>
-                <a href="#pricing" className="inline-block w-full py-2.5 rounded-lg font-bold text-white text-sm" style={{ background: 'linear-gradient(90deg,#FF9933,#e07b1a)' }}>
-                  See Pricing Plans
-                </a>
-              </div>
-            ) : (
-              <QuoteForm onDone={(name) => { setLeadName(name); setCaptured(true); }} />
-            )}
+            <Suspense fallback={<QuoteForm />}>
+              <HeroCapture />
+            </Suspense>
           </div>
         </div>
       </section>
