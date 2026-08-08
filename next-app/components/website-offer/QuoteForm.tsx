@@ -3,12 +3,6 @@ import { useState } from 'react';
 import { Loader2, Sparkles } from 'lucide-react';
 import { trackEvent } from '@/components/analytics/GoogleAnalytics';
 
-const CATEGORIES = [
-  'Retail / Shop', 'Restaurant / Cafe', 'Real Estate', 'Healthcare / Clinic',
-  'Education / Coaching', 'Manufacturing', 'IT / Software', 'Construction',
-  'Professional Services', 'Beauty / Salon', 'NGO / Trust', 'Other',
-];
-
 // Explicit, theme-independent styling — see app/get-quote/GetQuoteClient.tsx
 // for why this doesn't use the shared ".form-control" class.
 const INPUT_CLS = 'w-full px-4 py-3 rounded-xl text-sm outline-none transition-all duration-200 bg-white border border-gray-300 text-gray-900 placeholder-gray-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20';
@@ -30,7 +24,7 @@ export function ThankYouCard({ name }: { name?: string }) {
 // be used both as a live component and as a Suspense fallback with no
 // external state wiring needed.
 export function QuoteForm() {
-  const [form, setForm] = useState({ name: '', phone: '', companyName: '', businessType: '', email: '' });
+  const [form, setForm] = useState({ name: '', phone: '', websiteType: '', email: '' });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [doneName, setDoneName] = useState<string | null>(null);
@@ -41,7 +35,7 @@ export function QuoteForm() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    if (!form.name.trim() || form.phone.trim().length < 7 || !form.companyName.trim() || !form.businessType || !form.email.trim()) {
+    if (!form.name.trim() || form.phone.trim().length < 7 || !form.websiteType.trim() || !form.email.trim()) {
       setError('Please fill in every field.');
       return;
     }
@@ -52,7 +46,7 @@ export function QuoteForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: form.name, phone: form.phone, email: form.email,
-          companyName: form.companyName, businessType: form.businessType,
+          businessType: form.websiteType,
           service: 'Website (Independence Day Offer)',
           source: 'independence-day-website-offer',
         }),
@@ -77,11 +71,7 @@ export function QuoteForm() {
       </div>
       <input className={INPUT_CLS} placeholder="Full Name *" value={form.name} onChange={set('name')} required />
       <input type="tel" className={INPUT_CLS} placeholder="Mobile Number *" value={form.phone} onChange={set('phone')} required />
-      <input className={INPUT_CLS} placeholder="Business Name *" value={form.companyName} onChange={set('companyName')} required />
-      <select className={INPUT_CLS} value={form.businessType} onChange={set('businessType')} required>
-        <option value="">Select Category *</option>
-        {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-      </select>
+      <input className={INPUT_CLS} placeholder="Website Type (e.g. Portfolio, Restaurant, Shop) *" value={form.websiteType} onChange={set('websiteType')} required />
       <input type="email" className={INPUT_CLS} placeholder="Email Address" value={form.email} onChange={set('email')} required />
       {error && <p className="text-red-600 text-xs">{error}</p>}
       <button

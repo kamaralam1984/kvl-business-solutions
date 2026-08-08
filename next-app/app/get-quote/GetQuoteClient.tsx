@@ -6,12 +6,6 @@ import { Loader2, ShieldCheck, Clock, Sparkles } from 'lucide-react';
 import { IndianFlag } from '@/components/shared/IndianFlag';
 import { trackEvent } from '@/components/analytics/GoogleAnalytics';
 
-const CATEGORIES = [
-  'Retail / Shop', 'Restaurant / Cafe', 'Real Estate', 'Healthcare / Clinic',
-  'Education / Coaching', 'Manufacturing', 'IT / Software', 'Construction',
-  'Professional Services', 'Beauty / Salon', 'NGO / Trust', 'Other',
-];
-
 // Explicit, theme-independent styling — this page is a standalone light-mode
 // campaign design, so inputs must not pick up the shared ".form-control"
 // class's html.dark override (near-white text on our white card would be
@@ -20,7 +14,7 @@ const INPUT_CLS = 'w-full px-4 py-3 rounded-xl text-sm outline-none transition-a
 
 export function GetQuoteClient() {
   const router = useRouter();
-  const [form, setForm] = useState({ name: '', phone: '', companyName: '', businessType: '', email: '' });
+  const [form, setForm] = useState({ name: '', phone: '', websiteType: '', email: '' });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -30,7 +24,7 @@ export function GetQuoteClient() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    if (!form.name.trim() || form.phone.trim().length < 7 || !form.companyName.trim() || !form.businessType || !form.email.trim()) {
+    if (!form.name.trim() || form.phone.trim().length < 7 || !form.websiteType.trim() || !form.email.trim()) {
       setError('Please fill in every field.');
       return;
     }
@@ -41,7 +35,7 @@ export function GetQuoteClient() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: form.name, phone: form.phone, email: form.email,
-          companyName: form.companyName, businessType: form.businessType,
+          businessType: form.websiteType,
           service: 'Website (Independence Day Offer)',
           source: 'independence-day-ads',
         }),
@@ -98,15 +92,8 @@ export function GetQuoteClient() {
             <input id="gq-phone" type="tel" autoComplete="tel" className={INPUT_CLS} placeholder="Mobile Number *" value={form.phone} onChange={set('phone')} required />
           </div>
           <div>
-            <label htmlFor="gq-company" className="sr-only">Business Name</label>
-            <input id="gq-company" autoComplete="organization" className={INPUT_CLS} placeholder="Business Name *" value={form.companyName} onChange={set('companyName')} required />
-          </div>
-          <div>
-            <label htmlFor="gq-category" className="sr-only">Business Category</label>
-            <select id="gq-category" className={INPUT_CLS} value={form.businessType} onChange={set('businessType')} required>
-              <option value="">Select Business Category *</option>
-              {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
+            <label htmlFor="gq-website-type" className="sr-only">Website Type</label>
+            <input id="gq-website-type" className={INPUT_CLS} placeholder="Website Type (e.g. Portfolio, Restaurant, Shop) *" value={form.websiteType} onChange={set('websiteType')} required />
           </div>
           <div>
             <label htmlFor="gq-email" className="sr-only">Email Address</label>
