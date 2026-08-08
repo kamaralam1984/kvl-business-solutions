@@ -13,6 +13,7 @@ import { fireTrigger } from '@/lib/workflows/runner';
 import { sendLeadWhatsApp, notifyAdminWhatsApp } from '@/lib/whatsapp';
 import { computeLeadTier } from '@/lib/lead-tier';
 import { linkVisitorToLead } from '@/lib/vip/link';
+import { sendLeadCapiEvent, capiRequestContext } from '@/lib/metaCapi';
 
 const schema = z.object({
   name: z.string().min(2),
@@ -99,6 +100,9 @@ export async function POST(req: Request) {
       leadId: lead._id.toString(),
     });
     linkVisitorToLead({ leadId: lead._id.toString(), name: data.name, email: data.email }).catch(() => {});
+    const ctx = capiRequestContext(req, clientIp(req));
+    sendLeadCapiEvent({ eventId: lead._id.toString(), email: data.email, phone: data.phone, ...ctx })
+      .catch(e => console.error('[lead] Meta CAPI failed:', e?.message || e));
     return NextResponse.json({ ok: true, id: lead._id });
   } catch (e) {
     return apiError(e);

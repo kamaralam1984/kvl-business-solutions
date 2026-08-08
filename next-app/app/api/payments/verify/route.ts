@@ -7,6 +7,8 @@ import { generateLicenseKey } from '@/lib/license';
 import { sendNotification, orderEmail } from '@/lib/email';
 import { notify } from '@/lib/models/Notification';
 import { fireTrigger } from '@/lib/workflows/runner';
+import { sendPurchaseCapiEvent, capiRequestContext } from '@/lib/metaCapi';
+import { clientIp } from '@/lib/rate-limit';
 
 export async function POST(req: Request) {
   try {
@@ -45,6 +47,16 @@ export async function POST(req: Request) {
       licenseKey: order.licenseKey,
       link: `/dashboard/orders/${order.orderId}`,
     });
+
+    const ctx = capiRequestContext(req, clientIp(req));
+    sendPurchaseCapiEvent({
+      eventId: order.orderId,
+      email: order.email,
+      phone: order.billing?.phone,
+      value: order.amount,
+      currency: order.currency,
+      ...ctx,
+    }).catch(e => console.error('[payments/verify] Meta CAPI failed:', e?.message || e));
 
     return NextResponse.json({ ok: true, orderId: order.orderId, licenseKey: order.licenseKey });
   } catch (e) {

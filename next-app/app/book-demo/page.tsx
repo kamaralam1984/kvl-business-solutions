@@ -25,7 +25,7 @@ export default function BookDemoPage() {
       const r = await fetch('/api/booking', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
       const d = await r.json();
       if (!d.ok) throw new Error(d.error || 'Failed');
-      trackEvent('booking_submit', { product: form.product });
+      trackEvent('booking_submit', { product: form.product }, d.id);
       setState('success');
       router.push('/thank-you?type=booking');
     } catch (e: any) { setState('error'); setErr(e.message); }

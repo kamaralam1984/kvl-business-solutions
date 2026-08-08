@@ -36,7 +36,12 @@ function hasConsent() {
 //   2. Google Ads conversion tracking, for the subset of events mapped above
 //   3. This site's own database (/api/events), so the admin dashboard has
 //      real CTR/lead-source/landing-page numbers with no external API needed
-export function trackEvent(name: string, params?: Record<string, any>) {
+// `eventId` — when the caller has one (typically the just-created Lead/Order's
+// _id, returned by the API response) — is passed through to fbq's eventID so
+// Meta can dedupe this browser-side Pixel fire against the server-side
+// Conversions API event sent for the same conversion (lib/metaCapi.ts). Both
+// sides MUST use the identical id, or Meta double-counts the conversion.
+export function trackEvent(name: string, params?: Record<string, any>, eventId?: string) {
   if (typeof window === 'undefined') return;
 
   if (window.gtag && hasConsent()) {
@@ -47,7 +52,7 @@ export function trackEvent(name: string, params?: Record<string, any>) {
 
   if (window.fbq && hasConsent()) {
     const fbEvent = META_PIXEL_EVENTS[name];
-    if (fbEvent) window.fbq('track', fbEvent, params);
+    if (fbEvent) window.fbq('track', fbEvent, params, eventId ? { eventID: eventId } : undefined);
   }
 
   if (hasConsent()) {

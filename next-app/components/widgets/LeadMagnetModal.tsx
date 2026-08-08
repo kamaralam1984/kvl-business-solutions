@@ -70,7 +70,7 @@ export function LeadMagnetModal() {
         return;
       }
       setDone(true);
-      trackEvent('lead_submit', { source: `lead-magnet-${type}` });
+      trackEvent('lead_submit', { source: `lead-magnet-${type}` }, d.id);
     } catch {
       setError('Could not submit your request. Please try again or WhatsApp us.');
     } finally { setSubmitting(false); }

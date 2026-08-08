@@ -8,6 +8,7 @@ import { Lead } from '@/lib/models/Lead';
 import { sendNotification, callBackEmail } from '@/lib/email';
 import { sendCustomWhatsApp } from '@/lib/whatsapp';
 import { fireTrigger } from '@/lib/workflows/runner';
+import { sendLeadCapiEvent, capiRequestContext } from '@/lib/metaCapi';
 
 const schema = z.object({
   name: z.string().min(1).default('Customer'),
@@ -35,6 +36,9 @@ export async function POST(req: Request) {
         source: 'call-back-widget',
         message: 'Customer requested immediate callback via website widget',
       });
+      const ctx = capiRequestContext(req, clientIp(req));
+      sendLeadCapiEvent({ eventId: lead._id.toString(), phone: body.phone, ...ctx })
+        .catch(e => console.error('[call-back] Meta CAPI failed:', e?.message || e));
       // AI scoring — fire & forget. Call-back requests are high-intent (the
       // visitor explicitly asked to be called right now), but previously only
       // the main lead form triggered scoring, leaving these permanently
@@ -72,7 +76,7 @@ export async function POST(req: Request) {
       await Lead.findByIdAndUpdate(lead._id, { callStatus: 'failed' });
     }
 
-    return NextResponse.json({ ok: true, callId, callInitiated: Boolean(callId) });
+    return NextResponse.json({ ok: true, callId, callInitiated: Boolean(callId), leadId: lead._id.toString() });
   } catch (e) {
     return apiError(e);
   }

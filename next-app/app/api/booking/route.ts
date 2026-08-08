@@ -6,6 +6,7 @@ import { Booking } from '@/lib/models/Booking';
 import { sendNotification } from '@/lib/email';
 import { rateLimit, clientIp } from '@/lib/rate-limit';
 import { linkVisitorToLead } from '@/lib/vip/link';
+import { sendLeadCapiEvent, capiRequestContext } from '@/lib/metaCapi';
 
 const schema = z.object({
   name: z.string().min(2),
@@ -43,6 +44,9 @@ export async function POST(req: Request) {
       data.email);
 
     linkVisitorToLead({ name: data.name, email: data.email }).catch(() => {});
+    const ctx = capiRequestContext(req, clientIp(req));
+    sendLeadCapiEvent({ eventId: b._id.toString(), email: data.email, phone: data.phone, ...ctx })
+      .catch(e => console.error('[booking] Meta CAPI failed:', e?.message || e));
     return NextResponse.json({ ok: true, id: b._id });
   } catch (e) {
     return apiError(e);

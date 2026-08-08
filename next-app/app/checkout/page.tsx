@@ -76,7 +76,7 @@ function CheckoutInner() {
           const verify = await fetch('/api/payments/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(resp) });
           const vd = await verify.json();
           if (!vd.ok) { setErr('Payment verification failed. Please contact support.'); return; }
-          trackEvent('purchase', { value: data.amount / 100, currency: data.currency || 'INR', transaction_id: vd.orderId, product: data.productName });
+          trackEvent('purchase', { value: data.amount / 100, currency: data.currency || 'INR', transaction_id: vd.orderId, product: data.productName }, vd.orderId);
           // Logged-in buyers go straight to their dashboard. Guests paid
           // first — now's when we offer to turn that into an account.
           if (session?.user?.email) router.push(`/dashboard?success=${vd.orderId}`);

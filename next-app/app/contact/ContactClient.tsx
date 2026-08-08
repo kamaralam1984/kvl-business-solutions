@@ -60,7 +60,7 @@ export function ContactClient({ settings }: { settings: any }) {
         setStatus('error');
         return;
       }
-      trackEvent('lead_submit', { source: 'contact-form', service: form.service });
+      trackEvent('lead_submit', { source: 'contact-form', service: form.service }, d.id);
       setStatus('success');
       router.push('/thank-you?type=contact');
     } catch {

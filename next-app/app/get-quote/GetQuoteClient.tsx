@@ -52,7 +52,7 @@ export function GetQuoteClient() {
         setSubmitting(false);
         return;
       }
-      trackEvent('lead_submit', { source: 'independence-day-ads', service: 'Website (Independence Day Offer)' });
+      trackEvent('lead_submit', { source: 'independence-day-ads', service: 'Website (Independence Day Offer)' }, d.id);
       const qs = new URLSearchParams({ lead: d.id, name: form.name });
       const utm = typeof window !== 'undefined' ? window.location.search.replace(/^\?/, '') : '';
       router.push(`/website-offer?${qs.toString()}${utm ? `&${utm}` : ''}`);

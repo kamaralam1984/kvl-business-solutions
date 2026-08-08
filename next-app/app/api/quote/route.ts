@@ -6,6 +6,7 @@ import { Quote } from '@/lib/models/Quote';
 import { sendNotification, quoteEmail } from '@/lib/email';
 import { rateLimit, clientIp } from '@/lib/rate-limit';
 import { linkVisitorToLead } from '@/lib/vip/link';
+import { sendLeadCapiEvent, capiRequestContext } from '@/lib/metaCapi';
 
 const schema = z.object({
   type: z.string(),
@@ -26,6 +27,9 @@ export async function POST(req: Request) {
     const q = await Quote.create(data);
     sendNotification(`New Quote — ${data.contact.email}`, quoteEmail(data));
     linkVisitorToLead({ name: data.contact.name, email: data.contact.email }).catch(() => {});
+    const ctx = capiRequestContext(req, clientIp(req));
+    sendLeadCapiEvent({ eventId: q._id.toString(), email: data.contact.email, phone: data.contact.phone, ...ctx })
+      .catch(e => console.error('[quote] Meta CAPI failed:', e?.message || e));
     return NextResponse.json({ ok: true, id: q._id });
   } catch (e) {
     return apiError(e);

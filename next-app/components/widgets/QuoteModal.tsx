@@ -61,7 +61,7 @@ export function QuoteModal() {
         return;
       }
       setDone(true);
-      trackEvent('proposal_request', { type: sel.type?.label, scope: sel.scope?.label });
+      trackEvent('proposal_request', { type: sel.type?.label, scope: sel.scope?.label }, d.id);
     } catch {
       setError('Could not send your quote request. Please try again or WhatsApp us.');
     } finally { setSubmitting(false); }

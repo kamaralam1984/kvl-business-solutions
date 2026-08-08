@@ -43,7 +43,7 @@ export function ExitIntentPopup() {
     e.preventDefault();
     if (!email) return;
     // Save as lead
-    await fetch('/api/lead', {
+    const d = await fetch('/api/lead', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -53,8 +53,8 @@ export function ExitIntentPopup() {
         source: 'exit-popup',
         message: 'User submitted email via exit intent popup — wants a free consultation',
       }),
-    }).catch(() => {});
-    trackEvent('lead_submit', { source: 'exit-popup' });
+    }).then(r => r.json()).catch(() => ({}));
+    trackEvent('lead_submit', { source: 'exit-popup' }, d.id);
     setSubmitted(true);
     setTimeout(dismiss, 3000);
   };

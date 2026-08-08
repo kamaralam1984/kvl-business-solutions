@@ -22,7 +22,7 @@ export function CallBackWidget() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: name || 'Customer', phone }),
       }).then(x => x.json());
-      if (r.ok) { setCallInitiated(Boolean(r.callInitiated)); setDone(true); trackEvent('lead_submit', { source: 'callback-widget' }); }
+      if (r.ok) { setCallInitiated(Boolean(r.callInitiated)); setDone(true); trackEvent('lead_submit', { source: 'callback-widget' }, r.leadId); }
       else alert(r.error || 'Error. Please try again.');
     } finally {
       setLoading(false);
