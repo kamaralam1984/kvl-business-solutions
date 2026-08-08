@@ -25,7 +25,7 @@ export default function ShippingPage() {
       <p>You will receive an email with tracking details once your order is dispatched.</p>
 
       <h2>5. International shipping</h2>
-      <p>We currently ship hardware only within India. For international software licenses, email <a href="mailto:sales@kvlbusinesssolutions.com">sales@kvlbusinesssolutions.com</a>.</p>
+      <p>We currently ship hardware only within India. For international software licenses, email <a href="mailto:kvlbusinesssolution@gmail.com">kvlbusinesssolution@gmail.com</a>.</p>
 
       <h2>6. Damaged or wrong items</h2>
       <p>If you receive a damaged or incorrect item, raise a ticket within 48 hours of delivery. We will arrange a free replacement.</p>

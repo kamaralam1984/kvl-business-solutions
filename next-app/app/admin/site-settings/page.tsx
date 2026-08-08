@@ -162,7 +162,7 @@ export default function SiteSettingsPage() {
               value={s.referralRewardDescription}
               onChange={v => update('referralRewardDescription', v)}
               textarea
-              placeholder="e.g. Contact sales@kvlbusinesssolutions.com once your referral converts to a paid client to discuss a reward."
+              placeholder="e.g. Contact kvlbusinesssolution@gmail.com once your referral converts to a paid client to discuss a reward."
             />
           </>
         )}

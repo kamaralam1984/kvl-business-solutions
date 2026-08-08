@@ -1,6 +1,7 @@
 import { chatRouted } from './router';
 import { connectDB } from '@/lib/mongodb';
 import { Lead } from '@/lib/models/Lead';
+import { fireTrigger } from '@/lib/workflows/runner';
 
 export interface LeadData {
   name: string;
@@ -140,6 +141,25 @@ export async function scoreLeadAsync(leadId: string, data: LeadData) {
       $set: { ...scoreFields, aiScoreSource: source, aiScoredAt: new Date() },
     });
     console.log(`[lead-scorer] Scored ${leadId}: ${scoreFields.aiScore} (${scoreFields.intent}, source=${source})`);
+
+    // Speed-to-lead matters most for hot leads — ping sales the moment AI
+    // flags one, instead of relying on someone noticing it on the dashboard.
+    // ctx.email is the *recipient* here (sales inbox), so the lead's own
+    // contact details go under separate keys for the notification template.
+    if (scoreFields.intent === 'hot') {
+      fireTrigger('hot_lead', {
+        name: data.name,
+        email: (process.env.EMAIL_TO_SALES || 'kvlbusinesssolution@gmail.com').toLowerCase(),
+        phone: process.env.ADMIN_WHATSAPP_PHONE || '',
+        contactName: data.name,
+        contactEmail: data.email,
+        contactPhone: data.phone,
+        aiScore: scoreFields.aiScore,
+        summary: scoreFields.aiInsights?.summary || '',
+        nextAction: scoreFields.aiInsights?.nextAction || '',
+        leadId,
+      });
+    }
   } catch (e) {
     console.error('[lead-scorer] Error:', e);
   }

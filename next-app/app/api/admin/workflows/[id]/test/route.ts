@@ -57,15 +57,15 @@ const mockContexts: Record<string, any> = {
   },
   deal_won: {
     name: 'Test Contact', email: 'test@example.com', title: 'Test Deal', dealId: 'TEST-DEAL-001',
-    amount: 49999, stage: 'won', ownerEmail: 'sales@kvlbusinesssolutions.com', source: 'website',
+    amount: 49999, stage: 'won', ownerEmail: 'kvlbusinesssolution@gmail.com', source: 'website',
   },
   deal_lost: {
     name: 'Test Contact', email: 'test@example.com', title: 'Test Deal', dealId: 'TEST-DEAL-001',
-    amount: 49999, stage: 'lost', ownerEmail: 'sales@kvlbusinesssolutions.com', source: 'website',
+    amount: 49999, stage: 'lost', ownerEmail: 'kvlbusinesssolution@gmail.com', source: 'website',
   },
   proposal_sent: {
     name: 'Test Contact', email: 'test@example.com', title: 'Test Deal', dealId: 'TEST-DEAL-001',
-    amount: 49999, stage: 'proposal', ownerEmail: 'sales@kvlbusinesssolutions.com', source: 'website',
+    amount: 49999, stage: 'proposal', ownerEmail: 'kvlbusinesssolution@gmail.com', source: 'website',
   },
   // support_closed is real — fires from app/api/admin/tickets/[id]/route.ts on the
   // open→closed transition. The rest below still have no real event source in this

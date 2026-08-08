@@ -55,7 +55,7 @@ async function actionAddToCrm(workflow: any, ctx: TriggerContext) {
     if (updated) return;
     // Deal was deleted/missing — fall through and create a fresh one below.
   }
-  const ownerEmail = process.env.EMAIL_TO_SALES || 'sales@kvlbusinesssolutions.com';
+  const ownerEmail = process.env.EMAIL_TO_SALES || 'kvlbusinesssolution@gmail.com';
   await Deal.create({
     ownerEmail: ownerEmail.toLowerCase(),
     title: `Auto: ${ctx.name || ctx.title || 'New lead'}`,

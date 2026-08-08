@@ -13,7 +13,7 @@ const SiteSettingsSchema = new Schema({
   phone2: { type: String, default: '' },
   email: { type: String, default: 'info@kvlbusinesssolutions.com' },
   supportEmail: { type: String, default: 'support@kvlbusinesssolutions.com' },
-  salesEmail: { type: String, default: 'sales@kvlbusinesssolutions.com' },
+  salesEmail: { type: String, default: 'kvlbusinesssolution@gmail.com' },
   whatsapp: { type: String, default: '919942000413' },
   whatsappSupportText: { type: String, default: '24×7 support' },
   addressLine1: { type: String, default: 'Patna, Sultanganj, Bihar, India' },

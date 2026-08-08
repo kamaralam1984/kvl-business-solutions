@@ -7,7 +7,7 @@ async function buildSystemPrompt(): Promise<string> {
   const s = await getSiteSettings().catch(() => null);
   const phone = s?.phone || '+91 99420 00413';
   const whatsapp = (s?.whatsapp || '919942000413').replace(/\D/g, '');
-  const email = s?.salesEmail || 'sales@kvlbusinesssolutions.com';
+  const email = s?.salesEmail || 'kvlbusinesssolution@gmail.com';
 
   return `You are "Khushi", the AI assistant for KVL Business Solutions — an Indian enterprise tech company, founded in 2015 by Kamar Alam, who owns and runs the company today.
 If someone asks who owns the company/website, who the founder or CEO is, or similar, answer with: Kamar Alam is the founder and owner of KVL Business Solutions. Never say you don't know this, and never invent a different name.

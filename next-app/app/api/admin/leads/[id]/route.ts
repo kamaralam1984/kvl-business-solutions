@@ -26,7 +26,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       await Deal.updateOne({ _id: before.dealId, stage: { $ne: 'won' } }, { $set: { stage: 'qualified', probability: 40 } });
       logActivity({ action: 'lead.auto_deal', actorEmail: g.session?.user?.email || undefined, actorRole: 'admin', target: 'Deal', targetId: before.dealId.toString(), details: { leadId: lead._id.toString(), leadEmail: lead.email, advanced: true }, req });
     } else {
-      const ownerEmail = (g.session?.user?.email || process.env.EMAIL_TO_SALES || 'sales@kvlbusinesssolutions.com').toLowerCase();
+      const ownerEmail = (g.session?.user?.email || process.env.EMAIL_TO_SALES || 'kvlbusinesssolution@gmail.com').toLowerCase();
       const deal = await Deal.create({
         ownerEmail,
         title: `${lead.name}${lead.service ? ' — ' + lead.service : ''}`,
