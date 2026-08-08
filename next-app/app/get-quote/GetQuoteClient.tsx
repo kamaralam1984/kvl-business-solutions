@@ -117,22 +117,26 @@ export function GetQuoteClient() {
         </div>
 
         <form onSubmit={submit} className="bg-white rounded-2xl p-6 shadow-2xl space-y-3">
-          <div>
-            <label htmlFor="gq-name" className="sr-only">Full Name</label>
-            <input id="gq-name" autoComplete="name" className={INPUT_CLS} placeholder="Full Name *" value={form.name} onChange={set('name')} required />
-          </div>
-          <div>
-            <label htmlFor="gq-phone" className="sr-only">Mobile Number</label>
-            <input id="gq-phone" type="tel" autoComplete="tel" className={INPUT_CLS} placeholder="Mobile Number *" value={form.phone} onChange={set('phone')} required />
-          </div>
-          <div>
-            <label htmlFor="gq-website-type" className="sr-only">Website Type</label>
-            <input id="gq-website-type" className={INPUT_CLS} placeholder="Website Type (e.g. Portfolio, Restaurant, Shop) *" value={form.websiteType} onChange={set('websiteType')} required />
-          </div>
-          <div>
-            <label htmlFor="gq-email" className="sr-only">Email Address</label>
-            <input id="gq-email" type="email" autoComplete="email" className={INPUT_CLS} placeholder="Email Address *" value={form.email} onChange={set('email')} required />
-          </div>
+          {!showCallbackForm && !callbackDone && (
+            <>
+              <div>
+                <label htmlFor="gq-name" className="sr-only">Full Name</label>
+                <input id="gq-name" autoComplete="name" className={INPUT_CLS} placeholder="Full Name *" value={form.name} onChange={set('name')} required />
+              </div>
+              <div>
+                <label htmlFor="gq-phone" className="sr-only">Mobile Number</label>
+                <input id="gq-phone" type="tel" autoComplete="tel" className={INPUT_CLS} placeholder="Mobile Number *" value={form.phone} onChange={set('phone')} required />
+              </div>
+              <div>
+                <label htmlFor="gq-website-type" className="sr-only">Website Type</label>
+                <input id="gq-website-type" className={INPUT_CLS} placeholder="Website Type (e.g. Portfolio, Restaurant, Shop) *" value={form.websiteType} onChange={set('websiteType')} required />
+              </div>
+              <div>
+                <label htmlFor="gq-email" className="sr-only">Email Address</label>
+                <input id="gq-email" type="email" autoComplete="email" className={INPUT_CLS} placeholder="Email Address *" value={form.email} onChange={set('email')} required />
+              </div>
+            </>
+          )}
 
           {error && <p className="text-red-600 text-xs">{error}</p>}
 

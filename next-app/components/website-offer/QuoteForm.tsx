@@ -103,10 +103,14 @@ export function QuoteForm() {
         <div className="text-sm font-extrabold text-gray-900">Get Your Free Quote</div>
         <div className="text-[11px] text-gray-500">Share your details and we will contact you soon</div>
       </div>
-      <input className={INPUT_CLS} placeholder="Full Name *" value={form.name} onChange={set('name')} required />
-      <input type="tel" className={INPUT_CLS} placeholder="Mobile Number *" value={form.phone} onChange={set('phone')} required />
-      <input className={INPUT_CLS} placeholder="Website Type (e.g. Portfolio, Restaurant, Shop) *" value={form.websiteType} onChange={set('websiteType')} required />
-      <input type="email" className={INPUT_CLS} placeholder="Email Address" value={form.email} onChange={set('email')} required />
+      {!showCallbackForm && !callbackDone && (
+        <>
+          <input className={INPUT_CLS} placeholder="Full Name *" value={form.name} onChange={set('name')} required />
+          <input type="tel" className={INPUT_CLS} placeholder="Mobile Number *" value={form.phone} onChange={set('phone')} required />
+          <input className={INPUT_CLS} placeholder="Website Type (e.g. Portfolio, Restaurant, Shop) *" value={form.websiteType} onChange={set('websiteType')} required />
+          <input type="email" className={INPUT_CLS} placeholder="Email Address" value={form.email} onChange={set('email')} required />
+        </>
+      )}
       {error && <p className="text-red-600 text-xs">{error}</p>}
 
       {callbackDone ? (
