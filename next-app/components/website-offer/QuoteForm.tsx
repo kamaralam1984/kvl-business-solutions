@@ -111,11 +111,11 @@ export function QuoteForm() {
 
       {callbackDone ? (
         <div className="flex items-center justify-center gap-2 text-green-600 font-bold text-sm py-2.5">
-          <CheckCircle className="w-4 h-4" /> We'll call you back within 4 hours!
+          <CheckCircle className="w-4 h-4" /> We will call you back within 4 hours!
         </div>
       ) : showCallbackForm ? (
         <div className="border border-gray-200 rounded-xl p-3 space-y-2 bg-gray-50">
-          <p className="text-xs font-bold text-gray-700">We'll call you back — just your name &amp; number:</p>
+          <p className="text-xs font-bold text-gray-700">We will call you back — just your name &amp; number:</p>
           <input className={INPUT_CLS} placeholder="Your Name (optional)" value={cbName} onChange={e => setCbName(e.target.value)} />
           <input type="tel" className={INPUT_CLS} placeholder="Mobile Number *" value={cbPhone} onChange={e => setCbPhone(e.target.value)} />
           <div className="flex gap-2">
