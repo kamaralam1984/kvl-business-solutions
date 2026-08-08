@@ -13,6 +13,12 @@ import { sendLeadCapiEvent, capiRequestContext } from '@/lib/metaCapi';
 const schema = z.object({
   name: z.string().min(1).default('Customer'),
   phone: z.string().min(7),
+  // Lets callers (e.g. the Independence Day ad-funnel pages' own callback
+  // mini-form) tag the Lead with where the request actually came from,
+  // instead of every callback landing in Admin → Leads as generic
+  // "call-back-widget" regardless of source page.
+  source: z.string().optional(),
+  message: z.string().optional(),
 });
 
 export async function POST(req: Request) {
@@ -33,8 +39,8 @@ export async function POST(req: Request) {
         name: body.name,
         email: `callback_${Date.now()}@kvl.auto`,
         phone: body.phone,
-        source: 'call-back-widget',
-        message: 'Customer requested immediate callback via website widget',
+        source: body.source || 'call-back-widget',
+        message: body.message || 'Customer requested immediate callback via website widget',
       });
       const ctx = capiRequestContext(req, clientIp(req));
       sendLeadCapiEvent({ eventId: lead._id.toString(), phone: body.phone, ...ctx })

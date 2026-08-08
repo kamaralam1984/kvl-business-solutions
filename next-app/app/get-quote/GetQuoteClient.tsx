@@ -75,7 +75,11 @@ export function GetQuoteClient() {
       const r = await fetch('/api/call-back', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: cbName || 'Customer', phone: cbPhone }),
+        body: JSON.stringify({
+          name: cbName || 'Customer', phone: cbPhone,
+          source: 'independence-day-ads-callback',
+          message: 'Customer requested a callback from the ₹999 Independence Day ad landing page (/get-quote).',
+        }),
       }).then(x => x.json());
       if (r.ok) {
         trackEvent('lead_submit', { source: 'independence-day-ads-callback' }, r.leadId);
