@@ -78,6 +78,14 @@ export function orderEmail(o: any) {
     <p>Our installation team will reach out within 24 hours to deploy your software.</p>`);
 }
 
+export function projectDeliveredEmail(o: any) {
+  return wrap('Your Project is Delivered! 🎉', `<h2>🎉 Great news, ${o.billing?.name || 'there'}!</h2>
+    <p>Your order <b>${o.orderId}</b> — <b>${o.productName}</b> — has been completed and delivered.</p>
+    ${o.deliveryNotes ? `<p>${o.deliveryNotes}</p>` : ''}
+    <p>Thank you for choosing KVL Business Solutions — we hope you love it!</p>
+    <p>Need any changes or have questions? <a href="${SITE}/support" style="color:#1d4ed8">Contact support</a> anytime.</p>`);
+}
+
 export function verifyEmail(name: string, link: string) {
   return wrap('Verify your email', `<h2>Welcome ${name || 'to KVL'} 👋</h2>
     <p>Please verify your email address by clicking the button below. This link expires in 24 hours.</p>

@@ -1,4 +1,5 @@
 import { Schema, models, model } from 'mongoose';
+import { DELIVERY_STAGES } from '../delivery-stages';
 
 const BillingSchema = new Schema({
   name: String,
@@ -43,6 +44,14 @@ const OrderSchema = new Schema({
   discount: { type: Number, default: 0 },
   refundedAt: Date,
   refundReason: String,
+
+  // Project build/delivery tracking — shown to the customer as a progress
+  // bar (see components/shared/DeliveryProgress.tsx) and set by admin from
+  // /admin/orders. Percent complete is derived from the stage, not stored
+  // separately, so the two can never drift out of sync.
+  deliveryStage: { type: String, enum: DELIVERY_STAGES.map(s => s.key), default: 'confirmed', index: true },
+  deliveryNotes: String,
+  deliveredAt: Date,
 }, { timestamps: true });
 
 export const Order = models.Order || model('Order', OrderSchema);

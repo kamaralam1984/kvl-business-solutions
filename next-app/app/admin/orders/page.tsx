@@ -4,6 +4,7 @@ import { Search, ExternalLink, IndianRupee, ShoppingCart, TrendingUp, XCircle } 
 import Link from 'next/link';
 import { ExportButton } from '@/components/admin/ExportButton';
 import { RefundButton } from '@/components/admin/RefundButton';
+import { DELIVERY_STAGES } from '@/lib/delivery-stages';
 
 const STATUS_COLOR: Record<string, string> = {
   created: 'bg-yellow-500/20 text-yellow-500',
@@ -32,6 +33,15 @@ export default function AdminOrders() {
   useEffect(() => { load(); }, []);
 
   const filterBy = (status: string) => { setStatusFilter(status); load(q, status); };
+
+  const updateStage = async (orderId: string, deliveryStage: string) => {
+    setOrders(prev => prev.map(o => o.orderId === orderId ? { ...o, deliveryStage } : o)); // optimistic
+    const res = await fetch(`/api/admin/orders/${orderId}`, {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ deliveryStage }),
+    });
+    if (!res.ok) load(); // roll back to server truth on failure
+  };
 
   const statCards = [
     { label: 'Total Revenue', value: fmt(stats.revenue || 0), icon: IndianRupee, color: 'text-green-500', bg: 'bg-green-500/10' },
@@ -80,7 +90,7 @@ export default function AdminOrders() {
             <tr>
               <th className="p-3">Date</th><th className="p-3">Order ID</th><th className="p-3">Customer</th>
               <th className="p-3">Product</th><th className="p-3">Amount</th><th className="p-3">Hosting</th>
-              <th className="p-3">Status</th><th className="p-3"></th>
+              <th className="p-3">Status</th><th className="p-3">Project Stage</th><th className="p-3"></th>
             </tr>
           </thead>
           <tbody>
@@ -108,13 +118,24 @@ export default function AdminOrders() {
                     {o.status?.toUpperCase()}
                   </span>
                 </td>
+                <td className="p-3">
+                  {o.status === 'paid' ? (
+                    <select
+                      value={o.deliveryStage || 'confirmed'}
+                      onChange={e => updateStage(o.orderId, e.target.value)}
+                      className="form-control text-xs py-1"
+                    >
+                      {DELIVERY_STAGES.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
+                    </select>
+                  ) : <span className="text-text2 text-xs">—</span>}
+                </td>
                 <td className="p-3 text-right">
                   {o.status === 'paid' && <RefundButton orderId={o.orderId} />}
                 </td>
               </tr>
             ))}
             {orders.length === 0 && (
-              <tr><td colSpan={8} className="p-12 text-center">
+              <tr><td colSpan={9} className="p-12 text-center">
                 <ShoppingCart className="w-10 h-10 text-text2 mx-auto mb-2 opacity-40" />
                 <p className="text-text2 font-medium">No orders yet</p>
                 <p className="text-xs text-text2 mt-1">Orders will appear here once customers make purchases</p>

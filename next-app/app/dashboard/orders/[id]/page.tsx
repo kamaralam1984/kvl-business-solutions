@@ -7,6 +7,7 @@ import { Order } from '@/lib/models/Order';
 import { formatINR } from '@/lib/utils';
 import { ArrowLeft, Download, Copy, Cloud, Server } from 'lucide-react';
 import { OrderTimeline } from '@/components/shared/OrderTimeline';
+import { DeliveryProgress } from '@/components/shared/DeliveryProgress';
 
 export const dynamic = 'force-dynamic';
 
@@ -78,12 +79,17 @@ export default async function OrderDetailPage({ params }: { params: { id: string
           <Link href="/support" className="btn btn-ghost">Need Help?</Link>
         </div>
       </div>
-      <OrderTimeline
-        status={order.status}
-        createdAt={order.createdAt}
-        paidAt={order.updatedAt}
-        refundedAt={order.refundedAt}
-      />
+      <div className="space-y-5">
+        <OrderTimeline
+          status={order.status}
+          createdAt={order.createdAt}
+          paidAt={order.updatedAt}
+          refundedAt={order.refundedAt}
+        />
+        {order.status === 'paid' && (
+          <DeliveryProgress stage={order.deliveryStage} notes={order.deliveryNotes} deliveredAt={order.deliveredAt} />
+        )}
+      </div>
       </div>
     </div>
   );
