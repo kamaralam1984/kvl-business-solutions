@@ -4,7 +4,9 @@ import { apiError } from '@/lib/api-response';
 import { z } from 'zod';
 import { connectDB } from '@/lib/mongodb';
 import { Lead } from '@/lib/models/Lead';
+import { Deal } from '@/lib/models/Deal';
 import { Referral } from '@/lib/models/Referral';
+import { parseBudgetToValue } from '@/lib/deal-utils';
 import { sendNotification, leadEmail, leadConfirmationEmail } from '@/lib/email';
 import { rateLimit, clientIp } from '@/lib/rate-limit';
 import { fireTrigger } from '@/lib/workflows/runner';
@@ -54,15 +56,43 @@ export async function POST(req: Request) {
     if (referralCode) {
       Referral.updateOne({ code: referralCode }, { $inc: { signupsCount: 1 } }).catch(() => {});
     }
+
+    // Every lead lands in the CRM pipeline immediately — not just the ones an
+    // admin later marks "qualified" (see app/api/admin/leads/[id]/route.ts)
+    // or that eventually pay (see actionAddToCrm in lib/workflows/runner.ts,
+    // which updates *this* deal on payment instead of creating a duplicate).
+    // Reliability matters more than tidiness here, so this failing must never
+    // fail lead capture itself.
+    try {
+      const ownerEmail = (process.env.EMAIL_TO_SALES || 'sales@kvlbusinesssolutions.com').toLowerCase();
+      const deal = await Deal.create({
+        ownerEmail,
+        title: `${data.name}${data.service ? ' — ' + data.service : ''}`,
+        contactName: data.name,
+        contactEmail: data.email,
+        value: parseBudgetToValue(data.budget),
+        stage: 'lead',
+        probability: 20,
+        source: data.source || 'contact-form',
+        notes: data.message ? `Message: ${String(data.message).slice(0, 200)}` : undefined,
+      });
+      await Lead.updateOne({ _id: lead._id }, { $set: { dealId: deal._id } });
+      (lead as any).dealId = deal._id;
+    } catch (e: any) {
+      console.error('[lead] CRM deal auto-create failed:', e?.message || e);
+    }
+
     // AI scoring — fire & forget (non-blocking)
     import('@/lib/ai/lead-scorer').then(({ scoreLeadAsync }) =>
       scoreLeadAsync(lead._id.toString(), data).catch(() => {})
     );
     sendNotification(`New Lead — ${data.name}`, leadEmail(data));
     sendNotification('We got your request — KVL Business Solutions', leadConfirmationEmail(data), data.email);
-    // WhatsApp auto-message — fire & forget
-    sendLeadWhatsApp({ name: data.name, phone: data.phone, service: data.service }).catch(() => {});
-    notifyAdminWhatsApp({ name: data.name, phone: data.phone, email: data.email, service: data.service, source: data.source }).catch(() => {});
+    // WhatsApp auto-message — fire & forget. Logged, not swallowed: WATI can
+    // reject a brand-new lead's number ("contact not found") when there's no
+    // approved template message yet — that failure needs to show up in logs.
+    sendLeadWhatsApp({ name: data.name, phone: data.phone, service: data.service }).catch(e => console.error('[lead] customer WhatsApp failed:', e?.message || e));
+    notifyAdminWhatsApp({ name: data.name, phone: data.phone, email: data.email, service: data.service, source: data.source }).catch(e => console.error('[lead] admin WhatsApp failed:', e?.message || e));
     fireTrigger('new_lead', {
       name: data.name, email: data.email, phone: data.phone,
       service: data.service, message: data.message, source: data.source,

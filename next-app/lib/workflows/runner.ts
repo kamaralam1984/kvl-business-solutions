@@ -42,15 +42,28 @@ async function actionCreateNotification(workflow: any, ctx: TriggerContext) {
 }
 
 async function actionAddToCrm(workflow: any, ctx: TriggerContext) {
-  const ownerEmail = process.env.EMAIL_TO_SALES || 'sales@kvlbusinesssolutions.com';
   await connectDB();
+  // If this trigger's context carries a dealId (e.g. new_order fired for a
+  // buyer who already has a Lead → Deal from before they paid — see
+  // app/api/payments/create-order/route.ts), advance that same deal instead
+  // of creating a second, disconnected "Auto: ..." entry for the same person.
+  if (ctx.dealId) {
+    const updated = await Deal.findByIdAndUpdate(ctx.dealId, {
+      $set: { stage: 'won', probability: 100, value: ctx.amount || 0 },
+      $push: { tags: `order:${ctx.orderId || 'unknown'}` },
+    });
+    if (updated) return;
+    // Deal was deleted/missing — fall through and create a fresh one below.
+  }
+  const ownerEmail = process.env.EMAIL_TO_SALES || 'sales@kvlbusinesssolutions.com';
   await Deal.create({
     ownerEmail: ownerEmail.toLowerCase(),
     title: `Auto: ${ctx.name || ctx.title || 'New lead'}`,
     contactName: ctx.name,
+    contactEmail: ctx.email,
     value: ctx.amount || 0,
-    stage: 'lead',
-    probability: 20,
+    stage: ctx.orderId ? 'won' : 'lead',
+    probability: ctx.orderId ? 100 : 20,
     source: ctx.source || 'workflow',
     notes: `Auto-created by workflow "${workflow.name}". Context: ${JSON.stringify(ctx).slice(0, 200)}`,
   });

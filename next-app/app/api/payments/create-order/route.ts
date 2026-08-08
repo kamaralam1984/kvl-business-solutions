@@ -114,13 +114,14 @@ export async function POST(req: Request) {
     }
 
     fireTrigger('new_order', {
-      name: u?.name || identityEmail,
+      name: u?.name || matchedLead?.name || identityEmail,
       email: identityEmail,
       phone: u?.phone || identityPhone || '',
       amount,
       productName: product.name,
       orderId,
       hosting,
+      dealId: matchedLead?.dealId,
     });
 
     return NextResponse.json({
