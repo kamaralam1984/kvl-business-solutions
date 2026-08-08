@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Loader2, ShieldCheck, Clock, Sparkles } from 'lucide-react';
 import { IndianFlag } from '@/components/shared/IndianFlag';
+import { trackEvent } from '@/components/analytics/GoogleAnalytics';
 
 const CATEGORIES = [
   'Retail / Shop', 'Restaurant / Cafe', 'Real Estate', 'Healthcare / Clinic',
@@ -51,6 +52,7 @@ export function GetQuoteClient() {
         setSubmitting(false);
         return;
       }
+      trackEvent('lead_submit', { source: 'independence-day-ads', service: 'Website (Independence Day Offer)' });
       const qs = new URLSearchParams({ lead: d.id, name: form.name });
       const utm = typeof window !== 'undefined' ? window.location.search.replace(/^\?/, '') : '';
       router.push(`/website-offer?${qs.toString()}${utm ? `&${utm}` : ''}`);
