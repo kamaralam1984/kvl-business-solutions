@@ -19,6 +19,9 @@ export function GetQuoteClient() {
   const [error, setError] = useState('');
   const [callbackLoading, setCallbackLoading] = useState(false);
   const [callbackDone, setCallbackDone] = useState(false);
+  const [showCallbackForm, setShowCallbackForm] = useState(false);
+  const [cbName, setCbName] = useState('');
+  const [cbPhone, setCbPhone] = useState('');
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm(f => ({ ...f, [k]: e.target.value }));
@@ -58,13 +61,13 @@ export function GetQuoteClient() {
     }
   };
 
-  // Lighter-weight alternative to the full quote form — only needs the phone
-  // number already typed above, for visitors who want a call but don't want
-  // to fill in email/website type first.
+  // Lighter-weight alternative to the full quote form — its own separate
+  // Name + Phone mini-form, for visitors who want a call but don't want to
+  // fill in email/website type first.
   const requestCallback = async () => {
     setError('');
-    if (form.phone.replace(/\D/g, '').length < 10) {
-      setError('Please enter a valid mobile number above first.');
+    if (cbPhone.replace(/\D/g, '').length < 10) {
+      setError('Please enter a valid mobile number.');
       return;
     }
     setCallbackLoading(true);
@@ -72,7 +75,7 @@ export function GetQuoteClient() {
       const r = await fetch('/api/call-back', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: form.name || 'Customer', phone: form.phone }),
+        body: JSON.stringify({ name: cbName || 'Customer', phone: cbPhone }),
       }).then(x => x.json());
       if (r.ok) {
         trackEvent('lead_submit', { source: 'independence-day-ads-callback' }, r.leadId);
@@ -133,26 +136,50 @@ export function GetQuoteClient() {
 
           {error && <p className="text-red-600 text-xs">{error}</p>}
 
-          <div className="flex gap-2">
-            <button
-              type="submit"
-              disabled={submitting}
-              className="flex-1 py-3 rounded-lg font-bold text-white text-sm flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-60"
-              style={{ background: 'linear-gradient(90deg,#FF9933,#e07b1a)' }}
-            >
-              {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-              {submitting ? 'Submitting...' : 'Get Free Quote'}
-            </button>
-            <button
-              type="button"
-              onClick={requestCallback}
-              disabled={callbackLoading || callbackDone}
-              className="flex-1 py-3 rounded-lg font-bold text-white text-sm flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 transition-colors disabled:opacity-60"
-            >
-              {callbackLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : callbackDone ? <CheckCircle className="w-4 h-4" /> : <Phone className="w-4 h-4" />}
-              {callbackLoading ? 'Calling...' : callbackDone ? 'Requested!' : 'Call Me Back'}
-            </button>
-          </div>
+          {callbackDone ? (
+            <div className="flex items-center justify-center gap-2 text-green-600 font-bold text-sm py-3">
+              <CheckCircle className="w-4 h-4" /> We'll call you back within 4 hours!
+            </div>
+          ) : showCallbackForm ? (
+            <div className="border border-gray-200 rounded-xl p-3 space-y-2 bg-gray-50">
+              <p className="text-xs font-bold text-gray-700">We'll call you back — just your name &amp; number:</p>
+              <input className={INPUT_CLS} placeholder="Your Name (optional)" value={cbName} onChange={e => setCbName(e.target.value)} />
+              <input type="tel" className={INPUT_CLS} placeholder="Mobile Number *" value={cbPhone} onChange={e => setCbPhone(e.target.value)} />
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={requestCallback}
+                  disabled={callbackLoading}
+                  className="flex-1 py-2.5 rounded-lg font-bold text-white text-sm flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 transition-colors disabled:opacity-60"
+                >
+                  {callbackLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Phone className="w-4 h-4" />}
+                  {callbackLoading ? 'Requesting...' : 'Request Callback'}
+                </button>
+                <button type="button" onClick={() => { setShowCallbackForm(false); setError(''); }} className="px-4 py-2.5 rounded-lg text-sm text-gray-500 hover:text-gray-700">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                disabled={submitting}
+                className="flex-1 py-3 rounded-lg font-bold text-white text-sm flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-60"
+                style={{ background: 'linear-gradient(90deg,#FF9933,#e07b1a)' }}
+              >
+                {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                {submitting ? 'Submitting...' : 'Get Free Quote'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowCallbackForm(true)}
+                className="flex-1 py-3 rounded-lg font-bold text-white text-sm flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 transition-colors"
+              >
+                <Phone className="w-4 h-4" /> Call Me Back
+              </button>
+            </div>
+          )}
 
           <div className="flex items-center justify-center gap-4 pt-1 text-[11px] text-gray-500">
             <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-green-600" /> 100% Privacy Guaranteed</span>
