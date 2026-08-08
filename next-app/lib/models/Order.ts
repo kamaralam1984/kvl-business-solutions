@@ -20,6 +20,10 @@ const OrderSchema = new Schema({
   orderId: { type: String, unique: true, index: true },
   invoiceNo: { type: String, index: true },
   user: { type: Schema.Types.ObjectId, ref: 'User', index: true },
+  // Most recent Lead with a matching email/phone at the time this order was
+  // created, if any — lets admin trace ad-driven leads through to revenue
+  // instead of Leads and Orders sitting as two disconnected collections.
+  lead: { type: Schema.Types.ObjectId, ref: 'Lead', index: true },
   email: { type: String, required: true, index: true },
   productSlug: { type: String, required: true },
   productName: String,

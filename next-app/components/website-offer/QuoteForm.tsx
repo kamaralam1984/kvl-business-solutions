@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Loader2, Sparkles } from 'lucide-react';
+import { trackEvent } from '@/components/analytics/GoogleAnalytics';
 
 const CATEGORIES = [
   'Retail / Shop', 'Restaurant / Cafe', 'Real Estate', 'Healthcare / Clinic',
@@ -58,6 +59,7 @@ export function QuoteForm() {
       });
       const d = await res.json().catch(() => ({}));
       if (!res.ok || !d.ok) { setError(d.error || 'Could not submit — please try again or WhatsApp us.'); setSubmitting(false); return; }
+      trackEvent('lead_submit', { source: 'independence-day-website-offer', service: 'Website (Independence Day Offer)' });
       setDoneName(form.name);
     } catch {
       setError('Could not submit — please try again or WhatsApp us.');

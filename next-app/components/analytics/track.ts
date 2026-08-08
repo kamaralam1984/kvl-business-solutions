@@ -1,7 +1,7 @@
 'use client';
 
 declare global {
-  interface Window { gtag?: (...args: any[]) => void; dataLayer?: any[] }
+  interface Window { gtag?: (...args: any[]) => void; dataLayer?: any[]; fbq?: (...args: any[]) => void }
 }
 
 // Maps a trackEvent() name to a Google Ads conversion label (the
@@ -12,6 +12,17 @@ const AD_CONVERSION_LABELS: Record<string, string | undefined> = {
   lead_submit: process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_LEAD,
   booking_submit: process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_BOOKING,
   proposal_request: process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_PROPOSAL,
+};
+
+// Maps a trackEvent() name to a standard Meta Pixel event, fired via
+// window.fbq (initialized in components/analytics/MetaPixel.tsx). Lets Meta
+// actually see when an ad-driven visitor converts (not just PageView), so
+// campaigns can be optimized for and reported on leads/purchases.
+const META_PIXEL_EVENTS: Record<string, string | undefined> = {
+  lead_submit: 'Lead',
+  booking_submit: 'Lead',
+  proposal_request: 'Lead',
+  purchase: 'Purchase',
 };
 
 function hasConsent() {
@@ -32,6 +43,11 @@ export function trackEvent(name: string, params?: Record<string, any>) {
     window.gtag('event', name, params);
     const label = AD_CONVERSION_LABELS[name];
     if (label) window.gtag('event', 'conversion', { send_to: label, ...params });
+  }
+
+  if (window.fbq && hasConsent()) {
+    const fbEvent = META_PIXEL_EVENTS[name];
+    if (fbEvent) window.fbq('track', fbEvent, params);
   }
 
   if (hasConsent()) {

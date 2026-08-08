@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/auth';
 import { connectDB } from '@/lib/mongodb';
 import { Order } from '@/lib/models/Order';
 import { User } from '@/lib/models/User';
+import { Lead } from '@/lib/models/Lead';
 import { rzp } from '@/lib/razorpay';
 import { generateOrderId } from '@/lib/license';
 import { getLiveSoftwareProduct } from '@/lib/data/live-software';
@@ -80,10 +81,19 @@ export async function POST(req: Request) {
       ? { name: u.name, email: u.email, phone: u.phone, company: u.company, gstin: u.gstin, address: u.address }
       : { email: identityEmail, phone: identityPhone };
 
+    // Was this buyer previously a Lead (e.g. filled a form before coming
+    // back to pay)? Link the most recent match so admin can trace ad/lead
+    // sources through to actual revenue instead of two disconnected records.
+    const emailRe = new RegExp(`^${identityEmail.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i');
+    const matchedLead: any = await Lead.findOne({
+      $or: [{ email: emailRe }, ...(identityPhone ? [{ phone: identityPhone }] : [])],
+    }).sort({ createdAt: -1 }).lean();
+
     await Order.create({
       orderId,
       email: identityEmail,
       user: u?._id,
+      lead: matchedLead?._id,
       productSlug,
       productName: product.name,
       subtotal,

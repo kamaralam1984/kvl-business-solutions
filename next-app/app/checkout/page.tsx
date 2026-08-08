@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import type { Software } from '@/lib/data/software';
 import { formatINR } from '@/lib/utils';
+import { trackEvent } from '@/components/analytics/GoogleAnalytics';
 import { Check, ShieldCheck, CreditCard, Lock, Tag, X, Loader2, Mail, Phone } from 'lucide-react';
 
 const GST_RATE = 18;
@@ -75,6 +76,7 @@ function CheckoutInner() {
           const verify = await fetch('/api/payments/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(resp) });
           const vd = await verify.json();
           if (!vd.ok) { setErr('Payment verification failed. Please contact support.'); return; }
+          trackEvent('purchase', { value: data.amount / 100, currency: data.currency || 'INR', transaction_id: vd.orderId, product: data.productName });
           // Logged-in buyers go straight to their dashboard. Guests paid
           // first — now's when we offer to turn that into an account.
           if (session?.user?.email) router.push(`/dashboard?success=${vd.orderId}`);
