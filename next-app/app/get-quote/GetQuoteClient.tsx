@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Loader2, ShieldCheck, Clock, Sparkles } from 'lucide-react';
+import { Loader2, ShieldCheck, Clock, Sparkles, Phone, CheckCircle } from 'lucide-react';
 import { IndianFlag } from '@/components/shared/IndianFlag';
 import { trackEvent } from '@/components/analytics/GoogleAnalytics';
 
@@ -17,6 +17,8 @@ export function GetQuoteClient() {
   const [form, setForm] = useState({ name: '', phone: '', websiteType: '', email: '' });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [callbackLoading, setCallbackLoading] = useState(false);
+  const [callbackDone, setCallbackDone] = useState(false);
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm(f => ({ ...f, [k]: e.target.value }));
@@ -53,6 +55,35 @@ export function GetQuoteClient() {
     } catch {
       setError('Could not submit — please try again or WhatsApp us.');
       setSubmitting(false);
+    }
+  };
+
+  // Lighter-weight alternative to the full quote form — only needs the phone
+  // number already typed above, for visitors who want a call but don't want
+  // to fill in email/website type first.
+  const requestCallback = async () => {
+    setError('');
+    if (form.phone.replace(/\D/g, '').length < 10) {
+      setError('Please enter a valid mobile number above first.');
+      return;
+    }
+    setCallbackLoading(true);
+    try {
+      const r = await fetch('/api/call-back', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: form.name || 'Customer', phone: form.phone }),
+      }).then(x => x.json());
+      if (r.ok) {
+        trackEvent('lead_submit', { source: 'independence-day-ads-callback' }, r.leadId);
+        setCallbackDone(true);
+      } else {
+        setError(r.error || 'Could not request a callback. Please try again.');
+      }
+    } catch {
+      setError('Could not request a callback. Please try again.');
+    } finally {
+      setCallbackLoading(false);
     }
   };
 
@@ -102,15 +133,26 @@ export function GetQuoteClient() {
 
           {error && <p className="text-red-600 text-xs">{error}</p>}
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full py-3 rounded-lg font-bold text-white text-sm flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-60"
-            style={{ background: 'linear-gradient(90deg,#FF9933,#e07b1a)' }}
-          >
-            {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-            {submitting ? 'Submitting...' : 'Get Free Quote'}
-          </button>
+          <div className="flex gap-2">
+            <button
+              type="submit"
+              disabled={submitting}
+              className="flex-1 py-3 rounded-lg font-bold text-white text-sm flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-60"
+              style={{ background: 'linear-gradient(90deg,#FF9933,#e07b1a)' }}
+            >
+              {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+              {submitting ? 'Submitting...' : 'Get Free Quote'}
+            </button>
+            <button
+              type="button"
+              onClick={requestCallback}
+              disabled={callbackLoading || callbackDone}
+              className="flex-1 py-3 rounded-lg font-bold text-white text-sm flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 transition-colors disabled:opacity-60"
+            >
+              {callbackLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : callbackDone ? <CheckCircle className="w-4 h-4" /> : <Phone className="w-4 h-4" />}
+              {callbackLoading ? 'Calling...' : callbackDone ? 'Requested!' : 'Call Me Back'}
+            </button>
+          </div>
 
           <div className="flex items-center justify-center gap-4 pt-1 text-[11px] text-gray-500">
             <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-green-600" /> 100% Privacy Guaranteed</span>

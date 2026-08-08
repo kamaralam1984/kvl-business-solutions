@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Loader2, Sparkles } from 'lucide-react';
+import { Loader2, Sparkles, Phone, CheckCircle } from 'lucide-react';
 import { trackEvent } from '@/components/analytics/GoogleAnalytics';
 
 // Explicit, theme-independent styling — see app/get-quote/GetQuoteClient.tsx
@@ -28,6 +28,8 @@ export function QuoteForm() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [doneName, setDoneName] = useState<string | null>(null);
+  const [callbackLoading, setCallbackLoading] = useState(false);
+  const [callbackDone, setCallbackDone] = useState(false);
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm(f => ({ ...f, [k]: e.target.value }));
@@ -61,6 +63,35 @@ export function QuoteForm() {
     }
   };
 
+  // Lighter-weight alternative to the full quote form — only needs the phone
+  // number already typed above, for visitors who want a call but don't want
+  // to fill in email/website type first.
+  const requestCallback = async () => {
+    setError('');
+    if (form.phone.replace(/\D/g, '').length < 10) {
+      setError('Please enter a valid mobile number above first.');
+      return;
+    }
+    setCallbackLoading(true);
+    try {
+      const r = await fetch('/api/call-back', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: form.name || 'Customer', phone: form.phone }),
+      }).then(x => x.json());
+      if (r.ok) {
+        trackEvent('lead_submit', { source: 'independence-day-website-offer-callback' }, r.leadId);
+        setCallbackDone(true);
+      } else {
+        setError(r.error || 'Could not request a callback. Please try again.');
+      }
+    } catch {
+      setError('Could not request a callback. Please try again.');
+    } finally {
+      setCallbackLoading(false);
+    }
+  };
+
   if (doneName !== null) return <ThankYouCard name={doneName} />;
 
   return (
@@ -74,14 +105,25 @@ export function QuoteForm() {
       <input className={INPUT_CLS} placeholder="Website Type (e.g. Portfolio, Restaurant, Shop) *" value={form.websiteType} onChange={set('websiteType')} required />
       <input type="email" className={INPUT_CLS} placeholder="Email Address" value={form.email} onChange={set('email')} required />
       {error && <p className="text-red-600 text-xs">{error}</p>}
-      <button
-        type="submit" disabled={submitting}
-        className="w-full py-2.5 rounded-lg font-bold text-white text-sm flex items-center justify-center gap-2 disabled:opacity-60"
-        style={{ background: 'linear-gradient(90deg,#FF9933,#e07b1a)' }}
-      >
-        {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-        {submitting ? 'Submitting...' : 'Get Free Quote'}
-      </button>
+      <div className="flex gap-2">
+        <button
+          type="submit" disabled={submitting}
+          className="flex-1 py-2.5 rounded-lg font-bold text-white text-sm flex items-center justify-center gap-2 disabled:opacity-60"
+          style={{ background: 'linear-gradient(90deg,#FF9933,#e07b1a)' }}
+        >
+          {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+          {submitting ? 'Submitting...' : 'Get Free Quote'}
+        </button>
+        <button
+          type="button"
+          onClick={requestCallback}
+          disabled={callbackLoading || callbackDone}
+          className="flex-1 py-2.5 rounded-lg font-bold text-white text-sm flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 transition-colors disabled:opacity-60"
+        >
+          {callbackLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : callbackDone ? <CheckCircle className="w-4 h-4" /> : <Phone className="w-4 h-4" />}
+          {callbackLoading ? 'Calling...' : callbackDone ? 'Requested!' : 'Call Me Back'}
+        </button>
+      </div>
       <div className="text-center text-[10px] text-gray-400">100% Privacy Guaranteed</div>
     </form>
   );

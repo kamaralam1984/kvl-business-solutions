@@ -1,4 +1,5 @@
 'use client';
+import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -6,6 +7,11 @@ import { DeferredBanner } from '@/components/layout/DeferredBanner';
 import { DeferredWidgets } from '@/components/widgets/DeferredWidgets';
 import { SmartCTA } from '@/components/shared/SmartCTA';
 import { DashboardShell } from '@/components/dashboard/DashboardShell';
+
+// Just the chat bubble (not the full FloatingWidgets bundle — exit-intent
+// popup, quote/lead-magnet modals, etc. would compete with the funnel's own
+// single-purpose form) for the ad-funnel pages below.
+const Chatbot = dynamic(() => import('@/components/widgets/Chatbot').then(m => m.Chatbot), { ssr: false });
 
 // Standalone demo mini-sites (client-facing product showcases under /demo/*)
 // render their own full-page chrome and must not show KVL's own header/footer/
@@ -32,8 +38,19 @@ export function SiteChrome({
   const isDashboard = pathname?.startsWith('/dashboard');
   const isAdFunnel = pathname?.startsWith('/get-quote') || pathname?.startsWith('/website-offer');
 
-  if (isStandaloneDemo || isAdmin || isAuthPage || isAdFunnel) {
+  if (isStandaloneDemo || isAdmin || isAuthPage) {
     return <>{children}</>;
+  }
+
+  if (isAdFunnel) {
+    return (
+      <>
+        {children}
+        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[99] flex flex-col gap-3 items-end">
+          <Chatbot />
+        </div>
+      </>
+    );
   }
 
   if (isDashboard) {
