@@ -13,6 +13,8 @@ const schema = z.object({
   active: z.boolean().optional(),
   variant: z.enum(['info', 'success', 'warning', 'promo']).optional(),
   dismissible: z.boolean().optional(),
+  startsAt: z.string().optional(),
+  endsAt: z.string().optional(),
 });
 
 export async function PUT(req: Request, { params }: { params: { id: string } }) {

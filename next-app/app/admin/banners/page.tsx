@@ -11,9 +11,14 @@ type Banner = {
   active: boolean;
   variant: 'info' | 'success' | 'warning' | 'promo';
   dismissible: boolean;
+  startsAt?: string;
+  endsAt?: string;
 };
 
-const empty: Banner = { text: '', link: '', linkText: 'Learn more', active: true, variant: 'promo', dismissible: true };
+const empty: Banner = { text: '', link: '', linkText: 'Learn more', active: true, variant: 'promo', dismissible: true, startsAt: '', endsAt: '' };
+
+// <input type="date"> needs "YYYY-MM-DD" — Mongo returns a full ISO datetime string.
+const toDateInput = (v?: string) => (v ? v.slice(0, 10) : '');
 
 const variantColors: Record<string, string> = {
   info: 'bg-blue-500/15 text-blue-500',
@@ -107,6 +112,16 @@ export default function AdminBannersPage() {
                 <option value="success" style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>Success (green)</option>
                 <option value="warning" style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>Warning (yellow)</option>
               </select>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-xs text-text2 mb-1 block">Starts (optional)</label>
+                  <input type="date" className="form-control" value={toDateInput(editing.startsAt)} onChange={e => setEditing({ ...editing, startsAt: e.target.value ? new Date(e.target.value).toISOString() : '' })} />
+                </div>
+                <div>
+                  <label className="text-xs text-text2 mb-1 block">Ends (optional)</label>
+                  <input type="date" className="form-control" value={toDateInput(editing.endsAt)} onChange={e => setEditing({ ...editing, endsAt: e.target.value ? new Date(e.target.value).toISOString() : '' })} />
+                </div>
+              </div>
               <div className="flex gap-4">
                 <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={editing.active} onChange={e => setEditing({ ...editing, active: e.target.checked })} /> Active</label>
                 <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={editing.dismissible} onChange={e => setEditing({ ...editing, dismissible: e.target.checked })} /> Dismissible</label>

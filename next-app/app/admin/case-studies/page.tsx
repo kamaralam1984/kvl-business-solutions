@@ -131,6 +131,48 @@ export default function AdminCaseStudiesPage() {
                 <label className="text-[11px] font-semibold uppercase" style={{ color: 'rgba(var(--text) / 0.4)' }}>Solution</label>
                 <input className="form-control" placeholder="Headline" value={editing.solution.headline} onChange={e => setEditing({ ...editing, solution: { ...editing.solution, headline: e.target.value } })} />
                 <textarea className="form-control" rows={2} placeholder="Body" value={editing.solution.body} onChange={e => setEditing({ ...editing, solution: { ...editing.solution, body: e.target.value } })} />
+                {/* /projects/[slug] always renders a "Our Solution" pillars section — leaving
+                    this empty publishes an empty-looking section, so it's not optional here. */}
+                <label className="text-[10px] font-semibold uppercase block pt-1" style={{ color: 'rgba(var(--text) / 0.35)' }}>Pillars</label>
+                {editing.solution.pillars.map((p, i) => (
+                  <div key={i} className="flex gap-2">
+                    <input className="form-control" placeholder="Pillar title" value={p.title} onChange={e => {
+                      const pillars = editing.solution.pillars.map((x, idx) => idx === i ? { ...x, title: e.target.value } : x);
+                      setEditing({ ...editing, solution: { ...editing.solution, pillars } });
+                    }} />
+                    <input className="form-control" placeholder="Description" value={p.desc} onChange={e => {
+                      const pillars = editing.solution.pillars.map((x, idx) => idx === i ? { ...x, desc: e.target.value } : x);
+                      setEditing({ ...editing, solution: { ...editing.solution, pillars } });
+                    }} />
+                    <button type="button" onClick={() => setEditing({ ...editing, solution: { ...editing.solution, pillars: editing.solution.pillars.filter((_, idx) => idx !== i) } })} aria-label="Remove pillar" style={{ color: 'rgba(var(--text) / 0.4)' }}><Trash2 className="w-4 h-4" /></button>
+                  </div>
+                ))}
+                <button type="button" onClick={() => setEditing({ ...editing, solution: { ...editing.solution, pillars: [...editing.solution.pillars, { title: '', desc: '' }] } })} className="text-xs inline-flex items-center gap-1" style={{ color: '#c8a870' }}><Plus className="w-3 h-3" /> Add pillar</button>
+              </div>
+
+              <div className="p-3 rounded-lg space-y-1.5" style={{ background: 'rgba(var(--surface) / 0.03)' }}>
+                <label className="text-[11px] font-semibold uppercase" style={{ color: 'rgba(var(--text) / 0.4)' }}>Key Features</label>
+                {editing.keyFeatures.map((f, i) => (
+                  <div key={i} className="flex gap-2">
+                    <input className="form-control w-24" placeholder="Icon" value={f.icon} onChange={e => setEditing({ ...editing, keyFeatures: editing.keyFeatures.map((x, idx) => idx === i ? { ...x, icon: e.target.value } : x) })} />
+                    <input className="form-control" placeholder="Title" value={f.title} onChange={e => setEditing({ ...editing, keyFeatures: editing.keyFeatures.map((x, idx) => idx === i ? { ...x, title: e.target.value } : x) })} />
+                    <input className="form-control" placeholder="Description" value={f.desc} onChange={e => setEditing({ ...editing, keyFeatures: editing.keyFeatures.map((x, idx) => idx === i ? { ...x, desc: e.target.value } : x) })} />
+                    <button type="button" onClick={() => setEditing({ ...editing, keyFeatures: editing.keyFeatures.filter((_, idx) => idx !== i) })} aria-label="Remove feature" style={{ color: 'rgba(var(--text) / 0.4)' }}><Trash2 className="w-4 h-4" /></button>
+                  </div>
+                ))}
+                <button type="button" onClick={() => setEditing({ ...editing, keyFeatures: [...editing.keyFeatures, { icon: '', title: '', desc: '' }] })} className="text-xs inline-flex items-center gap-1" style={{ color: '#c8a870' }}><Plus className="w-3 h-3" /> Add feature</button>
+              </div>
+
+              <div className="p-3 rounded-lg space-y-1.5" style={{ background: 'rgba(var(--surface) / 0.03)' }}>
+                <label className="text-[11px] font-semibold uppercase" style={{ color: 'rgba(var(--text) / 0.4)' }}>Business Benefits</label>
+                {editing.benefits.map((b, i) => (
+                  <div key={i} className="flex gap-2">
+                    <input className="form-control" placeholder="Title" value={b.title} onChange={e => setEditing({ ...editing, benefits: editing.benefits.map((x, idx) => idx === i ? { ...x, title: e.target.value } : x) })} />
+                    <input className="form-control" placeholder="Description" value={b.desc} onChange={e => setEditing({ ...editing, benefits: editing.benefits.map((x, idx) => idx === i ? { ...x, desc: e.target.value } : x) })} />
+                    <button type="button" onClick={() => setEditing({ ...editing, benefits: editing.benefits.filter((_, idx) => idx !== i) })} aria-label="Remove benefit" style={{ color: 'rgba(var(--text) / 0.4)' }}><Trash2 className="w-4 h-4" /></button>
+                  </div>
+                ))}
+                <button type="button" onClick={() => setEditing({ ...editing, benefits: [...editing.benefits, { title: '', desc: '' }] })} className="text-xs inline-flex items-center gap-1" style={{ color: '#c8a870' }}><Plus className="w-3 h-3" /> Add benefit</button>
               </div>
 
               <input className="form-control" placeholder="Goals (comma-separated)" value={csv(editing.goals)} onChange={e => setEditing({ ...editing, goals: fromCsv(e.target.value) })} />
