@@ -3,6 +3,12 @@ import { renderDownloadShell } from '@/lib/download-page';
 import { services } from '@/lib/data/services';
 import { logDownload } from '@/lib/models/DownloadLog';
 
+// Reads req.headers (for bot-detection) on every request, so this can never
+// be static — declaring it explicitly stops Next.js from attempting static
+// optimization and then bailing out with a noisy (harmless) build-log trace
+// on every single build.
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: Request) {
   try {
   logDownload('company-profile', req.headers.get('user-agent'));
