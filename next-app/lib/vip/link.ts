@@ -8,7 +8,7 @@ import { VipVisitor } from '@/lib/models/VipVisitor';
 // by default, so every lead-creation route just needs this one call added.
 // Silently no-ops if the visitor never had a vip_vid cookie (e.g. tracking
 // consent wasn't granted) — never fabricates a link.
-export async function linkVisitorToLead(opts: { leadId?: string; dealId?: string; userId?: string; name?: string; email?: string }) {
+export async function linkVisitorToLead(opts: { leadId?: string; dealId?: string; userId?: string; name?: string; email?: string; phone?: string }) {
   const vid = cookies().get('vip_vid')?.value;
   if (!vid) return;
 
@@ -18,6 +18,7 @@ export async function linkVisitorToLead(opts: { leadId?: string; dealId?: string
   if (opts.userId) set.knownUserId = opts.userId;
   if (opts.name) set.knownName = opts.name;
   if (opts.email) set.knownEmail = opts.email;
+  if (opts.phone) set.knownPhone = opts.phone;
   if (Object.keys(set).length === 0) return;
 
   await VipVisitor.updateOne({ vid }, { $set: set }, { upsert: true }).catch(() => {});

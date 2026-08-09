@@ -9,6 +9,7 @@ import { sendNotification, callBackEmail } from '@/lib/email';
 import { sendCustomWhatsApp } from '@/lib/whatsapp';
 import { fireTrigger } from '@/lib/workflows/runner';
 import { sendLeadCapiEvent, capiRequestContext } from '@/lib/metaCapi';
+import { linkVisitorToLead } from '@/lib/vip/link';
 
 const schema = z.object({
   name: z.string().min(1).default('Customer'),
@@ -69,6 +70,7 @@ export async function POST(req: Request) {
       }).catch(() => {});
     }
     fireTrigger('call_back_requested', { name: body.name, phone: body.phone, leadId: lead._id.toString() });
+    linkVisitorToLead({ leadId: lead._id.toString(), name: body.name, phone: body.phone }).catch(() => {});
 
     // AI voice call — best-effort. A missing/failing Vapi key must not block the
     // lead capture or admin alerts above, which have already happened by this point.

@@ -43,7 +43,7 @@ export async function POST(req: Request) {
        <p>Need to chat sooner? WhatsApp <a href="https://wa.me/919942000413">+91 99420 00413</a>.</p>`,
       data.email);
 
-    linkVisitorToLead({ name: data.name, email: data.email }).catch(() => {});
+    linkVisitorToLead({ name: data.name, email: data.email, phone: data.phone }).catch(() => {});
     const ctx = capiRequestContext(req, clientIp(req));
     sendLeadCapiEvent({ eventId: b._id.toString(), email: data.email, phone: data.phone, ...ctx })
       .catch(e => console.error('[booking] Meta CAPI failed:', e?.message || e));

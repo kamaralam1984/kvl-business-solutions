@@ -99,7 +99,7 @@ export async function POST(req: Request) {
       service: data.service, message: data.message, source: data.source,
       leadId: lead._id.toString(),
     });
-    linkVisitorToLead({ leadId: lead._id.toString(), name: data.name, email: data.email }).catch(() => {});
+    linkVisitorToLead({ leadId: lead._id.toString(), name: data.name, email: data.email, phone: data.phone }).catch(() => {});
     const ctx = capiRequestContext(req, clientIp(req));
     sendLeadCapiEvent({ eventId: lead._id.toString(), email: data.email, phone: data.phone, ...ctx })
       .catch(e => console.error('[lead] Meta CAPI failed:', e?.message || e));

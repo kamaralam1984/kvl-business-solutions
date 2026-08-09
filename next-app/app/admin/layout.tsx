@@ -7,7 +7,7 @@ import {
   Activity, Tag, Calendar, Star, Settings, Megaphone, Globe, Monitor, Cpu,
   Workflow, Briefcase, Sparkles, Bell, Search, LogOut, ChevronRight,
   TrendingUp, Zap, Shield, Gift, ExternalLink, HeartHandshake, Plug,
-  HeartPulse, Download, MessageSquare, BookOpen, Layers, BarChart3,
+  HeartPulse, Download, MessageSquare, BookOpen, Layers,
   MousePointerClick, Send, IndianRupee, Radio,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -19,7 +19,7 @@ const sections = [
     links: [
       { href: '/admin',          label: 'Dashboard',   Icon: LayoutDashboard },
       { href: '/admin/revenue',  label: 'Revenue Dashboard', Icon: IndianRupee },
-      { href: '/admin/vip',      label: 'Visitor Intelligence', Icon: Radio },
+      { href: '/admin/vip',      label: 'Landing Page Analytics', Icon: Radio },
       { href: '/admin/activity', label: 'Activity',    Icon: Activity },
       { href: '/admin/api-usage',label: 'API Usage',   Icon: Cpu },
     ],
@@ -59,7 +59,6 @@ const sections = [
       { href: '/admin/coupons',       label: 'Coupons',       Icon: Tag },
       { href: '/admin/workflows',     label: 'Workflows',     Icon: Workflow },
       { href: '/admin/chatbot-logs',  label: 'Chatbot Logs',  Icon: MessageSquare },
-      { href: '/admin/visitor-stats', label: 'Visitor Stats', Icon: BarChart3 },
       { href: '/admin/conversion-events', label: 'Conversion Events', Icon: MousePointerClick },
       { href: '/admin/automation',    label: 'Automation Health', Icon: HeartPulse },
       { href: '/admin/integrations',  label: 'Integrations',  Icon: Plug },

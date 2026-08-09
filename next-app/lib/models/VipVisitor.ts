@@ -20,6 +20,7 @@ const VipVisitorSchema = new Schema({
   knownUserId: { type: Schema.Types.ObjectId, ref: 'User', default: null },
   knownName: String,
   knownEmail: String,
+  knownPhone: String,
 
   // Company Intelligence (Module 10) — deliberately descoped, no vendor
   // connected. Field kept so the schema doesn't need a migration if/when a

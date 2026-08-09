@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     await connectDB();
     const q = await Quote.create(data);
     sendNotification(`New Quote — ${data.contact.email}`, quoteEmail(data));
-    linkVisitorToLead({ name: data.contact.name, email: data.contact.email }).catch(() => {});
+    linkVisitorToLead({ name: data.contact.name, email: data.contact.email, phone: data.contact.phone }).catch(() => {});
     const ctx = capiRequestContext(req, clientIp(req));
     sendLeadCapiEvent({ eventId: q._id.toString(), email: data.contact.email, phone: data.contact.phone, ...ctx })
       .catch(e => console.error('[quote] Meta CAPI failed:', e?.message || e));
