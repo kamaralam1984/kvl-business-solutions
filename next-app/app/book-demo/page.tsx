@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
 import { motion } from 'framer-motion';
@@ -17,6 +17,29 @@ export default function BookDemoPage() {
   });
   const [state, setState] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [err, setErr] = useState('');
+  const [bookDemoEnabled, setBookDemoEnabled] = useState(true);
+  const [featuresChecked, setFeaturesChecked] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/site-features').then(r => r.json()).then(d => setBookDemoEnabled(d.bookDemo !== false)).catch(() => {}).finally(() => setFeaturesChecked(true));
+  }, []);
+
+  // Checked client-side after mount (this page is statically generated), so
+  // briefly show nothing rather than flashing the full booking form before
+  // an admin-disabled state has had a chance to load.
+  if (featuresChecked && !bookDemoEnabled) {
+    return (
+      <div className="min-h-[70vh] grid place-items-center p-6 text-center" style={{ background: 'rgb(var(--bg))' }}>
+        <div>
+          <h1 className="text-2xl font-extrabold mb-3">Demo booking is temporarily unavailable</h1>
+          <p className="text-text2 max-w-md mx-auto mb-6">We&apos;re not scheduling new demo calls through this page right now — reach out directly and we&apos;ll help you from there.</p>
+          <a href="https://wa.me/919942000413" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white font-semibold" style={{ background: 'linear-gradient(135deg,#25d366,#128c7e)' }}>
+            WhatsApp us
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();

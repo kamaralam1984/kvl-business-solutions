@@ -14,6 +14,11 @@ export function ReviewsSection({ productSlug, productName }: { productSlug?: str
   const [form, setForm] = useState({ rating: 5, title: '', message: '' });
   const [state, setState] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [err, setErr] = useState('');
+  const [reviewsEnabled, setReviewsEnabled] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/site-features').then(r => r.json()).then(d => setReviewsEnabled(d.reviews !== false)).catch(() => {});
+  }, []);
 
   const load = () => {
     const q = productSlug ? `?product=${productSlug}` : '';
@@ -62,14 +67,14 @@ export function ReviewsSection({ productSlug, productName }: { productSlug?: str
             <p className="text-text2 text-sm mt-1">Be the first to review {productName || 'this'}</p>
           )}
         </div>
-        {session?.user && (
+        {reviewsEnabled && session?.user && (
           <button onClick={() => setOpen(!open)} className="btn btn-primary text-sm">
             <MessageSquarePlus className="w-4 h-4" /> Write Review
           </button>
         )}
       </div>
 
-      {open && session?.user && (
+      {reviewsEnabled && open && session?.user && (
         <form onSubmit={submit} className="surface-tint p-5 rounded-xl mb-6 space-y-3">
           <div>
             <label className="text-xs text-text2 mb-1 block">Your rating</label>
@@ -91,7 +96,7 @@ export function ReviewsSection({ productSlug, productName }: { productSlug?: str
         </form>
       )}
 
-      {!session?.user && (
+      {reviewsEnabled && !session?.user && (
         <p className="text-xs text-text2 mb-4">
           <a href="/login" className="text-primary hover:underline">Sign in</a> to write a review.
         </p>

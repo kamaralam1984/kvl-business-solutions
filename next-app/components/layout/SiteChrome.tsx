@@ -49,6 +49,7 @@ export function SiteChrome({
   const isAuthPage = pathname?.startsWith('/login') || pathname?.startsWith('/register');
   const isDashboard = pathname?.startsWith('/dashboard');
   const isAdFunnel = pathname?.startsWith('/get-quote') || pathname?.startsWith('/website-offer');
+  const chatbotEnabled = settings?.features?.chatbot !== false;
 
   if (isStandaloneDemo || isAdmin || isAuthPage) {
     return <>{children}</>;
@@ -63,12 +64,16 @@ export function SiteChrome({
         {/* Same desktop/mobile split as FloatingWidgets.tsx — on mobile the
             cookie banner spans bottom-4 left-4 right-4, so the bubble is
             raised to bottom-16 there instead of sharing that same strip. */}
-        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[99] hidden md:flex">
-          <Chatbot />
-        </div>
-        <div className="fixed bottom-16 right-4 z-[99] flex md:hidden">
-          <Chatbot />
-        </div>
+        {chatbotEnabled && (
+          <>
+            <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[99] hidden md:flex">
+              <Chatbot />
+            </div>
+            <div className="fixed bottom-16 right-4 z-[99] flex md:hidden">
+              <Chatbot />
+            </div>
+          </>
+        )}
       </>
     );
   }
@@ -91,7 +96,7 @@ export function SiteChrome({
       <main id="main-content">{children}</main>
       <SmartCTA />
       <Footer settings={settings} />
-      <DeferredWidgets showCookieConsent={cookieConsentEnabled} />
+      <DeferredWidgets showCookieConsent={cookieConsentEnabled} chatbotEnabled={chatbotEnabled} />
     </>
   );
 }

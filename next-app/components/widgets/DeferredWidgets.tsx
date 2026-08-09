@@ -8,10 +8,10 @@ const FloatingWidgets = dynamic(() => import('./FloatingWidgets').then(m => m.Fl
 const CookieConsent    = dynamic(() => import('./CookieConsent').then(m => m.CookieConsent), { ssr: false });
 const VipTracker       = dynamic(() => import('../vip/VipTracker').then(m => m.VipTracker), { ssr: false });
 
-export function DeferredWidgets({ showCookieConsent }: { showCookieConsent: boolean }) {
+export function DeferredWidgets({ showCookieConsent, chatbotEnabled }: { showCookieConsent: boolean; chatbotEnabled?: boolean }) {
   return (
     <>
-      <FloatingWidgets />
+      <FloatingWidgets chatbotEnabled={chatbotEnabled} />
       {showCookieConsent && <CookieConsent />}
       <VipTracker />
     </>

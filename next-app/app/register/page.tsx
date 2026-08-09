@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -7,6 +7,7 @@ import { UserPlus, MailCheck, User, Mail, Lock, Phone, Building2 } from 'lucide-
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { trackEvent } from '@/components/analytics/track';
+import { GoogleSignInButton } from '@/components/widgets/GoogleSignInButton';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -15,6 +16,11 @@ export default function RegisterPage() {
   const [err, setErr] = useState('');
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
+  const [googleLoginEnabled, setGoogleLoginEnabled] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/site-features').then(r => r.json()).then(d => setGoogleLoginEnabled(!!d.googleLogin)).catch(() => {});
+  }, []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -221,6 +227,19 @@ export default function RegisterPage() {
               {loading ? 'Creating account...' : 'Create Account'}
             </button>
           </form>
+
+          {googleLoginEnabled && (
+            <>
+              <div className="flex items-center gap-3 my-5">
+                <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.1)' }} />
+                <span className="text-xs" style={{ color: '#888' }}>or</span>
+                <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.1)' }} />
+              </div>
+              <Suspense fallback={null}>
+                <GoogleSignInButton />
+              </Suspense>
+            </>
+          )}
 
           <p className="text-[11px] text-center mt-4" style={{ color: '#888' }}>
             By signing up, you agree to our{' '}

@@ -27,6 +27,11 @@ function CheckoutInner() {
   const [applied, setApplied] = useState<{ code: string; discount: number } | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
   const [couponErr, setCouponErr] = useState('');
+  const [couponsEnabled, setCouponsEnabled] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/site-features').then(r => r.json()).then(d => setCouponsEnabled(d.coupons !== false)).catch(() => {});
+  }, []);
 
   // Payment comes first, account creation after (see /checkout/success) — a
   // guest just needs an email + phone to receive the license key and pay.
@@ -177,7 +182,7 @@ function CheckoutInner() {
             <div className="text-3xl font-extrabold text-primary my-1">{formatINR(total)}</div>
             <div className="text-xs text-text2 mb-4">{product.unit} · {hosting === 'cloud' ? '☁ Cloud' : '🖥 On-Premise'}</div>
 
-            {!applied && (
+            {couponsEnabled && !applied && (
               <div className="mb-4">
                 <div className="flex gap-2">
                   <label htmlFor="checkout-coupon" className="sr-only">Coupon code</label>

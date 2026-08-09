@@ -1,5 +1,5 @@
 'use client';
-import { Suspense, useState } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Star, Send, CheckCircle2 } from 'lucide-react';
 import { PageHero } from '@/components/shared/PageHero';
@@ -78,6 +78,11 @@ function ReviewForm() {
 }
 
 export default function ReviewsPage() {
+  const [reviewsEnabled, setReviewsEnabled] = useState(true);
+  useEffect(() => {
+    fetch('/api/site-features').then(r => r.json()).then(d => setReviewsEnabled(d.reviews !== false)).catch(() => {});
+  }, []);
+
   return (
     <>
       <PageHero
@@ -89,9 +94,15 @@ export default function ReviewsPage() {
       />
       <section className="section">
         <div className="container">
-          <Suspense fallback={null}>
-            <ReviewForm />
-          </Suspense>
+          {reviewsEnabled ? (
+            <Suspense fallback={null}>
+              <ReviewForm />
+            </Suspense>
+          ) : (
+            <p className="text-center text-text2 max-w-lg mx-auto">
+              We&apos;re not accepting new review submissions right now — please check back later.
+            </p>
+          )}
         </div>
       </section>
     </>

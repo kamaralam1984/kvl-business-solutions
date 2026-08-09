@@ -7,6 +7,7 @@ import { sendNotification } from '@/lib/email';
 import { rateLimit, clientIp } from '@/lib/rate-limit';
 import { linkVisitorToLead } from '@/lib/vip/link';
 import { sendLeadCapiEvent, capiRequestContext } from '@/lib/metaCapi';
+import { getSiteSettings } from '@/lib/models/SiteSettings';
 
 const schema = z.object({
   name: z.string().min(2),
@@ -22,6 +23,11 @@ const schema = z.object({
 export async function POST(req: Request) {
   const limit = rateLimit(`booking:${clientIp(req)}`, 5, 10 * 60_000);
   if (!limit.allowed) return NextResponse.json({ ok: false, error: 'Too many requests' }, { status: 429 });
+
+  const settings = await getSiteSettings().catch(() => null);
+  if (settings?.features?.bookDemo === false || settings?.features?.bookings === false) {
+    return NextResponse.json({ ok: false, error: 'Demo booking is currently unavailable.' }, { status: 403 });
+  }
 
   try {
     const data = schema.parse(await req.json());

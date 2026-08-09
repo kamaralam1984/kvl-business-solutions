@@ -1,11 +1,12 @@
 'use client';
-import { Suspense, useState } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { LogIn, Mail, Lock } from 'lucide-react';
+import { GoogleSignInButton } from '@/components/widgets/GoogleSignInButton';
 
 function LoginForm() {
   const router = useRouter();
@@ -15,6 +16,11 @@ function LoginForm() {
   const [password, setPassword] = useState('');
   const [err, setErr] = useState('');
   const [loading, setLoading] = useState(false);
+  const [googleLoginEnabled, setGoogleLoginEnabled] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/site-features').then(r => r.json()).then(d => setGoogleLoginEnabled(!!d.googleLogin)).catch(() => {});
+  }, []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -146,6 +152,17 @@ function LoginForm() {
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
+
+          {googleLoginEnabled && (
+            <>
+              <div className="flex items-center gap-3 my-5">
+                <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.1)' }} />
+                <span className="text-xs" style={{ color: '#888' }}>or</span>
+                <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.1)' }} />
+              </div>
+              <GoogleSignInButton />
+            </>
+          )}
 
           <p className="text-sm text-center mt-6" style={{ color: '#888' }}>
             {"Don't have an account?"}{' '}
