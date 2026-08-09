@@ -24,6 +24,18 @@ const poppins = Poppins({ subsets: ['latin'], weight: ['400','500','600','700','
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
 
+// Without this, every page that Next.js can statically optimize (no page-level
+// dynamic API used) gets prerendered ONCE at `next build` time and then served
+// as frozen HTML forever after — a live edit in Admin > Site Settings (hero
+// copy, banners, feature toggles, maintenance mode, anything read via
+// getSiteSettings()/getActiveBanner() here or in a page under this layout)
+// would silently never take effect until the next deploy. This makes the
+// whole app revalidate in the background at most every 30s, matching the
+// "✓ Saved — live in 30 seconds" promise already shown in the admin UI.
+// Routes that already force their own dynamic rendering (session-gated
+// pages, admin, etc.) are unaffected — a dynamic API call always wins.
+export const revalidate = 30;
+
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings().catch(() => null);
   const title = settings?.metaTitle || 'KVL Business Solutions — Enterprise Software, ERP, CRM & AI Automation';

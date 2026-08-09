@@ -9,6 +9,11 @@ import { getSiteSettings } from '@/lib/models/SiteSettings';
 // defaults to enabled rather than silently hiding real functionality.
 const DEFAULTS = { chatbot: true, bookDemo: true, googleLogin: true, reviews: true, coupons: true, bookings: true };
 
+// Route handlers don't inherit a layout's `revalidate` — without this, Next.js
+// statically optimizes this GET and freezes its response at build time, so a
+// toggle flipped in the admin panel would never actually reach this endpoint.
+export const revalidate = 30;
+
 export async function GET() {
   try {
     const settings = await getSiteSettings().catch(() => null);
