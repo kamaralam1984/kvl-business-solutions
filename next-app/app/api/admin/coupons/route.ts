@@ -18,6 +18,9 @@ const schema = z.object({
   validFrom: z.string().optional(),
   validUntil: z.string().optional(),
   active: z.boolean().default(true),
+}).refine(d => d.type !== 'percent' || d.value <= 100, {
+  message: 'A percent-off coupon cannot exceed 100%',
+  path: ['value'],
 });
 
 export async function GET() {
