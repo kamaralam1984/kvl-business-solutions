@@ -20,6 +20,7 @@ export const INTEGRATION_GROUPS: { category: string; keys: { key: string; label:
     keys: [
       { key: 'VAPI_API_KEY', label: 'Vapi API Key' },
       { key: 'VAPI_PHONE_NUMBER_ID', label: 'Vapi Phone Number ID' },
+      { key: 'VAPI_WEBHOOK_SECRET', label: 'Vapi Webhook Secret' },
     ],
   },
   {

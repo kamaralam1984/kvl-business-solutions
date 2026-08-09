@@ -1,16 +1,16 @@
 import { NextResponse } from 'next/server';
 
-// Verify either Vercel Cron header OR CRON_SECRET bearer token
+// Require the CRON_SECRET bearer token — no fallback. The old "Vercel Cron
+// user-agent" bypass trusted the User-Agent/x-vercel-cron headers, both of
+// which are ordinary attacker-controlled request headers with no
+// cryptographic proof behind them (and this app doesn't even run on Vercel
+// in production — see project memory), so it was a standing unauthenticated
+// bypass for every cron route. Fails closed if CRON_SECRET isn't set.
 export function requireCronAuth(req: Request) {
   const authHeader = req.headers.get('authorization') || '';
-  const userAgent = req.headers.get('user-agent') || '';
   const secret = process.env.CRON_SECRET;
 
-  // Vercel Cron sends a specific user agent and the deployment owner header
-  const isVercelCron = userAgent === 'vercel-cron/1.0' || req.headers.get('x-vercel-cron') === '1';
-
   if (secret && authHeader === `Bearer ${secret}`) return null;
-  if (isVercelCron) return null;
 
   return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
 }

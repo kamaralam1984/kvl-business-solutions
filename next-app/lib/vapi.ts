@@ -1,5 +1,7 @@
 const VAPI_API_KEY = process.env.VAPI_API_KEY || '';
 const VAPI_PHONE_NUMBER_ID = process.env.VAPI_PHONE_NUMBER_ID || '';
+const VAPI_WEBHOOK_SECRET = process.env.VAPI_WEBHOOK_SECRET || '';
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
 const BASE_URL = 'https://api.vapi.ai';
 
 const ASSISTANT_SYSTEM_PROMPT = `Aap KVL Business Solutions ki taraf se call kar rahi hain. Aap ek professional, warm aur helpful AI assistant hain jiska naam "Priya" hai.
@@ -39,6 +41,11 @@ export interface VapiCallOptions {
 export async function initiateCall(opts: VapiCallOptions): Promise<{ callId: string; status: string }> {
   if (!VAPI_API_KEY) throw new Error('VAPI_API_KEY not configured');
   if (!VAPI_PHONE_NUMBER_ID) throw new Error('VAPI_PHONE_NUMBER_ID not configured');
+  // The webhook (app/api/vapi/webhook/route.ts) only accepts requests carrying
+  // this exact secret back in the x-vapi-secret header — without it configured,
+  // calls still work but end-of-call reports are refused (fail closed) rather
+  // than trusting an unauthenticated POST.
+  if (!VAPI_WEBHOOK_SECRET) throw new Error('VAPI_WEBHOOK_SECRET not configured');
 
   const customerContext = [
     `Customer Name: ${opts.name}`,
@@ -72,6 +79,8 @@ export async function initiateCall(opts: VapiCallOptions): Promise<{ callId: str
       maxDurationSeconds: 300,
       backgroundSound: 'off',
       metadata: { leadId: opts.leadId },
+      serverUrl: `${SITE}/api/vapi/webhook`,
+      serverUrlSecret: VAPI_WEBHOOK_SECRET,
     },
   };
 

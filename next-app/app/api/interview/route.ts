@@ -2,16 +2,20 @@ import { NextResponse } from 'next/server';
 import { apiError } from '@/lib/api-response';
 import { z } from 'zod';
 import { chatRouted, ChatMessage } from '@/lib/ai/router';
+import { rateLimit, clientIp } from '@/lib/rate-limit';
 
 const schema = z.object({
-  role: z.string().min(2),
+  role: z.string().min(2).max(100),
   level: z.enum(['Junior', 'Mid', 'Senior']).default('Mid'),
   language: z.enum(['English', 'Hindi', 'Hinglish']).default('Hinglish'),
-  history: z.array(z.object({ role: z.enum(['user', 'assistant']), content: z.string() })),
+  history: z.array(z.object({ role: z.enum(['user', 'assistant']), content: z.string().max(2000) })).max(40),
   finish: z.boolean().default(false),
 });
 
 export async function POST(req: Request) {
+  const limit = rateLimit(`interview:${clientIp(req)}`, 20, 10 * 60_000);
+  if (!limit.allowed) return NextResponse.json({ ok: false, error: 'Too many requests, try again shortly' }, { status: 429 });
+
   try {
     const { role, level, language, history, finish } = schema.parse(await req.json());
 
