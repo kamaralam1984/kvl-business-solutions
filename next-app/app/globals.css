@@ -467,6 +467,17 @@
     box-shadow: 0 0 0 3px rgba(200,168,112,0.08);
     background: rgba(255,255,255,0.06);
   }
+  /* <option> popups are native-rendered outside our translucent .form-control
+     background, so without an explicit opaque color here some browsers paint
+     them white-on-white (light text inherited, default light popup). */
+  select.form-control option {
+    background: rgb(var(--bg-2));
+    color: #0a0a0a;
+  }
+  html.dark select.form-control option {
+    background: rgb(var(--bg-2));
+    color: rgb(var(--text));
+  }
 
   /* Floating label input */
   .input-floating { position: relative; }
