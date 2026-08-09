@@ -6,6 +6,7 @@ import { getLiveSoftwareProduct, getLiveSoftwareProducts } from '@/lib/data/live
 import { PageHero } from '@/components/shared/PageHero';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { ReviewsSection } from '@/components/widgets/ReviewsSection';
+import { ViewContentTracker } from '@/components/analytics/ViewContentTracker';
 import { formatINR } from '@/lib/utils';
 import { connectDB } from '@/lib/mongodb';
 import { Review } from '@/lib/models/Review';
@@ -97,6 +98,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
   return (
     <>
       <JsonLd data={productJsonLd} id={`product-${product.slug}-jsonld`} />
+      <ViewContentTracker id={product.slug} name={product.name} value={cloudPrice} category={product.category} />
       <PageHero
         eyebrow="SOFTWARE"
         title={product.name}

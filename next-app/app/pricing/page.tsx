@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { softwareProducts } from '@/lib/data/software';
 import { formatINR } from '@/lib/utils';
 import { Check, Calendar, Shield, Clock, Award } from 'lucide-react';
+import { ViewContentTracker } from '@/components/analytics/ViewContentTracker';
 
 function FadeIn({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);
@@ -67,6 +68,7 @@ export default function PricingPage() {
 
   return (
     <div style={{ background: 'rgb(var(--bg))' }}>
+      <ViewContentTracker id="pricing" name="Pricing Page" category="Pricing" />
 
       {/* Hero */}
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden" style={{ background: 'rgb(var(--bg))' }}>

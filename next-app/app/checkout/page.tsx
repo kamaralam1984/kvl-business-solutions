@@ -42,8 +42,15 @@ function CheckoutInner() {
     fetch('/api/products')
       .then(r => r.json())
       .then(d => setProduct((d.products || []).find((p: Software) => p.slug === productSlug) || null))
+      .catch(() => setProduct(null))
       .finally(() => setProductLoading(false));
   }, [productSlug]);
+
+  useEffect(() => {
+    if (!product) return;
+    trackEvent('begin_checkout', { content_ids: [product.slug], content_name: product.name, value: product.price, currency: 'INR' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product?.slug]);
 
   const pay = async (couponCodeOverride?: string) => {
     if (isGuest && !guestDetailsValid) { setErr('Enter a valid email and phone number first.'); return; }
@@ -80,7 +87,7 @@ function CheckoutInner() {
           // Logged-in buyers go straight to their dashboard. Guests paid
           // first — now's when we offer to turn that into an account.
           if (session?.user?.email) router.push(`/dashboard?success=${vd.orderId}`);
-          else router.push(`/checkout/success?order=${vd.orderId}&email=${encodeURIComponent(guestEmail)}`);
+          else router.push(`/checkout/success?order=${vd.orderId}&email=${encodeURIComponent(guestEmail)}&product=${encodeURIComponent(productSlug)}`);
         },
         modal: { ondismiss: () => setLoading(false) },
       });

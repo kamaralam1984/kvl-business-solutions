@@ -4,6 +4,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { signIn, useSession } from 'next-auth/react';
 import { CheckCircle2, Lock, User as UserIcon, ArrowRight } from 'lucide-react';
+import { UpsellRecommendations } from '@/components/shared/UpsellRecommendations';
 
 function SuccessInner() {
   const sp = useSearchParams();
@@ -11,6 +12,7 @@ function SuccessInner() {
   const { update } = useSession();
   const orderId = sp.get('order') || '';
   const email = sp.get('email') || '';
+  const productSlug = sp.get('product') || '';
 
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
@@ -106,6 +108,8 @@ function SuccessInner() {
           </button>
         </div>
       )}
+
+      {productSlug && <UpsellRecommendations excludeSlug={productSlug} />}
     </div>
   );
 }

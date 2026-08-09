@@ -23,6 +23,12 @@ const META_PIXEL_EVENTS: Record<string, string | undefined> = {
   booking_submit: 'Lead',
   proposal_request: 'Lead',
   purchase: 'Purchase',
+  // ViewContent/InitiateCheckout — without these, Meta only ever sees a
+  // generic PageView plus the two terminal conversions, which starves
+  // retargeting/lookalike audiences of "viewed this specific product" and
+  // "started checkout" signals.
+  view_content: 'ViewContent',
+  begin_checkout: 'InitiateCheckout',
 };
 
 function hasConsent() {

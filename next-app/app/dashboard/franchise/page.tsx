@@ -5,9 +5,11 @@ import { Franchise } from '@/lib/models/Franchise';
 import { Order } from '@/lib/models/Order';
 import { Lead } from '@/lib/models/Lead';
 import { Deal } from '@/lib/models/Deal';
+import { getOrCreateReferral } from '@/lib/referrals';
 import { formatINR } from '@/lib/utils';
 import Link from 'next/link';
-import { Building2, TrendingUp, Target, Users, MapPin, IndianRupee, Mail } from 'lucide-react';
+import { Building2, TrendingUp, Target, Users, MapPin, IndianRupee, Mail, Link2 } from 'lucide-react';
+import { CopyReferralLink } from '@/components/dashboard/CopyReferralLink';
 
 export const dynamic = 'force-dynamic';
 
@@ -46,10 +48,23 @@ export default async function FranchisePage() {
     );
   }
 
-  // Franchise stats — assume orders/leads in their territory
-  const orders: any[] = await Order.find({ status: 'paid' }).lean();
-  const leads: any[] = await Lead.find({}).lean();
-  const deals: any[] = await Deal.find({ ownerEmail: session.user.email }).lean();
+  // Franchise stats — scoped to leads/orders this partner actually referred,
+  // via the same referral-code mechanism the standalone referral program
+  // uses (lib/referrals.ts). Reusing it here means a franchise partner's
+  // link is the same one their /dashboard/referrals page shows — one code,
+  // one attribution trail — instead of every franchise partner seeing every
+  // order sitewide (the previous, incorrect behavior).
+  const referral = await getOrCreateReferral(session.user.email);
+  const leads: any[] = await Lead.find({ referralCode: referral.code }).lean();
+  const leadIds = leads.map((l: any) => l._id);
+  const dealIds = leads.map((l: any) => l.dealId).filter(Boolean);
+  const [orders, deals]: [any[], any[]] = await Promise.all([
+    Order.find({ status: 'paid', lead: { $in: leadIds } }).lean(),
+    Deal.find({ _id: { $in: dealIds } }).lean(),
+  ]);
+
+  const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
+  const referralLink = `${SITE}/?ref=${referral.code}`;
 
   const revenue = orders.reduce((s, o) => s + (o.amount || 0), 0);
   const commission = Math.round(revenue * (franchise.commissionRate / 100));
@@ -68,6 +83,16 @@ export default async function FranchisePage() {
           <Link href="/dashboard/crm" className="btn btn-ghost text-xs"><Users className="w-3.5 h-3.5" /> CRM</Link>
           <Link href="/dashboard/analytics" className="btn btn-ghost text-xs"><TrendingUp className="w-3.5 h-3.5" /> Analytics</Link>
         </div>
+      </div>
+
+      {/* Referral link — every lead/order that comes through this link is what "revenue" below is scoped to */}
+      <div className="card-base p-4 mb-6 flex items-center gap-3 flex-wrap">
+        <Link2 className="w-4 h-4 text-primary shrink-0" />
+        <div className="flex-1 min-w-0">
+          <div className="text-xs font-bold">Your franchise link</div>
+          <div className="text-xs text-text2 font-mono truncate">{referralLink}</div>
+        </div>
+        <CopyReferralLink link={referralLink} />
       </div>
 
       {/* Stats grid */}

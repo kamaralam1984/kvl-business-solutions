@@ -8,7 +8,7 @@ import {
   Workflow, Briefcase, Sparkles, Bell, Search, LogOut, ChevronRight,
   TrendingUp, Zap, Shield, Gift, ExternalLink, HeartHandshake, Plug,
   HeartPulse, Download, MessageSquare, BookOpen, Layers,
-  MousePointerClick, Send, IndianRupee, Radio,
+  MousePointerClick, Send, IndianRupee, Radio, Building2,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ThemeToggle } from '@/components/widgets/ThemeToggle';
@@ -32,6 +32,7 @@ const sections = [
       { href: '/admin/orders',   label: 'Orders',      Icon: Package },
       { href: '/admin/quotes',   label: 'Quotes',      Icon: FileText },
       { href: '/admin/referrals', label: 'Referrals',  Icon: Gift },
+      { href: '/admin/franchise', label: 'Franchise Partners', Icon: Building2 },
       { href: '/dashboard/crm', label: 'Deals / CRM Pipeline', Icon: HeartHandshake, external: true },
       { href: '/admin/outreach', label: 'Outreach CRM', Icon: Send },
     ],

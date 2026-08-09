@@ -6,6 +6,7 @@ import { formatINR } from '@/lib/utils';
 import Link from 'next/link';
 import { Package, ShoppingBag, Gift } from 'lucide-react';
 import { DashboardCharts } from '@/components/dashboard/DashboardCharts';
+import { UpsellRecommendations } from '@/components/shared/UpsellRecommendations';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,6 +14,7 @@ export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
   await connectDB();
   const orders = await Order.find({ email: session?.user?.email }).sort({ createdAt: -1 }).lean();
+  const latestPaid: any = orders.find((o: any) => o.status === 'paid');
 
   return (
     <div className="py-10">
@@ -68,6 +70,8 @@ export default async function DashboardPage() {
           </table>
         </div>
       )}
+
+      {latestPaid && <UpsellRecommendations excludeSlug={latestPaid.productSlug} />}
     </div>
   );
 }
