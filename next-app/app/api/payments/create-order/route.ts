@@ -108,10 +108,9 @@ export async function POST(req: Request) {
       discount,
     });
 
-    // Increment coupon usage (only on order created — finalize on webhook would be more accurate but acceptable)
-    if (appliedCoupon) {
-      await Coupon.updateOne({ _id: appliedCoupon._id }, { $inc: { usedCount: 1 } });
-    }
+    // Coupon usage is NOT counted here — only once the payment actually
+    // succeeds (see lib/payments/mark-paid.ts), so an abandoned/failed
+    // checkout never burns a limited-use code.
 
     fireTrigger('new_order', {
       name: u?.name || matchedLead?.name || identityEmail,

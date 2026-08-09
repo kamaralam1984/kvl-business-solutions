@@ -3,8 +3,8 @@ import { apiError } from '@/lib/api-response';
 import crypto from 'crypto';
 import { connectDB } from '@/lib/mongodb';
 import { Order } from '@/lib/models/Order';
-import { generateLicenseKey } from '@/lib/license';
 import { sendNotification, orderEmail } from '@/lib/email';
+import { markOrderPaid } from '@/lib/payments/mark-paid';
 
 // Razorpay sends payment events here as a backup to client-side verify.
 // Configure: Razorpay Dashboard → Settings → Webhooks → POST {SITE}/api/payments/webhook
@@ -27,26 +27,34 @@ export async function POST(req: Request) {
     if (!rzpOrderId) return NextResponse.json({ ok: true, ignored: true });
 
     await connectDB();
-    const order = await Order.findOne({ razorpayOrderId: rzpOrderId });
-    if (!order) return NextResponse.json({ ok: true, message: 'Order not found' });
 
-    if (event === 'payment.captured' && order.status !== 'paid') {
-      order.razorpayPaymentId = payment.id;
-      order.status = 'paid';
-      if (!order.licenseKey) order.licenseKey = generateLicenseKey();
-      await order.save();
-      sendNotification(`Your KVL License — ${order.productName}`, orderEmail(order), order.email);
-      sendNotification(`💰 New Paid Order — ${order.productName}`, orderEmail(order));
+    if (event === 'payment.captured') {
+      // Shared with /api/payments/verify — atomic, idempotent, only the
+      // first of the two paths to arrive actually sends emails/generates
+      // the license key.
+      await markOrderPaid(rzpOrderId, { razorpayPaymentId: payment.id });
     } else if (event === 'payment.failed') {
-      order.status = 'failed';
-      order.failureReason = payment.error_description || payment.error_reason || 'Payment failed';
-      order.failureCode = payment.error_code;
-      await order.save();
+      // Only ever flips a still-open order — never clobbers one that verify
+      // (or an earlier payment.captured webhook) already marked paid, which
+      // a delayed/retried payment.failed webhook for an earlier attempt on
+      // the same order could otherwise do.
+      await Order.updateOne(
+        { razorpayOrderId: rzpOrderId, status: 'created' },
+        {
+          $set: {
+            status: 'failed',
+            failureReason: payment.error_description || payment.error_reason || 'Payment failed',
+            failureCode: payment.error_code,
+          },
+        }
+      );
     } else if (event === 'refund.processed') {
-      order.status = 'refunded';
-      order.refundedAt = new Date();
-      await order.save();
-      sendNotification(`Refund processed — ${order.orderId}`, orderEmail(order), order.email);
+      const order = await Order.findOneAndUpdate(
+        { razorpayOrderId: rzpOrderId, status: { $ne: 'refunded' } },
+        { $set: { status: 'refunded', refundedAt: new Date() } },
+        { new: true }
+      );
+      if (order) sendNotification(`Refund processed — ${order.orderId}`, orderEmail(order), order.email);
     }
 
     return NextResponse.json({ ok: true });
