@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
 // KVL Visitor Intelligence Platform — client capture SDK (Phase A).
@@ -36,10 +36,18 @@ function hasConsent() {
   return document.cookie.match(/kvl_consent=([^;]+)/)?.[1] === 'accepted';
 }
 
+// Fired by CookieConsent right after it sets the cookie, so a tab that's
+// already open (banner still on screen when this component mounted) starts
+// tracking the moment "Accept all" is clicked, instead of only on the next
+// full page load — the gap that was silently swallowing every session for
+// any visitor who accepted after the initial render (i.e. nearly everyone).
+export const CONSENT_EVENT = 'kvl-consent-accepted';
+
 const INTERACTIVE_SELECTOR = 'a, button, input, select, textarea, [role="button"], [onclick]';
 
 export function VipTracker() {
   const pathname = usePathname();
+  const [consented, setConsented] = useState(false);
   const queueRef = useRef<any[]>([]);
   const vidRef = useRef<string>('');
   const sidRef = useRef<string>('');
@@ -74,9 +82,19 @@ export function VipTracker() {
     }
   };
 
-  // Identity + session bootstrap — runs once.
+  // Consent bootstrap — picks up a cookie that's already there on mount,
+  // and reacts live if the user accepts via the banner during this same
+  // page view (see CONSENT_EVENT above).
   useEffect(() => {
-    if (!hasConsent()) return;
+    if (hasConsent()) { setConsented(true); return; }
+    const onConsent = () => setConsented(true);
+    window.addEventListener(CONSENT_EVENT, onConsent);
+    return () => window.removeEventListener(CONSENT_EVENT, onConsent);
+  }, []);
+
+  // Identity + session bootstrap — runs once consent is granted.
+  useEffect(() => {
+    if (!consented) return;
     let vid = getCookie(VID_COOKIE);
     if (!vid) { vid = newId(); setCookie(VID_COOKIE, vid, VID_MAX_AGE); }
     vidRef.current = vid;
@@ -99,11 +117,11 @@ export function VipTracker() {
       window.removeEventListener('pagehide', onHide);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [consented]);
 
   // Per-pageview: reset scroll tracking, emit page_view.
   useEffect(() => {
-    if (!hasConsent()) return;
+    if (!consented) return;
     pageEnteredAtRef.current = Date.now();
     maxScrollPctRef.current = 0;
     push('page_view');
@@ -113,11 +131,11 @@ export function VipTracker() {
       push('page_view', { exiting: true, timeOnPageSeconds: seconds, scrollDepthPct: maxScrollPctRef.current });
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
+  }, [pathname, consented]);
 
-  // Behavioural event listeners — attached once.
+  // Behavioural event listeners — attached once consent is granted.
   useEffect(() => {
-    if (!hasConsent()) return;
+    if (!consented) return;
 
     const scrollMilestonesFired = new Set<number>();
     const onScroll = () => {
@@ -205,7 +223,7 @@ export function VipTracker() {
       window.removeEventListener('error', onError);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [consented]);
 
   return null;
 }

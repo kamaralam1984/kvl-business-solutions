@@ -14,8 +14,14 @@ export function CookieConsent() {
   const setConsent = (value: 'accepted' | 'rejected') => {
     const expires = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString();
     document.cookie = `kvl_consent=${value}; expires=${expires}; path=/; SameSite=Lax`;
-    if (value === 'accepted' && typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('consent', 'update', { 'ad_storage': 'granted', 'analytics_storage': 'granted' });
+    if (value === 'accepted') {
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('consent', 'update', { 'ad_storage': 'granted', 'analytics_storage': 'granted' });
+      }
+      // Lets VipTracker (already mounted, already past its initial consent
+      // check) start recording immediately instead of waiting for a page
+      // reload that may never come — see components/vip/VipTracker.tsx.
+      window.dispatchEvent(new Event('kvl-consent-accepted'));
     }
     setShow(false);
   };
