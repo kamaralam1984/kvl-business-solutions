@@ -13,8 +13,14 @@ export default function AdminProductsPage() {
   const [editing, setEditing] = useState<Product | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [msg, setMsg] = useState('');
+  const [loadError, setLoadError] = useState(false);
 
-  const load = () => fetch('/api/admin/products').then(r => r.json()).then(d => d.ok && setProducts(d.products));
+  const load = () => {
+    setLoadError(false);
+    return fetch('/api/admin/products').then(r => r.json()).then(d => {
+      if (d.ok) setProducts(d.products); else setLoadError(true);
+    }).catch(() => setLoadError(true));
+  };
   useEffect(() => { load(); }, []);
 
   const save = async () => {
@@ -60,7 +66,11 @@ export default function AdminProductsPage() {
                 </td>
               </tr>
             ))}
-            {products.length === 0 && <tr><td colSpan={5} className="p-8 text-center text-text2">No products yet. Click &quot;Add Product&quot; to create one.</td></tr>}
+            {products.length === 0 && (
+              <tr><td colSpan={5} className="p-8 text-center text-text2">
+                {loadError ? 'Failed to load products — check your connection and try refreshing.' : <>No products yet. Click &quot;Add Product&quot; to create one.</>}
+              </td></tr>
+            )}
           </tbody>
         </table>
       </div>

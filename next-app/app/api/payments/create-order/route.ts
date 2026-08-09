@@ -82,12 +82,25 @@ export async function POST(req: Request) {
       : { email: identityEmail, phone: identityPhone };
 
     // Was this buyer previously a Lead (e.g. filled a form before coming
-    // back to pay)? Link the most recent match so admin can trace ad/lead
-    // sources through to actual revenue instead of two disconnected records.
+    // back to pay)? Link so admin can trace ad/lead sources through to
+    // actual revenue instead of two disconnected records — and so a
+    // franchise partner's referral link (lib/referrals.ts) gets correctly
+    // credited for the sale.
+    //
+    // A buyer can rack up MULTIPLE matching Leads before checking out (e.g.
+    // they came in through a partner's referral link, then later used the
+    // chatbot or contact form with no ?ref= on that visit). Picking just the
+    // most-recent one regardless of referralCode would silently strip the
+    // original referral attribution — the true referring partner loses
+    // credit, or worse, whichever Lead happens to be newest (possibly from a
+    // DIFFERENT partner's link) gets wrongly credited instead. So: among all
+    // matching Leads, prefer the most recent one that actually carries a
+    // referralCode; only fall back to the most-recent-overall when none do.
     const emailRe = new RegExp(`^${identityEmail.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i');
-    const matchedLead: any = await Lead.findOne({
+    const matchingLeads: any[] = await Lead.find({
       $or: [{ email: emailRe }, ...(identityPhone ? [{ phone: identityPhone }] : [])],
     }).sort({ createdAt: -1 }).lean();
+    const matchedLead: any = matchingLeads.find(l => l.referralCode) || matchingLeads[0];
 
     await Order.create({
       orderId,

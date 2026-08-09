@@ -19,8 +19,15 @@ export default function AdminJobsPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [editing, setEditing] = useState<Job | null>(null);
   const [isNew, setIsNew] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
-  const load = () => fetch('/api/admin/jobs').then(r => r.json()).then(d => d.ok && setJobs(d.jobs));
+  const load = () => {
+    setLoadError(false);
+    return fetch('/api/admin/jobs')
+      .then(r => r.json())
+      .then(d => { if (d.ok) setJobs(d.jobs); else setLoadError(true); })
+      .catch(() => setLoadError(true));
+  };
   useEffect(() => { load(); }, []);
 
   const save = async () => {
@@ -58,7 +65,7 @@ export default function AdminJobsPage() {
             <tr><th className="p-3">Title</th><th className="p-3">Department</th><th className="p-3">Location</th><th className="p-3 text-right">Applications</th><th className="p-3">Status</th><th className="p-3"></th></tr>
           </thead>
           <tbody>
-            {jobs.length === 0 && <tr><td colSpan={6} className="p-8 text-center text-text2">No jobs yet. Click &quot;New Job&quot; to add.</td></tr>}
+            {jobs.length === 0 && <tr><td colSpan={6} className="p-8 text-center text-text2">{loadError ? 'Failed to load jobs — check your connection and try refreshing.' : <>No jobs yet. Click &quot;New Job&quot; to add.</>}</td></tr>}
             {jobs.map(j => (
               <tr key={j._id} className="border-b border-tint last:border-b-0 hover:bg-primary/5">
                 <td className="p-3 font-semibold">

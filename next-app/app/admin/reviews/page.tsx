@@ -5,8 +5,14 @@ import { Star, Check, X, Trash2, Award } from 'lucide-react';
 export default function AdminReviewsPage() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [filter, setFilter] = useState<'all' | 'pending' | 'approved'>('pending');
+  const [loadError, setLoadError] = useState(false);
 
-  const load = () => fetch('/api/admin/reviews').then(r => r.json()).then(d => d.ok && setReviews(d.reviews));
+  const load = () => {
+    setLoadError(false);
+    return fetch('/api/admin/reviews').then(r => r.json()).then(d => {
+      if (d.ok) setReviews(d.reviews); else setLoadError(true);
+    }).catch(() => setLoadError(true));
+  };
   useEffect(() => { load(); }, []);
 
   const set = async (id: string, data: any) => {
@@ -35,7 +41,11 @@ export default function AdminReviewsPage() {
       </div>
 
       <div className="space-y-3">
-        {filtered.length === 0 && <div className="card-base p-8 text-center text-text2">No {filter} reviews.</div>}
+        {filtered.length === 0 && (
+          <div className="card-base p-8 text-center text-text2">
+            {loadError ? 'Failed to load reviews — check your connection and try refreshing.' : `No ${filter} reviews.`}
+          </div>
+        )}
         {filtered.map(r => (
           <div key={r._id} className="card-base p-5">
             <div className="flex justify-between gap-4">

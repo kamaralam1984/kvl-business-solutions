@@ -7,10 +7,14 @@ import { logActivity } from '@/lib/activity';
 
 export async function GET() {
   const g = await requireAdmin(); if (!g.ok) return g.response;
-  await connectDB();
-  let doc = await SiteSettings.findById('main').lean();
-  if (!doc) doc = await SiteSettings.create({ _id: 'main' });
-  return NextResponse.json({ ok: true, settings: doc });
+  try {
+    await connectDB();
+    let doc = await SiteSettings.findById('main').lean();
+    if (!doc) doc = await SiteSettings.create({ _id: 'main' });
+    return NextResponse.json({ ok: true, settings: doc });
+  } catch (e) {
+    return apiError(e);
+  }
 }
 
 export async function PUT(req: Request) {

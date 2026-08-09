@@ -34,9 +34,13 @@ const schema = z.object({
 
 export async function GET() {
   const g = await requireAdmin(); if (!g.ok) return g.response;
-  await connectDB();
-  const studies = await CaseStudy.find({}).sort({ _id: -1 }).lean();
-  return NextResponse.json({ ok: true, studies });
+  try {
+    await connectDB();
+    const studies = await CaseStudy.find({}).sort({ _id: -1 }).lean();
+    return NextResponse.json({ ok: true, studies });
+  } catch (e) {
+    return apiError(e);
+  }
 }
 
 export async function POST(req: Request) {

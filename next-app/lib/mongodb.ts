@@ -13,6 +13,16 @@ export async function connectDB() {
   if (!cached.promise) {
     cached.promise = mongoose.connect(uri, { bufferCommands: false });
   }
-  cached.conn = await cached.promise;
+  try {
+    cached.conn = await cached.promise;
+  } catch (e) {
+    // Don't leave a dead, rejected promise cached forever — without this,
+    // one transient connection failure (e.g. during a VPS reboot) wedges
+    // every future request in this process onto the same rejection, even
+    // long after Mongo recovers, until pm2 restarts the process. Clearing
+    // it here means the next call attempts a fresh connect().
+    cached.promise = null;
+    throw e;
+  }
   return cached.conn;
 }

@@ -10,9 +10,15 @@ const CARD = { background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var
 export default function RevenueDashboardPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
-    fetch('/api/admin/revenue').then(r => r.json()).then(d => d.ok && setData(d)).finally(() => setLoading(false));
+    setLoadError(false);
+    fetch('/api/admin/revenue')
+      .then(r => r.json())
+      .then(d => { if (d.ok) setData(d); else setLoadError(true); })
+      .catch(() => setLoadError(true))
+      .finally(() => setLoading(false));
   }, []);
 
   const chartData = (data?.dailyVisitors || []).map((d: any) => ({
@@ -46,7 +52,9 @@ export default function RevenueDashboardPage() {
           {[0, 1, 2, 3, 4, 5].map(i => <div key={i} className="rounded-2xl p-5" style={CARD}><AdminSkeleton rows={2} /></div>)}
         </div>
       ) : !data ? (
-        <div className="rounded-2xl p-8 text-center" style={{ ...CARD, color: 'rgba(var(--text) / 0.4)' }}>Failed to load.</div>
+        <div className="rounded-2xl p-8 text-center" style={{ ...CARD, color: 'rgba(var(--text) / 0.4)' }}>
+          {loadError ? 'Failed to load — check your connection and try refreshing.' : 'Failed to load.'}
+        </div>
       ) : (
         <>
           <div className="grid sm:grid-cols-3 gap-4 stagger-children">

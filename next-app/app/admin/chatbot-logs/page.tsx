@@ -12,11 +12,17 @@ export default function ChatbotLogsPage() {
   const [leadCapturedCount, setLeadCapturedCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
+    setLoadError(false);
     fetch('/api/admin/chatbot-logs')
       .then(r => r.json())
-      .then(d => { if (d.ok) { setLogs(d.logs); setTotal(d.total); setLeadCapturedCount(d.leadCapturedCount); } })
+      .then(d => {
+        if (d.ok) { setLogs(d.logs); setTotal(d.total); setLeadCapturedCount(d.leadCapturedCount); }
+        else setLoadError(true);
+      })
+      .catch(() => setLoadError(true))
       .finally(() => setLoading(false));
   }, []);
 
@@ -47,6 +53,8 @@ export default function ChatbotLogsPage() {
             </div>
           ))}
         </div>
+      ) : loadError ? (
+        <p className="text-[13px]" style={{ color: 'rgba(var(--text) / 0.3)' }}>Failed to load — check your connection and try refreshing.</p>
       ) : logs.length === 0 ? (
         <p className="text-[13px]" style={{ color: 'rgba(var(--text) / 0.3)' }}>No conversations yet.</p>
       ) : (

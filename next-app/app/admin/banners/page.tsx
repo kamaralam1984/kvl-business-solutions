@@ -25,8 +25,14 @@ export default function AdminBannersPage() {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [editing, setEditing] = useState<Banner | null>(null);
   const [isNew, setIsNew] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
-  const load = () => fetch('/api/admin/banners').then(r => r.json()).then(d => d.ok && setBanners(d.banners));
+  const load = () => {
+    setLoadError(false);
+    return fetch('/api/admin/banners').then(r => r.json())
+      .then(d => { if (d.ok) setBanners(d.banners); else setLoadError(true); })
+      .catch(() => setLoadError(true));
+  };
   useEffect(() => { load(); }, []);
 
   const save = async () => {
@@ -60,7 +66,8 @@ export default function AdminBannersPage() {
       </div>
 
       <div className="space-y-3">
-        {banners.length === 0 && <div className="card-base p-8 text-center text-text2">No banners yet. Create one — example: &quot;🎉 25% off this month — code LAUNCH25&quot;</div>}
+        {loadError && <div className="card-base p-8 text-center text-text2">Failed to load — check your connection and try refreshing.</div>}
+        {!loadError && banners.length === 0 && <div className="card-base p-8 text-center text-text2">No banners yet. Create one — example: &quot;🎉 25% off this month — code LAUNCH25&quot;</div>}
         {banners.map(b => (
           <div key={b._id} className="card-base p-4 flex items-start gap-4">
             <div className="flex-1 min-w-0">

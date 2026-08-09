@@ -14,10 +14,15 @@ export default function AdminUsersPage() {
   const [showPw, setShowPw] = useState(false);
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState('');
+  const [loadError, setLoadError] = useState(false);
 
-  const load = (search = '') =>
-    fetch(`/api/admin/users${search ? `?q=${encodeURIComponent(search)}` : ''}`)
-      .then(r => r.json()).then(d => d.ok && setUsers(d.users));
+  const load = (search = '') => {
+    setLoadError(false);
+    return fetch(`/api/admin/users${search ? `?q=${encodeURIComponent(search)}` : ''}`)
+      .then(r => r.json())
+      .then(d => { if (d.ok) setUsers(d.users); else setLoadError(true); })
+      .catch(() => setLoadError(true));
+  };
 
   useEffect(() => { load(); }, []);
 
@@ -147,7 +152,9 @@ export default function AdminUsersPage() {
               </tr>
             ))}
             {users.length === 0 && (
-              <tr><td colSpan={7} className="p-8 text-center" style={{ color: 'rgba(148,163,184,0.5)' }}>No users found.</td></tr>
+              <tr><td colSpan={7} className="p-8 text-center" style={{ color: 'rgba(148,163,184,0.5)' }}>
+                {loadError ? 'Failed to load users — check your connection and try refreshing.' : 'No users found.'}
+              </td></tr>
             )}
           </tbody>
         </table>

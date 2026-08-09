@@ -11,13 +11,16 @@ export default function AdminIntegrationsPage() {
   const [total, setTotal] = useState(0);
   const [configuredCount, setConfiguredCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     fetch('/api/admin/integrations')
       .then(r => r.json())
       .then(d => {
         if (d.ok) { setGroups(d.groups); setTotal(d.total); setConfiguredCount(d.configuredCount); }
+        else setLoadError(true);
       })
+      .catch(() => setLoadError(true))
       .finally(() => setLoading(false));
   }, []);
 
@@ -49,6 +52,13 @@ export default function AdminIntegrationsPage() {
               <AdminSkeleton rows={4} />
             </div>
           ))}
+        </div>
+      ) : loadError ? (
+        <div
+          className="rounded-2xl p-8 text-center"
+          style={{ background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)', border: '1px solid rgba(var(--border) / 0.06)', color: 'rgba(var(--text) / 0.4)' }}
+        >
+          Failed to load — check your connection and try refreshing.
         </div>
       ) : (
         <div className="grid md:grid-cols-2 gap-4 stagger-children">

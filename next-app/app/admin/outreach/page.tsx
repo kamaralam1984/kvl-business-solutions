@@ -15,8 +15,14 @@ export default function OutreachCampaignsPage() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [creating, setCreating] = useState<typeof empty | null>(null);
   const [saving, setSaving] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
-  const load = () => fetch('/api/admin/outreach/campaigns').then(r => r.json()).then(d => d.ok && setCampaigns(d.campaigns));
+  const load = () => {
+    setLoadError(false);
+    return fetch('/api/admin/outreach/campaigns').then(r => r.json())
+      .then(d => { if (d.ok) setCampaigns(d.campaigns); else setLoadError(true); })
+      .catch(() => setLoadError(true));
+  };
   useEffect(() => { load(); }, []);
 
   const save = async () => {
@@ -68,7 +74,12 @@ export default function OutreachCampaignsPage() {
             </Link>
           );
         })}
-        {campaigns.length === 0 && (
+        {loadError && (
+          <div className="col-span-2 rounded-2xl p-8 text-center" style={{ background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)', border: '1px solid rgba(var(--border) / 0.06)', color: 'rgba(var(--text) / 0.3)' }}>
+            Failed to load — check your connection and try refreshing.
+          </div>
+        )}
+        {!loadError && campaigns.length === 0 && (
           <div className="col-span-2 rounded-2xl p-8 text-center" style={{ background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)', border: '1px solid rgba(var(--border) / 0.06)', color: 'rgba(var(--text) / 0.3)' }}>
             No campaigns yet — create one to start drafting outreach.
           </div>

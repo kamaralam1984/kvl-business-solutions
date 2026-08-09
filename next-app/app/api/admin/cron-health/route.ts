@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { connectDB } from '@/lib/mongodb';
 import { CronLog } from '@/lib/models/CronLog';
 import { requireAdmin } from '@/lib/admin-guard';
@@ -16,17 +17,21 @@ const JOBS = [
 
 export async function GET() {
   const g = await requireAdmin(); if (!g.ok) return g.response;
-  await connectDB();
+  try {
+    await connectDB();
 
-  const jobs = await Promise.all(JOBS.map(async ({ job, schedule }) => {
-    const recent = await CronLog.find({ job }).sort({ ranAt: -1 }).limit(5).lean();
-    return {
-      job,
-      schedule,
-      lastRun: recent[0] || null,
-      history: recent,
-    };
-  }));
+    const jobs = await Promise.all(JOBS.map(async ({ job, schedule }) => {
+      const recent = await CronLog.find({ job }).sort({ ranAt: -1 }).limit(5).lean();
+      return {
+        job,
+        schedule,
+        lastRun: recent[0] || null,
+        history: recent,
+      };
+    }));
 
-  return NextResponse.json({ ok: true, jobs });
+    return NextResponse.json({ ok: true, jobs });
+  } catch (e) {
+    return apiError(e);
+  }
 }

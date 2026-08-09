@@ -21,13 +21,20 @@ export default function AdminBookings() {
   const [stats, setStats] = useState<any>({});
   const [q, setQ] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [loadError, setLoadError] = useState(false);
 
   const load = async (search = q, status = statusFilter) => {
     const p = new URLSearchParams();
     if (search) p.set('q', search);
     if (status) p.set('status', status);
-    const d = await fetch(`/api/admin/bookings?${p}`).then(r => r.json());
-    if (d.ok) { setBookings(d.bookings); setStats(d.stats); }
+    setLoadError(false);
+    try {
+      const d = await fetch(`/api/admin/bookings?${p}`).then(r => r.json());
+      if (d.ok) { setBookings(d.bookings); setStats(d.stats); }
+      else setLoadError(true);
+    } catch {
+      setLoadError(true);
+    }
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -149,8 +156,17 @@ export default function AdminBookings() {
             {bookings.length === 0 && (
               <tr><td colSpan={7} className="p-12 text-center">
                 <Calendar className="w-10 h-10 mx-auto mb-2 opacity-30" style={{ color: '#888' }} />
-                <p className="font-medium" style={{ color: 'rgba(148,163,184,0.6)' }}>No demo bookings yet</p>
-                <p className="text-xs mt-1" style={{ color: 'rgba(148,163,184,0.4)' }}>Bookings from the website will appear here</p>
+                {loadError ? (
+                  <>
+                    <p className="font-medium" style={{ color: 'rgba(148,163,184,0.6)' }}>Failed to load bookings</p>
+                    <p className="text-xs mt-1" style={{ color: 'rgba(148,163,184,0.4)' }}>Check your connection and try refreshing.</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="font-medium" style={{ color: 'rgba(148,163,184,0.6)' }}>No demo bookings yet</p>
+                    <p className="text-xs mt-1" style={{ color: 'rgba(148,163,184,0.4)' }}>Bookings from the website will appear here</p>
+                  </>
+                )}
               </td></tr>
             )}
           </tbody>

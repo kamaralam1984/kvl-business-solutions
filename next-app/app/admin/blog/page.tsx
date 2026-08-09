@@ -23,8 +23,14 @@ export default function AdminBlogPage() {
   const [editing, setEditing] = useState<Post | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [msg, setMsg] = useState('');
+  const [loadError, setLoadError] = useState(false);
 
-  const load = () => fetch('/api/admin/blog').then(r => r.json()).then(d => d.ok && setPosts(d.posts));
+  const load = () => {
+    setLoadError(false);
+    return fetch('/api/admin/blog').then(r => r.json())
+      .then(d => { if (d.ok) setPosts(d.posts); else setLoadError(true); })
+      .catch(() => setLoadError(true));
+  };
   useEffect(() => { load(); }, []);
 
   const save = async () => {
@@ -87,7 +93,8 @@ export default function AdminBlogPage() {
                 </td>
               </tr>
             ))}
-            {posts.length === 0 && <tr><td colSpan={5} className="p-8 text-center" style={{ color: 'rgba(var(--text) / 0.3)' }}>No admin-created posts yet.</td></tr>}
+            {loadError && <tr><td colSpan={5} className="p-8 text-center" style={{ color: 'rgba(var(--text) / 0.3)' }}>Failed to load — check your connection and try refreshing.</td></tr>}
+            {!loadError && posts.length === 0 && <tr><td colSpan={5} className="p-8 text-center" style={{ color: 'rgba(var(--text) / 0.3)' }}>No admin-created posts yet.</td></tr>}
           </tbody>
         </table>
       </div>

@@ -26,24 +26,28 @@ const schema = z.object({
 
 export async function GET(req: Request) {
   const g = await requireAdmin(); if (!g.ok) return g.response;
-  await connectDB();
+  try {
+    await connectDB();
 
-  // Auto-seed default demos on first admin access (when DB is empty)
-  const count = await Demo.countDocuments();
-  if (count === 0) {
-    await Demo.insertMany(DEFAULT_DEMOS);
-    logActivity({
-      action: 'demo.seed',
-      actorEmail: g.session?.user?.email || undefined,
-      actorRole: 'admin',
-      target: 'Demo',
-      details: { count: DEFAULT_DEMOS.length, reason: 'auto-seed on first admin access' },
-      req,
-    });
+    // Auto-seed default demos on first admin access (when DB is empty)
+    const count = await Demo.countDocuments();
+    if (count === 0) {
+      await Demo.insertMany(DEFAULT_DEMOS);
+      logActivity({
+        action: 'demo.seed',
+        actorEmail: g.session?.user?.email || undefined,
+        actorRole: 'admin',
+        target: 'Demo',
+        details: { count: DEFAULT_DEMOS.length, reason: 'auto-seed on first admin access' },
+        req,
+      });
+    }
+
+    const demos = await Demo.find({}).sort({ order: 1, createdAt: -1 }).lean();
+    return NextResponse.json({ ok: true, demos, seeded: count === 0 });
+  } catch (e) {
+    return apiError(e);
   }
-
-  const demos = await Demo.find({}).sort({ order: 1, createdAt: -1 }).lean();
-  return NextResponse.json({ ok: true, demos, seeded: count === 0 });
 }
 
 export async function POST(req: Request) {

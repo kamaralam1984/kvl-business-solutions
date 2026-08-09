@@ -30,9 +30,14 @@ function timeAgo(iso: string) {
 export default function AutomationHealthPage() {
   const [jobs, setJobs] = useState<JobHealth[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
-    fetch('/api/admin/cron-health').then(r => r.json()).then(d => { if (d.ok) setJobs(d.jobs); }).finally(() => setLoading(false));
+    fetch('/api/admin/cron-health')
+      .then(r => r.json())
+      .then(d => { if (d.ok) setJobs(d.jobs); else setLoadError(true); })
+      .catch(() => setLoadError(true))
+      .finally(() => setLoading(false));
   }, []);
 
   return (
@@ -53,6 +58,13 @@ export default function AutomationHealthPage() {
               <AdminSkeleton rows={2} />
             </div>
           ))}
+        </div>
+      ) : loadError ? (
+        <div
+          className="rounded-2xl p-8 text-center"
+          style={{ background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)', border: '1px solid rgba(var(--border) / 0.06)', color: 'rgba(var(--text) / 0.4)' }}
+        >
+          Failed to load — check your connection and try refreshing.
         </div>
       ) : (
         <div className="space-y-3 stagger-children">

@@ -25,10 +25,15 @@ export default function CampaignDetailPage() {
   const [bulkOpen, setBulkOpen] = useState(false);
   const [bulkText, setBulkText] = useState('');
   const [openDraftId, setOpenDraftId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
-  const load = () => fetch(`/api/admin/outreach/campaigns/${id}`).then(r => r.json()).then(d => {
-    if (d.ok) { setCampaign(d.campaign); setProspects(d.prospects); }
-  });
+  const load = () => {
+    setLoadError(false);
+    return fetch(`/api/admin/outreach/campaigns/${id}`).then(r => r.json()).then(d => {
+      if (d.ok) { setCampaign(d.campaign); setProspects(d.prospects); } else { setLoadError(true); }
+    }).catch(() => setLoadError(true)).finally(() => setLoading(false));
+  };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load(); }, [id]);
 
@@ -68,7 +73,23 @@ export default function CampaignDetailPage() {
     if (d.ok) { router.push('/dashboard/crm'); } else alert(d.error || 'Failed');
   };
 
-  if (!campaign) return null;
+  if (loading) return null;
+
+  if (!campaign) {
+    return (
+      <div className="space-y-6 max-w-5xl">
+        <button onClick={() => router.push('/admin/outreach')} className="text-[12px] flex items-center gap-1" style={{ color: 'rgba(var(--text) / 0.5)' }}>
+          <ArrowLeft className="w-3.5 h-3.5" /> All campaigns
+        </button>
+        <div
+          className="rounded-2xl p-8 text-center"
+          style={{ background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)', border: '1px solid rgba(var(--border) / 0.06)', color: 'rgba(var(--text) / 0.4)' }}
+        >
+          {loadError ? 'Failed to load campaign — check your connection and try refreshing.' : 'Campaign not found.'}
+        </div>
+      </div>
+    );
+  }
 
   const total = prospects.length;
   const sent = prospects.filter(p => ['sent', 'opened', 'replied', 'meeting_booked'].includes(p.status)).length;

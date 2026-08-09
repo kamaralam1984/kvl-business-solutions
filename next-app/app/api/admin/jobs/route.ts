@@ -22,9 +22,13 @@ const schema = z.object({
 
 export async function GET() {
   const g = await requireAdmin(); if (!g.ok) return g.response;
-  await connectDB();
-  const jobs = await Job.find({}).sort({ createdAt: -1 }).lean();
-  return NextResponse.json({ ok: true, jobs });
+  try {
+    await connectDB();
+    const jobs = await Job.find({}).sort({ createdAt: -1 }).lean();
+    return NextResponse.json({ ok: true, jobs });
+  } catch (e) {
+    return apiError(e);
+  }
 }
 
 export async function POST(req: Request) {

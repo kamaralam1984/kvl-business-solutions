@@ -17,23 +17,27 @@ const schema = z.object({
 
 export async function GET() {
   const g = await requireAdmin(); if (!g.ok) return g.response;
-  await connectDB();
-  const campaigns = await OutreachCampaign.find({}).sort({ createdAt: -1 }).lean();
+  try {
+    await connectDB();
+    const campaigns = await OutreachCampaign.find({}).sort({ createdAt: -1 }).lean();
 
-  // Per-campaign prospect counts by status, computed in one aggregation so the
-  // list view can show real sent/replied/meeting numbers without N+1 queries.
-  const counts = await OutreachProspect.aggregate([
-    { $group: { _id: { campaignId: '$campaignId', status: '$status' }, n: { $sum: 1 } } },
-  ]);
-  const byCampaign = new Map<string, Record<string, number>>();
-  for (const c of counts) {
-    const id = c._id.campaignId.toString();
-    if (!byCampaign.has(id)) byCampaign.set(id, {});
-    byCampaign.get(id)![c._id.status] = c.n;
+    // Per-campaign prospect counts by status, computed in one aggregation so the
+    // list view can show real sent/replied/meeting numbers without N+1 queries.
+    const counts = await OutreachProspect.aggregate([
+      { $group: { _id: { campaignId: '$campaignId', status: '$status' }, n: { $sum: 1 } } },
+    ]);
+    const byCampaign = new Map<string, Record<string, number>>();
+    for (const c of counts) {
+      const id = c._id.campaignId.toString();
+      if (!byCampaign.has(id)) byCampaign.set(id, {});
+      byCampaign.get(id)![c._id.status] = c.n;
+    }
+
+    const withCounts = campaigns.map((c: any) => ({ ...c, statusCounts: byCampaign.get(c._id.toString()) || {} }));
+    return NextResponse.json({ ok: true, campaigns: withCounts });
+  } catch (e) {
+    return apiError(e);
   }
-
-  const withCounts = campaigns.map((c: any) => ({ ...c, statusCounts: byCampaign.get(c._id.toString()) || {} }));
-  return NextResponse.json({ ok: true, campaigns: withCounts });
 }
 
 export async function POST(req: Request) {

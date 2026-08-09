@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { connectDB } from '@/lib/mongodb';
 import { DownloadLog } from '@/lib/models/DownloadLog';
 import { Lead } from '@/lib/models/Lead';
@@ -12,17 +13,21 @@ const DOCS = [
 
 export async function GET() {
   const g = await requireAdmin(); if (!g.ok) return g.response;
-  await connectDB();
+  try {
+    await connectDB();
 
-  const docs = await Promise.all(DOCS.map(async d => {
-    const [downloads, interested] = await Promise.all([
-      DownloadLog.countDocuments({ type: d.type }),
-      Lead.countDocuments({ source: `download-${d.type}` }),
-    ]);
-    return { ...d, downloads, interested };
-  }));
+    const docs = await Promise.all(DOCS.map(async d => {
+      const [downloads, interested] = await Promise.all([
+        DownloadLog.countDocuments({ type: d.type }),
+        Lead.countDocuments({ source: `download-${d.type}` }),
+      ]);
+      return { ...d, downloads, interested };
+    }));
 
-  const recent = await DownloadLog.find({}).sort({ downloadedAt: -1 }).limit(20).lean();
+    const recent = await DownloadLog.find({}).sort({ downloadedAt: -1 }).limit(20).lean();
 
-  return NextResponse.json({ ok: true, docs, recent });
+    return NextResponse.json({ ok: true, docs, recent });
+  } catch (e) {
+    return apiError(e);
+  }
 }

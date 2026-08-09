@@ -5,11 +5,15 @@ import { Save, Settings, Phone, Globe, Star, ToggleLeft, AlertTriangle, Image as
 export default function SiteSettingsPage() {
   const [s, setS] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const [msg, setMsg] = useState('');
   const [tab, setTab] = useState<'contact' | 'brand' | 'hero' | 'features' | 'seo' | 'referrals' | 'maintenance'>('contact');
 
   useEffect(() => {
-    fetch('/api/admin/site-settings').then(r => r.json()).then(d => d.ok && setS(d.settings));
+    fetch('/api/admin/site-settings')
+      .then(r => r.json())
+      .then(d => { if (d.ok) setS(d.settings); else setLoadError(true); })
+      .catch(() => setLoadError(true));
   }, []);
 
   const save = async () => {
@@ -23,6 +27,7 @@ export default function SiteSettingsPage() {
     } finally { setLoading(false); }
   };
 
+  if (loadError) return <div className="p-8 text-text2">Failed to load settings — check your connection and try refreshing.</div>;
   if (!s) return <div className="p-8 text-text2">Loading…</div>;
 
   const update = (k: string, v: any) => setS({ ...s, [k]: v });

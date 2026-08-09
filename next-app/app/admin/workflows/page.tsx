@@ -47,8 +47,14 @@ export default function WorkflowsPage() {
   const [isNew, setIsNew] = useState(false);
   const [testing, setTesting] = useState<string | null>(null);
   const [testResult, setTestResult] = useState<{ id: string; result: any } | null>(null);
+  const [loadError, setLoadError] = useState(false);
 
-  const load = () => fetch('/api/admin/workflows').then(r => r.json()).then(d => d.ok && setItems(d.workflows));
+  const load = () => {
+    setLoadError(false);
+    return fetch('/api/admin/workflows').then(r => r.json())
+      .then(d => { if (d.ok) setItems(d.workflows); else setLoadError(true); })
+      .catch(() => setLoadError(true));
+  };
   useEffect(() => { load(); }, []);
 
   const save = async () => {
@@ -92,7 +98,8 @@ export default function WorkflowsPage() {
       </div>
 
       <div className="space-y-3">
-        {items.length === 0 && <div className="card-base p-10 text-center text-text2"><Zap className="w-10 h-10 mx-auto opacity-30 mb-2" />No workflows yet. Click &quot;New Workflow&quot; to automate something.</div>}
+        {loadError && <div className="card-base p-10 text-center text-text2"><Zap className="w-10 h-10 mx-auto opacity-30 mb-2" />Failed to load — check your connection and try refreshing.</div>}
+        {!loadError && items.length === 0 && <div className="card-base p-10 text-center text-text2"><Zap className="w-10 h-10 mx-auto opacity-30 mb-2" />No workflows yet. Click &quot;New Workflow&quot; to automate something.</div>}
         {items.map(w => {
           const trig = TRIGGERS.find(t => t.id === w.trigger)?.label || w.trigger;
           const act = ACTIONS.find(a => a.id === w.action)?.label || w.action;

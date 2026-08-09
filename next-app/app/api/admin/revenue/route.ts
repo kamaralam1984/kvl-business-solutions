@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { connectDB } from '@/lib/mongodb';
 import { Deal, DEAL_STAGES } from '@/lib/models/Deal';
 import { Lead } from '@/lib/models/Lead';
@@ -16,6 +17,7 @@ import { requireAdmin } from '@/lib/admin-guard';
 // there would be exactly the fabricated data this dashboard is built to avoid.
 export async function GET() {
   const g = await requireAdmin(); if (!g.ok) return g.response;
+  try {
   await connectDB();
 
   const since30 = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
@@ -90,4 +92,7 @@ export async function GET() {
     topLandingPagesForLeads: landingPagesRaw.map((r: any) => ({ path: r._id || '(unknown)', count: r.count })),
     campaignRoi: { available: false, reason: 'No ad platform (Google Ads / Meta Ads) connected yet — see WEBSITE-STATUS.md §2.5' },
   });
+  } catch (e) {
+    return apiError(e);
+  }
 }

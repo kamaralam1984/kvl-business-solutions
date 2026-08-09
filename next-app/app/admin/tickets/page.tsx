@@ -29,11 +29,19 @@ const statusColor: Record<string, string> = {
 export default function AdminTickets() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [replyText, setReplyText] = useState('');
   const [sending, setSending] = useState(false);
 
-  const load = () => fetch('/api/admin/tickets').then(r => r.json()).then(d => { if (d.ok) setTickets(d.tickets); }).finally(() => setLoading(false));
+  const load = () => {
+    setLoadError(false);
+    return fetch('/api/admin/tickets')
+      .then(r => r.json())
+      .then(d => { if (d.ok) setTickets(d.tickets); else setLoadError(true); })
+      .catch(() => setLoadError(true))
+      .finally(() => setLoading(false));
+  };
   useEffect(() => { load(); }, []);
 
   const updateStatus = async (id: string, status: Ticket['status']) => {
@@ -76,7 +84,9 @@ export default function AdminTickets() {
           ))}
         </div>
       ) : tickets.length === 0 ? (
-        <p className="text-[13px]" style={{ color: 'rgba(var(--text) / 0.3)' }}>No tickets yet.</p>
+        <p className="text-[13px]" style={{ color: 'rgba(var(--text) / 0.3)' }}>
+          {loadError ? 'Failed to load tickets — check your connection and try refreshing.' : 'No tickets yet.'}
+        </p>
       ) : (
         <div className="space-y-2 stagger-children">
           {tickets.map(t => {

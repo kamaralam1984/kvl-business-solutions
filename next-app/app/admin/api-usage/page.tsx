@@ -12,6 +12,8 @@ export default function ApiUsagePage() {
       const r = await fetch('/api/admin/api-usage');
       const d = await r.json();
       setData(d);
+    } catch {
+      setData({ ok: false });
     } finally {
       setLoading(false);
     }

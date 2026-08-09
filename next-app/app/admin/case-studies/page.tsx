@@ -33,8 +33,14 @@ export default function AdminCaseStudiesPage() {
   const [editing, setEditing] = useState<Study | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [msg, setMsg] = useState('');
+  const [loadError, setLoadError] = useState(false);
 
-  const load = () => fetch('/api/admin/case-studies').then(r => r.json()).then(d => d.ok && setStudies(d.studies));
+  const load = () => {
+    setLoadError(false);
+    return fetch('/api/admin/case-studies').then(r => r.json())
+      .then(d => { if (d.ok) setStudies(d.studies); else setLoadError(true); })
+      .catch(() => setLoadError(true));
+  };
   useEffect(() => { load(); }, []);
 
   const save = async () => {
@@ -85,7 +91,8 @@ export default function AdminCaseStudiesPage() {
                 </td>
               </tr>
             ))}
-            {studies.length === 0 && <tr><td colSpan={4} className="p-8 text-center" style={{ color: 'rgba(var(--text) / 0.3)' }}>No admin-created case studies yet.</td></tr>}
+            {loadError && <tr><td colSpan={4} className="p-8 text-center" style={{ color: 'rgba(var(--text) / 0.3)' }}>Failed to load — check your connection and try refreshing.</td></tr>}
+            {!loadError && studies.length === 0 && <tr><td colSpan={4} className="p-8 text-center" style={{ color: 'rgba(var(--text) / 0.3)' }}>No admin-created case studies yet.</td></tr>}
           </tbody>
         </table>
       </div>

@@ -6,9 +6,13 @@ import { requireAdmin } from '@/lib/admin-guard';
 
 export async function GET() {
   const g = await requireAdmin(); if (!g.ok) return g.response;
-  await connectDB();
-  const workflows = await Workflow.find({}).sort({ createdAt: -1 }).lean();
-  return NextResponse.json({ ok: true, workflows });
+  try {
+    await connectDB();
+    const workflows = await Workflow.find({}).sort({ createdAt: -1 }).lean();
+    return NextResponse.json({ ok: true, workflows });
+  } catch (e) {
+    return apiError(e);
+  }
 }
 
 export async function POST(req: Request) {

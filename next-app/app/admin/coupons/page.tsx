@@ -24,8 +24,14 @@ export default function AdminCouponsPage() {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [editing, setEditing] = useState<Coupon | null>(null);
   const [msg, setMsg] = useState('');
+  const [loadError, setLoadError] = useState(false);
 
-  const load = () => fetch('/api/admin/coupons').then(r => r.json()).then(d => d.ok && setCoupons(d.coupons));
+  const load = () => {
+    setLoadError(false);
+    return fetch('/api/admin/coupons').then(r => r.json()).then(d => {
+      if (d.ok) setCoupons(d.coupons); else setLoadError(true);
+    }).catch(() => setLoadError(true));
+  };
   useEffect(() => { load(); }, []);
 
   const save = async () => {
@@ -78,7 +84,11 @@ export default function AdminCouponsPage() {
                 </td>
               </tr>
             ))}
-            {coupons.length === 0 && <tr><td colSpan={7} className="p-8 text-center text-text2">No coupons yet. Click &quot;New Coupon&quot; to create one.</td></tr>}
+            {coupons.length === 0 && (
+              <tr><td colSpan={7} className="p-8 text-center text-text2">
+                {loadError ? 'Failed to load coupons — check your connection and try refreshing.' : <>No coupons yet. Click &quot;New Coupon&quot; to create one.</>}
+              </td></tr>
+            )}
           </tbody>
         </table>
       </div>

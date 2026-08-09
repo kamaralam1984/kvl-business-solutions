@@ -19,8 +19,15 @@ export default function AdminCoursesPage() {
   const [editing, setEditing] = useState<Course | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [msg, setMsg] = useState('');
+  const [loadError, setLoadError] = useState(false);
 
-  const load = () => fetch('/api/admin/courses').then(r => r.json()).then(d => d.ok && setCourses(d.courses));
+  const load = () => {
+    setLoadError(false);
+    return fetch('/api/admin/courses')
+      .then(r => r.json())
+      .then(d => { if (d.ok) setCourses(d.courses); else setLoadError(true); })
+      .catch(() => setLoadError(true));
+  };
   useEffect(() => { load(); }, []);
 
   const save = async () => {
@@ -76,7 +83,7 @@ export default function AdminCoursesPage() {
                 </td>
               </tr>
             ))}
-            {courses.length === 0 && <tr><td colSpan={5} className="p-8 text-center" style={{ color: 'rgba(var(--text) / 0.3)' }}>No admin-created courses yet.</td></tr>}
+            {courses.length === 0 && <tr><td colSpan={5} className="p-8 text-center" style={{ color: 'rgba(var(--text) / 0.3)' }}>{loadError ? 'Failed to load courses — check your connection and try refreshing.' : 'No admin-created courses yet.'}</td></tr>}
           </tbody>
         </table>
       </div>

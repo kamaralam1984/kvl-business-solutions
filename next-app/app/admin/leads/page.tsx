@@ -43,14 +43,20 @@ export default function AdminLeads() {
   const [intentFilter, setIntentFilter] = useState('');
   const [preview, setPreview] = useState<any>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState(false);
 
   const load = async (search = q, status = statusFilter, intent = intentFilter) => {
+    setLoadError(false);
     const p = new URLSearchParams();
     if (search) p.set('q', search);
     if (status) p.set('status', status);
     if (intent) p.set('intent', intent);
-    const d = await fetch(`/api/admin/leads?${p}`).then(r => r.json());
-    if (d.ok) { setLeads(d.leads); setStats(d.stats); }
+    try {
+      const d = await fetch(`/api/admin/leads?${p}`).then(r => r.json());
+      if (d.ok) { setLeads(d.leads); setStats(d.stats); } else { setLoadError(true); }
+    } catch {
+      setLoadError(true);
+    }
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -287,8 +293,17 @@ export default function AdminLeads() {
             {leads.length === 0 && (
               <tr><td colSpan={6} className="p-12 text-center">
                 <Brain className="w-10 h-10 mx-auto mb-2 opacity-30" style={{ color: '#888' }} />
-                <p className="font-medium" style={{ color: 'rgba(148,163,184,0.6)' }}>No leads found</p>
-                <p className="text-xs mt-1" style={{ color: 'rgba(148,163,184,0.4)' }}>Leads from contact form and chatbot will appear here with AI scores</p>
+                {loadError ? (
+                  <>
+                    <p className="font-medium" style={{ color: 'rgba(148,163,184,0.6)' }}>Failed to load leads</p>
+                    <p className="text-xs mt-1" style={{ color: 'rgba(148,163,184,0.4)' }}>Check your connection and try refreshing.</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="font-medium" style={{ color: 'rgba(148,163,184,0.6)' }}>No leads found</p>
+                    <p className="text-xs mt-1" style={{ color: 'rgba(148,163,184,0.4)' }}>Leads from contact form and chatbot will appear here with AI scores</p>
+                  </>
+                )}
               </td></tr>
             )}
           </tbody>

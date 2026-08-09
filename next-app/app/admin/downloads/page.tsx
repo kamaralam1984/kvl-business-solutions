@@ -10,9 +10,17 @@ export default function AdminDownloadsPage() {
   const [docs, setDocs] = useState<Doc[]>([]);
   const [recent, setRecent] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
-    fetch('/api/admin/downloads').then(r => r.json()).then(d => { if (d.ok) { setDocs(d.docs); setRecent(d.recent); } }).finally(() => setLoading(false));
+    setLoadError(false);
+    fetch('/api/admin/downloads').then(r => r.json())
+      .then(d => {
+        if (d.ok) { setDocs(d.docs); setRecent(d.recent); }
+        else setLoadError(true);
+      })
+      .catch(() => setLoadError(true))
+      .finally(() => setLoading(false));
   }, []);
 
   return (
@@ -36,6 +44,9 @@ export default function AdminDownloadsPage() {
         </div>
       ) : (
         <>
+          {loadError && (
+            <p className="text-[12.5px]" style={{ color: 'rgba(var(--text) / 0.3)' }}>Failed to load — check your connection and try refreshing.</p>
+          )}
           <div className="grid sm:grid-cols-3 gap-4 stagger-children">
             {docs.map(d => (
               <div key={d.type} className="admin-card-hover kpi-enter rounded-2xl p-5" style={{ background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)', border: '1px solid rgba(var(--border) / 0.06)' }}>
@@ -63,7 +74,9 @@ export default function AdminDownloadsPage() {
 
           <div className="rounded-2xl p-5" style={{ background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)', border: '1px solid rgba(var(--border) / 0.06)' }}>
             <h2 className="text-[13px] font-bold mb-3" style={{ color: 'rgb(var(--text))' }}>Recent Downloads</h2>
-            {recent.length === 0 ? (
+            {loadError ? (
+              <p className="text-[12.5px]" style={{ color: 'rgba(var(--text) / 0.3)' }}>Failed to load — check your connection and try refreshing.</p>
+            ) : recent.length === 0 ? (
               <p className="text-[12.5px]" style={{ color: 'rgba(var(--text) / 0.3)' }}>No downloads yet.</p>
             ) : (
               <div className="space-y-1.5">

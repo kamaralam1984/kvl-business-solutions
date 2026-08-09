@@ -21,9 +21,13 @@ const schema = z.object({
 
 export async function GET() {
   const g = await requireAdmin(); if (!g.ok) return g.response;
-  await connectDB();
-  const courses = await Course.find({}).sort({ _id: -1 }).lean();
-  return NextResponse.json({ ok: true, courses });
+  try {
+    await connectDB();
+    const courses = await Course.find({}).sort({ _id: -1 }).lean();
+    return NextResponse.json({ ok: true, courses });
+  } catch (e) {
+    return apiError(e);
+  }
 }
 
 export async function POST(req: Request) {

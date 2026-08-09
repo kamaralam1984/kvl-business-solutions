@@ -26,26 +26,30 @@ const schema = z.object({
 // partner from that attribution, not just the raw Franchise document.
 export async function GET() {
   const g = await requireAdmin(); if (!g.ok) return g.response;
-  await connectDB();
-  const franchises = await Franchise.find({}).sort({ createdAt: -1 }).lean();
+  try {
+    await connectDB();
+    const franchises = await Franchise.find({}).sort({ createdAt: -1 }).lean();
 
-  const enriched = await Promise.all(franchises.map(async (f: any) => {
-    const referral = await getOrCreateReferral(f.ownerEmail);
-    const leads = await Lead.find({ referralCode: referral.code }, { _id: 1 }).lean();
-    const leadIds = leads.map((l: any) => l._id);
-    const orders = await Order.find({ status: 'paid', lead: { $in: leadIds } }, { amount: 1 }).lean();
-    const revenue = orders.reduce((s: number, o: any) => s + (o.amount || 0), 0);
-    return {
-      ...f,
-      referralCode: referral.code,
-      leadsCount: leads.length,
-      ordersCount: orders.length,
-      revenue,
-      commission: Math.round(revenue * (f.commissionRate / 100)),
-    };
-  }));
+    const enriched = await Promise.all(franchises.map(async (f: any) => {
+      const referral = await getOrCreateReferral(f.ownerEmail);
+      const leads = await Lead.find({ referralCode: referral.code }, { _id: 1 }).lean();
+      const leadIds = leads.map((l: any) => l._id);
+      const orders = await Order.find({ status: 'paid', lead: { $in: leadIds } }, { amount: 1 }).lean();
+      const revenue = orders.reduce((s: number, o: any) => s + (o.amount || 0), 0);
+      return {
+        ...f,
+        referralCode: referral.code,
+        leadsCount: leads.length,
+        ordersCount: orders.length,
+        revenue,
+        commission: Math.round(revenue * (f.commissionRate / 100)),
+      };
+    }));
 
-  return NextResponse.json({ ok: true, franchises: enriched });
+    return NextResponse.json({ ok: true, franchises: enriched });
+  } catch (e) {
+    return apiError(e);
+  }
 }
 
 export async function POST(req: Request) {

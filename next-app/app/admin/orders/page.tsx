@@ -28,13 +28,19 @@ export default function AdminOrders() {
   const [stats, setStats] = useState<any>({});
   const [q, setQ] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [loadError, setLoadError] = useState(false);
 
   const load = async (search = q, status = statusFilter) => {
+    setLoadError(false);
     const p = new URLSearchParams();
     if (search) p.set('q', search);
     if (status) p.set('status', status);
-    const d = await fetch(`/api/admin/orders?${p}`).then(r => r.json());
-    if (d.ok) { setOrders(d.orders); setStats(d.stats); }
+    try {
+      const d = await fetch(`/api/admin/orders?${p}`).then(r => r.json());
+      if (d.ok) { setOrders(d.orders); setStats(d.stats); } else { setLoadError(true); }
+    } catch {
+      setLoadError(true);
+    }
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -153,8 +159,17 @@ export default function AdminOrders() {
             {orders.length === 0 && (
               <tr><td colSpan={9} className="p-12 text-center">
                 <ShoppingCart className="w-10 h-10 text-text2 mx-auto mb-2 opacity-40" />
-                <p className="text-text2 font-medium">No orders yet</p>
-                <p className="text-xs text-text2 mt-1">Orders will appear here once customers make purchases</p>
+                {loadError ? (
+                  <>
+                    <p className="text-text2 font-medium">Failed to load orders</p>
+                    <p className="text-xs text-text2 mt-1">Check your connection and try refreshing.</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-text2 font-medium">No orders yet</p>
+                    <p className="text-xs text-text2 mt-1">Orders will appear here once customers make purchases</p>
+                  </>
+                )}
               </td></tr>
             )}
           </tbody>

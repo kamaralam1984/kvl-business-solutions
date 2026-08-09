@@ -36,8 +36,14 @@ export default function AdminDemosPage() {
   const [editing, setEditing] = useState<Demo | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [msg, setMsg] = useState('');
+  const [loadError, setLoadError] = useState(false);
 
-  const load = () => fetch('/api/admin/demos').then(r => r.json()).then(d => d.ok && setDemos(d.demos));
+  const load = () => {
+    setLoadError(false);
+    return fetch('/api/admin/demos').then(r => r.json()).then(d => {
+      if (d.ok) setDemos(d.demos); else setLoadError(true);
+    }).catch(() => setLoadError(true));
+  };
   useEffect(() => { load(); }, []);
 
   const save = async () => {
@@ -87,8 +93,17 @@ export default function AdminDemosPage() {
         {demos.length === 0 && (
           <div className="col-span-full card-base p-10 text-center">
             <Globe className="w-12 h-12 mx-auto text-text2 opacity-30 mb-3" />
-            <p className="text-text2 text-sm">No demos yet. Click &quot;Add Website&quot; to add your first one.</p>
-            <p className="text-xs text-text2 mt-2">Example: vidyt.com, aapkaplote.com</p>
+            {loadError ? (
+              <>
+                <p className="text-text2 text-sm">Failed to load demos.</p>
+                <p className="text-xs text-text2 mt-2">Check your connection and try refreshing.</p>
+              </>
+            ) : (
+              <>
+                <p className="text-text2 text-sm">No demos yet. Click &quot;Add Website&quot; to add your first one.</p>
+                <p className="text-xs text-text2 mt-2">Example: vidyt.com, aapkaplote.com</p>
+              </>
+            )}
           </div>
         )}
         {demos.map(d => (

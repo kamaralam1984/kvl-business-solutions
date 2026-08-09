@@ -17,11 +17,15 @@ const updateSchema = z.object({
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
   const g = await requireAdmin(); if (!g.ok) return g.response;
-  await connectDB();
-  const campaign = await OutreachCampaign.findById(params.id).lean();
-  if (!campaign) return NextResponse.json({ ok: false, error: 'Not found' }, { status: 404 });
-  const prospects = await OutreachProspect.find({ campaignId: params.id }).sort({ createdAt: -1 }).lean();
-  return NextResponse.json({ ok: true, campaign, prospects });
+  try {
+    await connectDB();
+    const campaign = await OutreachCampaign.findById(params.id).lean();
+    if (!campaign) return NextResponse.json({ ok: false, error: 'Not found' }, { status: 404 });
+    const prospects = await OutreachProspect.find({ campaignId: params.id }).sort({ createdAt: -1 }).lean();
+    return NextResponse.json({ ok: true, campaign, prospects });
+  } catch (e) {
+    return apiError(e);
+  }
 }
 
 export async function PUT(req: Request, { params }: { params: { id: string } }) {

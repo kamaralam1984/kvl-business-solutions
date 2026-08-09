@@ -18,13 +18,20 @@ export default function AdminQuotes() {
   const [stats, setStats] = useState<any>({});
   const [q, setQ] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [loadError, setLoadError] = useState(false);
 
   const load = async (search = q, status = statusFilter) => {
     const p = new URLSearchParams();
     if (search) p.set('q', search);
     if (status) p.set('status', status);
-    const d = await fetch(`/api/admin/quotes?${p}`).then(r => r.json());
-    if (d.ok) { setQuotes(d.quotes); setStats(d.stats); }
+    setLoadError(false);
+    try {
+      const d = await fetch(`/api/admin/quotes?${p}`).then(r => r.json());
+      if (d.ok) { setQuotes(d.quotes); setStats(d.stats); }
+      else setLoadError(true);
+    } catch {
+      setLoadError(true);
+    }
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -122,8 +129,17 @@ export default function AdminQuotes() {
             {quotes.length === 0 && (
               <tr><td colSpan={7} className="p-12 text-center">
                 <FileText className="w-10 h-10 text-text2 mx-auto mb-2 opacity-40" />
-                <p className="text-text2 font-medium">No quote requests yet</p>
-                <p className="text-xs text-text2 mt-1">Quote requests from the website will appear here</p>
+                {loadError ? (
+                  <>
+                    <p className="text-text2 font-medium">Failed to load quote requests</p>
+                    <p className="text-xs text-text2 mt-1">Check your connection and try refreshing.</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-text2 font-medium">No quote requests yet</p>
+                    <p className="text-xs text-text2 mt-1">Quote requests from the website will appear here</p>
+                  </>
+                )}
               </td></tr>
             )}
           </tbody>

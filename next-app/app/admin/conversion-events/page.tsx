@@ -15,13 +15,17 @@ export default function ConversionEventsPage() {
   const [topLandingPages, setTopLandingPages] = useState<PathCount[]>([]);
   const [daily, setDaily] = useState<Daily[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
+    setLoadError(false);
     fetch('/api/admin/conversion-events')
       .then(r => r.json())
       .then(d => {
         if (d.ok) { setByName(d.byName); setTopLandingPages(d.topLandingPages); setDaily(d.daily); }
+        else setLoadError(true);
       })
+      .catch(() => setLoadError(true))
       .finally(() => setLoading(false));
   }, []);
 
@@ -88,7 +92,8 @@ export default function ConversionEventsPage() {
             <div className="kpi-enter rounded-2xl p-5" style={CARD}>
               <h2 className="text-[13px] font-bold mb-4" style={{ color: 'rgb(var(--text))' }}>Event Breakdown</h2>
               <div className="space-y-2">
-                {byName.length === 0 && <p className="text-[12px]" style={{ color: 'rgba(var(--text) / 0.3)' }}>No events yet.</p>}
+                {loadError && <p className="text-[12px]" style={{ color: 'rgba(var(--text) / 0.3)' }}>Failed to load — check your connection and try refreshing.</p>}
+                {!loadError && byName.length === 0 && <p className="text-[12px]" style={{ color: 'rgba(var(--text) / 0.3)' }}>No events yet.</p>}
                 {byName.map(n => (
                   <div key={n.name} className="flex items-center justify-between text-[12px]">
                     <span style={{ color: 'rgba(var(--text) / 0.6)' }}>{n.name}</span>
@@ -101,7 +106,8 @@ export default function ConversionEventsPage() {
             <div className="kpi-enter rounded-2xl p-5" style={CARD}>
               <h2 className="text-[13px] font-bold mb-4" style={{ color: 'rgb(var(--text))' }}>Top Converting Pages</h2>
               <div className="space-y-2">
-                {topLandingPages.length === 0 && <p className="text-[12px]" style={{ color: 'rgba(var(--text) / 0.3)' }}>No data yet.</p>}
+                {loadError && <p className="text-[12px]" style={{ color: 'rgba(var(--text) / 0.3)' }}>Failed to load — check your connection and try refreshing.</p>}
+                {!loadError && topLandingPages.length === 0 && <p className="text-[12px]" style={{ color: 'rgba(var(--text) / 0.3)' }}>No data yet.</p>}
                 {topLandingPages.map(p => (
                   <div key={p.path} className="flex items-center justify-between text-[12px]">
                     <span style={{ color: 'rgba(var(--text) / 0.6)' }} className="truncate mr-2">{p.path}</span>

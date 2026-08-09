@@ -45,8 +45,15 @@ export default function AdminFranchisePage() {
   const [editing, setEditing] = useState<Franchise | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [msg, setMsg] = useState('');
+  const [loadError, setLoadError] = useState(false);
 
-  const load = () => fetch('/api/admin/franchise').then(r => r.json()).then(d => d.ok && setFranchises(d.franchises));
+  const load = () => {
+    setLoadError(false);
+    return fetch('/api/admin/franchise')
+      .then(r => r.json())
+      .then(d => { if (d.ok) setFranchises(d.franchises); else setLoadError(true); })
+      .catch(() => setLoadError(true));
+  };
   useEffect(() => { load(); }, []);
 
   const save = async () => {
@@ -102,7 +109,7 @@ export default function AdminFranchisePage() {
                 </td>
               </tr>
             ))}
-            {franchises.length === 0 && <tr><td colSpan={7} className="p-8 text-center text-text2">No franchise partners yet. Click &quot;New Partner&quot; to add one.</td></tr>}
+            {franchises.length === 0 && <tr><td colSpan={7} className="p-8 text-center text-text2">{loadError ? 'Failed to load franchise partners — check your connection and try refreshing.' : <>No franchise partners yet. Click &quot;New Partner&quot; to add one.</>}</td></tr>}
           </tbody>
         </table>
       </div>
