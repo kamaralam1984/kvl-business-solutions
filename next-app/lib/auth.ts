@@ -67,12 +67,20 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         (token as any).role = (user as any).role;
         (token as any).id = (user as any).id;
+        (token as any).roleCheckedAt = Date.now();
       }
-      // For Google sign-ins, fetch role from DB since the OAuth user object doesn't have it
-      if (!(token as any).role && token.email) {
+      // Re-check role from the DB periodically (not just once, and not just for
+      // Google sign-ins) — a JWT session otherwise keeps whatever role it was
+      // issued with for its entire lifetime, so an admin demoted from the admin
+      // panel would keep full access until they happened to sign in again.
+      // This bounds that staleness window instead of leaving it open-ended.
+      const ROLE_REFRESH_MS = 5 * 60_000;
+      const lastChecked = (token as any).roleCheckedAt || 0;
+      if (token.email && (!(token as any).role || Date.now() - lastChecked > ROLE_REFRESH_MS)) {
         await connectDB();
         const u = await User.findOne({ email: (token.email as string).toLowerCase() }).lean<any>();
         if (u) { (token as any).role = u.role; (token as any).id = String(u._id); }
+        (token as any).roleCheckedAt = Date.now();
       }
       return token;
     },

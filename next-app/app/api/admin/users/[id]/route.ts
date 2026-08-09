@@ -16,11 +16,29 @@ const schema = z.object({
   password: z.string().min(6).optional(),
 });
 
+// Refuses to demote/delete the last remaining admin (including via an admin
+// acting on their own account) — without this, an admin panel with one
+// admin user could accidentally lock itself out with no recovery path
+// short of a direct database edit.
+async function wouldRemoveLastAdmin(targetId: string, targetIsCurrentlyAdmin: boolean, demotingOrDeleting: boolean) {
+  if (!targetIsCurrentlyAdmin || !demotingOrDeleting) return false;
+  const otherAdmins = await User.countDocuments({ role: 'admin', _id: { $ne: targetId } });
+  return otherAdmins === 0;
+}
+
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
   const g = await requireAdmin(); if (!g.ok) return g.response;
   try {
     const { password, ...rest } = schema.parse(await req.json());
     await connectDB();
+
+    if (rest.role === 'user') {
+      const target = await User.findById(params.id).select('role').lean<{ role: string }>();
+      if (target && await wouldRemoveLastAdmin(params.id, target.role === 'admin', true)) {
+        return NextResponse.json({ ok: false, error: 'Cannot demote the last remaining admin.' }, { status: 400 });
+      }
+    }
+
     const update: Record<string, any> = { ...rest };
     if (password) {
       const bcrypt = await import('bcryptjs');
@@ -37,8 +55,17 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   const g = await requireAdmin(); if (!g.ok) return g.response;
-  await connectDB();
-  const u = await User.findByIdAndDelete(params.id);
-  logActivity({ action: 'user.delete', actorEmail: g.session?.user?.email || undefined, actorRole: 'admin', target: 'User', targetId: u?.email, req });
-  return NextResponse.json({ ok: true });
+  try {
+    await connectDB();
+    const target = await User.findById(params.id).select('role').lean<{ role: string }>();
+    if (!target) return NextResponse.json({ ok: false, error: 'Not found' }, { status: 404 });
+    if (await wouldRemoveLastAdmin(params.id, target.role === 'admin', true)) {
+      return NextResponse.json({ ok: false, error: 'Cannot delete the last remaining admin.' }, { status: 400 });
+    }
+    const u = await User.findByIdAndDelete(params.id);
+    logActivity({ action: 'user.delete', actorEmail: g.session?.user?.email || undefined, actorRole: 'admin', target: 'User', targetId: u?.email, req });
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    return apiError(e);
+  }
 }
