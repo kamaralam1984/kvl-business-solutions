@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Loader2, ShieldCheck, Clock, ArrowRight, Phone, CheckCircle } from 'lucide-react';
 import { IndianFlag } from '@/components/shared/IndianFlag';
+import { OfferCountdown } from '@/components/shared/OfferCountdown';
+import { LiveSocialProof } from '@/components/shared/LiveSocialProof';
 import { trackEvent } from '@/components/analytics/GoogleAnalytics';
 
 // Explicit, theme-independent styling — this page is a standalone dark
@@ -159,6 +161,13 @@ export function GetQuoteClient() {
             <p className="text-white/55 text-sm max-w-sm mx-auto leading-relaxed">
               Share your details — our team calls you personally with a free quote, usually within the hour.
             </p>
+            <div className="flex justify-center mt-4">
+              <OfferCountdown dark />
+            </div>
+          </div>
+
+          <div className="flex justify-center mb-4">
+            <LiveSocialProof path="/get-quote" dark />
           </div>
 
           {/* Proof of real work — actual client sites, framed like browser windows */}

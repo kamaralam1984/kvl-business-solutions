@@ -7,6 +7,8 @@ import {
   MessageCircle, Headphones as HeadphonesIcon, Check, Sparkles, Phone, Mail, MapPin,
 } from 'lucide-react';
 import { IndianFlag } from '@/components/shared/IndianFlag';
+import { OfferCountdown } from '@/components/shared/OfferCountdown';
+import { LiveSocialProof } from '@/components/shared/LiveSocialProof';
 import { PortfolioCarousel } from '@/components/website-offer/PortfolioCarousel';
 import { PricingSection } from '@/components/website-offer/PricingSection';
 import { TestimonialsCarousel } from '@/components/website-offer/TestimonialsCarousel';
@@ -103,6 +105,8 @@ export function WebsiteOfferClient({ plans, reviews, portfolio }: {
             </div>
             <span className="inline-block text-[11px] font-bold uppercase tracking-wide text-white/90 border border-white/30 rounded-full px-3 py-1 mb-5">Limited Time Offer</span>
 
+            <div className="mb-5"><OfferCountdown dark /></div>
+
             <div className="flex flex-wrap gap-x-5 gap-y-2 mb-7">
               {['Modern Design', 'Mobile Friendly', 'SEO Optimized'].map(t => (
                 <span key={t} className="flex items-center gap-1.5 text-sm text-white/85"><Check className="w-4 h-4 text-green-400" /> {t}</span>
@@ -118,6 +122,7 @@ export function WebsiteOfferClient({ plans, reviews, portfolio }: {
               </a>
             </div>
             <p className="text-white/50 text-xs mt-4">*Offer valid till 15th August</p>
+            <div className="mt-4"><LiveSocialProof path="/website-offer" dark /></div>
           </div>
 
           <div id="quote-form" style={revealStyle(heroInView, 1)} className="flex justify-center lg:justify-end scroll-mt-24">
