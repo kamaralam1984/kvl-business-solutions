@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { Plus, Trash2, Save, X, Workflow as WorkflowIcon, Zap, Play, AlertCircle, Loader2, CheckCircle2 } from 'lucide-react';
+import { Modal } from '@/components/shared/Modal';
 
 const TRIGGERS = [
   { id: 'new_lead', label: 'New lead form submission' },
@@ -149,8 +150,7 @@ export default function WorkflowsPage() {
       </div>
 
       {editing && (
-        <div className="fixed inset-0 z-50 grid place-items-center p-4 bg-black/50 backdrop-blur" onClick={() => setEditing(null)}>
-          <div className="card-base p-6 max-w-md w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <Modal onClose={() => setEditing(null)} containerClassName="fixed inset-0 z-50 grid place-items-center p-4 bg-black/50 backdrop-blur" className="card-base p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-extrabold">{isNew ? 'New Workflow' : 'Edit Workflow'}</h2>
               <button onClick={() => setEditing(null)}><X className="w-5 h-5" /></button>
@@ -195,8 +195,7 @@ export default function WorkflowsPage() {
               <button onClick={save} className="btn btn-primary w-full justify-center"><Save className="w-4 h-4" /> Save Workflow</button>
               <p className="text-[10px] text-text2">✓ Live execution enabled. Use template vars: <code>{'{{name}}'}</code>, <code>{'{{email}}'}</code>, <code>{'{{amount}}'}</code>, <code>{'{{productName}}'}</code>, <code>{'{{orderId}}'}</code>, etc. Click &quot;Test&quot; to dry-run with mock data.</p>
             </div>
-          </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

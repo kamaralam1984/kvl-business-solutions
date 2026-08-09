@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Search, Trash2, MessageSquare, X, TrendingUp, Users, PhoneCall, Trophy, Brain, Zap, ChevronDown, ChevronUp, Bot, Phone, PhoneMissed, PhoneOff, Loader2 } from 'lucide-react';
 import { ExportButton } from '@/components/admin/ExportButton';
+import { Modal } from '@/components/shared/Modal';
 
 const STATUS_OPTS = ['new', 'contacted', 'qualified', 'won', 'lost'];
 const STATUS_COLOR: Record<string, string> = {
@@ -312,14 +313,19 @@ export default function AdminLeads() {
 
       {/* Message Preview Modal */}
       {preview && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)' }}>
-          <div className="rounded-2xl shadow-2xl w-full max-w-md p-6" style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.1)', borderRadius: '16px' }}>
+        <Modal
+          onClose={() => setPreview(null)}
+          containerClassName="fixed inset-0 z-50 flex items-center justify-center p-4"
+          containerStyle={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)' }}
+          className="rounded-2xl shadow-2xl w-full max-w-md p-6"
+          style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.1)', borderRadius: '16px' }}
+        >
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h3 className="font-bold text-lg text-text">{preview.name}</h3>
                 <p className="text-xs text-text2">{preview.email} · {preview.phone}</p>
               </div>
-              <button onClick={() => setPreview(null)} style={{ color: 'rgba(148,163,184,0.6)' }}><X className="w-5 h-5" /></button>
+              <button onClick={() => setPreview(null)} style={{ color: 'rgba(148,163,184,0.6)' }} aria-label="Close"><X className="w-5 h-5" /></button>
             </div>
             {preview.chatMessages?.length > 0 ? (
               <div className="space-y-2 max-h-64 overflow-y-auto">
@@ -334,8 +340,7 @@ export default function AdminLeads() {
               <div className="rounded-xl p-4 text-sm whitespace-pre-wrap" style={{ background: 'rgba(var(--surface) / 0.04)', color: 'rgba(148,163,184,0.8)' }}>{preview.message}</div>
             )}
             {preview.service && <p className="mt-3 text-xs text-text2">Service: <span className="font-semibold text-text">{preview.service}</span></p>}
-          </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

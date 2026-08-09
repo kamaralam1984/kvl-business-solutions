@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { Plus, Trash2, Edit3, X } from 'lucide-react';
+import { Modal } from '@/components/shared/Modal';
 
 type Lesson = { id: string; title: string; duration: string; content: string };
 type Course = {
@@ -89,12 +90,12 @@ export default function AdminCoursesPage() {
       </div>
 
       {editing && (
-        <div className="fixed inset-0 z-50 grid place-items-center p-4 bg-black/60 backdrop-blur" onClick={() => setEditing(null)}>
-          <div
-            className="p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto rounded-2xl"
-            style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.08)' }}
-            onClick={e => e.stopPropagation()}
-          >
+        <Modal
+          onClose={() => setEditing(null)}
+          containerClassName="fixed inset-0 z-50 grid place-items-center p-4 bg-black/60 backdrop-blur"
+          className="p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto rounded-2xl"
+          style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.08)' }}
+        >
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-extrabold" style={{ color: 'rgb(var(--text))' }}>{isNew ? 'New Course' : 'Edit Course'}</h2>
               <button onClick={() => setEditing(null)} style={{ color: 'rgba(var(--text) / 0.5)' }}><X className="w-5 h-5" /></button>
@@ -134,8 +135,7 @@ export default function AdminCoursesPage() {
 
               <button onClick={save} className="btn btn-primary w-full justify-center">Save Course</button>
             </div>
-          </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

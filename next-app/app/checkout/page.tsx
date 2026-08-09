@@ -180,7 +180,9 @@ function CheckoutInner() {
             {!applied && (
               <div className="mb-4">
                 <div className="flex gap-2">
+                  <label htmlFor="checkout-coupon" className="sr-only">Coupon code</label>
                   <input
+                    id="checkout-coupon"
                     type="text" value={code} onChange={e => setCode(e.target.value.toUpperCase())}
                     placeholder="Coupon code"
                     className="form-control text-xs font-mono uppercase flex-1"
@@ -197,16 +199,20 @@ function CheckoutInner() {
               <div className="mb-4 space-y-2">
                 <p className="text-xs text-text2">We&apos;ll send your license key here — no account needed to pay.</p>
                 <div className="relative">
+                  <label htmlFor="checkout-guest-email" className="sr-only">Email address</label>
                   <Mail className="absolute left-3 top-3.5 w-4 h-4 text-text2" />
                   <input
+                    id="checkout-guest-email"
                     type="email" value={guestEmail} onChange={e => setGuestEmail(e.target.value)}
                     placeholder="you@company.com" autoComplete="email"
                     className="form-control pl-9 text-sm"
                   />
                 </div>
                 <div className="relative">
+                  <label htmlFor="checkout-guest-phone" className="sr-only">Mobile number</label>
                   <Phone className="absolute left-3 top-3.5 w-4 h-4 text-text2" />
                   <input
+                    id="checkout-guest-phone"
                     type="tel" value={guestPhone} onChange={e => setGuestPhone(e.target.value)}
                     placeholder="+91 98765 43210" autoComplete="tel"
                     className="form-control pl-9 text-sm"

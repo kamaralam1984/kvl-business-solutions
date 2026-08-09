@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, Gauge, Bot } from 'lucide-react';
 import { trackEvent } from '@/components/analytics/track';
@@ -36,6 +36,7 @@ export function LeadMagnetModal() {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState('');
+  const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const h = (e: Event) => {
@@ -81,6 +82,24 @@ export function LeadMagnetModal() {
     setTimeout(() => { setDone(false); setError(''); setForm({ name: '', email: '', phone: '', context: '' }); }, 300);
   };
 
+  // Keyboard/AT accessibility: Escape closes, focus moves into the dialog on
+  // open and is restored to the previously-focused element on close.
+  useEffect(() => {
+    if (!open) return;
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    cardRef.current?.focus();
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      previouslyFocused?.focus?.();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
   return (
     <AnimatePresence>
       {open && (
@@ -90,6 +109,10 @@ export function LeadMagnetModal() {
           onClick={(e) => e.target === e.currentTarget && close()}
         >
           <motion.div
+            ref={cardRef}
+            role="dialog"
+            aria-modal="true"
+            tabIndex={-1}
             initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 30, opacity: 0 }}
             className="bg-app2 border border-tint rounded-2xl p-7 max-w-md w-full relative"
           >

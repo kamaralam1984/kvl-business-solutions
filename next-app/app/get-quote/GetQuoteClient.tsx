@@ -219,8 +219,10 @@ export function GetQuoteClient() {
               ) : showCallbackForm ? (
                 <div className="border border-gray-200 rounded-xl p-3.5 space-y-2 bg-gray-50/80">
                   <p className="text-xs font-bold text-gray-700">We will call you back — just your name &amp; number:</p>
-                  <input className={INPUT_CLS} placeholder="Your Name (optional)" value={cbName} onChange={e => setCbName(e.target.value)} />
-                  <input type="tel" className={INPUT_CLS} placeholder="Mobile Number *" value={cbPhone} onChange={e => setCbPhone(e.target.value)} />
+                  <label htmlFor="gq-cb-name" className="sr-only">Your Name</label>
+                  <input id="gq-cb-name" className={INPUT_CLS} placeholder="Your Name (optional)" value={cbName} onChange={e => setCbName(e.target.value)} />
+                  <label htmlFor="gq-cb-phone" className="sr-only">Mobile Number</label>
+                  <input id="gq-cb-phone" type="tel" className={INPUT_CLS} placeholder="Mobile Number *" value={cbPhone} onChange={e => setCbPhone(e.target.value)} />
                   <div className="flex gap-2 pt-1">
                     <button
                       type="button"

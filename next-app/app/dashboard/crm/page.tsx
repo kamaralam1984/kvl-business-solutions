@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Plus, Trash2, X, Save, Sparkles, Briefcase, Loader2, Search, Download, CheckSquare, Square, Filter, Star } from 'lucide-react';
 import { formatINR } from '@/lib/utils';
 import { toCSV } from '@/lib/csv';
+import { Modal } from '@/components/shared/Modal';
 
 const STAGES = [
   { id: 'lead', label: 'Lead', color: '#94a3b8' },
@@ -381,8 +382,7 @@ export default function CrmPage() {
 
       {/* Edit modal */}
       {editing && (
-        <div className="fixed inset-0 z-50 grid place-items-center p-4 bg-black/50 backdrop-blur" onClick={() => setEditing(null)}>
-          <div className="card-base p-6 max-w-md w-full" onClick={e => e.stopPropagation()}>
+        <Modal onClose={() => setEditing(null)} containerClassName="fixed inset-0 z-50 grid place-items-center p-4 bg-black/50 backdrop-blur" className="card-base p-6 max-w-md w-full">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-extrabold">{isNew ? 'New Deal' : 'Edit Deal'}</h2>
               <button onClick={() => setEditing(null)}><X className="w-5 h-5" /></button>
@@ -406,8 +406,7 @@ export default function CrmPage() {
               <textarea className="form-control" rows={3} placeholder="Notes" value={editing.notes || ''} onChange={e => setEditing({ ...editing, notes: e.target.value })} />
               <button onClick={save} className="btn btn-primary w-full justify-center"><Save className="w-4 h-4" /> Save</button>
             </div>
-          </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

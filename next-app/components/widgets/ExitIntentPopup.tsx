@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowRight, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { trackEvent } from '@/components/analytics/GoogleAnalytics';
@@ -9,6 +9,7 @@ export function ExitIntentPopup() {
   const [dismissed, setDismissed] = useState(false);
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (dismissed) return;
@@ -38,6 +39,24 @@ export function ExitIntentPopup() {
   }, [dismissed]);
 
   const dismiss = () => { setShow(false); setDismissed(true); };
+
+  // Keyboard/AT accessibility: Escape closes, focus moves into the dialog on
+  // open and is restored to the previously-focused element on close.
+  useEffect(() => {
+    if (!show) return;
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    cardRef.current?.focus();
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') dismiss();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      previouslyFocused?.focus?.();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [show]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,6 +89,10 @@ export function ExitIntentPopup() {
           onClick={e => e.target === e.currentTarget && dismiss()}
         >
           <motion.div
+            ref={cardRef}
+            role="dialog"
+            aria-modal="true"
+            tabIndex={-1}
             initial={{ opacity: 0, scale: 0.95, y: 14 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 10 }}
@@ -77,7 +100,7 @@ export function ExitIntentPopup() {
             className="relative w-full max-w-md rounded-2xl overflow-hidden bg-bg2 border border-border/10"
             style={{ boxShadow: '0 1px 0 rgba(255,255,255,0.06) inset, 0 30px 80px rgba(0,0,0,0.45)' }}
           >
-            <button onClick={dismiss}
+            <button onClick={dismiss} aria-label="Close"
               className="absolute top-5 right-5 z-10 grid place-items-center w-8 h-8 rounded-full text-text2 hover:text-text transition-colors"
               style={{ background: 'rgba(var(--text) / 0.06)' }}>
               <X className="w-4 h-4" />

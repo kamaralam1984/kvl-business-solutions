@@ -42,12 +42,12 @@ export function MobileMenu({
                       isActive ? 'pl-3' : 'border-transparent'
                     )}
                     style={{
-                      color: isActive ? 'rgb(var(--text))' : 'rgba(var(--text) / 0.45)',
+                      color: isActive ? 'rgb(var(--text))' : 'rgb(var(--text-2))',
                       borderLeftColor: isActive ? '#c8a870' : undefined,
                       borderBottom: '1px solid rgba(var(--border) / 0.05)',
                     }}
                     onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text))'; }}
-                    onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.45)'; }}
+                    onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text-2))'; }}
                   >
                     {item.label}
                     {isActive && <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#c8a870' }} />}

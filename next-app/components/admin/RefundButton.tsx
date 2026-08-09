@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { RefreshCcw, X, Loader2 } from 'lucide-react';
+import { Modal } from '@/components/shared/Modal';
 
 export function RefundButton({ orderId }: { orderId: string }) {
   const router = useRouter();
@@ -33,11 +34,14 @@ export function RefundButton({ orderId }: { orderId: string }) {
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 grid place-items-center p-4 bg-black/50 backdrop-blur" onClick={() => !loading && setOpen(false)}>
-          <div className="card-base p-6 max-w-md w-full" onClick={e => e.stopPropagation()}>
+        <Modal
+          onClose={() => !loading && setOpen(false)}
+          containerClassName="fixed inset-0 z-50 grid place-items-center p-4 bg-black/50 backdrop-blur"
+          className="card-base p-6 max-w-md w-full"
+        >
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-extrabold">Refund order</h3>
-              <button onClick={() => !loading && setOpen(false)}><X className="w-5 h-5" /></button>
+              <button onClick={() => !loading && setOpen(false)} aria-label="Close"><X className="w-5 h-5" /></button>
             </div>
             <p className="text-xs text-text2 mb-3">Order: <code className="font-mono">{orderId}</code></p>
             <p className="text-sm mb-3">This will issue a <b>full refund</b> via Razorpay and mark the order as refunded. Customer will be emailed.</p>
@@ -55,8 +59,7 @@ export function RefundButton({ orderId }: { orderId: string }) {
                 {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Processing…</> : <><RefreshCcw className="w-4 h-4" /> Confirm Refund</>}
               </button>
             </div>
-          </div>
-        </div>
+        </Modal>
       )}
     </>
   );

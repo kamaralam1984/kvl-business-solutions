@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowLeft, ArrowRight, Send, Globe, LaptopMinimal, Smartphone, Satellite, Sprout, Leaf, TreePine, Crown, Zap, Calendar, CalendarDays, Clock } from 'lucide-react';
 import { formatINR } from '@/lib/utils';
@@ -32,6 +32,7 @@ export function QuoteModal() {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState('');
+  const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const h = () => setOpen(true);
@@ -69,6 +70,24 @@ export function QuoteModal() {
 
   const close = () => { setOpen(false); setTimeout(() => { setStep(0); setSel({}); setDone(false); setError(''); setContact({ name: '', email: '', phone: '' }); }, 300); };
 
+  // Keyboard/AT accessibility: Escape closes, focus moves into the dialog on
+  // open and is restored to the previously-focused element on close.
+  useEffect(() => {
+    if (!open) return;
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    cardRef.current?.focus();
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      previouslyFocused?.focus?.();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
   const Pane = ({ items, group }: { items: any[]; group: keyof typeof sel }) => (
     <div className="grid grid-cols-2 gap-2.5 mb-4">
       {items.map(it => (
@@ -95,10 +114,14 @@ export function QuoteModal() {
           onClick={(e) => e.target === e.currentTarget && close()}
         >
           <motion.div
+            ref={cardRef}
+            role="dialog"
+            aria-modal="true"
+            tabIndex={-1}
             initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 30, opacity: 0 }}
             className="bg-app2 border border-tint rounded-2xl p-7 max-w-md w-full relative"
           >
-            <button onClick={close} className="absolute top-3 right-4 text-text2"><X /></button>
+            <button onClick={close} className="absolute top-3 right-4 text-text2" aria-label="Close"><X /></button>
             <h3 className="text-xl font-bold mb-1">Get Instant Quote</h3>
             <p className="text-text2 text-sm mb-4">Answer 3 quick questions for a personalized estimate.</p>
 

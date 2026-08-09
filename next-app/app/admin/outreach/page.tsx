@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Plus, X, Mail, Linkedin, Send, MessageCircle, CalendarCheck } from 'lucide-react';
+import { Modal } from '@/components/shared/Modal';
 
 type Campaign = {
   _id: string; name: string; channel: 'email' | 'linkedin';
@@ -87,8 +88,12 @@ export default function OutreachCampaignsPage() {
       </div>
 
       {creating && (
-        <div className="fixed inset-0 z-50 grid place-items-center p-4 bg-black/60 backdrop-blur" onClick={() => setCreating(null)}>
-          <div className="p-6 max-w-lg w-full rounded-2xl" style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.08)' }} onClick={e => e.stopPropagation()}>
+        <Modal
+          onClose={() => setCreating(null)}
+          containerClassName="fixed inset-0 z-50 grid place-items-center p-4 bg-black/60 backdrop-blur"
+          className="p-6 max-w-lg w-full rounded-2xl"
+          style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.08)' }}
+        >
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-extrabold" style={{ color: 'rgb(var(--text))' }}>New Campaign</h2>
               <button onClick={() => setCreating(null)} style={{ color: 'rgba(var(--text) / 0.5)' }}><X className="w-5 h-5" /></button>
@@ -107,8 +112,7 @@ export default function OutreachCampaignsPage() {
                 <Send className="w-4 h-4" /> {saving ? 'Creating...' : 'Create Campaign'}
               </button>
             </div>
-          </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

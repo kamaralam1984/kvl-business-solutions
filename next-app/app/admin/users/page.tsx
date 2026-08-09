@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Search, ShieldCheck, Shield, Trash2, Pencil, UserPlus, X, Eye, EyeOff } from 'lucide-react';
 import { ExportButton } from '@/components/admin/ExportButton';
+import { Modal } from '@/components/shared/Modal';
 
 const EMPTY_FORM = { name: '', email: '', phone: '', company: '', role: 'user' as 'user' | 'admin', password: '', emailVerified: true };
 
@@ -162,11 +163,16 @@ export default function AdminUsersPage() {
 
       {/* Modal */}
       {modal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)' }}>
-          <div className="rounded-2xl shadow-2xl w-full max-w-md" style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.1)' }}>
+        <Modal
+          onClose={closeModal}
+          containerClassName="fixed inset-0 z-50 flex items-center justify-center p-4"
+          containerStyle={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)' }}
+          className="rounded-2xl shadow-2xl w-full max-w-md"
+          style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.1)' }}
+        >
             <div className="flex items-center justify-between p-5" style={{ borderBottom: '1px solid rgba(var(--border) / 0.07)' }}>
               <h2 className="text-lg font-bold text-text">{modal === 'add' ? 'Add New User' : 'Edit User'}</h2>
-              <button onClick={closeModal} style={{ color: 'rgba(148,163,184,0.6)' }}><X className="w-5 h-5" /></button>
+              <button onClick={closeModal} style={{ color: 'rgba(148,163,184,0.6)' }} aria-label="Close"><X className="w-5 h-5" /></button>
             </div>
             <div className="p-5 space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -220,8 +226,7 @@ export default function AdminUsersPage() {
                 {saving ? 'Saving...' : modal === 'add' ? 'Create User' : 'Save Changes'}
               </button>
             </div>
-          </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

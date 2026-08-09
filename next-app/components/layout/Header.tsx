@@ -109,9 +109,9 @@ export function Header() {
                   <Link
                     href={item.href}
                     className="relative px-4 py-2.5 text-[13px] font-medium transition-all duration-200 flex flex-col items-center"
-                    style={{ color: isActive ? 'rgb(var(--text))' : 'rgba(var(--text) / 0.45)' }}
+                    style={{ color: isActive ? 'rgb(var(--text))' : 'rgb(var(--text-2))' }}
                     onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text))'; }}
-                    onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.45)'; }}
+                    onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text-2))'; }}
                   >
                     <span className="flex items-center gap-1">
                       {item.label}
@@ -135,9 +135,9 @@ export function Header() {
                 key={item.href}
                 href={item.href}
                 className="relative px-4 py-2.5 text-[13px] font-medium transition-all duration-200 flex flex-col items-center"
-                style={{ color: isActive ? 'rgb(var(--text))' : 'rgba(var(--text) / 0.45)' }}
+                style={{ color: isActive ? 'rgb(var(--text))' : 'rgb(var(--text-2))' }}
                 onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text))'; }}
-                onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.45)'; }}
+                onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text-2))'; }}
               >
                 {item.label}
                 {isActive && (
@@ -197,9 +197,9 @@ export function Header() {
               <Link
                 href="/login"
                 className="px-4 py-2 text-[13px] font-medium transition-colors duration-200"
-                style={{ color: 'rgba(var(--text) / 0.4)' }}
+                style={{ color: 'rgb(var(--text-2))' }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text))'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.4)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text-2))'; }}
               >
                 Login
               </Link>
@@ -218,10 +218,10 @@ export function Header() {
           {/* Mobile toggle */}
           <button
             className="lg:hidden flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-200 ml-1"
-            style={{ color: 'rgba(var(--text) / 0.4)' }}
+            style={{ color: 'rgb(var(--text-2))' }}
             onClick={() => setOpen(v => !v)}
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text))'; (e.currentTarget as HTMLElement).style.background = 'rgba(var(--text) / 0.04)'; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.4)'; (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text-2))'; (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
             aria-label="Toggle menu"
           >
             {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

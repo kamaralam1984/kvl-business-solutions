@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { Plus, Trash2, X, Save, Briefcase, ExternalLink } from 'lucide-react';
+import { Modal } from '@/components/shared/Modal';
 
 type Job = {
   _id?: string; slug: string; title: string; department: string; location: string;
@@ -92,8 +93,7 @@ export default function AdminJobsPage() {
       </div>
 
       {editing && (
-        <div className="fixed inset-0 z-50 grid place-items-center p-4 bg-black/50 backdrop-blur" onClick={() => setEditing(null)}>
-          <div className="card-base p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <Modal onClose={() => setEditing(null)} containerClassName="fixed inset-0 z-50 grid place-items-center p-4 bg-black/50 backdrop-blur" className="card-base p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-extrabold">{isNew ? 'New Job' : 'Edit Job'}</h2>
               <button onClick={() => setEditing(null)}><X className="w-5 h-5" /></button>
@@ -123,8 +123,7 @@ export default function AdminJobsPage() {
               <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={editing.active} onChange={e => setEditing({ ...editing, active: e.target.checked })} /> Active (publicly visible)</label>
               <button onClick={save} className="btn btn-primary w-full justify-center"><Save className="w-4 h-4" /> Save</button>
             </div>
-          </div>
-        </div>
+        </Modal>
       )}
     </div>
   );
