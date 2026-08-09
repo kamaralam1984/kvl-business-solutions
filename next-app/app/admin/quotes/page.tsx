@@ -54,7 +54,7 @@ export default function AdminQuotes() {
     { label: 'Total Quotes', value: stats.total || 0, icon: FileText, color: 'text-blue-500', bg: 'bg-blue-500/10' },
     { label: 'Submitted', value: stats.submitted || 0, icon: Clock, color: 'text-yellow-500', bg: 'bg-yellow-500/10' },
     { label: 'Follow-up', value: stats.followUp || 0, icon: Clock, color: 'text-purple-500', bg: 'bg-purple-500/10' },
-    { label: 'Avg. Value', value: stats.total ? `₹${Math.round((stats.totalValue || 0) / (stats.total * 100)).toLocaleString('en-IN')}` : '₹0', icon: IndianRupee, color: 'text-green-500', bg: 'bg-green-500/10' },
+    { label: 'Avg. Value', value: stats.total ? `₹${Math.round((stats.totalValue || 0) / stats.total).toLocaleString('en-IN')}` : '₹0', icon: IndianRupee, color: 'text-green-500', bg: 'bg-green-500/10' },
   ];
 
   return (

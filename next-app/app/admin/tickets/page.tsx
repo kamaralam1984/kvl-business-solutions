@@ -55,6 +55,14 @@ export default function AdminTickets() {
     load();
   };
 
+  // replyText is a single shared field for whichever ticket is expanded — must
+  // be cleared on every toggle, or an unsent draft for ticket A silently
+  // reappears (and can be sent) as the reply box for ticket B.
+  const toggleExpanded = (id: string) => {
+    setExpanded(prev => (prev === id ? null : id));
+    setReplyText('');
+  };
+
   const sendReply = async (id: string) => {
     if (!replyText.trim()) return;
     setSending(true);
@@ -96,8 +104,8 @@ export default function AdminTickets() {
                 <div
                   role="button"
                   tabIndex={0}
-                  onClick={() => setExpanded(isOpen ? null : t._id)}
-                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setExpanded(isOpen ? null : t._id); }}
+                  onClick={() => toggleExpanded(t._id)}
+                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') toggleExpanded(t._id); }}
                   className="w-full flex items-center justify-between gap-3 p-4 text-left cursor-pointer"
                 >
                   <div className="min-w-0 flex-1">
