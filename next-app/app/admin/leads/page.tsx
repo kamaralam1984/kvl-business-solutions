@@ -67,11 +67,6 @@ export default function AdminLeads() {
     load();
   };
 
-  const rescore = async (lead: any) => {
-    await fetch(`/api/admin/leads/${lead._id}/rescore`, { method: 'POST' });
-    setTimeout(() => load(), 3000);
-  };
-
   const [calling, setCalling] = useState<string | null>(null);
   const callLead = async (lead: any) => {
     if (!confirm(`"${lead.name}" ko AI call karein? (${lead.phone})`)) return;

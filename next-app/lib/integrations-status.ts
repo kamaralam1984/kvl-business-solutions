@@ -59,6 +59,8 @@ export const INTEGRATION_GROUPS: { category: string; keys: { key: string; label:
       { key: 'MONGODB_URI', label: 'Database Connection' },
       { key: 'NEXTAUTH_SECRET', label: 'Auth Secret' },
       { key: 'CRON_SECRET', label: 'Cron Job Secret' },
+      { key: 'GOOGLE_CLIENT_ID', label: 'Google Login Client ID' },
+      { key: 'GOOGLE_CLIENT_SECRET', label: 'Google Login Client Secret' },
     ],
   },
   {
@@ -67,9 +69,11 @@ export const INTEGRATION_GROUPS: { category: string; keys: { key: string; label:
       { key: 'NEXT_PUBLIC_GA_ID', label: 'Google Analytics' },
       { key: 'NEXT_PUBLIC_GTM_ID', label: 'Google Tag Manager' },
       { key: 'NEXT_PUBLIC_META_PIXEL_ID', label: 'Meta Pixel' },
+      { key: 'META_CAPI_ACCESS_TOKEN', label: 'Meta Conversions API' },
       { key: 'NEXT_PUBLIC_LINKEDIN_PARTNER_ID', label: 'LinkedIn Insight' },
       { key: 'NEXT_PUBLIC_CLARITY_ID', label: 'Microsoft Clarity' },
       { key: 'NEXT_PUBLIC_GSC_VERIFICATION', label: 'Google Search Console' },
+      { key: 'NEXT_PUBLIC_GOOGLE_ADS_ID', label: 'Google Ads Conversion ID' },
     ],
   },
 ];
