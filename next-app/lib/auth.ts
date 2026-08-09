@@ -4,6 +4,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import bcrypt from 'bcryptjs';
 import { connectDB } from './mongodb';
 import { User } from './models/User';
+import { rateLimit } from './rate-limit';
 
 const providers: NextAuthOptions['providers'] = [
   CredentialsProvider({
@@ -14,6 +15,11 @@ const providers: NextAuthOptions['providers'] = [
     },
     async authorize(credentials) {
       if (!credentials?.email || !credentials.password) return null;
+      // Per-account throttle (not per-IP — NextAuth's authorize() callback doesn't
+      // reliably expose the real client IP across versions/deployments) so a script
+      // can't brute-force/credential-stuff a known email, admin accounts included.
+      const rl = rateLimit(`login:${credentials.email.toLowerCase()}`, 10, 15 * 60_000);
+      if (!rl.allowed) return null;
       await connectDB();
       const user = await User.findOne({ email: credentials.email.toLowerCase() });
       if (!user || !user.passwordHash) return null; // OAuth-only users can't use password login
