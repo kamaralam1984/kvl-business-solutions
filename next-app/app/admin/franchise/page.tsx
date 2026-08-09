@@ -106,7 +106,7 @@ export default function AdminFranchisePage() {
                 </td>
                 <td className="p-3 text-right whitespace-nowrap">
                   <button onClick={() => { setEditing(f); setIsNew(false); }} className="text-text2 hover:text-primary p-1 text-xs mr-1">Edit</button>
-                  <button onClick={() => del(f)} className="text-text2 hover:text-red-500 p-1"><Trash2 className="w-4 h-4" /></button>
+                  <button onClick={() => del(f)} aria-label="Delete franchise partner" className="text-text2 hover:text-red-500 p-1"><Trash2 className="w-4 h-4" /></button>
                 </td>
               </tr>
             ))}

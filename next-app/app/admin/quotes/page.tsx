@@ -122,7 +122,7 @@ export default function AdminQuotes() {
                   </select>
                 </td>
                 <td className="p-3">
-                  <button onClick={() => del(q._id)} className="p-1 text-text2 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
+                  <button onClick={() => del(q._id)} aria-label="Delete quote" className="p-1 text-text2 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
                 </td>
               </tr>
             ))}

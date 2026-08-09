@@ -46,9 +46,9 @@ function Table({ cols, rows, color }: { cols: string[]; rows: (string | JSX.Elem
                 {row.map((cell, j) => <td key={j} className="px-4 py-3 text-slate-300 whitespace-nowrap">{cell}</td>)}
                 <td className="px-4 py-3">
                   <div className="flex gap-2">
-                    <button className="text-slate-500 hover:text-blue-400"><Eye className="w-3.5 h-3.5" /></button>
-                    <button className="text-slate-500 hover:text-yellow-400"><Edit2 className="w-3.5 h-3.5" /></button>
-                    <button className="text-slate-500 hover:text-red-400"><Trash2 className="w-3.5 h-3.5" /></button>
+                    <button aria-label="View" className="text-slate-500 hover:text-blue-400"><Eye className="w-3.5 h-3.5" /></button>
+                    <button aria-label="Edit" className="text-slate-500 hover:text-yellow-400"><Edit2 className="w-3.5 h-3.5" /></button>
+                    <button aria-label="Delete" className="text-slate-500 hover:text-red-400"><Trash2 className="w-3.5 h-3.5" /></button>
                   </div>
                 </td>
               </tr>

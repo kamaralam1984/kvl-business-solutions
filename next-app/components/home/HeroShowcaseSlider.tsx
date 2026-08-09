@@ -148,7 +148,7 @@ export function HeroShowcaseSlider() {
 
         {/* Screenshot */}
         <div className="relative aspect-[16/10]">
-          <Image src={slide.image} alt={slide.name} fill sizes="440px" className="object-cover" />
+          <Image src={slide.image} alt={slide.name} fill sizes="440px" className="object-cover" priority />
           <span
             className="absolute bottom-3 left-3 text-[10px] font-bold px-2.5 py-1 rounded-full"
             style={{ background: 'rgba(0,0,0,0.55)', color: '#fff', backdropFilter: 'blur(4px)' }}

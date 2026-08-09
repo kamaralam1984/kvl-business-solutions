@@ -83,7 +83,7 @@ export default function AdminBannersPage() {
             </div>
             <div className="flex gap-1 shrink-0">
               <button onClick={() => { setEditing(b); setIsNew(false); }} className="text-text2 hover:text-primary p-1.5"><Edit3 className="w-4 h-4" /></button>
-              <button onClick={() => del(b._id)} className="text-text2 hover:text-red-500 p-1.5"><Trash2 className="w-4 h-4" /></button>
+              <button onClick={() => del(b._id)} aria-label="Delete banner" className="text-text2 hover:text-red-500 p-1.5"><Trash2 className="w-4 h-4" /></button>
             </div>
           </div>
         ))}

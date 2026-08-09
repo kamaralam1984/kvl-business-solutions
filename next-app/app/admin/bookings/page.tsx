@@ -143,7 +143,7 @@ export default function AdminBookings() {
                         {a.label}
                       </button>
                     ))}
-                    <button onClick={() => del(b._id, b.name)} className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors"
+                    <button onClick={() => del(b._id, b.name)} aria-label="Delete booking" className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors"
                       style={{ color: 'rgba(148,163,184,0.5)' }}
                       onMouseEnter={e => (e.currentTarget.style.color = '#f87171')}
                       onMouseLeave={e => (e.currentTarget.style.color = 'rgba(148,163,184,0.5)')}>

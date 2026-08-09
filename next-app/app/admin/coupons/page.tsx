@@ -81,7 +81,7 @@ export default function AdminCouponsPage() {
                   </button>
                 </td>
                 <td className="p-3 text-right">
-                  <button onClick={() => del(c)} className="text-text2 hover:text-red-500 p-1"><Trash2 className="w-4 h-4" /></button>
+                  <button onClick={() => del(c)} aria-label="Delete coupon" className="text-text2 hover:text-red-500 p-1"><Trash2 className="w-4 h-4" /></button>
                 </td>
               </tr>
             ))}

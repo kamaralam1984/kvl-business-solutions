@@ -58,5 +58,10 @@ const VipSessionSchema = new Schema({
 }, { timestamps: true });
 
 VipSessionSchema.index({ vid: 1, startedAt: -1 });
+// Backs the Landing Page Analytics aggregations (app/api/admin/vip/landing-pages/route.ts),
+// which filter on startedAt + landingPage — without this, every one of those
+// queries is a full collection scan that gets slower as this collection
+// (written to on every visitor session) grows over months of production traffic.
+VipSessionSchema.index({ startedAt: 1, landingPage: 1 });
 
 export const VipSession = models.VipSession || model('VipSession', VipSessionSchema);

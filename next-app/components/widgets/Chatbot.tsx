@@ -163,6 +163,7 @@ export function Chatbot() {
               </div>
             </div>
             <button onClick={e => { e.stopPropagation(); setShowBubble(false); setProactiveDone(true); }}
+              aria-label="Dismiss"
               className="absolute top-1 right-1 text-text2 hover:text-text"><X className="w-3 h-3" /></button>
           </motion.div>
         )}

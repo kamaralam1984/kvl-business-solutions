@@ -136,7 +136,6 @@ export function IndustriesGrid() {
                       sizes="(max-width: 640px) 55vw, (max-width: 1024px) 60vw, 460px"
                       quality={65}
                       className="object-cover"
-                      priority={i === 0}
                     />
                     {!isActive && <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.35)' }} />}
                   </motion.button>

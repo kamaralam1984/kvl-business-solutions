@@ -166,7 +166,7 @@ function CheckoutInner() {
               {applied && (
                 <div className="flex justify-between text-green-500">
                   <span className="flex items-center gap-1"><Tag className="w-3 h-3" /> {applied.code}
-                    <button onClick={() => setApplied(null)} className="ml-1 hover:text-red-500"><X className="w-3 h-3" /></button>
+                    <button onClick={() => setApplied(null)} aria-label="Remove coupon" className="ml-1 hover:text-red-500"><X className="w-3 h-3" /></button>
                   </span>
                   <span>−{formatINR(applied.discount)}</span>
                 </div>

@@ -91,7 +91,11 @@ export default function VipOverviewPage() {
   ] : [];
 
   const chartData = (landing?.daily || []).map((d: any) => ({
-    label: new Date(d.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
+    // d.date is a date-only "YYYY-MM-DD" string already bucketed in IST
+    // server-side. Parsing it bare would read as UTC midnight, which can
+    // shift the displayed calendar day backward for anyone viewing from a
+    // timezone behind UTC — anchor to IST noon instead so it can't drift.
+    label: new Date(`${d.date}T12:00:00+05:30`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
     count: d.count,
     unique: d.uniqueVisitors,
   }));

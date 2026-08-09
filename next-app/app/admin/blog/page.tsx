@@ -90,7 +90,7 @@ export default function AdminBlogPage() {
                 <td className="p-3" style={{ color: 'rgba(var(--text) / 0.4)' }}>{p.publishedAt}</td>
                 <td className="p-3 text-right">
                   <button onClick={() => { setEditing(p); setIsNew(false); }} className="p-1" style={{ color: 'rgba(var(--text) / 0.4)' }}><Edit3 className="w-4 h-4" /></button>
-                  <button onClick={() => del(p._id)} className="p-1" style={{ color: 'rgba(var(--text) / 0.4)' }}><Trash2 className="w-4 h-4" /></button>
+                  <button onClick={() => del(p._id)} aria-label="Delete blog post" className="p-1" style={{ color: 'rgba(var(--text) / 0.4)' }}><Trash2 className="w-4 h-4" /></button>
                 </td>
               </tr>
             ))}
@@ -132,7 +132,7 @@ export default function AdminBlogPage() {
                     <div key={i} className="p-3 rounded-lg space-y-1.5" style={{ background: 'rgba(var(--surface) / 0.03)' }}>
                       <div className="flex gap-2">
                         <input className="form-control flex-1" placeholder="Section heading" value={s.heading} onChange={e => updateSection(i, 'heading', e.target.value)} />
-                        <button onClick={() => setEditing({ ...editing, body: editing.body.filter((_, idx) => idx !== i) })} style={{ color: 'rgba(var(--text) / 0.3)' }}><Trash2 className="w-4 h-4" /></button>
+                        <button onClick={() => setEditing({ ...editing, body: editing.body.filter((_, idx) => idx !== i) })} aria-label="Remove section" style={{ color: 'rgba(var(--text) / 0.3)' }}><Trash2 className="w-4 h-4" /></button>
                       </div>
                       <textarea className="form-control w-full" rows={3} placeholder="Section content" value={s.content} onChange={e => updateSection(i, 'content', e.target.value)} />
                     </div>
@@ -150,7 +150,7 @@ export default function AdminBlogPage() {
                     <div key={i} className="p-3 rounded-lg space-y-1.5" style={{ background: 'rgba(var(--surface) / 0.03)' }}>
                       <div className="flex gap-2">
                         <input className="form-control flex-1" placeholder="Question" value={f.q} onChange={e => updateFaq(i, 'q', e.target.value)} />
-                        <button onClick={() => setEditing({ ...editing, faq: editing.faq.filter((_, idx) => idx !== i) })} style={{ color: 'rgba(var(--text) / 0.3)' }}><Trash2 className="w-4 h-4" /></button>
+                        <button onClick={() => setEditing({ ...editing, faq: editing.faq.filter((_, idx) => idx !== i) })} aria-label="Remove FAQ item" style={{ color: 'rgba(var(--text) / 0.3)' }}><Trash2 className="w-4 h-4" /></button>
                       </div>
                       <textarea className="form-control w-full" rows={2} placeholder="Answer" value={f.a} onChange={e => updateFaq(i, 'a', e.target.value)} />
                     </div>

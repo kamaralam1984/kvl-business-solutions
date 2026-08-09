@@ -153,7 +153,7 @@ export default function CampaignDetailPage() {
                   ) : (
                     <span className="text-[10px] font-bold text-green-400 mr-1">In CRM</span>
                   )}
-                  <button onClick={() => del(p)} className="p-1 inline-block" style={{ color: 'rgba(var(--text) / 0.4)' }}><Trash2 className="w-4 h-4" /></button>
+                  <button onClick={() => del(p)} aria-label="Delete prospect" className="p-1 inline-block" style={{ color: 'rgba(var(--text) / 0.4)' }}><Trash2 className="w-4 h-4" /></button>
                 </td>
               </tr>
             ))}

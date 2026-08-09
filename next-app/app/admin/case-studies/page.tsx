@@ -88,7 +88,7 @@ export default function AdminCaseStudiesPage() {
                 <td className="p-3" style={{ color: 'rgba(var(--text) / 0.6)' }}>{s.industry}</td>
                 <td className="p-3 text-right">
                   <button onClick={() => { setEditing(s); setIsNew(false); }} className="p-1" style={{ color: 'rgba(var(--text) / 0.4)' }}><Edit3 className="w-4 h-4" /></button>
-                  <button onClick={() => del(s._id)} className="p-1" style={{ color: 'rgba(var(--text) / 0.4)' }}><Trash2 className="w-4 h-4" /></button>
+                  <button onClick={() => del(s._id)} aria-label="Delete case study" className="p-1" style={{ color: 'rgba(var(--text) / 0.4)' }}><Trash2 className="w-4 h-4" /></button>
                 </td>
               </tr>
             ))}

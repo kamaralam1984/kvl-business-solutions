@@ -57,7 +57,7 @@ export function SiteChrome({
     return (
       <>
         <Header />
-        <main>
+        <main id="main-content">
           <DashboardShell>{children}</DashboardShell>
         </main>
       </>
@@ -68,7 +68,7 @@ export function SiteChrome({
     <>
       <DeferredBanner banner={banner} />
       <Header />
-      <main>{children}</main>
+      <main id="main-content">{children}</main>
       <SmartCTA />
       <Footer settings={settings} />
       <DeferredWidgets showCookieConsent={cookieConsentEnabled} />

@@ -63,7 +63,7 @@ export default function AdminProductsPage() {
                 <td className="p-3"><span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${p.active ? 'bg-green-500/20 text-green-500' : 'bg-slate-500/20 text-slate-500'}`}>{p.active ? 'ACTIVE' : 'HIDDEN'}</span></td>
                 <td className="p-3 text-right">
                   <button onClick={() => { setEditing(p); setIsNew(false); }} className="text-text2 hover:text-primary p-1"><Edit3 className="w-4 h-4" /></button>
-                  <button onClick={() => del(p._id)} className="text-text2 hover:text-red-500 p-1"><Trash2 className="w-4 h-4" /></button>
+                  <button onClick={() => del(p._id)} aria-label="Delete product" className="text-text2 hover:text-red-500 p-1"><Trash2 className="w-4 h-4" /></button>
                 </td>
               </tr>
             ))}

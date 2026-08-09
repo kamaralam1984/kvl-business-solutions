@@ -84,7 +84,7 @@ export default function AdminJobsPage() {
                 <td className="p-3 text-right">
                   <a href={`/careers/${j.slug}`} target="_blank" rel="noreferrer" className="text-text2 hover:text-primary p-1 inline-block"><ExternalLink className="w-4 h-4" /></a>
                   <button onClick={() => { setEditing(j); setIsNew(false); }} className="text-text2 hover:text-primary text-xs ml-2">Edit</button>
-                  <button onClick={() => del(j._id)} className="text-text2 hover:text-red-500 p-1 ml-2"><Trash2 className="w-4 h-4" /></button>
+                  <button onClick={() => del(j._id)} aria-label="Delete job" className="text-text2 hover:text-red-500 p-1 ml-2"><Trash2 className="w-4 h-4" /></button>
                 </td>
               </tr>
             ))}

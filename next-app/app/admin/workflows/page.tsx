@@ -142,7 +142,7 @@ export default function WorkflowsPage() {
                   {testing === w._id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Play className="w-3 h-3" />} Test
                 </button>
                 <button onClick={() => { setEditing(w); setIsNew(false); }} className="text-text2 hover:text-primary text-xs">Edit</button>
-                <button onClick={() => del(w._id)} className="text-text2 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
+                <button onClick={() => del(w._id)} aria-label="Delete workflow" className="text-text2 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
               </div>
             </div>
           );

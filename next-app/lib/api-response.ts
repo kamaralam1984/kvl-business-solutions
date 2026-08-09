@@ -31,6 +31,18 @@ export function apiError(e: unknown, fallbackStatus = 500) {
     );
   }
 
+  // Mongo/Mongoose duplicate-key error (unique index collision) — without
+  // this, any route relying on a unique index (Franchise.ownerEmail,
+  // Coupon.code, etc.) fell through to the generic "Something went wrong"
+  // message, hiding a perfectly explainable cause from whoever hit it.
+  if (e && typeof e === 'object' && (e as any).code === 11000) {
+    const field = Object.keys((e as any).keyValue || {})[0];
+    return NextResponse.json(
+      { ok: false, error: field ? `This ${field} is already in use.` : 'This value is already in use.' },
+      { status: 409 }
+    );
+  }
+
   console.error(e);
   return NextResponse.json(
     { ok: false, error: 'Something went wrong. Please try again.' },

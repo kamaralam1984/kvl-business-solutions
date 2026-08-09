@@ -140,7 +140,7 @@ export default function AdminDemosPage() {
                 <button onClick={() => { setEditing(d); setIsNew(false); }} className="btn btn-ghost text-xs flex-1 justify-center"><Edit3 className="w-3.5 h-3.5" /> Edit</button>
                 <button onClick={() => toggle(d, 'active')} className={`btn text-xs ${d.active ? 'btn-ghost' : 'btn-primary'}`}>{d.active ? 'Hide' : 'Show'}</button>
                 <button onClick={() => toggle(d, 'live')} className={`btn text-xs ${d.live ? 'btn-ghost' : 'btn-primary'}`}>{d.live ? 'Unmark Live' : 'Mark Live'}</button>
-                <button onClick={() => del(d)} className="text-text2 hover:text-red-500 p-1.5"><Trash2 className="w-3.5 h-3.5" /></button>
+                <button onClick={() => del(d)} aria-label="Delete demo" className="text-text2 hover:text-red-500 p-1.5"><Trash2 className="w-3.5 h-3.5" /></button>
               </div>
             </div>
           </div>

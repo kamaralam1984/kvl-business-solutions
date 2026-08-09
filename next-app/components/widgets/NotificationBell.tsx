@@ -116,7 +116,7 @@ export function NotificationBell() {
                       {n.message && <div className="text-xs text-text2 mt-0.5 line-clamp-2">{n.message}</div>}
                       <div className="text-[10px] text-text2 mt-1">{timeAgo(n.createdAt)}</div>
                     </div>
-                    <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); remove(n._id); }} className="opacity-0 group-hover:opacity-100 text-text2 hover:text-red-500 transition-opacity shrink-0 p-1">
+                    <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); remove(n._id); }} aria-label="Remove notification" className="opacity-0 group-hover:opacity-100 text-text2 hover:text-red-500 transition-opacity shrink-0 p-1">
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -124,7 +124,14 @@ export function NotificationBell() {
                 return n.link ? (
                   <Link key={n._id} href={n.link} onClick={() => { markRead(n._id); setOpen(false); }}>{inner}</Link>
                 ) : (
-                  <div key={n._id} onClick={() => markRead(n._id)} className="cursor-pointer">{inner}</div>
+                  <div
+                    key={n._id}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => markRead(n._id)}
+                    onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); markRead(n._id); } }}
+                    className="cursor-pointer"
+                  >{inner}</div>
                 );
               })}
             </div>

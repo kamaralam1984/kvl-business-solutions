@@ -80,7 +80,7 @@ export default function AdminCoursesPage() {
                 <td className="p-3" style={{ color: 'rgba(var(--text) / 0.6)' }}>{c.lessons.length}</td>
                 <td className="p-3 text-right">
                   <button onClick={() => { setEditing(c); setIsNew(false); }} className="p-1" style={{ color: 'rgba(var(--text) / 0.4)' }}><Edit3 className="w-4 h-4" /></button>
-                  <button onClick={() => del(c._id)} className="p-1" style={{ color: 'rgba(var(--text) / 0.4)' }}><Trash2 className="w-4 h-4" /></button>
+                  <button onClick={() => del(c._id)} aria-label="Delete course" className="p-1" style={{ color: 'rgba(var(--text) / 0.4)' }}><Trash2 className="w-4 h-4" /></button>
                 </td>
               </tr>
             ))}
@@ -125,7 +125,7 @@ export default function AdminCoursesPage() {
                       <div className="flex gap-2">
                         <input className="form-control flex-1" placeholder="Lesson title" value={l.title} onChange={e => updateLesson(i, 'title', e.target.value)} />
                         <input className="form-control w-24" placeholder="8 min" value={l.duration} onChange={e => updateLesson(i, 'duration', e.target.value)} />
-                        <button onClick={() => setEditing({ ...editing, lessons: editing.lessons.filter((_, idx) => idx !== i) })} style={{ color: 'rgba(var(--text) / 0.3)' }}><Trash2 className="w-4 h-4" /></button>
+                        <button onClick={() => setEditing({ ...editing, lessons: editing.lessons.filter((_, idx) => idx !== i) })} aria-label="Remove lesson" style={{ color: 'rgba(var(--text) / 0.3)' }}><Trash2 className="w-4 h-4" /></button>
                       </div>
                       <textarea className="form-control w-full" rows={3} placeholder="Lesson content (markdown)" value={l.content} onChange={e => updateLesson(i, 'content', e.target.value)} />
                     </div>
