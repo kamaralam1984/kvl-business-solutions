@@ -3,9 +3,9 @@ import { renderDownloadShell } from '@/lib/download-page';
 import { services } from '@/lib/data/services';
 import { logDownload } from '@/lib/models/DownloadLog';
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-  logDownload('company-profile');
+  logDownload('company-profile', req.headers.get('user-agent'));
   const settings = await getSiteSettings();
 
   const body = `
