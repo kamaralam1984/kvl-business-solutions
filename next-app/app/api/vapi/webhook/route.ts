@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import { Lead } from '@/lib/models/Lead';
+import { timingSafeEqual } from '@/lib/timing-safe-equal';
 
 // Vapi sends this shared secret back in x-vapi-secret on every webhook call
 // when the assistant was created with `serverUrlSecret` set (see
@@ -22,7 +23,7 @@ function safeRecordingUrl(url: unknown): string {
 }
 
 export async function POST(req: Request) {
-  if (!VAPI_WEBHOOK_SECRET || req.headers.get('x-vapi-secret') !== VAPI_WEBHOOK_SECRET) {
+  if (!VAPI_WEBHOOK_SECRET || !timingSafeEqual(VAPI_WEBHOOK_SECRET, req.headers.get('x-vapi-secret'))) {
     return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
   }
 

@@ -36,6 +36,9 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  const limit = rateLimit(`newsletter-unsub:${clientIp(req)}`, 10, 10 * 60_000);
+  if (!limit.allowed) return NextResponse.json({ ok: false, error: 'Too many attempts' }, { status: 429 });
+
   try {
     const url = new URL(req.url);
     const email = url.searchParams.get('email');

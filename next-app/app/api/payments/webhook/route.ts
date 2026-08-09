@@ -5,6 +5,7 @@ import { connectDB } from '@/lib/mongodb';
 import { Order } from '@/lib/models/Order';
 import { sendNotification, orderEmail } from '@/lib/email';
 import { markOrderPaid } from '@/lib/payments/mark-paid';
+import { timingSafeEqual } from '@/lib/timing-safe-equal';
 
 // Razorpay sends payment events here as a backup to client-side verify.
 // Configure: Razorpay Dashboard → Settings → Webhooks → POST {SITE}/api/payments/webhook
@@ -17,7 +18,7 @@ export async function POST(req: Request) {
     const body = await req.text();
     const signature = req.headers.get('x-razorpay-signature') || '';
     const expected = crypto.createHmac('sha256', secret).update(body).digest('hex');
-    if (expected !== signature) return NextResponse.json({ ok: false, error: 'Invalid signature' }, { status: 400 });
+    if (!timingSafeEqual(expected, signature)) return NextResponse.json({ ok: false, error: 'Invalid signature' }, { status: 400 });
 
     const evt = JSON.parse(body);
     const event: string = evt.event;

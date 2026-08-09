@@ -48,6 +48,7 @@ export function FileUploader({ folder = 'kvl/tickets', multiple = true, accept =
         // Must match exactly what the server signed (lib/api/upload/sign) —
         // any mismatch here and Cloudinary rejects the signature outright.
         fd.append('transformation', sig.transformation);
+        fd.append('allowed_formats', sig.allowedFormats);
 
         const up = await fetch(`https://api.cloudinary.com/v1_1/${sig.cloudName}/auto/upload`, { method: 'POST', body: fd });
         const data = await up.json();
