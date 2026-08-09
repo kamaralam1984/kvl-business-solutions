@@ -8,6 +8,7 @@ const TRIGGERS = [
   { id: 'new_order', label: 'New order created' },
   { id: 'new_ticket', label: 'New support ticket' },
   { id: 'order_paid', label: 'Order payment received' },
+  { id: 'hot_lead', label: 'Lead scored HOT by AI (≥75)' },
   { id: 'lead_inactive_3d', label: 'Lead inactive for 3 days' },
   { id: 'cart_abandoned', label: 'Cart abandoned (24h)' },
   { id: 'call_back_requested', label: 'Call Me Back requested' },
