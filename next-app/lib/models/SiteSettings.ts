@@ -37,23 +37,17 @@ const SiteSettingsSchema = new Schema({
     github: String,
   },
 
-  // Hero (homepage)
-  heroEyebrow: { type: String, default: 'BUSINESS TECHNOLOGY' },
-  heroTitle: { type: String, default: 'Smart Software,' },
-  heroAccent: { type: String, default: 'Powerful Business' },
-  heroDescription: { type: String, default: 'Advanced software, GPS, automation, and enterprise services — one trusted partner for 1000+ Indian businesses.' },
-  heroCtaText: { type: String, default: 'Get A Quote' },
-  heroCtaLink: { type: String, default: '/contact' },
-  heroSecondaryCtaText: { type: String, default: 'Browse Software' },
+  // Hero (homepage) — defaults match components/home/Hero.tsx's current live
+  // copy exactly, so wiring this up doesn't silently change the homepage;
+  // it only takes effect once an admin actually edits something here.
+  heroEyebrow: { type: String, default: 'Enterprise Software, Engineered in India' },
+  heroTitle: { type: String, default: 'Custom Software Development' },
+  heroAccent: { type: String, default: 'Purpose-Built Software. Precision Engineered for Your Business.' },
+  heroDescription: { type: String, default: 'Custom ERP, CRM, and AI automation built around how your business actually runs — so operations move faster, decisions are backed by real data, and nothing breaks when it matters most. Trusted by hospital networks, government bodies, and enterprises that cannot afford downtime.' },
+  heroCtaText: { type: String, default: 'Talk to a Solution Architect' },
+  heroCtaLink: { type: String, default: '/book-demo' },
+  heroSecondaryCtaText: { type: String, default: 'See Live Case Studies' },
   heroSecondaryCtaLink: { type: String, default: '/software' },
-
-  // Stats (homepage)
-  stats: {
-    customers: { type: String, default: '1000+' },
-    projects: { type: String, default: '500+' },
-    rating: { type: String, default: '4.8' },
-    uptime: { type: String, default: '99.5%' },
-  },
 
   // Feature flags — toggle features on/off site-wide
   features: {
@@ -70,9 +64,6 @@ const SiteSettingsSchema = new Schema({
   // SEO
   metaTitle: { type: String, default: 'KVL Business Solutions — India\'s Next-Generation Business Technology' },
   metaDescription: { type: String, default: 'Advanced Software, Industrial Solutions, GPS Systems & Modern Business Technology.' },
-
-  // Featured products on homepage (slugs)
-  featuredProductSlugs: { type: [String], default: ['erp', 'gps-tracking', 'crm', 'school', 'hospital', 'ai-business'] },
 
   // Maintenance mode
   maintenanceMode: { type: Boolean, default: false },

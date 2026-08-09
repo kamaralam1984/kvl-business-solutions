@@ -19,7 +19,21 @@ const trustBadges = [
    CPUs. Button hover states use Tailwind's `hover:` classes instead of JS
    event handlers. The right-column product slider is desktop-only and is
    the one client-hydrated island in this section. */
-export function Hero() {
+type HeroSettings = {
+  heroEyebrow?: string; heroTitle?: string; heroAccent?: string; heroDescription?: string;
+  heroCtaText?: string; heroCtaLink?: string; heroSecondaryCtaText?: string; heroSecondaryCtaLink?: string;
+};
+
+export function Hero({ settings }: { settings?: HeroSettings | null } = {}) {
+  const eyebrow = settings?.heroEyebrow || 'Enterprise Software, Engineered in India';
+  const title = settings?.heroTitle || 'Custom Software Development';
+  const accent = settings?.heroAccent || 'Purpose-Built Software. Precision Engineered for Your Business.';
+  const description = settings?.heroDescription || 'Custom ERP, CRM, and AI automation built around how your business actually runs — so operations move faster, decisions are backed by real data, and nothing breaks when it matters most. Trusted by hospital networks, government bodies, and enterprises that cannot afford downtime.';
+  const ctaText = settings?.heroCtaText || 'Talk to a Solution Architect';
+  const ctaLink = settings?.heroCtaLink || '/book-demo';
+  const secondaryCtaText = settings?.heroSecondaryCtaText || 'See Live Case Studies';
+  const secondaryCtaLink = settings?.heroSecondaryCtaLink || '/software';
+
   return (
     <section
       className="relative min-h-[92svh] flex items-center overflow-hidden"
@@ -48,7 +62,7 @@ export function Hero() {
             style={{ color: '#c8a870' }}
           >
             <span className="animate-line-draw" style={{ width: 24, height: 1, background: 'linear-gradient(90deg, #c8a870, transparent)', display: 'inline-block' }} />
-            Enterprise Software, Engineered in India
+            {eyebrow}
           </span>
         </div>
 
@@ -63,7 +77,7 @@ export function Hero() {
               className="font-sans font-black leading-[1.05] tracking-[-0.03em] mb-3"
               style={{ fontSize: 'clamp(1.3rem, 2.8vw, 2.3rem)', color: 'rgb(var(--text))' }}
             >
-              Custom Software Development
+              {title}
             </h1>
 
             {/* Tagline */}
@@ -71,7 +85,7 @@ export function Hero() {
               className="font-semibold mb-7"
               style={{ fontSize: 'clamp(0.85rem, 1.1vw, 1rem)', color: '#c8a870' }}
             >
-              Purpose-Built Software. Precision Engineered for Your Business.
+              {accent}
             </p>
 
             {/* Subheadline */}
@@ -79,34 +93,30 @@ export function Hero() {
               className="text-[17px] leading-[1.75] mb-9"
               style={{ color: 'rgb(var(--text-2))', maxWidth: '540px' }}
             >
-              Custom ERP, CRM, and AI automation built around how your business
-              actually runs — so operations move faster, decisions are backed by
-              real data, and nothing breaks when it matters most. Trusted by
-              hospital networks, government bodies, and enterprises that cannot
-              afford downtime.
+              {description}
             </p>
 
             {/* CTA buttons */}
             <div className="flex flex-wrap gap-3 mb-10">
               <TrackedLink
-                href="/book-demo"
-                label="Talk to a Solution Architect"
+                href={ctaLink}
+                label={ctaText}
                 placement="hero-primary"
                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-bold text-[14px] transition-shadow duration-200 group hover:shadow-[0_10px_30px_rgba(0,0,0,0.24)]"
                 style={{ background: '#0a0a0a', color: '#ffffff', boxShadow: '0 4px 20px rgba(0,0,0,0.16)' }}
               >
-                Talk to a Solution Architect
+                {ctaText}
                 <ArrowUpRight className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
               </TrackedLink>
 
               <TrackedLink
-                href="/software"
-                label="See Live Case Studies"
+                href={secondaryCtaLink}
+                label={secondaryCtaText}
                 placement="hero-secondary"
                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-[14px] transition-colors duration-200 border hover:border-[#c8a870] hover:bg-[rgba(200,168,112,0.06)]"
                 style={{ borderColor: 'rgba(var(--border) / 0.15)', color: 'rgb(var(--text))', background: 'transparent' }}
               >
-                See Live Case Studies
+                {secondaryCtaText}
               </TrackedLink>
             </div>
 

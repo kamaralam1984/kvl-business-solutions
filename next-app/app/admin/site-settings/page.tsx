@@ -119,21 +119,6 @@ export default function SiteSettingsPage() {
               <Field label="Secondary button text" value={s.heroSecondaryCtaText} onChange={v => update('heroSecondaryCtaText', v)} />
               <Field label="Secondary button link" value={s.heroSecondaryCtaLink} onChange={v => update('heroSecondaryCtaLink', v)} />
             </Grid>
-
-            <Section title="Stats counters" />
-            <Grid cols={4}>
-              <Field label="Customers" value={s.stats?.customers} onChange={v => updateNested('stats', 'customers', v)} />
-              <Field label="Projects" value={s.stats?.projects} onChange={v => updateNested('stats', 'projects', v)} />
-              <Field label="Rating" value={s.stats?.rating} onChange={v => updateNested('stats', 'rating', v)} />
-              <Field label="Uptime" value={s.stats?.uptime} onChange={v => updateNested('stats', 'uptime', v)} />
-            </Grid>
-
-            <Section title="Featured products on homepage" desc="Comma-separated slugs" />
-            <Field
-              label="Slugs (e.g., erp, crm, gps-tracking)"
-              value={(s.featuredProductSlugs || []).join(', ')}
-              onChange={v => update('featuredProductSlugs', v.split(',').map(x => x.trim()).filter(Boolean))}
-            />
           </>
         )}
 
