@@ -15,6 +15,14 @@ const STATUS_COLOR: Record<string, string> = {
 
 const fmt = (n: number) => `₹${n.toLocaleString('en-IN')}`;
 
+const ageHours = (date: string) => (Date.now() - new Date(date).getTime()) / 3_600_000;
+const ageLabel = (date: string) => {
+  const h = ageHours(date);
+  if (h < 1) return `${Math.max(1, Math.round(h * 60))}m ago`;
+  if (h < 48) return `${Math.round(h)}h ago`;
+  return `${Math.round(h / 24)}d ago`;
+};
+
 export default function AdminOrders() {
   const [orders, setOrders] = useState<any[]>([]);
   const [stats, setStats] = useState<any>({});
@@ -117,6 +125,14 @@ export default function AdminOrders() {
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_COLOR[o.status] || ''}`}>
                     {o.status?.toUpperCase()}
                   </span>
+                  {o.status === 'failed' && o.failureReason && (
+                    <div className="text-[10px] text-red-500/80 mt-1 max-w-[160px]">{o.failureReason}</div>
+                  )}
+                  {o.status === 'created' && (
+                    <div className={`text-[10px] mt-1 ${ageHours(o.createdAt) >= 2 ? 'text-yellow-500/80' : 'text-text2'}`}>
+                      Awaiting payment · {ageLabel(o.createdAt)}
+                    </div>
+                  )}
                 </td>
                 <td className="p-3">
                   {o.status === 'paid' ? (

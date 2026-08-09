@@ -37,6 +37,12 @@ const OrderSchema = new Schema({
   razorpayPaymentId: String,
   razorpaySignature: String,
   status: { type: String, enum: ['created', 'paid', 'failed', 'refunded'], default: 'created', index: true },
+  // Why a payment failed — captured from Razorpay's error payload, either
+  // via the checkout modal's payment.failed event (immediate, client-side)
+  // or the payment.failed webhook (authoritative, async backup). Whichever
+  // arrives first wins; both write the same shape.
+  failureReason: String,
+  failureCode: String,
   licenseKey: String,
   hosting: { type: String, enum: ['cloud', 'on-premise'], default: 'cloud' },
   billing: { type: BillingSchema, default: () => ({}) },

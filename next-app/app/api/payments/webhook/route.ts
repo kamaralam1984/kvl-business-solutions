@@ -39,6 +39,8 @@ export async function POST(req: Request) {
       sendNotification(`💰 New Paid Order — ${order.productName}`, orderEmail(order));
     } else if (event === 'payment.failed') {
       order.status = 'failed';
+      order.failureReason = payment.error_description || payment.error_reason || 'Payment failed';
+      order.failureCode = payment.error_code;
       await order.save();
     } else if (event === 'refund.processed') {
       order.status = 'refunded';

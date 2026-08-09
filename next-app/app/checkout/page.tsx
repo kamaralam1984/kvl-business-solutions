@@ -84,6 +84,17 @@ function CheckoutInner() {
         },
         modal: { ondismiss: () => setLoading(false) },
       });
+      rzp.on('payment.failed', (resp: any) => {
+        setErr(resp.error?.description || 'Payment failed. Please try again or use a different payment method.');
+        setLoading(false);
+        fetch('/api/payments/mark-failed', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            razorpay_order_id: resp.error?.metadata?.order_id || data.razorpayOrderId,
+            code: resp.error?.code, description: resp.error?.description, reason: resp.error?.reason,
+          }),
+        }).catch(() => {});
+      });
       rzp.open();
     } catch (e: any) {
       setErr(e.message || 'Failed to start checkout');
