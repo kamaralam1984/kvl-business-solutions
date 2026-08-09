@@ -21,12 +21,18 @@ export interface WAMessage {
 async function sendWATI({ phone, message }: WAMessage) {
   const mobile = phone.replace(/\D/g, '').replace(/^91/, '').slice(-10);
   const to = `91${mobile}`;
-  const res = await fetch(`${WATI_ENDPOINT}/api/v1/sendSessionMessage/${to}`, {
+  // WATI reads messageText from the query string, not the JSON body — sending
+  // it as a body param gets "message text can not be empty" back. It also
+  // returns HTTP 200 for logical failures (e.g. unknown contact, expired
+  // session), with the real outcome in `result`/`info` — checking res.ok
+  // alone lets those fail silently.
+  const url = `${WATI_ENDPOINT}/api/v1/sendSessionMessage/${to}?messageText=${encodeURIComponent(message)}`;
+  const res = await fetch(url, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${WATI_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messageText: message }),
+    headers: { Authorization: `Bearer ${WATI_KEY}` },
   });
-  if (!res.ok) throw new Error(`WATI error ${res.status}: ${await res.text()}`);
+  const data = await res.json().catch(() => null);
+  if (!res.ok || !data?.result) throw new Error(`WATI error ${res.status}: ${data?.info || 'unknown response'}`);
 }
 
 // Send an arbitrary, already-composed message — used by the admin-configurable Workflow engine
