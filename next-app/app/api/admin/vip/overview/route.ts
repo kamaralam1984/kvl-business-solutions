@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { connectDB } from '@/lib/mongodb';
 import { VipVisitor } from '@/lib/models/VipVisitor';
 import { VipSession } from '@/lib/models/VipSession';
@@ -12,6 +13,7 @@ import { requireAdmin } from '@/lib/admin-guard';
 // stream — a deliberate Phase A simplification (see PHASE22-VIP-ARCHITECTURE.md).
 export async function GET() {
   const g = await requireAdmin(); if (!g.ok) return g.response;
+  try {
   await connectDB();
 
   const now = new Date();
@@ -69,4 +71,7 @@ export async function GET() {
       score: scoreByVid.get(v.vid)?.score ?? null, tier: scoreByVid.get(v.vid)?.tier ?? null,
     })),
   });
+  } catch (e) {
+    return apiError(e);
+  }
 }

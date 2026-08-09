@@ -44,9 +44,13 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   const g = await requireAdmin(); if (!g.ok) return g.response;
-  await connectDB();
-  await OutreachCampaign.findByIdAndDelete(params.id);
-  await OutreachProspect.deleteMany({ campaignId: params.id });
-  logActivity({ action: 'outreach.campaign.delete', actorEmail: g.session?.user?.email || undefined, actorRole: 'admin', target: 'OutreachCampaign', targetId: params.id, req });
-  return NextResponse.json({ ok: true });
+  try {
+    await connectDB();
+    await OutreachCampaign.findByIdAndDelete(params.id);
+    await OutreachProspect.deleteMany({ campaignId: params.id });
+    logActivity({ action: 'outreach.campaign.delete', actorEmail: g.session?.user?.email || undefined, actorRole: 'admin', target: 'OutreachCampaign', targetId: params.id, req });
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    return apiError(e);
+  }
 }

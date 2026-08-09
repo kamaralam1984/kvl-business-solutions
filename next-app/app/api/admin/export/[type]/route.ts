@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { connectDB } from '@/lib/mongodb';
 import { Order } from '@/lib/models/Order';
 import { Lead } from '@/lib/models/Lead';
@@ -13,6 +14,7 @@ const date = (d: any) => d ? new Date(d).toISOString() : '';
 
 export async function GET(_: Request, { params }: { params: { type: string } }) {
   const g = await requireAdmin(); if (!g.ok) return g.response;
+  try {
   await connectDB();
 
   let rows: Record<string, any>[] = [];
@@ -106,4 +108,7 @@ export async function GET(_: Request, { params }: { params: { type: string } }) 
       'Content-Disposition': `attachment; filename="${filename}"`,
     },
   });
+  } catch (e) {
+    return apiError(e);
+  }
 }

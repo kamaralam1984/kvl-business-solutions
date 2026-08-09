@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Plus, X, Mail, Linkedin, Send, MessageCircle, CalendarCheck } from 'lucide-react';
+import { Plus, X, Mail, Linkedin, Send, MessageCircle, CalendarCheck, Pencil, Trash2 } from 'lucide-react';
 import { Modal } from '@/components/shared/Modal';
 
 type Campaign = {
@@ -15,6 +15,7 @@ const empty = { name: '', channel: 'email' as const, subjectTemplate: '', bodyTe
 export default function OutreachCampaignsPage() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [creating, setCreating] = useState<typeof empty | null>(null);
+  const [editing, setEditing] = useState<Pick<Campaign, '_id' | 'name' | 'channel' | 'subjectTemplate' | 'bodyTemplate' | 'status'> | null>(null);
   const [saving, setSaving] = useState(false);
   const [loadError, setLoadError] = useState(false);
 
@@ -38,6 +39,30 @@ export default function OutreachCampaignsPage() {
     } finally { setSaving(false); }
   };
 
+  const saveEdit = async () => {
+    if (!editing) return;
+    setSaving(true);
+    try {
+      const r = await fetch(`/api/admin/outreach/campaigns/${editing._id}`, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: editing.name, channel: editing.channel,
+          subjectTemplate: editing.subjectTemplate, bodyTemplate: editing.bodyTemplate,
+          status: editing.status,
+        }),
+      });
+      const d = await r.json();
+      if (d.ok) { setEditing(null); load(); } else alert(d.error || 'Failed');
+    } finally { setSaving(false); }
+  };
+
+  const del = async (id: string) => {
+    if (!confirm('Delete this campaign? Its prospects will be deleted too.')) return;
+    const r = await fetch(`/api/admin/outreach/campaigns/${id}`, { method: 'DELETE' });
+    const d = await r.json();
+    if (d.ok) load(); else alert(d.error || 'Failed');
+  };
+
   return (
     <div className="space-y-6 max-w-5xl">
       <div className="flex justify-between items-end">
@@ -57,22 +82,37 @@ export default function OutreachCampaignsPage() {
           const replied = sc.replied || 0;
           const meetings = sc.meeting_booked || 0;
           return (
-            <Link key={c._id} href={`/admin/outreach/${c._id}`} className="rounded-2xl p-5 block transition-colors hover:bg-[rgba(var(--surface)/0.03)]" style={{ background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)', border: '1px solid rgba(var(--border) / 0.06)' }}>
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  {c.channel === 'email' ? <Mail className="w-4 h-4 text-primary" /> : <Linkedin className="w-4 h-4 text-primary" />}
-                  <h3 className="font-bold" style={{ color: 'rgb(var(--text))' }}>{c.name}</h3>
+            <div key={c._id} className="relative rounded-2xl" style={{ background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)', border: '1px solid rgba(var(--border) / 0.06)' }}>
+              <Link href={`/admin/outreach/${c._id}`} className="block p-5 pr-20 transition-colors hover:bg-[rgba(var(--surface)/0.03)] rounded-2xl">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    {c.channel === 'email' ? <Mail className="w-4 h-4 text-primary" /> : <Linkedin className="w-4 h-4 text-primary" />}
+                    <h3 className="font-bold" style={{ color: 'rgb(var(--text))' }}>{c.name}</h3>
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: c.status === 'active' ? 'rgba(34,197,94,0.15)' : 'rgba(var(--surface) / 0.08)', color: c.status === 'active' ? '#4ade80' : 'rgba(var(--text) / 0.5)' }}>
+                    {c.status.toUpperCase()}
+                  </span>
                 </div>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: c.status === 'active' ? 'rgba(34,197,94,0.15)' : 'rgba(var(--surface) / 0.08)', color: c.status === 'active' ? '#4ade80' : 'rgba(var(--text) / 0.5)' }}>
-                  {c.status.toUpperCase()}
-                </span>
+                <div className="flex items-center gap-4 text-[12px] mt-3" style={{ color: 'rgba(var(--text) / 0.5)' }}>
+                  <span>{total} prospects</span>
+                  <span className="flex items-center gap-1"><MessageCircle className="w-3 h-3" /> {replied} replied</span>
+                  <span className="flex items-center gap-1"><CalendarCheck className="w-3 h-3" /> {meetings} meetings</span>
+                </div>
+              </Link>
+              <div className="absolute top-5 right-5 flex items-center gap-3">
+                <button
+                  onClick={() => setEditing({ _id: c._id, name: c.name, channel: c.channel, subjectTemplate: c.subjectTemplate, bodyTemplate: c.bodyTemplate, status: c.status })}
+                  aria-label="Edit campaign"
+                  style={{ color: 'rgba(var(--text) / 0.35)' }}
+                  className="hover:text-primary transition-colors"
+                >
+                  <Pencil className="w-3.5 h-3.5" />
+                </button>
+                <button onClick={() => del(c._id)} aria-label="Delete campaign" style={{ color: 'rgba(var(--text) / 0.35)' }} className="hover:text-red-500 transition-colors">
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
               </div>
-              <div className="flex items-center gap-4 text-[12px] mt-3" style={{ color: 'rgba(var(--text) / 0.5)' }}>
-                <span>{total} prospects</span>
-                <span className="flex items-center gap-1"><MessageCircle className="w-3 h-3" /> {replied} replied</span>
-                <span className="flex items-center gap-1"><CalendarCheck className="w-3 h-3" /> {meetings} meetings</span>
-              </div>
-            </Link>
+            </div>
           );
         })}
         {loadError && (
@@ -110,6 +150,39 @@ export default function OutreachCampaignsPage() {
               <textarea className="form-control" rows={6} placeholder="Message template — use {{name}} and {{company}} as placeholders" value={creating.bodyTemplate} onChange={e => setCreating({ ...creating, bodyTemplate: e.target.value })} />
               <button onClick={save} disabled={saving || !creating.name || !creating.bodyTemplate} className="btn btn-primary w-full justify-center">
                 <Send className="w-4 h-4" /> {saving ? 'Creating...' : 'Create Campaign'}
+              </button>
+            </div>
+        </Modal>
+      )}
+
+      {editing && (
+        <Modal
+          onClose={() => setEditing(null)}
+          containerClassName="fixed inset-0 z-50 grid place-items-center p-4 bg-black/60 backdrop-blur"
+          className="p-6 max-w-lg w-full rounded-2xl"
+          style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.08)' }}
+        >
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-extrabold" style={{ color: 'rgb(var(--text))' }}>Edit Campaign</h2>
+              <button onClick={() => setEditing(null)} style={{ color: 'rgba(var(--text) / 0.5)' }}><X className="w-5 h-5" /></button>
+            </div>
+            <div className="space-y-3">
+              <input className="form-control" placeholder="Campaign name" value={editing.name} onChange={e => setEditing({ ...editing, name: e.target.value })} />
+              <select className="form-control" value={editing.channel} onChange={e => setEditing({ ...editing, channel: e.target.value as any })}>
+                <option value="email" style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>Cold Email</option>
+                <option value="linkedin" style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>LinkedIn</option>
+              </select>
+              <select className="form-control" value={editing.status} onChange={e => setEditing({ ...editing, status: e.target.value })}>
+                <option value="draft" style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>Draft</option>
+                <option value="active" style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>Active</option>
+                <option value="paused" style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>Paused</option>
+              </select>
+              {editing.channel === 'email' && (
+                <input className="form-control" placeholder="Subject template (use {{name}}, {{company}})" value={editing.subjectTemplate} onChange={e => setEditing({ ...editing, subjectTemplate: e.target.value })} />
+              )}
+              <textarea className="form-control" rows={6} placeholder="Message template — use {{name}} and {{company}} as placeholders" value={editing.bodyTemplate} onChange={e => setEditing({ ...editing, bodyTemplate: e.target.value })} />
+              <button onClick={saveEdit} disabled={saving || !editing.name || !editing.bodyTemplate} className="btn btn-primary w-full justify-center">
+                <Send className="w-4 h-4" /> {saving ? 'Saving...' : 'Save Changes'}
               </button>
             </div>
         </Modal>
