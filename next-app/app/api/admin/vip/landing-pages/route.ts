@@ -22,12 +22,27 @@ export async function GET(req: Request) {
   const match: Record<string, any> = { startedAt: { $gte: since }, landingPage: { $exists: true, $ne: null } };
   if (pathFilter) match.landingPage = pathFilter;
 
-  const [dailyRaw, byPageRaw, byCountryRaw, byCityRaw, byChannelRaw, recentSessions] = await Promise.all([
+  const [dailyRaw, hourlyRaw, byDeviceRaw, byPageRaw, byCountryRaw, byCityRaw, byChannelRaw, recentSessions] = await Promise.all([
     VipSession.aggregate([
       { $match: match },
-      { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$startedAt' } }, count: { $sum: 1 }, visitors: { $addToSet: '$vid' } } },
+      { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$startedAt', timezone: 'Asia/Kolkata' } }, count: { $sum: 1 }, visitors: { $addToSet: '$vid' } } },
       { $project: { date: '$_id', count: 1, uniqueVisitors: { $size: '$visitors' }, _id: 0 } },
       { $sort: { date: 1 } },
+    ]),
+    // Peak-hours pattern (IST) — which hour of day this landing page gets
+    // the most traffic, aggregated across the whole selected range (like
+    // Ads Manager/AdSense's "time of day" breakdown, not just a single day).
+    VipSession.aggregate([
+      { $match: match },
+      { $group: { _id: { $hour: { date: '$startedAt', timezone: 'Asia/Kolkata' } }, count: { $sum: 1 } } },
+      { $project: { hour: '$_id', count: 1, _id: 0 } },
+      { $sort: { hour: 1 } },
+    ]),
+    VipSession.aggregate([
+      { $match: { ...match, 'device.type': { $exists: true, $ne: null } } },
+      { $group: { _id: '$device.type', count: { $sum: 1 } } },
+      { $project: { type: '$_id', count: 1, _id: 0 } },
+      { $sort: { count: -1 } },
     ]),
     VipSession.aggregate([
       { $match: match },
@@ -91,6 +106,9 @@ export async function GET(req: Request) {
     totalViews,
     totalUniqueVisitors: totalUnique,
     daily: dailyRaw,
+    // Zero-fill all 24 hours so the chart doesn't skip silent hours.
+    hourly: Array.from({ length: 24 }, (_, hour) => ({ hour, count: hourlyRaw.find((h: any) => h.hour === hour)?.count || 0 })),
+    byDevice: byDeviceRaw,
     byPage: byPageRaw,
     byCountry: byCountryRaw,
     byCity: byCityRaw,

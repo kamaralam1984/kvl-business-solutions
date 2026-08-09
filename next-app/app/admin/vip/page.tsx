@@ -2,7 +2,10 @@
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import {
+  BarChart, Bar, AreaChart, Area, PieChart, Pie, Cell, Legend,
+  XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
+} from 'recharts';
 import {
   Radio, Users, Globe2, Flame, ArrowUpRight, MapPin, Smartphone, Monitor, Tablet,
   Mail, Phone, Clock, TrendingUp, User as UserIcon,
@@ -11,12 +14,19 @@ import { AdminSkeleton } from '@/components/admin/AdminSkeleton';
 
 const CARD = { background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)', border: '1px solid rgba(var(--border) / 0.06)' };
 const DEVICE_ICON: Record<string, any> = { desktop: Monitor, mobile: Smartphone, tablet: Tablet };
+const DONUT_COLORS = ['#c8a96e', '#4ade80', '#60a5fa', '#f97316', '#a78bfa', '#f472b6', '#22d3ee'];
 
 function timeAgo(date: string | Date) {
   const s = Math.max(0, Math.floor((Date.now() - new Date(date).getTime()) / 1000));
   if (s < 60) return `${s}s`;
   if (s < 3600) return `${Math.floor(s / 60)}m`;
   return `${Math.floor(s / 3600)}h`;
+}
+
+function hourLabel(h: number) {
+  const period = h < 12 ? 'AM' : 'PM';
+  const hr = h % 12 === 0 ? 12 : h % 12;
+  return `${hr} ${period}`;
 }
 
 function PulseDot({ color = '#4ade80' }: { color?: string }) {
@@ -26,6 +36,27 @@ function PulseDot({ color = '#4ade80' }: { color?: string }) {
       <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: color }} />
     </span>
   );
+}
+
+// Animated count-up for KPI numbers — plays once whenever `value` changes,
+// eased so it settles rather than ticking linearly.
+function CountUp({ value }: { value: number }) {
+  const [display, setDisplay] = useState(0);
+  useEffect(() => {
+    if (!Number.isFinite(value)) return;
+    let raf = 0;
+    const start = performance.now();
+    const duration = 700;
+    const animateFrame = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setDisplay(Math.round(value * eased));
+      if (t < 1) raf = requestAnimationFrame(animateFrame);
+    };
+    raf = requestAnimationFrame(animateFrame);
+    return () => cancelAnimationFrame(raf);
+  }, [value]);
+  return <>{display.toLocaleString('en-IN')}</>;
 }
 
 export default function VipOverviewPage() {
@@ -103,7 +134,9 @@ export default function VipOverviewPage() {
                   <k.Icon className="w-4 h-4" style={{ color: k.color }} />
                   <span className="text-[11px] font-semibold" style={{ color: 'rgba(var(--text) / 0.4)' }}>{k.label}</span>
                 </div>
-                <div className="text-2xl font-extrabold" style={{ color: 'rgb(var(--text))' }}>{k.val}</div>
+                <div className="text-2xl font-extrabold" style={{ color: 'rgb(var(--text))' }}>
+                  {typeof k.val === 'number' ? <CountUp value={k.val} /> : k.val}
+                </div>
               </div>
             ))}
           </div>
@@ -161,27 +194,96 @@ export default function VipOverviewPage() {
             </div>
           </div>
 
-          {/* Daily trend */}
+          {/* Daily trend — AdSense-style gradient area chart */}
           <div className="kpi-enter rounded-2xl p-5" style={CARD}>
             <h2 className="text-[13px] font-bold mb-4" style={{ color: 'rgb(var(--text))' }}>Landing Page Views — Last {days} Days</h2>
             {chartData.length === 0 ? (
               <p className="text-[12px] py-10 text-center" style={{ color: 'rgba(var(--text) / 0.3)' }}>Is range mein koi data nahi hai.</p>
             ) : (
-              <ResponsiveContainer width="100%" height={260}>
-                <BarChart data={chartData}>
+              <ResponsiveContainer width="100%" height={280}>
+                <AreaChart data={chartData}>
+                  <defs>
+                    <linearGradient id="viewsGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#c8a96e" stopOpacity={0.45} />
+                      <stop offset="100%" stopColor="#c8a96e" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="uniqueGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#4ade80" stopOpacity={0.35} />
+                      <stop offset="100%" stopColor="#4ade80" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(var(--border) / 0.06)" vertical={false} />
                   <XAxis dataKey="label" tick={{ fill: 'rgba(var(--text) / 0.35)', fontSize: 11 }} interval={Math.max(0, Math.floor(chartData.length / 10))} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fill: 'rgba(var(--text) / 0.35)', fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
                   <Tooltip contentStyle={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.1)', borderRadius: 8, fontSize: 12 }} labelStyle={{ color: 'rgb(var(--text))' }} />
-                  <Bar dataKey="count" name="Views" fill="#c8a96e" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="unique" name="Unique Visitors" fill="#4ade80" radius={[4, 4, 0, 0]} />
+                  <Legend wrapperStyle={{ fontSize: 11 }} />
+                  <Area type="monotone" dataKey="count" name="Views" stroke="#c8a96e" strokeWidth={2.5} fill="url(#viewsGrad)" animationDuration={900} dot={false} activeDot={{ r: 4 }} />
+                  <Area type="monotone" dataKey="unique" name="Unique Visitors" stroke="#4ade80" strokeWidth={2.5} fill="url(#uniqueGrad)" animationDuration={900} animationBegin={150} dot={false} activeDot={{ r: 4 }} />
+                </AreaChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+
+          {/* Peak hours — same idea as AdSense's "time of day" earnings pattern */}
+          <div className="kpi-enter rounded-2xl p-5" style={CARD}>
+            <div className="flex items-center gap-2 mb-4">
+              <Clock className="w-4 h-4" style={{ color: '#60a5fa' }} />
+              <h2 className="text-[13px] font-bold" style={{ color: 'rgb(var(--text))' }}>Peak Hours (IST) — Last {days} Days</h2>
+            </div>
+            {(landing?.hourly || []).every((h: any) => h.count === 0) ? (
+              <p className="text-[12px] py-10 text-center" style={{ color: 'rgba(var(--text) / 0.3)' }}>Is range mein koi data nahi hai.</p>
+            ) : (
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={(landing?.hourly || []).map((h: any) => ({ hour: hourLabel(h.hour), count: h.count }))}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(var(--border) / 0.06)" vertical={false} />
+                  <XAxis dataKey="hour" tick={{ fill: 'rgba(var(--text) / 0.35)', fontSize: 10 }} interval={1} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fill: 'rgba(var(--text) / 0.35)', fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
+                  <Tooltip contentStyle={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.1)', borderRadius: 8, fontSize: 12 }} labelStyle={{ color: 'rgb(var(--text))' }} />
+                  <Bar dataKey="count" name="Views" fill="#60a5fa" radius={[6, 6, 0, 0]} animationDuration={800} />
                 </BarChart>
               </ResponsiveContainer>
             )}
           </div>
 
-          {/* Pages / Geo / Source */}
-          <div className="grid md:grid-cols-3 gap-4">
+          {/* Device Type + Channel Mix — donut charts */}
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="kpi-enter rounded-2xl p-5" style={CARD}>
+              <h2 className="text-[13px] font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>Device Type</h2>
+              {(landing?.byDevice || []).length === 0 ? (
+                <p className="text-[12px] py-10 text-center" style={{ color: 'rgba(var(--text) / 0.3)' }}>No device data yet.</p>
+              ) : (
+                <ResponsiveContainer width="100%" height={240}>
+                  <PieChart>
+                    <Pie data={landing.byDevice} dataKey="count" nameKey="type" innerRadius={55} outerRadius={85} paddingAngle={3} animationDuration={800} isAnimationActive>
+                      {landing.byDevice.map((_: any, i: number) => <Cell key={i} fill={DONUT_COLORS[i % DONUT_COLORS.length]} stroke="none" />)}
+                    </Pie>
+                    <Tooltip contentStyle={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.1)', borderRadius: 8, fontSize: 12 }} labelStyle={{ color: 'rgb(var(--text))' }} />
+                    <Legend wrapperStyle={{ fontSize: 11 }} />
+                  </PieChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+
+            <div className="kpi-enter rounded-2xl p-5" style={CARD}>
+              <h2 className="text-[13px] font-bold mb-2" style={{ color: 'rgb(var(--text))' }}>Traffic Source</h2>
+              {(landing?.byChannel || []).length === 0 ? (
+                <p className="text-[12px] py-10 text-center" style={{ color: 'rgba(var(--text) / 0.3)' }}>No sessions yet.</p>
+              ) : (
+                <ResponsiveContainer width="100%" height={240}>
+                  <PieChart>
+                    <Pie data={landing.byChannel} dataKey="count" nameKey="channel" innerRadius={55} outerRadius={85} paddingAngle={3} animationDuration={800} isAnimationActive>
+                      {landing.byChannel.map((_: any, i: number) => <Cell key={i} fill={DONUT_COLORS[i % DONUT_COLORS.length]} stroke="none" />)}
+                    </Pie>
+                    <Tooltip contentStyle={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.1)', borderRadius: 8, fontSize: 12 }} labelStyle={{ color: 'rgb(var(--text))' }} />
+                    <Legend wrapperStyle={{ fontSize: 11 }} />
+                  </PieChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </div>
+
+          {/* Pages / Geo */}
+          <div className="grid md:grid-cols-2 gap-4">
             <div className="kpi-enter rounded-2xl p-5" style={CARD}>
               <h2 className="text-[13px] font-bold mb-4" style={{ color: 'rgb(var(--text))' }}>Top Landing Pages</h2>
               <div className="space-y-2">
@@ -203,19 +305,6 @@ export default function VipOverviewPage() {
                 {(landing?.byCity || []).map((c: any) => (
                   <div key={`${c.city}-${c.country}`} className="flex justify-between text-[12px]">
                     <span className="truncate mr-2" style={{ color: 'rgba(var(--text) / 0.6)' }}>{c.city}{c.region ? `, ${c.region}` : ''}</span>
-                    <span className="font-semibold shrink-0" style={{ color: 'rgb(var(--text))' }}>{c.count}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="kpi-enter rounded-2xl p-5" style={CARD}>
-              <h2 className="text-[13px] font-bold mb-4" style={{ color: 'rgb(var(--text))' }}>Traffic Source</h2>
-              <div className="space-y-2">
-                {(landing?.byChannel || []).length === 0 && <p className="text-[12px]" style={{ color: 'rgba(var(--text) / 0.3)' }}>No sessions yet.</p>}
-                {(landing?.byChannel || []).map((c: any) => (
-                  <div key={c.channel} className="flex justify-between text-[12px]">
-                    <span className="truncate mr-2" style={{ color: 'rgba(var(--text) / 0.6)' }}>{c.channel}</span>
                     <span className="font-semibold shrink-0" style={{ color: 'rgb(var(--text))' }}>{c.count}</span>
                   </div>
                 ))}
