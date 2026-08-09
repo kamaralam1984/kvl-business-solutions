@@ -187,8 +187,8 @@ export function GetQuoteClient() {
             <p className="text-center text-[10px] tracking-wide uppercase text-white/35 mt-2.5 mb-4">Real websites we&apos;ve built for real businesses</p>
           </div>
 
-          <div className="relative rounded-2xl p-[1.5px] bg-gradient-to-br from-gold/70 via-gold-light/25 to-transparent shadow-glow-gold">
-            <form onSubmit={submit} className="bg-white rounded-[15px] p-5 sm:p-7 space-y-2.5 sm:space-y-3">
+          <div className="relative rounded-2xl p-[2px] shadow-glow-gold" style={{ background: 'linear-gradient(160deg,#FF9933,#e8c890 50%,#138808)' }}>
+            <form onSubmit={submit} className="bg-white rounded-[14px] p-5 sm:p-7 space-y-2.5 sm:space-y-3">
               {!showCallbackForm && !callbackDone && (
                 <>
                   <div>
