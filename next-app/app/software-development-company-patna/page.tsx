@@ -1,6 +1,12 @@
 import Link from 'next/link';
-import * as Icons from 'lucide-react';
-import { ArrowUpRight, ArrowRight, MapPin, ShieldCheck, MessageCircle } from 'lucide-react';
+import {
+  ArrowUpRight, ArrowRight, MapPin, ShieldCheck, MessageCircle,
+  LaptopMinimal, Globe, Smartphone, Satellite, HardHat, Cog, Bot, Video,
+  Network, Cloud, Brain, Megaphone, Palette, Users, Contact2, Webhook, Tag,
+  Workflow, Factory, Truck, School, Hospital, Store, Building2, Landmark,
+  UtensilsCrossed, Wallet, Box,
+  type LucideIcon,
+} from 'lucide-react';
 import { services } from '@/lib/data/services';
 import { industries } from '@/lib/data/industries';
 import { caseStudies } from '@/lib/data/case-studies';
@@ -31,8 +37,15 @@ const businessContext = [
   "Being based here also means we're not guessing at the constraints — GST invoicing rules, local vendor and staffing patterns, the realities of running a multi-branch retail or NBFC operation across Bihar, or a school managing admissions across a full academic year. That context shows up in the software itself, not just the sales conversation.",
 ];
 
+const ICON_MAP: Record<string, LucideIcon> = {
+  LaptopMinimal, Globe, Smartphone, Satellite, HardHat, Cog, Bot, Video,
+  Network, Cloud, Brain, Megaphone, Palette, Users, Contact2, Webhook, Tag,
+  Workflow, Factory, Truck, School, Hospital, Store, Building2, Landmark,
+  UtensilsCrossed, Wallet, Box,
+};
+
 function Icon({ name, className }: { name: string; className?: string }) {
-  const Cmp = (Icons as any)[name] || Icons.Box;
+  const Cmp = ICON_MAP[name] || Box;
   return <Cmp className={className} />;
 }
 

@@ -1,5 +1,9 @@
 import Link from 'next/link';
-import * as Icons from 'lucide-react';
+import {
+  HardHat, Cog, Factory, Truck, School, Hospital, Store, Building2, Landmark,
+  UtensilsCrossed, Wallet, Box,
+  type LucideIcon,
+} from 'lucide-react';
 import { PageHero } from '@/components/shared/PageHero';
 import { CtaBanner } from '@/components/home/CtaBanner';
 import { TiltCard } from '@/components/shared/TiltCard';
@@ -16,6 +20,11 @@ export const metadata = {
   openGraph: { title, description, url: `${SITE}/industries`, type: 'website' },
 };
 
+const ICON_MAP: Record<string, LucideIcon> = {
+  HardHat, Cog, Factory, Truck, School, Hospital, Store, Building2, Landmark,
+  UtensilsCrossed, Wallet, Box,
+};
+
 export default function IndustriesPage() {
   return (
     <>
@@ -23,7 +32,7 @@ export default function IndustriesPage() {
       <section className="section">
         <div className="container space-y-5">
           {industries.map(ind => {
-            const Icon = (Icons as any)[ind.icon] || Icons.Box;
+            const Icon = ICON_MAP[ind.icon] || Box;
             return (
               <TiltCard key={ind.slug} className="card-base p-7 grid md:grid-cols-[auto_1fr_auto] gap-6 items-center">
                 <Link href={`/industries/${ind.slug}`} className="w-20 h-20 rounded-2xl grid place-items-center text-white text-3xl" style={{ background: `linear-gradient(135deg, ${ind.c1}, ${ind.c2})` }}>

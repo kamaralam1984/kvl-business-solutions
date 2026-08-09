@@ -2,10 +2,26 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import * as Icons from 'lucide-react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import {
+  ChevronLeft, ChevronRight,
+  Box, CheckCircle2, Globe, TrendingUp, Building2, Code2, Handshake, Receipt, Network, Boxes,
+  Satellite, GraduationCap, Stethoscope, HardHat, Wrench, BadgeIndianRupee, Fingerprint, Brain,
+  UtensilsCrossed, Hotel, Radar, BarChart3, Map, ShieldCheck, Locate, MapPin, ShieldAlert, Users,
+  CalendarCheck, Truck,
+} from 'lucide-react';
 import type { Software } from '@/lib/data/software';
 import { caseStudies } from '@/lib/data/case-studies';
+
+// Icons reachable via the slide's `icon` field (case-study icon or a software
+// product's icon) or a case study's `keyFeatures[].icon` — every value that
+// currently appears across lib/data/case-studies.ts and lib/data/software.ts.
+const ICON_MAP: Record<string, LucideIcon> = {
+  Box, CheckCircle2, Globe, TrendingUp, Building2, Code2, Handshake, Receipt, Network, Boxes,
+  Satellite, GraduationCap, Stethoscope, HardHat, Wrench, BadgeIndianRupee, Fingerprint, Brain,
+  UtensilsCrossed, Hotel, Radar, BarChart3, Map, ShieldCheck, Locate, MapPin, ShieldAlert, Users,
+  CalendarCheck, Truck,
+};
 
 const shortLabel = (name: string) =>
   name.replace(/ Software$/, '').replace(/ Management$/, '').replace(/ System$/, '');
@@ -71,7 +87,7 @@ export function HeroShowcaseSlider() {
 
   if (!slides || slides.length === 0) return null;
   const slide = slides[index];
-  const FooterIcon = (Icons as any)[slide.icon] || Icons.Box;
+  const FooterIcon = ICON_MAP[slide.icon] || Box;
   const glowA = GLOW_COLORS[index % GLOW_COLORS.length];
   const glowB = GLOW_COLORS[(index + 3) % GLOW_COLORS.length];
 
@@ -175,7 +191,7 @@ export function HeroShowcaseSlider() {
           {/* Feature row */}
           <div className="grid grid-cols-3 gap-2 mb-5">
             {slide.features.map((f, i) => {
-              const FeatureIcon = f.icon ? ((Icons as any)[f.icon] || Icons.CheckCircle2) : Icons.CheckCircle2;
+              const FeatureIcon = f.icon ? (ICON_MAP[f.icon] || CheckCircle2) : CheckCircle2;
               return (
                 <div key={i} className="rounded-xl p-2.5 text-center" style={{ background: 'rgba(var(--text) / 0.03)' }}>
                   <FeatureIcon className="w-4 h-4 mx-auto mb-1.5" style={{ color: '#c8a870' }} />

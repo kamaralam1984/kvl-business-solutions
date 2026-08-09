@@ -1,8 +1,16 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import * as Icons from 'lucide-react';
-import { ChevronRight, ArrowUpRight, CheckCircle2, ExternalLink, Compass } from 'lucide-react';
+import {
+  ChevronRight, ArrowUpRight, CheckCircle2, ExternalLink, Compass,
+  TrendingUp, Radar, BarChart3, Clock, Eye, Wand2, Scissors, Layers, Map,
+  ShieldCheck, Locate, SlidersHorizontal, Sparkles, MessageCircle, Building2,
+  MapPin, ShieldAlert, Users, BatteryMedium, Globe, Receipt, CalendarCheck,
+  Truck, ShoppingCart,
+  LaptopMinimal, Smartphone, Satellite, HardHat, Cog, Bot, Video, Network,
+  Cloud, Brain, Megaphone, Palette, Contact2, Webhook, Tag, Workflow, Box,
+  type LucideIcon,
+} from 'lucide-react';
 import { type CaseStudy } from '@/lib/data/case-studies';
 import { getLiveCaseStudy, getLiveCaseStudies } from '@/lib/data/live-case-studies';
 import { services } from '@/lib/data/services';
@@ -28,8 +36,17 @@ const processSteps = [
   { num: '07', title: 'Support',     desc: 'Training and documentation come standard, plus a year of free updates and support.' },
 ];
 
+const ICON_MAP: Record<string, LucideIcon> = {
+  TrendingUp, Radar, BarChart3, Clock, Eye, Wand2, Scissors, Layers, Map,
+  ShieldCheck, Locate, SlidersHorizontal, Sparkles, MessageCircle, Building2,
+  MapPin, ShieldAlert, Users, BatteryMedium, Globe, Receipt, CalendarCheck,
+  Truck, ShoppingCart,
+  LaptopMinimal, Smartphone, Satellite, HardHat, Cog, Bot, Video, Network,
+  Cloud, Brain, Megaphone, Palette, Contact2, Webhook, Tag, Workflow, Box,
+};
+
 function Icon({ name, className }: { name: string; className?: string }) {
-  const Cmp = (Icons as any)[name] || Icons.Box;
+  const Cmp = ICON_MAP[name] || Box;
   return <Cmp className={className} />;
 }
 

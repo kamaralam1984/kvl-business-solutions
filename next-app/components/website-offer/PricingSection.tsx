@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
-import * as Icons from 'lucide-react';
-import { Check, X, AlertTriangle, Phone } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { Check, X, AlertTriangle, Phone, Globe, TrendingUp, Building2, Code2 } from 'lucide-react';
 import { formatINR } from '@/lib/utils';
 import { useReveal, revealStyle } from '@/lib/hooks/useReveal';
 import type { Software } from '@/lib/data/software';
@@ -25,6 +25,10 @@ const DOMAIN_INCLUDED: Record<string, boolean> = {
 };
 const ORDER = ['independence-day-website', 'website-business-4999', 'website-growth-9999', 'website-advanced-14999', 'website-custom-25000'];
 
+// Icons for the plans in ORDER above — every distinct `icon` value those
+// plans carry in lib/data/software.ts.
+const ICON_MAP: Record<string, LucideIcon> = { Globe, TrendingUp, Building2, Code2 };
+
 export function PricingSection({ plans }: { plans: Software[] }) {
   const { ref, inView } = useReveal();
   const sorted = ORDER.map(slug => plans.find(p => p.slug === slug)).filter((p): p is Software => Boolean(p));
@@ -45,7 +49,7 @@ export function PricingSection({ plans }: { plans: Software[] }) {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
           {sorted.map((p, i) => {
-            const Icon = (Icons as any)[p.icon] || Icons.Globe;
+            const Icon = ICON_MAP[p.icon] || Globe;
             const domainIncluded = DOMAIN_INCLUDED[p.slug];
             const days = DELIVERY_DAYS[p.slug];
             const isCustom = p.slug === 'website-custom-25000';

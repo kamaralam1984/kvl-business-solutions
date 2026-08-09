@@ -2,16 +2,26 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import * as Icons from 'lucide-react';
-import { Eye, ShoppingCart, Check, Calendar, Zap, Play } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import {
+  Eye, ShoppingCart, Check, Calendar, Zap, Play, Box,
+  BadgeIndianRupee, Boxes, Brain, Building2, Code2, Fingerprint, Globe, GraduationCap, Handshake,
+  HardHat, Hotel, Network, Receipt, Satellite, Stethoscope, TrendingUp, UtensilsCrossed, Wrench,
+} from 'lucide-react';
 import { TiltCard } from '@/components/shared/TiltCard';
 import { formatINR } from '@/lib/utils';
 import type { Software } from '@/lib/data/software';
 
+// Every distinct top-level `icon` value used in lib/data/software.ts.
+const ICON_MAP: Record<string, LucideIcon> = {
+  BadgeIndianRupee, Boxes, Brain, Building2, Code2, Fingerprint, Globe, GraduationCap, Handshake,
+  HardHat, Hotel, Network, Receipt, Satellite, Stethoscope, TrendingUp, UtensilsCrossed, Wrench,
+};
+
 export function SoftwareCard({ product }: { product: Software }) {
   const [mode, setMode] = useState<'buy' | 'rent'>('buy');
   const [host, setHost] = useState<'cloud' | 'onprem'>('cloud');
-  const Icon = (Icons as any)[product.icon] || Icons.Box;
+  const Icon = ICON_MAP[product.icon] || Box;
   const wa = (process.env.NEXT_PUBLIC_WHATSAPP || '919942000413').replace(/\D/g, '');
   const buyPrice = product.buyOnly
     ? product.price

@@ -1,14 +1,37 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import * as Icons from 'lucide-react';
-import { ShoppingCart, Zap, X, Menu, LogOut, Bell, Search } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import {
+  ShoppingCart, Zap, X, Menu, LogOut, Bell, Search, Box, Circle,
+  BadgeIndianRupee, Boxes, Brain, Building2, Code2, Fingerprint, Globe, GraduationCap, Handshake,
+  HardHat, Hotel, Network, Receipt, Satellite, Stethoscope, TrendingUp, UtensilsCrossed, Wrench,
+  AlertTriangle, ArrowDownCircle, ArrowUpCircle, BarChart2, Bed, BedDouble, BookOpen, Briefcase,
+  CalendarCheck, CalendarDays, CalendarOff, ChefHat, ClipboardList, Clock, Cog, CreditCard,
+  DollarSign, FileText, FlaskConical, GitBranch, Grid3X3, Home, LayoutDashboard, Map, MapPin,
+  MessageSquare, Package, Pill, Route, ShoppingBag, Sparkles, Truck, Users,
+} from 'lucide-react';
 import { formatINR } from '@/lib/utils';
 import type { Software } from '@/lib/data/software';
 
+// Every distinct top-level `icon` value used in lib/data/software.ts.
+const PRODUCT_ICON_MAP: Record<string, LucideIcon> = {
+  BadgeIndianRupee, Boxes, Brain, Building2, Code2, Fingerprint, Globe, GraduationCap, Handshake,
+  HardHat, Hotel, Network, Receipt, Satellite, Stethoscope, TrendingUp, UtensilsCrossed, Wrench,
+};
+
+// Every distinct `demoNav[].icon` value used in lib/data/software.ts.
+const NAV_ICON_MAP: Record<string, LucideIcon> = {
+  AlertTriangle, ArrowDownCircle, ArrowUpCircle, BadgeIndianRupee, BarChart2, Bed, BedDouble, Bell,
+  BookOpen, Briefcase, CalendarCheck, CalendarDays, CalendarOff, ChefHat, ClipboardList, Clock,
+  Cog, CreditCard, DollarSign, FileText, FlaskConical, GitBranch, Globe, Grid3X3, Home,
+  LayoutDashboard, Map, MapPin, MessageSquare, Package, Pill, Receipt, Route, ShoppingBag,
+  ShoppingCart, Sparkles, TrendingUp, Truck, Users, Zap,
+};
+
 export function DemoShell({ product, children, activeNav, onNavChange }: { product: Software; children: React.ReactNode; activeNav: number; onNavChange: (i: number) => void }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const Icon = (Icons as any)[product.icon] || Icons.Box;
+  const Icon = PRODUCT_ICON_MAP[product.icon] || Box;
   const wa = (process.env.NEXT_PUBLIC_WHATSAPP || '919942000413').replace(/\D/g, '');
 
   return (
@@ -46,7 +69,7 @@ export function DemoShell({ product, children, activeNav, onNavChange }: { produ
           {/* Nav */}
           <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
             {product.demoNav.map((item, i) => {
-              const NavIcon = (Icons as any)[item.icon] || Icons.Circle;
+              const NavIcon = NAV_ICON_MAP[item.icon] || Circle;
               return (
                 <button
                   key={item.label}
@@ -102,7 +125,7 @@ export function DemoShell({ product, children, activeNav, onNavChange }: { produ
           <div className="bg-slate-900/50 px-6 py-3 border-b border-slate-800/60 flex items-center gap-2">
             {(() => {
               const item = product.demoNav[activeNav];
-              const NavIcon = (Icons as any)[item.icon] || Icons.Circle;
+              const NavIcon = NAV_ICON_MAP[item.icon] || Circle;
               return (
                 <>
                   <NavIcon className="w-4 h-4" style={{ color: product.c1 }} />

@@ -1,7 +1,12 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import * as Icons from 'lucide-react';
-import { CheckCircle2, ArrowRight, ExternalLink } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import {
+  CheckCircle2, ArrowRight, ExternalLink, Box,
+  LaptopMinimal, Globe, Smartphone, Satellite, HardHat, Cog, Bot, Video, Network, Cloud, Brain,
+  Megaphone, Palette, Users, Contact2, Webhook, Tag, Workflow,
+  Factory, Truck, School, Hospital, Store, Building2, Landmark, UtensilsCrossed, Wallet,
+} from 'lucide-react';
 import { services } from '@/lib/data/services';
 import { getServiceDetail } from '@/lib/data/service-details';
 import { industries } from '@/lib/data/industries';
@@ -23,8 +28,17 @@ const processSteps = [
   { num: '07', title: 'Support',     desc: 'Training and documentation come standard, plus a year of free updates and support.' },
 ];
 
+// Every distinct `icon` value used across lib/data/services.ts and
+// lib/data/industries.ts — the only two data sources whose icon strings can
+// reach this component (service.icon, ind.icon, s.icon).
+const ICON_MAP: Record<string, LucideIcon> = {
+  LaptopMinimal, Globe, Smartphone, Satellite, HardHat, Cog, Bot, Video, Network, Cloud, Brain,
+  Megaphone, Palette, Users, Contact2, Webhook, Tag, Workflow,
+  Factory, Truck, School, Hospital, Store, Building2, Landmark, UtensilsCrossed, Wallet,
+};
+
 function Icon({ name, className }: { name: string; className?: string }) {
-  const Cmp = (Icons as any)[name] || Icons.Box;
+  const Cmp = ICON_MAP[name] || Box;
   return <Cmp className={className} />;
 }
 

@@ -1,8 +1,12 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import * as Icons from 'lucide-react';
-import { ArrowUpRight, Check } from 'lucide-react';
+import {
+  ArrowUpRight, Check,
+  Handshake, Receipt, Network, Boxes, Satellite, GraduationCap, Stethoscope,
+  HardHat, Wrench, Fingerprint, UtensilsCrossed, Hotel, Building2, Box,
+  type LucideIcon,
+} from 'lucide-react';
 import { industries } from '@/lib/data/industries';
 import { softwareProducts } from '@/lib/data/software';
 import { caseStudies } from '@/lib/data/case-studies';
@@ -12,8 +16,13 @@ import { CtaBanner } from '@/components/home/CtaBanner';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
 
+const ICON_MAP: Record<string, LucideIcon> = {
+  Handshake, Receipt, Network, Boxes, Satellite, GraduationCap, Stethoscope,
+  HardHat, Wrench, Fingerprint, UtensilsCrossed, Hotel, Building2, Box,
+};
+
 function Icon({ name, className }: { name: string; className?: string }) {
-  const Cmp = (Icons as any)[name] || Icons.Box;
+  const Cmp = ICON_MAP[name] || Box;
   return <Cmp className={className} />;
 }
 

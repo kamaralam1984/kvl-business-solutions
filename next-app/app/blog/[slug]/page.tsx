@@ -1,7 +1,13 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import * as Icons from 'lucide-react';
-import { ChevronRight, ArrowUpRight, Clock, Calendar, User, List } from 'lucide-react';
+import {
+  ChevronRight, ArrowUpRight, Clock, Calendar, User, List,
+  LaptopMinimal, Globe, Smartphone, Satellite, HardHat, Cog, Bot, Video,
+  Network, Cloud, Brain, Megaphone, Palette, Users, Contact2, Webhook, Tag,
+  Workflow, Factory, Truck, School, Hospital, Store, Building2, Landmark,
+  UtensilsCrossed, Wallet, Box,
+  type LucideIcon,
+} from 'lucide-react';
 import { DEFAULT_BLOG_AUTHOR, type BlogPost } from '@/lib/data/blog';
 import { getLiveBlogPost, getLiveBlogPosts } from '@/lib/data/live-blog';
 import { services } from '@/lib/data/services';
@@ -17,8 +23,15 @@ const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.c
 // build time) so Admin → Blog posts show up without a full redeploy.
 export const revalidate = 300;
 
+const ICON_MAP: Record<string, LucideIcon> = {
+  LaptopMinimal, Globe, Smartphone, Satellite, HardHat, Cog, Bot, Video,
+  Network, Cloud, Brain, Megaphone, Palette, Users, Contact2, Webhook, Tag,
+  Workflow, Factory, Truck, School, Hospital, Store, Building2, Landmark,
+  UtensilsCrossed, Wallet, Box,
+};
+
 function Icon({ name, className }: { name: string; className?: string }) {
-  const Cmp = (Icons as any)[name] || Icons.Box;
+  const Cmp = ICON_MAP[name] || Box;
   return <Cmp className={className} />;
 }
 

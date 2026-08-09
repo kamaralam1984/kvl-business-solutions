@@ -3,10 +3,25 @@ import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CtaBanner } from '@/components/home/CtaBanner';
-import * as Icons from 'lucide-react';
-import { Monitor, Smartphone, ExternalLink, Globe, Sparkles } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import {
+  Monitor, Smartphone, ExternalLink, Globe, Sparkles,
+  Briefcase, Building2, GraduationCap, Hospital, HardHat, Satellite, ShoppingCart, Cog, Landmark,
+  UserSquare, Video, Home, Code, UtensilsCrossed, BedDouble, Dumbbell, Truck, Plane, Scale, Pill,
+  BookOpen, Leaf, Car, Wrench, Calculator, Sofa, Rocket,
+} from 'lucide-react';
 import { DEMO_CATEGORIES } from '@/lib/data/demo-categories';
 import { formatINR } from '@/lib/utils';
+
+// Every `iconName` an admin can pick from the Admin > Demos icon dropdown
+// (app/admin/demos/page.tsx ICON_OPTIONS) plus every value used by the
+// hardcoded fallback demo list (app/website-demos/page.tsx / lib/data/default-demos.ts)
+// shown when the DB has no entries yet — the two sources this field can come from.
+const ICON_MAP: Record<string, LucideIcon> = {
+  Globe, Briefcase, Building2, GraduationCap, Hospital, HardHat, Satellite, ShoppingCart, Cog,
+  Landmark, UserSquare, Video, Home, Smartphone, Code, UtensilsCrossed, BedDouble, Dumbbell, Truck,
+  Plane, Scale, Sparkles, Pill, BookOpen, Leaf, Car, Wrench, Calculator, Sofa, Rocket,
+};
 
 type Demo = {
   _id: string;
@@ -108,7 +123,7 @@ export function DemosClient({ demos }: { demos: Demo[] }) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((d, i) => {
                 const v = view[d._id] || 'desktop';
-                const Icon = (Icons as any)[d.iconName] || Globe;
+                const Icon = ICON_MAP[d.iconName] || Globe;
                 const catLabel = usedCats.find(c => c.id === d.category)?.label || d.category;
                 return (
                   <motion.div

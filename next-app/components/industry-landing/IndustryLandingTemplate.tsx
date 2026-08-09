@@ -1,6 +1,11 @@
 import Link from 'next/link';
-import * as Icons from 'lucide-react';
-import { ArrowUpRight, ArrowRight, ShieldCheck, MessageCircle, Check } from 'lucide-react';
+import {
+  ArrowUpRight, ArrowRight, ShieldCheck, MessageCircle, Check,
+  LaptopMinimal, Globe, Smartphone, Satellite, HardHat, Cog, Bot, Video,
+  Network, Cloud, Brain, Megaphone, Palette, Users, Contact2, Webhook, Tag,
+  Workflow, Box,
+  type LucideIcon,
+} from 'lucide-react';
 import { IndustryLandingPage } from '@/lib/data/industry-landing-pages';
 import { services } from '@/lib/data/services';
 import { caseStudies } from '@/lib/data/case-studies';
@@ -23,8 +28,14 @@ const processSteps = [
 
 const TECH_STACK = ['Next.js', 'React', 'Node.js', 'TypeScript', 'MongoDB', 'AI / LLM Integration', 'GPS & Mapping APIs', 'Cloud Hosting (AWS / Azure / GCP)'];
 
+const ICON_MAP: Record<string, LucideIcon> = {
+  LaptopMinimal, Globe, Smartphone, Satellite, HardHat, Cog, Bot, Video,
+  Network, Cloud, Brain, Megaphone, Palette, Users, Contact2, Webhook, Tag,
+  Workflow, Box,
+};
+
 function Icon({ name, className }: { name: string; className?: string }) {
-  const Cmp = (Icons as any)[name] || Icons.Box;
+  const Cmp = ICON_MAP[name] || Box;
   return <Cmp className={className} />;
 }
 

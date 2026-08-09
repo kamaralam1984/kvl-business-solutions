@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import * as Icons from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { getLiveSoftwareProduct, getLiveSoftwareProducts } from '@/lib/data/live-software';
 import { PageHero } from '@/components/shared/PageHero';
 import { JsonLd } from '@/components/shared/JsonLd';
@@ -10,9 +10,27 @@ import { ViewContentTracker } from '@/components/analytics/ViewContentTracker';
 import { formatINR } from '@/lib/utils';
 import { connectDB } from '@/lib/mongodb';
 import { Review } from '@/lib/models/Review';
-import { Check, Cloud, Server, ShieldCheck, Headphones, RefreshCcw, Award, Play, Zap } from 'lucide-react';
+import {
+  Check, Cloud, Server, ShieldCheck, Headphones, RefreshCcw, Award, Play, Zap,
+  BadgeIndianRupee, BarChart2, Bell, BookOpen, CalendarClock, CalendarX2, ChefHat, ClipboardCheck,
+  ClipboardList, Clock, CreditCard, Eye, FileCheck, FileText, Fingerprint, Fuel, GitBranch, Globe,
+  Layers, LayoutGrid, MapPin, MessageSquare, Navigation, Network, PackageCheck, Receipt, Rocket,
+  ScanLine, Search, Settings, ShieldAlert, Smartphone, Sparkles, Target, TrendingDown, TrendingUp,
+  Users, Warehouse, Code2,
+} from 'lucide-react';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
+
+// Every distinct `icon` value used inside `benefits[]` across
+// lib/data/software.ts — the only data reaching this lookup. Zap (imported
+// above) is both the fallback and one of the real benefit icons.
+const ICON_MAP: Record<string, LucideIcon> = {
+  BadgeIndianRupee, BarChart2, Bell, BookOpen, CalendarClock, CalendarX2, ChefHat, ClipboardCheck,
+  ClipboardList, Clock, Cloud, Code2, CreditCard, Eye, FileCheck, FileText, Fingerprint, Fuel,
+  GitBranch, Globe, Headphones, Layers, LayoutGrid, MapPin, MessageSquare, Navigation, Network,
+  PackageCheck, Receipt, Rocket, ScanLine, Search, Settings, ShieldAlert, ShieldCheck, Smartphone,
+  Sparkles, Target, TrendingDown, TrendingUp, Users, Warehouse, Zap,
+};
 
 // Re-generated every 5 minutes (and on-demand for slugs not pre-rendered at
 // build time) so Admin → Products edits (price, description, active/hidden)
@@ -149,7 +167,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
                 <p className="text-text2 text-sm mb-5">Not just features — real, measurable impact on how you operate day to day.</p>
                 <div className="grid sm:grid-cols-3 gap-4">
                   {product.benefits.map(b => {
-                    const BenefitIcon = (Icons as any)[b.icon] || Icons.Zap;
+                    const BenefitIcon = ICON_MAP[b.icon] || Zap;
                     return (
                       <div key={b.title} className="p-4 rounded-xl" style={{ background: 'rgba(var(--text) / 0.03)' }}>
                         <div

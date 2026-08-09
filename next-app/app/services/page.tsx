@@ -2,10 +2,21 @@
 import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { services } from '@/lib/data/services';
-import * as Icons from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import {
+  ArrowRight, CheckCircle2, Box,
+  LaptopMinimal, Globe, Smartphone, Satellite, HardHat, Cog, Bot, Video, Network, Cloud, Brain,
+  Megaphone, Palette, Users, Contact2, Webhook, Tag, Workflow,
+} from 'lucide-react';
 import { JsonLd } from '@/components/shared/JsonLd';
+
+// Every distinct `icon` value used across lib/data/services.ts, plus the
+// fallback (Box) for an unrecognized name.
+const ICON_MAP: Record<string, LucideIcon> = {
+  LaptopMinimal, Globe, Smartphone, Satellite, HardHat, Cog, Bot, Video, Network, Cloud, Brain,
+  Megaphone, Palette, Users, Contact2, Webhook, Tag, Workflow,
+};
 
 function FadeIn({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);
@@ -119,7 +130,7 @@ export default function ServicesPage() {
           </FadeIn>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {services.map((s, i) => {
-              const Icon = (Icons as any)[s.icon] || Icons.Box;
+              const Icon = ICON_MAP[s.icon] || Box;
               return (
                 <FadeIn key={s.slug} delay={i * 0.05}>
                   <div className="card-premium p-6 group h-full flex flex-col">

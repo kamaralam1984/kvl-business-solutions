@@ -1,8 +1,11 @@
 import Link from 'next/link';
 import { getLiveCourses } from '@/lib/data/live-courses';
 import { PageHero } from '@/components/shared/PageHero';
-import * as Icons from 'lucide-react';
-import { BookOpen, Clock, GraduationCap, ArrowRight } from 'lucide-react';
+import {
+  BookOpen, Clock, GraduationCap, ArrowRight,
+  Network, Satellite, Handshake, BadgeIndianRupee,
+  type LucideIcon,
+} from 'lucide-react';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
 const title = 'Smart Learning Engine — Free Business & Software Courses';
@@ -14,6 +17,8 @@ export const metadata = {
   alternates: { canonical: `${SITE}/learn` },
   openGraph: { title, description, url: `${SITE}/learn`, type: 'website' },
 };
+
+const ICON_MAP: Record<string, LucideIcon> = { Network, Satellite, Handshake, BadgeIndianRupee };
 
 export default async function LearnPage() {
   const courses = await getLiveCourses();
@@ -46,7 +51,7 @@ export default async function LearnPage() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {courses.map(c => {
-              const Icon = (Icons as any)[c.icon] || BookOpen;
+              const Icon = ICON_MAP[c.icon] || BookOpen;
               return (
                 <Link key={c.slug} href={`/learn/${c.slug}`} className="card-base overflow-hidden block group hover:shadow-card-hover transition-all">
                   <div className="h-32 relative grid place-items-center text-white" style={{ background: `linear-gradient(135deg, ${c.c1}, ${c.c2})` }}>
