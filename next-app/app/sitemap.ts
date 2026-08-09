@@ -8,22 +8,26 @@ import { getLiveSoftwareProducts } from '@/lib/data/live-software';
 import { getLiveCaseStudies } from '@/lib/data/live-case-studies';
 import { getLiveCourses } from '@/lib/data/live-courses';
 import { getLiveBlogPosts } from '@/lib/data/live-blog';
+import { connectDB } from '@/lib/mongodb';
+import { Job } from '@/lib/models/Job';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const site = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
   const now = new Date();
 
-  const [softwareProducts, caseStudies, courses, blogPosts] = await Promise.all([
+  await connectDB();
+  const [softwareProducts, caseStudies, courses, blogPosts, jobs] = await Promise.all([
     getLiveSoftwareProducts(),
     getLiveCaseStudies(),
     getLiveCourses(),
     getLiveBlogPosts(),
+    Job.find({ active: true }, { slug: 1 }).lean(),
   ]);
 
   const staticPaths = [
     '', 'about', 'services', 'software', 'industries', 'projects', 'clients',
-    'website-demos', 'contact', 'support', 'faq', 'pricing', 'book-demo', 'docs', 'brand',
-    'voice', 'mock-interview', 'careers', 'learn', 'downloads', 'blog', 'global',
+    'website-demos', 'website-offer', 'contact', 'support', 'faq', 'pricing', 'book-demo', 'docs', 'brand',
+    'voice', 'mock-interview', 'careers', 'learn', 'downloads', 'blog', 'global', 'reviews',
     'software-development-company-patna', 'site-map',
     'privacy', 'terms', 'refund-policy', 'shipping-policy',
     'login', 'register',
@@ -89,6 +93,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       changeFrequency: 'monthly' as const,
       priority: 0.7,
+    })),
+    ...jobs.map((j: any) => ({
+      url: `${site}/careers/${j.slug}`,
+      lastModified: now,
+      changeFrequency: 'weekly' as const,
+      priority: 0.5,
     })),
   ];
 }

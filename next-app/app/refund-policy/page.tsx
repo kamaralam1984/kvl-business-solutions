@@ -1,6 +1,15 @@
 import { LegalLayout } from '@/components/shared/LegalLayout';
 
-export const metadata = { title: 'Refund & Cancellation Policy — KVL' };
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
+const title = 'Refund & Cancellation Policy — KVL';
+const description = '30-day money-back guarantee, how to request a refund, non-refundable items, and how to cancel a subscription.';
+
+export const metadata = {
+  title,
+  description,
+  alternates: { canonical: `${SITE}/refund-policy` },
+  openGraph: { title, description, url: `${SITE}/refund-policy`, type: 'website' },
+};
 
 export default function RefundPage() {
   return (

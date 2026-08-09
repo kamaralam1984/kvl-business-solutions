@@ -3,9 +3,15 @@ import Image from 'next/image';
 import { PageHero } from '@/components/shared/PageHero';
 import { Download, FileImage, Palette } from 'lucide-react';
 
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
+const title = 'Brand Assets — Logo & Media Kit';
+const description = 'Download official KVL Business Solutions logos and brand colors in multiple formats — for partner sites, press, presentations and social media.';
+
 export const metadata = {
-  title: 'Brand Assets — Logo & Media Kit',
-  description: 'Download official KVL Business Solutions logos and brand colors in multiple formats — for partner sites, press, presentations and social media.',
+  title,
+  description,
+  alternates: { canonical: `${SITE}/brand` },
+  openGraph: { title, description, url: `${SITE}/brand`, type: 'website' },
 };
 
 const variants = [

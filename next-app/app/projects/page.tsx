@@ -4,9 +4,15 @@ import { ProjectFilterBar } from '@/components/projects/ProjectFilterBar';
 import { DownloadsSection } from '@/components/widgets/DownloadsSection';
 import { getLiveCaseStudies } from '@/lib/data/live-case-studies';
 
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
+const title = 'Project Portfolio — Real, Live Products Built by KVL Business Solutions';
+const description = 'Real, verifiable software products KVL Business Solutions has designed and engineered — live in production today, not mockups or representative examples.';
+
 export const metadata = {
-  title: 'Project Portfolio — Real, Live Products Built by KVL Business Solutions',
-  description: 'Real, verifiable software products KVL Business Solutions has designed and engineered — live in production today, not mockups or representative examples.',
+  title,
+  description,
+  alternates: { canonical: `${SITE}/projects` },
+  openGraph: { title, description, url: `${SITE}/projects`, type: 'website' },
 };
 
 export default async function ProjectsPage() {

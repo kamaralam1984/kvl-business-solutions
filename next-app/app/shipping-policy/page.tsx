@@ -1,6 +1,15 @@
 import { LegalLayout } from '@/components/shared/LegalLayout';
 
-export const metadata = { title: 'Shipping & Delivery Policy — KVL' };
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
+const title = 'Shipping & Delivery Policy — KVL';
+const description = 'Delivery timelines for software licenses and hardware (GPS/CCTV) shipments — instant digital delivery, dispatch times, and tracking.';
+
+export const metadata = {
+  title,
+  description,
+  alternates: { canonical: `${SITE}/shipping-policy` },
+  openGraph: { title, description, url: `${SITE}/shipping-policy`, type: 'website' },
+};
 
 export default function ShippingPage() {
   return (

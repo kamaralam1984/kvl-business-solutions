@@ -1,6 +1,15 @@
 import { LegalLayout } from '@/components/shared/LegalLayout';
 
-export const metadata = { title: 'Privacy Policy — KVL Business Solutions' };
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
+const title = 'Privacy Policy — KVL Business Solutions';
+const description = 'What data KVL Business Solutions collects, how we use it, who we share it with, and your rights over your personal data.';
+
+export const metadata = {
+  title,
+  description,
+  alternates: { canonical: `${SITE}/privacy` },
+  openGraph: { title, description, url: `${SITE}/privacy`, type: 'website' },
+};
 
 export default function PrivacyPage() {
   return (

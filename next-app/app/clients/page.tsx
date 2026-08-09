@@ -4,17 +4,51 @@ import { ArrowUpRight, MessageSquarePlus } from 'lucide-react';
 import { PageHero } from '@/components/shared/PageHero';
 import { Testimonials } from '@/components/home/Testimonials';
 import { getLiveCaseStudies } from '@/lib/data/live-case-studies';
+import { JsonLd } from '@/components/shared/JsonLd';
+import { connectDB } from '@/lib/mongodb';
+import { Review } from '@/lib/models/Review';
+
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
+const title = 'Clients & Testimonials — KVL Business Solutions';
+const description = 'See what businesses across healthcare, education, manufacturing, and retail say about working with KVL Business Solutions — verified reviews, not written by us.';
 
 export const metadata = {
-  title: 'Clients & Testimonials — KVL Business Solutions',
-  description: 'See what businesses across healthcare, education, manufacturing, and retail say about working with KVL Business Solutions — verified reviews, not written by us.',
+  title,
+  description,
+  alternates: { canonical: `${SITE}/clients` },
+  openGraph: { title, description, url: `${SITE}/clients`, type: 'website' },
 };
 
 export default async function ClientsPage() {
   const caseStudies = (await getLiveCaseStudies()).slice(0, 4);
 
+  await connectDB();
+  const approvedReviews = await Review.find({ approved: true }).lean();
+  const reviewCount = approvedReviews.length;
+  const ratingValue = reviewCount > 0
+    ? Math.round((approvedReviews.reduce((s: number, r: any) => s + r.rating, 0) / reviewCount) * 10) / 10
+    : 0;
+
+  const orgJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': `${SITE}/#organization`,
+    name: 'KVL Business Solutions',
+    url: SITE,
+    ...(reviewCount > 0 ? {
+      aggregateRating: { '@type': 'AggregateRating', ratingValue, reviewCount },
+      review: approvedReviews.slice(0, 10).map((r: any) => ({
+        '@type': 'Review',
+        author: { '@type': 'Person', name: r.name },
+        reviewRating: { '@type': 'Rating', ratingValue: r.rating, bestRating: 5 },
+        reviewBody: r.message,
+      })),
+    } : {}),
+  };
+
   return (
     <>
+      {reviewCount > 0 && <JsonLd data={orgJsonLd} id="clients-jsonld" />}
       <PageHero eyebrow="OUR CLIENTS" title="Client" accent="Reviews" description="Verified reviews from real customers — nothing here is written by us." breadcrumb="Clients" />
       <Testimonials />
 

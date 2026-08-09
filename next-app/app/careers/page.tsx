@@ -5,9 +5,15 @@ import { PageHero } from '@/components/shared/PageHero';
 import { CtaBanner } from '@/components/home/CtaBanner';
 import { MapPin, Briefcase, Clock, ArrowRight, Sparkles } from 'lucide-react';
 
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
+const title = 'Careers — Join KVL Business Solutions';
+const description = 'Join a fast-growing enterprise technology company building real software used by hospitals, schools, and businesses across India. Explore open roles in engineering, design, and sales.';
+
 export const metadata = {
-  title: 'Careers — Join KVL Business Solutions',
-  description: 'Join a fast-growing enterprise technology company building real software used by hospitals, schools, and businesses across India. Explore open roles in engineering, design, and sales.',
+  title,
+  description,
+  alternates: { canonical: `${SITE}/careers` },
+  openGraph: { title, description, url: `${SITE}/careers`, type: 'website' },
 };
 export const dynamic = 'force-dynamic';
 

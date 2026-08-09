@@ -6,6 +6,9 @@ import { softwareProducts } from '@/lib/data/software';
 import { formatINR } from '@/lib/utils';
 import { Check, Calendar, Shield, Clock, Award } from 'lucide-react';
 import { ViewContentTracker } from '@/components/analytics/ViewContentTracker';
+import { JsonLd } from '@/components/shared/JsonLd';
+
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
 
 function FadeIn({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);
@@ -66,8 +69,31 @@ export default function PricingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [isAnnual, setIsAnnual] = useState(true);
 
+  const pricingJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: 'KVL Business Solutions — Enterprise Software Plans',
+    description: 'Fixed-price ERP, CRM and business automation software plans.',
+    url: `${SITE}/pricing`,
+    offers: planTiers.map(tier => {
+      const products = tier.products.map(slug => softwareProducts.find(p => p.slug === slug)!).filter(Boolean);
+      const total = products.reduce((s, p) => s + p.price, 0);
+      const discount = tier.name === 'Business' ? 0.15 : tier.name === 'Enterprise' ? 0.30 : 0;
+      const price = Math.round(total * (1 - discount) * (1 - 0.2));
+      return {
+        '@type': 'Offer',
+        name: `${tier.name} Plan`,
+        description: tier.desc,
+        price,
+        priceCurrency: 'INR',
+        availability: 'https://schema.org/InStock',
+      };
+    }),
+  };
+
   return (
     <div style={{ background: 'rgb(var(--bg))' }}>
+      <JsonLd data={pricingJsonLd} id="pricing-jsonld" />
       <ViewContentTracker id="pricing" name="Pricing Page" category="Pricing" />
 
       {/* Hero */}

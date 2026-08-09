@@ -5,9 +5,15 @@ import { CtaBanner } from '@/components/home/CtaBanner';
 import { countryPages } from '@/lib/data/country-pages';
 import { industryLandingPages } from '@/lib/data/industry-landing-pages';
 
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
+const title = 'Global Software Development — Countries We Serve | KVL Business Solutions';
+const description = 'KVL Business Solutions is an India-based software development company serving enterprise clients remotely across the US, UK, Canada, Australia, UAE, Singapore, Germany, Saudi Arabia, Qatar and New Zealand.';
+
 export const metadata = {
-  title: 'Global Software Development — Countries We Serve | KVL Business Solutions',
-  description: 'KVL Business Solutions is an India-based software development company serving enterprise clients remotely across the US, UK, Canada, Australia, UAE, Singapore, Germany, Saudi Arabia, Qatar and New Zealand.',
+  title,
+  description,
+  alternates: { canonical: `${SITE}/global` },
+  openGraph: { title, description, url: `${SITE}/global`, type: 'website' },
 };
 
 export default function GlobalPage() {

@@ -5,9 +5,15 @@ import { CtaBanner } from '@/components/home/CtaBanner';
 import { TiltCard } from '@/components/shared/TiltCard';
 import { industries } from '@/lib/data/industries';
 
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
+const title = 'Industries We Serve — Sector-Specific Enterprise Software';
+const description = "KVL builds industry-specific software and systems for healthcare, education, manufacturing, construction, retail, real estate and government — engineered around how each sector actually operates.";
+
 export const metadata = {
-  title: 'Industries We Serve — Sector-Specific Enterprise Software',
-  description: "KVL builds industry-specific software and systems for healthcare, education, manufacturing, construction, retail, real estate and government — engineered around how each sector actually operates.",
+  title,
+  description,
+  alternates: { canonical: `${SITE}/industries` },
+  openGraph: { title, description, url: `${SITE}/industries`, type: 'website' },
 };
 
 export default function IndustriesPage() {

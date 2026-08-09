@@ -1,6 +1,15 @@
 import { LegalLayout } from '@/components/shared/LegalLayout';
 
-export const metadata = { title: 'Terms of Service — KVL Business Solutions' };
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
+const title = 'Terms of Service — KVL Business Solutions';
+const description = 'The terms governing your use of KVL Business Solutions software, licensing, payments, and support.';
+
+export const metadata = {
+  title,
+  description,
+  alternates: { canonical: `${SITE}/terms` },
+  openGraph: { title, description, url: `${SITE}/terms`, type: 'website' },
+};
 
 export default function TermsPage() {
   return (

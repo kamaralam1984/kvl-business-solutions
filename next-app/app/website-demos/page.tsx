@@ -5,9 +5,15 @@ import { DemosClient } from './DemosClient';
 
 export const dynamic = 'force-dynamic';
 
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
+const title = 'Live Software Demos — Explore Working Products Before You Buy';
+const description = "Browse live, working demos of KVL's software products — CRM, ERP, school and hospital management, billing, and more. See real software in action, not screenshots.";
+
 export const metadata: Metadata = {
-  title: 'Live Software Demos — Explore Working Products Before You Buy',
-  description: "Browse live, working demos of KVL's software products — CRM, ERP, school and hospital management, billing, and more. See real software in action, not screenshots.",
+  title,
+  description,
+  alternates: { canonical: `${SITE}/website-demos` },
+  openGraph: { title, description, url: `${SITE}/website-demos`, type: 'website' },
 };
 
 // Fallback demos shown if DB has no entries yet (first deploy)

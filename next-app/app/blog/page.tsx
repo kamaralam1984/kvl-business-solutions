@@ -7,9 +7,14 @@ import { getLiveBlogPosts } from '@/lib/data/live-blog';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
 
+const title = 'Knowledge Center — ERP, GST, GPS & AI Guides for Indian Businesses';
+const description = 'Practical, expert-level guides on ERP selection, GST e-invoicing, GPS fleet ROI, AI automation, and custom software decisions — written for Indian business owners, not filler content.';
+
 export const metadata = {
-  title: 'Knowledge Center — ERP, GST, GPS & AI Guides for Indian Businesses',
-  description: 'Practical, expert-level guides on ERP selection, GST e-invoicing, GPS fleet ROI, AI automation, and custom software decisions — written for Indian business owners, not filler content.',
+  title,
+  description,
+  alternates: { canonical: `${SITE}/blog` },
+  openGraph: { title, description, url: `${SITE}/blog`, type: 'website' },
 };
 
 export default async function BlogPage() {

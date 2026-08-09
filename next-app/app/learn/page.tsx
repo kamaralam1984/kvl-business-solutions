@@ -4,9 +4,15 @@ import { PageHero } from '@/components/shared/PageHero';
 import * as Icons from 'lucide-react';
 import { BookOpen, Clock, GraduationCap, ArrowRight } from 'lucide-react';
 
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
+const title = 'Smart Learning Engine — Free Business & Software Courses';
+const description = 'Free video and text courses on business software, GST, sales and practical business skills from KVL Business Solutions — learn at your own pace, earn a certificate.';
+
 export const metadata = {
-  title: 'Smart Learning Engine — Free Business & Software Courses',
-  description: 'Free video and text courses on business software, GST, sales and practical business skills from KVL Business Solutions — learn at your own pace, earn a certificate.',
+  title,
+  description,
+  alternates: { canonical: `${SITE}/learn` },
+  openGraph: { title, description, url: `${SITE}/learn`, type: 'website' },
 };
 
 export default async function LearnPage() {
