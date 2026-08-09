@@ -13,14 +13,6 @@ import { trackEvent } from '@/components/analytics/GoogleAnalytics';
 // so nothing here reads `html.dark` state; every color is spelled out.
 const INPUT_CLS = 'w-full px-4 py-3.5 rounded-xl text-sm outline-none transition-all duration-200 bg-white border border-gray-200 text-gray-900 placeholder-gray-400 focus:border-gold focus:ring-4 focus:ring-gold/10';
 
-// Real, already-delivered client work — see lib/data/case-studies.ts — used
-// as proof-of-work instead of stock photography or icons.
-const SHOWCASE = [
-  { name: 'VidYT', img: '/projects/vidyt/desktop.png' },
-  { name: 'AapKaPlot', img: '/projects/aapkaplot/desktop.png' },
-  { name: 'Gravity', img: '/projects/gravity/desktop.png' },
-];
-
 function ChakraWatermark({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 200 200" className={className} fill="none">
@@ -170,25 +162,8 @@ export function GetQuoteClient() {
             <LiveSocialProof path="/get-quote" dark />
           </div>
 
-          {/* Proof of real work — actual client sites, framed like browser windows */}
-          <div className="mb-3">
-            <div className="grid grid-cols-3 gap-2.5">
-              {SHOWCASE.map(p => (
-                <div key={p.name} className="rounded-lg overflow-hidden border border-white/10 bg-white/[0.03]">
-                  <div className="h-3.5 flex items-center gap-1 px-1.5 bg-white/5">
-                    <span className="w-1 h-1 rounded-full bg-white/25" />
-                    <span className="w-1 h-1 rounded-full bg-white/25" />
-                    <span className="w-1 h-1 rounded-full bg-white/25" />
-                  </div>
-                  <Image src={p.img} alt={`${p.name} — a real website built by KVL Business Solutions`} width={240} height={150} className="w-full h-14 sm:h-16 object-cover object-top opacity-90" />
-                </div>
-              ))}
-            </div>
-            <p className="text-center text-[10px] tracking-wide uppercase text-white/35 mt-2.5 mb-4">Real websites we&apos;ve built for real businesses</p>
-          </div>
-
           <div className="relative rounded-2xl p-[2px] shadow-glow-gold" style={{ background: 'linear-gradient(160deg,#FF9933,#e8c890 50%,#138808)' }}>
-            <form onSubmit={submit} className="bg-white rounded-[14px] p-5 sm:p-7 space-y-2.5 sm:space-y-3">
+            <form onSubmit={submit} className="rounded-[14px] p-5 sm:p-7 space-y-2.5 sm:space-y-3" style={{ background: 'linear-gradient(180deg,#fff3e2 0%,#ffffff 45%,#eafbf1 100%)' }}>
               {!showCallbackForm && !callbackDone && (
                 <>
                   <div>
