@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { cloudinary, isConfigured, ownerFolderKey } from '@/lib/cloudinary';
@@ -12,43 +13,47 @@ export async function POST(req: Request) {
   const limit = rateLimit(`upload:${clientIp(req)}`, 20, 60_000);
   if (!limit.allowed) return NextResponse.json({ ok: false, error: 'Too many uploads' }, { status: 429 });
 
-  const { folder = 'kvl/tickets' } = await req.json().catch(() => ({}));
-  const allowedFolders = ['kvl/tickets', 'kvl/products', 'kvl/users'];
-  const safeFolder = allowedFolders.includes(folder) ? folder : 'kvl/tickets';
+  try {
+    const { folder = 'kvl/tickets' } = await req.json().catch(() => ({}));
+    const allowedFolders = ['kvl/tickets', 'kvl/products', 'kvl/users'];
+    const safeFolder = allowedFolders.includes(folder) ? folder : 'kvl/tickets';
 
-  // Only admins can upload product images
-  if (safeFolder === 'kvl/products' && (session.user as any).role !== 'admin') {
-    return NextResponse.json({ ok: false, error: 'Admin only' }, { status: 403 });
+    // Only admins can upload product images
+    if (safeFolder === 'kvl/products' && (session.user as any).role !== 'admin') {
+      return NextResponse.json({ ok: false, error: 'Admin only' }, { status: 403 });
+    }
+
+    // Self-service folders get a per-user subfolder, so app/api/upload/delete
+    // can verify a caller only ever deletes their own uploads.
+    const scopedFolder = safeFolder === 'kvl/products'
+      ? safeFolder
+      : `${safeFolder}/${ownerFolderKey(session.user.email)}`;
+
+    const timestamp = Math.round(Date.now() / 1000);
+    // Compress every upload at ingest — auto quality + a sane max dimension —
+    // so a 10MB photo lands in Cloudinary storage as a much smaller derivative
+    // instead of keeping the original file size. Non-image files (PDFs, etc.)
+    // pass through resource_type=auto unaffected since these only apply to images.
+    const transformation = 'q_auto:good,w_1920,c_limit,f_auto';
+    // Cloudinary enforces this server-side regardless of what resource_type
+    // the client's upload request claims — closes off uploading arbitrary
+    // file types (HTML, SVG-with-script, executables) under a trusted
+    // res.cloudinary.com URL.
+    const allowedFormats = 'jpg,jpeg,png,gif,webp,pdf';
+    const paramsToSign = { timestamp, folder: scopedFolder, transformation, allowed_formats: allowedFormats };
+    const signature = cloudinary.utils.api_sign_request(paramsToSign, process.env.CLOUDINARY_API_SECRET!);
+
+    return NextResponse.json({
+      ok: true,
+      signature,
+      timestamp,
+      folder: scopedFolder,
+      transformation,
+      allowedFormats,
+      cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+      apiKey: process.env.CLOUDINARY_API_KEY,
+    });
+  } catch (e) {
+    return apiError(e);
   }
-
-  // Self-service folders get a per-user subfolder, so app/api/upload/delete
-  // can verify a caller only ever deletes their own uploads.
-  const scopedFolder = safeFolder === 'kvl/products'
-    ? safeFolder
-    : `${safeFolder}/${ownerFolderKey(session.user.email)}`;
-
-  const timestamp = Math.round(Date.now() / 1000);
-  // Compress every upload at ingest — auto quality + a sane max dimension —
-  // so a 10MB photo lands in Cloudinary storage as a much smaller derivative
-  // instead of keeping the original file size. Non-image files (PDFs, etc.)
-  // pass through resource_type=auto unaffected since these only apply to images.
-  const transformation = 'q_auto:good,w_1920,c_limit,f_auto';
-  // Cloudinary enforces this server-side regardless of what resource_type
-  // the client's upload request claims — closes off uploading arbitrary
-  // file types (HTML, SVG-with-script, executables) under a trusted
-  // res.cloudinary.com URL.
-  const allowedFormats = 'jpg,jpeg,png,gif,webp,pdf';
-  const paramsToSign = { timestamp, folder: scopedFolder, transformation, allowed_formats: allowedFormats };
-  const signature = cloudinary.utils.api_sign_request(paramsToSign, process.env.CLOUDINARY_API_SECRET!);
-
-  return NextResponse.json({
-    ok: true,
-    signature,
-    timestamp,
-    folder: scopedFolder,
-    transformation,
-    allowedFormats,
-    cloudName: process.env.CLOUDINARY_CLOUD_NAME,
-    apiKey: process.env.CLOUDINARY_API_KEY,
-  });
 }

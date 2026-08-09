@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { connectDB } from '@/lib/mongodb';
 import { VipSession } from '@/lib/models/VipSession';
 import { Order } from '@/lib/models/Order';
@@ -17,30 +18,34 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const path = searchParams.get('path') || undefined;
 
-  await connectDB();
-  const since5min = new Date(Date.now() - 5 * 60 * 1000);
-  const since48h = new Date(Date.now() - 48 * 60 * 60 * 1000);
+  try {
+    await connectDB();
+    const since5min = new Date(Date.now() - 5 * 60 * 1000);
+    const since48h = new Date(Date.now() - 48 * 60 * 60 * 1000);
 
-  const [liveCount, recentOrders] = await Promise.all([
-    VipSession.countDocuments({
-      lastActivityAt: { $gte: since5min },
-      ...(path ? { landingPage: path } : {}),
-    }),
-    Order.find({ status: 'paid', createdAt: { $gte: since48h } })
-      .sort({ createdAt: -1 })
-      .limit(5)
-      .select('billing.name billing.address.city productName createdAt')
-      .lean(),
-  ]);
+    const [liveCount, recentOrders] = await Promise.all([
+      VipSession.countDocuments({
+        lastActivityAt: { $gte: since5min },
+        ...(path ? { landingPage: path } : {}),
+      }),
+      Order.find({ status: 'paid', createdAt: { $gte: since48h } })
+        .sort({ createdAt: -1 })
+        .limit(5)
+        .select('billing.name billing.address.city productName createdAt')
+        .lean(),
+    ]);
 
-  const recentPurchases = recentOrders
-    .filter((o: any) => o.billing?.name)
-    .map((o: any) => ({
-      firstName: String(o.billing.name).trim().split(/\s+/)[0],
-      city: o.billing?.address?.city || null,
-      product: o.productName,
-      minutesAgo: Math.max(1, Math.round((Date.now() - new Date(o.createdAt).getTime()) / 60_000)),
-    }));
+    const recentPurchases = recentOrders
+      .filter((o: any) => o.billing?.name)
+      .map((o: any) => ({
+        firstName: String(o.billing.name).trim().split(/\s+/)[0],
+        city: o.billing?.address?.city || null,
+        product: o.productName,
+        minutesAgo: Math.max(1, Math.round((Date.now() - new Date(o.createdAt).getTime()) / 60_000)),
+      }));
 
-  return NextResponse.json({ ok: true, liveCount, recentPurchases });
+    return NextResponse.json({ ok: true, liveCount, recentPurchases });
+  } catch (e) {
+    return apiError(e);
+  }
 }

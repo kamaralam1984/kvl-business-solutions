@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { connectDB } from '@/lib/mongodb';
@@ -7,6 +8,7 @@ import { Order } from '@/lib/models/Order';
 const inr = (n: number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(n);
 
 export async function GET(_: Request, { params }: { params: { orderId: string } }) {
+  try {
   const session = await getServerSession(authOptions);
   await connectDB();
   const order: any = await Order.findOne({ orderId: params.orderId }).lean();
@@ -112,4 +114,7 @@ export async function GET(_: Request, { params }: { params: { orderId: string } 
 </body></html>`;
 
   return new NextResponse(html, { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+  } catch (e) {
+    return apiError(e);
+  }
 }

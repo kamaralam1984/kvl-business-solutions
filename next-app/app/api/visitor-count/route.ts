@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { connectDB } from '@/lib/mongodb';
 import { VisitCounter } from '@/lib/models/VisitCounter';
 import { VisitDailyLog } from '@/lib/models/VisitDailyLog';
@@ -14,9 +15,13 @@ export async function GET(req: Request) {
   const limit = rateLimit(`visitor-count:${clientIp(req)}`, 30, 60_000);
   if (!limit.allowed) return NextResponse.json({ ok: false, error: 'Too many requests' }, { status: 429 });
 
-  await connectDB();
-  const doc = await VisitCounter.findOne({ key: 'total' }).lean<{ count: number }>();
-  return NextResponse.json({ ok: true, count: BASE + (doc?.count || 0) });
+  try {
+    await connectDB();
+    const doc = await VisitCounter.findOne({ key: 'total' }).lean<{ count: number }>();
+    return NextResponse.json({ ok: true, count: BASE + (doc?.count || 0) });
+  } catch (e) {
+    return apiError(e);
+  }
 }
 
 // Increments the total — called once per new tab session (see VisitorCounter.tsx),
@@ -25,15 +30,19 @@ export async function POST(req: Request) {
   const limit = rateLimit(`visitor-count-inc:${clientIp(req)}`, 10, 60_000);
   if (!limit.allowed) return NextResponse.json({ ok: false, error: 'Too many requests' }, { status: 429 });
 
-  await connectDB();
-  const doc = await VisitCounter.findOneAndUpdate(
-    { key: 'total' },
-    { $inc: { count: 1 } },
-    { upsert: true, new: true }
-  );
+  try {
+    await connectDB();
+    const doc = await VisitCounter.findOneAndUpdate(
+      { key: 'total' },
+      { $inc: { count: 1 } },
+      { upsert: true, new: true }
+    );
 
-  const today = new Date().toISOString().slice(0, 10);
-  VisitDailyLog.findOneAndUpdate({ date: today }, { $inc: { count: 1 } }, { upsert: true }).catch(() => {});
+    const today = new Date().toISOString().slice(0, 10);
+    VisitDailyLog.findOneAndUpdate({ date: today }, { $inc: { count: 1 } }, { upsert: true }).catch(() => {});
 
-  return NextResponse.json({ ok: true, count: BASE + doc.count });
+    return NextResponse.json({ ok: true, count: BASE + doc.count });
+  } catch (e) {
+    return apiError(e);
+  }
 }

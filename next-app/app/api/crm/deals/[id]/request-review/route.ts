@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { connectDB } from '@/lib/mongodb';
@@ -12,13 +13,17 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
 
-  await connectDB();
-  const isAdmin = (session.user as any).role === 'admin';
-  const filter = isAdmin ? { _id: params.id } : { _id: params.id, ownerEmail: session.user.email };
-  const deal = await Deal.findOne(filter).lean<any>();
-  if (!deal) return NextResponse.json({ ok: false, error: 'Not found' }, { status: 404 });
+  try {
+    await connectDB();
+    const isAdmin = (session.user as any).role === 'admin';
+    const filter = isAdmin ? { _id: params.id } : { _id: params.id, ownerEmail: session.user.email };
+    const deal = await Deal.findOne(filter).lean<any>();
+    if (!deal) return NextResponse.json({ ok: false, error: 'Not found' }, { status: 404 });
 
-  const result = await requestReviewForDeal(deal);
-  if (!result.sent) return NextResponse.json({ ok: false, error: result.reason }, { status: 400 });
-  return NextResponse.json({ ok: true });
+    const result = await requestReviewForDeal(deal);
+    if (!result.sent) return NextResponse.json({ ok: false, error: result.reason }, { status: 400 });
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    return apiError(e);
+  }
 }

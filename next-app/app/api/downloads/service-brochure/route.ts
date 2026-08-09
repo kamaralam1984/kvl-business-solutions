@@ -4,6 +4,7 @@ import { services } from '@/lib/data/services';
 import { logDownload } from '@/lib/models/DownloadLog';
 
 export async function GET() {
+  try {
   logDownload('service-brochure');
   const settings = await getSiteSettings();
 
@@ -32,4 +33,14 @@ export async function GET() {
   });
 
   return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+  } catch (e) {
+    // Opened directly as a browser navigation (<a target="_blank">), not
+    // fetched as JSON — return an HTML error page on failure, matching this
+    // route's actual response contract, instead of apiError()'s JSON shape.
+    console.error(e);
+    return new Response(
+      '<!DOCTYPE html><html><body style="font-family:system-ui,sans-serif;padding:40px;text-align:center"><h1>Something went wrong</h1><p>Please try again in a moment.</p></body></html>',
+      { status: 500, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+    );
+  }
 }

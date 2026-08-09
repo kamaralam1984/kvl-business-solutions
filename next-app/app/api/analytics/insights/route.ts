@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { connectDB } from '@/lib/mongodb';
@@ -11,6 +12,7 @@ export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
 
+  try {
   await connectDB();
   const email = session.user.email;
   const isAdmin = (session.user as any).role === 'admin';
@@ -75,4 +77,7 @@ Format: just bullet points, no headers, no preamble.`;
       stageCounts,
     },
   });
+  } catch (e) {
+    return apiError(e);
+  }
 }
