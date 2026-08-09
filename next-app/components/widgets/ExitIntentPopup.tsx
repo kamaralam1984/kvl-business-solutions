@@ -9,6 +9,8 @@ export function ExitIntentPopup() {
   const [dismissed, setDismissed] = useState(false);
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -61,21 +63,33 @@ export function ExitIntentPopup() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    // Save as lead
-    const d = await fetch('/api/lead', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: 'Exit Intent Lead',
-        email,
-        phone: '0000000000',
-        source: 'exit-popup',
-        message: 'User submitted email via exit intent popup — wants a free consultation',
-      }),
-    }).then(r => r.json()).catch(() => ({}));
-    trackEvent('lead_submit', { source: 'exit-popup' }, d.id);
-    setSubmitted(true);
-    setTimeout(dismiss, 3000);
+    setError('');
+    setSubmitting(true);
+    try {
+      const res = await fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: 'Exit Intent Lead',
+          email,
+          phone: '0000000000',
+          source: 'exit-popup',
+          message: 'User submitted email via exit intent popup — wants a free consultation',
+        }),
+      });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok || !d.ok) {
+        setError(d.error || 'Could not submit — please try again or WhatsApp us.');
+        setSubmitting(false);
+        return;
+      }
+      trackEvent('lead_submit', { source: 'exit-popup' }, d.id);
+      setSubmitted(true);
+      setTimeout(dismiss, 3000);
+    } catch {
+      setError('Could not submit — please try again or WhatsApp us.');
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -152,9 +166,10 @@ export function ExitIntentPopup() {
                       placeholder="you@company.com"
                       className="form-control w-full"
                     />
-                    <button type="submit"
-                      className="w-full btn-gold-solid flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm">
-                      Get My Free Consultation <ArrowRight className="w-4 h-4" />
+                    {error && <p className="text-red-400 text-xs">{error}</p>}
+                    <button type="submit" disabled={submitting}
+                      className="w-full btn-gold-solid flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm disabled:opacity-60">
+                      {submitting ? 'Submitting…' : <>Get My Free Consultation <ArrowRight className="w-4 h-4" /></>}
                     </button>
                   </form>
                   <div className="flex items-center justify-center gap-1.5 mt-4 text-[11.5px]" style={{ color: 'rgb(var(--text-3))' }}>

@@ -60,7 +60,13 @@ export function SiteChrome({
         {children}
         <VipTracker />
         {cookieConsentEnabled && <CookieConsent />}
-        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[99] flex flex-col gap-3 items-end">
+        {/* Same desktop/mobile split as FloatingWidgets.tsx — on mobile the
+            cookie banner spans bottom-4 left-4 right-4, so the bubble is
+            raised to bottom-16 there instead of sharing that same strip. */}
+        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[99] hidden md:flex">
+          <Chatbot />
+        </div>
+        <div className="fixed bottom-16 right-4 z-[99] flex md:hidden">
           <Chatbot />
         </div>
       </>

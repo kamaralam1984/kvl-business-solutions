@@ -14,10 +14,22 @@ export const DownloadLog = models.DownloadLog || model('DownloadLog', DownloadLo
 // milliseconds of each other, which was inflating "Downloads" with
 // non-human hits — e.g. all 3 doc types logged within ~100ms, repeatedly.
 // A real visitor never opens all three at once like that.
-const BOT_UA_PATTERN = /bot|crawl|spider|slurp|facebookexternalhit|whatsapp|telegrambot|slackbot|discordbot|linkedinbot|twitterbot|embedly|quora link preview|pinterest|preview|headless|curl|wget|python-requests|okhttp|axios|node-fetch/i;
+const BOT_UA_PATTERN = /bot|crawl|spider|slurp|facebookexternalhit|telegrambot|slackbot|discordbot|linkedinbot|twitterbot|embedly|quora link preview|pinterest|preview|headless|curl|wget|python-requests|okhttp|axios|node-fetch/i;
+
+// WhatsApp's own link-preview fetcher (triggered when someone pastes a URL
+// into a chat) sends a bare "WhatsApp/x.y.z" UA with no browser engine token.
+// A real visitor who taps a link INSIDE the WhatsApp app — a primary lead
+// channel for this business — gets a full mobile browser UA with
+// "WhatsApp/x.y.z" merely appended (Mozilla/... AppleWebKit/... WhatsApp/x.y.z).
+// Only the former should count as a bot; matching "whatsapp" unconditionally
+// would silently drop every real WhatsApp-referred download too.
+function isWhatsAppPreviewFetcher(userAgent: string): boolean {
+  return /whatsapp/i.test(userAgent) && !/mozilla|applewebkit/i.test(userAgent);
+}
 
 export function isBotUserAgent(userAgent: string | null | undefined): boolean {
-  return !userAgent || BOT_UA_PATTERN.test(userAgent);
+  if (!userAgent) return true;
+  return BOT_UA_PATTERN.test(userAgent) || isWhatsAppPreviewFetcher(userAgent);
 }
 
 // Fire-and-forget — a logging failure must never break the download itself.
