@@ -21,8 +21,8 @@ function useCounter(target: number, active: boolean) {
   return val;
 }
 
-function StatTile({ Icon, value, label, inView, index }: { Icon: any; value: number; label: string; inView: boolean; index: number }) {
-  const count = useCounter(value, inView);
+function StatTile({ Icon, value, label, inView, index, loading }: { Icon: any; value: number; label: string; inView: boolean; index: number; loading?: boolean }) {
+  const count = useCounter(value, inView && !loading);
   return (
     <div style={revealStyle(inView, index, { staggerMs: 90, durationMs: 500, distance: 16 })}>
       <div className="relative h-full rounded-2xl p-5 sm:p-6 text-center transition-all duration-300 group"
@@ -38,11 +38,18 @@ function StatTile({ Icon, value, label, inView, index }: { Icon: any; value: num
       >
         <div className="w-10 h-10 rounded-xl grid place-items-center mx-auto mb-3"
           style={{ background: 'rgba(200,168,112,0.10)', border: '1px solid rgba(200,168,112,0.22)' }}>
-          <Icon className="w-4.5 h-4.5" style={{ color: '#c8a870' }} />
+          <Icon className="w-[18px] h-[18px]" style={{ color: '#c8a870' }} />
         </div>
-        <div className="font-display font-black leading-none" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', color: 'rgb(var(--text))' }}>
-          {count.toLocaleString('en-IN')}
-        </div>
+        {/* Show a neutral placeholder instead of a literal "0" while the real
+            count is still loading — a hard 0 reads as a broken counter and
+            undercuts this section's whole "every number here is real" point. */}
+        {loading ? (
+          <div className="font-display font-black leading-none opacity-30" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', color: 'rgb(var(--text))' }}>—</div>
+        ) : (
+          <div className="font-display font-black leading-none" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', color: 'rgb(var(--text))' }}>
+            {count.toLocaleString('en-IN')}
+          </div>
+        )}
         <div className="text-[11.5px] mt-1.5" style={{ color: 'rgb(var(--text-2))' }}>{label}</div>
 
         <div className="absolute -bottom-6 -right-6 w-16 h-16 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
@@ -74,7 +81,7 @@ export function StatsBar({ productCount, caseStudyCount }: { productCount: numbe
     { Icon: Box, value: productCount, label: 'Software Products' },
     { Icon: Sparkles, value: caseStudyCount, label: 'Live Products Built' },
     { Icon: CalendarDays, value: years, label: 'Years in Business' },
-    { Icon: Users, value: visitors ?? 0, label: 'Website Visitors' },
+    { Icon: Users, value: visitors ?? 0, label: 'Website Visitors', loading: visitors === null },
   ];
 
   return (

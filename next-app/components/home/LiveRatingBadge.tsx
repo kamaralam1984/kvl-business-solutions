@@ -18,7 +18,7 @@ export function LiveRatingBadge() {
   return (
     <div className="flex items-center gap-2 text-[13px] font-medium" style={{ color: 'rgb(var(--text-2))' }}>
       <Star className="w-4 h-4 shrink-0" style={{ color: '#f59e0b' }} />
-      {data.avgRating}/5 Client Rating ({data.count} review{data.count === 1 ? '' : 's'})
+      {data.avgRating.toFixed(1)}/5 Client Rating ({data.count} review{data.count === 1 ? '' : 's'})
     </div>
   );
 }

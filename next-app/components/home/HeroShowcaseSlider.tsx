@@ -64,17 +64,12 @@ function buildSoftwareSlides(products: Software[]) {
   }));
 }
 
-export function HeroShowcaseSlider() {
-  const [products, setProducts] = useState<Software[] | null>(null);
+export function HeroShowcaseSlider({ products }: { products: Software[] }) {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
   const [paused, setPaused] = useState(false);
 
-  useEffect(() => {
-    fetch('/api/products').then(r => r.json()).then(d => setProducts(d.products || [])).catch(() => setProducts([]));
-  }, []);
-
-  const slides = products == null ? null : [...liveSlides, ...buildSoftwareSlides(products)];
+  const slides = [...liveSlides, ...buildSoftwareSlides(products)];
   const total = slides?.length || 0;
 
   const go = useCallback((dir: 1 | -1) => { setDirection(dir); setIndex(i => (i + dir + total) % total); }, [total]);
@@ -85,7 +80,7 @@ export function HeroShowcaseSlider() {
     return () => clearInterval(t);
   }, [paused, total]);
 
-  if (!slides || slides.length === 0) return null;
+  if (slides.length === 0) return null;
   const slide = slides[index];
   const FooterIcon = ICON_MAP[slide.icon] || Box;
   const glowA = GLOW_COLORS[index % GLOW_COLORS.length];
@@ -103,36 +98,33 @@ export function HeroShowcaseSlider() {
       <div className="absolute -inset-10 pointer-events-none" aria-hidden>
         <div
           key={`glowA-${index}`}
-          className="absolute top-0 left-1/4 w-56 h-56 rounded-full"
+          className="absolute top-0 left-1/4 w-56 h-56 rounded-full hero-slider-glow-a"
           style={{
             background: glowA,
             filter: 'blur(60px)',
             opacity: 0.55,
             transition: 'background 0.7s ease',
-            animation: 'vfxGlowDrift 7s ease-in-out infinite',
           }}
         />
         <div
           key={`glowB-${index}`}
-          className="absolute bottom-0 right-1/4 w-64 h-64 rounded-full"
+          className="absolute bottom-0 right-1/4 w-64 h-64 rounded-full hero-slider-glow-b"
           style={{
             background: glowB,
             filter: 'blur(70px)',
             opacity: 0.45,
             transition: 'background 0.7s ease',
-            animation: 'vfxGlowDriftAlt 9s ease-in-out infinite',
           }}
         />
       </div>
 
       <div
         key={`card-${slide.key}`}
-        className="relative rounded-3xl overflow-hidden"
+        className={`relative rounded-3xl overflow-hidden ${direction === 1 ? 'hero-slider-slide-in-right' : 'hero-slider-slide-in-left'}`}
         style={{
           background: 'rgb(var(--bg-2))',
           border: '1px solid rgba(var(--border) / 0.08)',
           boxShadow: '0 30px 70px rgba(0,0,0,0.10)',
-          animation: `${direction === 1 ? 'slideInRight' : 'slideInLeft'} 0.5s cubic-bezier(0.22,1,0.36,1) both`,
         }}
       >
         {/* Browser chrome */}
@@ -148,7 +140,7 @@ export function HeroShowcaseSlider() {
 
         {/* Screenshot */}
         <div className="relative aspect-[16/10]">
-          <Image src={slide.image} alt={slide.name} fill sizes="440px" className="object-cover" priority />
+          <Image src={slide.image} alt={`${slide.name} — screenshot of the live product interface`} fill sizes="440px" className="object-cover" />
           <span
             className="absolute bottom-3 left-3 text-[10px] font-bold px-2.5 py-1 rounded-full"
             style={{ background: 'rgba(0,0,0,0.55)', color: '#fff', backdropFilter: 'blur(4px)' }}
@@ -222,7 +214,7 @@ export function HeroShowcaseSlider() {
       <button
         aria-label="Previous product"
         onClick={() => go(-1)}
-        className="absolute left-0 top-[38%] -translate-y-1/2 -translate-x-4 w-9 h-9 rounded-full grid place-items-center"
+        className="absolute left-0 top-[38%] -translate-y-1/2 -translate-x-4 w-10 h-10 rounded-full grid place-items-center"
         style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.1)', boxShadow: '0 6px 18px rgba(0,0,0,0.12)' }}
       >
         <ChevronLeft className="w-4 h-4" style={{ color: 'rgb(var(--text))' }} />
@@ -230,22 +222,26 @@ export function HeroShowcaseSlider() {
       <button
         aria-label="Next product"
         onClick={() => go(1)}
-        className="absolute right-0 top-[38%] -translate-y-1/2 translate-x-4 w-9 h-9 rounded-full grid place-items-center"
+        className="absolute right-0 top-[38%] -translate-y-1/2 translate-x-4 w-10 h-10 rounded-full grid place-items-center"
         style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.1)', boxShadow: '0 6px 18px rgba(0,0,0,0.12)' }}
       >
         <ChevronRight className="w-4 h-4" style={{ color: 'rgb(var(--text))' }} />
       </button>
 
-      {/* Dots */}
+      {/* Dots — visual bar stays thin, button padding expands the tap target */}
       <div className="flex flex-wrap justify-center gap-1.5 mt-5">
         {slides.map((s, i) => (
           <button
             key={s.key}
             aria-label={`Go to ${s.name}`}
             onClick={() => { setDirection(i > index ? 1 : -1); setIndex(i); }}
-            className="rounded-full transition-all duration-300"
-            style={{ width: i === index ? 16 : 6, height: 6, background: i === index ? '#c8a870' : 'rgba(var(--text) / 0.15)' }}
-          />
+            className="py-2.5 px-0.5 grid place-items-center"
+          >
+            <span
+              className="block rounded-full transition-all duration-300"
+              style={{ width: i === index ? 16 : 6, height: 6, background: i === index ? '#c8a870' : 'rgba(var(--text) / 0.15)' }}
+            />
+          </button>
         ))}
       </div>
     </div>

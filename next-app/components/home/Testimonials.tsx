@@ -56,8 +56,8 @@ export function Testimonials() {
                     </div>
                   </div>
                   <div className="flex gap-0.5 mb-3">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5" fill={i < r.rating ? '#c8a870' : 'none'} style={{ color: '#c8a870' }} />
+                    {Array.from({ length: 5 }).map((_, starIdx) => (
+                      <Star key={starIdx} className="w-3.5 h-3.5" fill={starIdx < r.rating ? '#c8a870' : 'none'} style={{ color: '#c8a870' }} />
                     ))}
                   </div>
                   <p className="text-[13.5px] leading-[1.7]" style={{ color: 'rgb(var(--text-2))' }}>{r.message}</p>
