@@ -34,9 +34,8 @@ const nextConfig = {
     remotePatterns: [{ protocol: 'https', hostname: '**' }],
     formats: ['image/avif', 'image/webp'],
   },
-  transpilePackages: ['three'],
   experimental: {
-    optimizePackageImports: ['lucide-react', 'framer-motion'],
+    optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts'],
   },
   async rewrites() {
     return [
