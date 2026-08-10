@@ -1,5 +1,6 @@
 'use client';
 import dynamic from 'next/dynamic';
+import Script from 'next/script';
 import { usePathname } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -7,6 +8,21 @@ import { DeferredBanner } from '@/components/layout/DeferredBanner';
 import { DeferredWidgets } from '@/components/widgets/DeferredWidgets';
 import { SmartCTA } from '@/components/shared/SmartCTA';
 import { DashboardShell } from '@/components/dashboard/DashboardShell';
+
+// Was previously loaded unconditionally in app/layout.tsx, so it ran on
+// every route — including /admin, /login, /demo/*, and the maintenance-mode
+// HTML — none of which can ever open it. Scoped here to only the branches
+// that render chat-capable chrome, and gated on the same chatbotEnabled flag
+// as the in-house Chatbot bubble.
+function ChatWidgetScript({ chatbotEnabled }: { chatbotEnabled: boolean }) {
+  if (!chatbotEnabled) return null;
+  return (
+    <Script
+      src={process.env.NEXT_PUBLIC_CHATBOT_WIDGET_URL || 'https://superai.kvlbusinesssolutions.com/widget.js'}
+      strategy="lazyOnload"
+    />
+  );
+}
 
 // Just the chat bubble (not the full FloatingWidgets bundle — exit-intent
 // popup, quote/lead-magnet modals, etc. would compete with the funnel's own
@@ -74,6 +90,7 @@ export function SiteChrome({
             </div>
           </>
         )}
+        <ChatWidgetScript chatbotEnabled={chatbotEnabled} />
       </>
     );
   }
@@ -85,6 +102,7 @@ export function SiteChrome({
         <main id="main-content">
           <DashboardShell>{children}</DashboardShell>
         </main>
+        <ChatWidgetScript chatbotEnabled={chatbotEnabled} />
       </>
     );
   }
@@ -97,6 +115,7 @@ export function SiteChrome({
       <SmartCTA />
       <Footer settings={settings} />
       <DeferredWidgets showCookieConsent={cookieConsentEnabled} chatbotEnabled={chatbotEnabled} />
+      <ChatWidgetScript chatbotEnabled={chatbotEnabled} />
     </>
   );
 }
