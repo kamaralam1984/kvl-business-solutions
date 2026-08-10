@@ -3,9 +3,10 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useReveal, revealStyle } from '@/lib/hooks/useReveal';
-import { Sparkles, Layers, LayoutDashboard, FileCheck, Headset, RotateCw } from 'lucide-react';
+import { ShieldCheck, Sparkles, Layers, LayoutDashboard, FileCheck, Headset, RotateCw } from 'lucide-react';
 
 const reasons = [
+  { Icon: ShieldCheck,      title: 'Verified Credentials',     desc: 'MSME-registered, with an NDA available on request before any project discussion.', image: '/certifications/verified-credentials.png' },
   { Icon: Sparkles,         title: 'AI Failover, Built In',    desc: 'Multi-provider AI chain — no downtime on lead scoring or outreach.', image: '/certifications/ai-failover.png' },
   { Icon: Layers,           title: 'Modern Engineering Stack', desc: 'Next.js, React, TypeScript, and MongoDB.', image: '/certifications/modern-engineering-stack.png' },
   { Icon: LayoutDashboard,  title: 'Working Software Suite',   desc: 'Real production software — not a prototype.', image: '/certifications/working-software-suite.png' },
