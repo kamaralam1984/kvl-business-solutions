@@ -45,17 +45,21 @@ function ReasonCard({ r, index, inView }: { r: (typeof reasons)[number]; index: 
             style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
           >
             {r.image ? (
-              <div className="relative w-full h-40 shrink-0">
+              // The source files are pre-cropped to exactly their title/subtitle
+              // region (941×620) — matching that same ratio here means object-cover
+              // has nothing left to trim, so the full heading is always visible
+              // instead of getting cut off mid-word at an arbitrary fixed height.
+              <div className="relative w-full shrink-0" style={{ aspectRatio: '941 / 620' }}>
                 <Image
                   src={r.image}
                   alt={`${r.title} — ${r.desc}`}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  quality={70}
+                  quality={75}
                   className="object-cover"
                   style={{ objectPosition: 'top' }}
                 />
-                <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(0,0,0,0.35) 100%)' }} />
+                <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(0,0,0,0) 78%, rgba(0,0,0,0.25) 100%)' }} />
               </div>
             ) : (
               <div className="pt-7 px-7">
