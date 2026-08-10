@@ -23,7 +23,7 @@ export default async function ClientsPage() {
   const caseStudies = (await getLiveCaseStudies()).slice(0, 4);
 
   await connectDB();
-  const approvedReviews = await Review.find({ approved: true }).lean();
+  const approvedReviews = await Review.find({ approved: true }).select('name rating message').lean();
   const reviewCount = approvedReviews.length;
   const ratingValue = reviewCount > 0
     ? Math.round((approvedReviews.reduce((s: number, r: any) => s + r.rating, 0) / reviewCount) * 10) / 10

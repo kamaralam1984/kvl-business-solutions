@@ -33,7 +33,15 @@ function mergeOne(staticP: Software | undefined, db: any): Software | null {
   };
 }
 
+// Cached to avoid a fresh DB round-trip on every page that reads the full
+// product catalog (homepage, /software, sitemap, ...) — same 30s TTL as
+// getSiteSettings() so admin edits still go live within the same window.
+let cache: { data: Software[]; ts: number } | null = null;
+const TTL = 30_000;
+
 export async function getLiveSoftwareProducts(): Promise<Software[]> {
+  if (cache && Date.now() - cache.ts < TTL) return cache.data;
+
   await connectDB();
   const dbProducts = await Product.find({}).lean();
   const dbBySlug = new Map(dbProducts.map((d: any) => [d.slug, d]));
@@ -50,6 +58,7 @@ export async function getLiveSoftwareProducts(): Promise<Software[]> {
     const result = mergeOne(undefined, db);
     if (result) merged.push(result);
   }
+  cache = { data: merged, ts: Date.now() };
   return merged;
 }
 

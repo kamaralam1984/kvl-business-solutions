@@ -9,8 +9,14 @@ function toPlain(doc: any): BlogPostType {
 
 // Admin-created posts (DB) alongside the existing hand-written posts (static
 // file) — DB wins on a slug collision, so admin can also override an existing
-// post by reusing its slug.
+// post by reusing its slug. Cached with the same 30s TTL as getSiteSettings()
+// to avoid a fresh DB round-trip on every request.
+let cache: { data: BlogPostType[]; ts: number } | null = null;
+const TTL = 30_000;
+
 export async function getLiveBlogPosts(): Promise<BlogPostType[]> {
+  if (cache && Date.now() - cache.ts < TTL) return cache.data;
+
   await connectDB();
   const dbPosts = await BlogPost.find({}).lean();
   const dbBySlug = new Map(dbPosts.map((d: any) => [d.slug, toPlain(d)]));
@@ -19,6 +25,7 @@ export async function getLiveBlogPosts(): Promise<BlogPostType[]> {
   for (const [slug, post] of dbBySlug) {
     if (!blogPosts.some(p => p.slug === slug)) merged.push(post);
   }
+  cache = { data: merged, ts: Date.now() };
   return merged;
 }
 

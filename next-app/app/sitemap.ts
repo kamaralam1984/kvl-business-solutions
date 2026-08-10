@@ -11,6 +11,12 @@ import { getLiveBlogPosts } from '@/lib/data/live-blog';
 import { connectDB } from '@/lib/mongodb';
 import { Job } from '@/lib/models/Job';
 
+// Metadata routes don't inherit app/layout.tsx's revalidate — without this,
+// sitemap.xml is frozen at build time (or refetched on every crawl hit,
+// since the getLive*() calls below are now cached but this route itself
+// wasn't). Matches the site's "live within ~30s" admin-edit promise.
+export const revalidate = 300;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const site = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
   const now = new Date();

@@ -41,7 +41,15 @@ function toFullShape(db: any): CaseStudyType {
   };
 }
 
+// Cached to avoid a fresh DB round-trip on every page that reads the full
+// case-study catalog (homepage, /projects, sitemap, ...) — same 30s TTL as
+// getSiteSettings() so admin edits still go live within the same window.
+let cache: { data: CaseStudyType[]; ts: number } | null = null;
+const TTL = 30_000;
+
 export async function getLiveCaseStudies(): Promise<CaseStudyType[]> {
+  if (cache && Date.now() - cache.ts < TTL) return cache.data;
+
   await connectDB();
   const dbStudies = await CaseStudy.find({}).lean();
   const dbBySlug = new Map(dbStudies.map((d: any) => [d.slug, toFullShape(d)]));
@@ -50,6 +58,7 @@ export async function getLiveCaseStudies(): Promise<CaseStudyType[]> {
   for (const [slug, study] of dbBySlug) {
     if (!caseStudies.some(c => c.slug === slug)) merged.push(study);
   }
+  cache = { data: merged, ts: Date.now() };
   return merged;
 }
 

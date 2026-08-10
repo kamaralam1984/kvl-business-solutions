@@ -3,8 +3,6 @@ import { connectDB } from '@/lib/mongodb';
 import { Demo } from '@/lib/models/Demo';
 import { DemosClient } from './DemosClient';
 
-export const dynamic = 'force-dynamic';
-
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
 const title = 'Live Software Demos — Explore Working Products Before You Buy';
 const description = "Browse live, working demos of KVL's software products — CRM, ERP, school and hospital management, billing, and more. See real software in action, not screenshots.";
@@ -50,7 +48,10 @@ export default async function DemosPage() {
   let demos: any[] = [];
   try {
     await connectDB();
-    const dbDemos = await Demo.find({ active: true }).sort({ live: -1, order: 1, createdAt: -1 }).lean();
+    const dbDemos = await Demo.find({ active: true })
+      .select('name description url category technologies live image iconName c1 c2 startingPrice')
+      .sort({ live: -1, order: 1, createdAt: -1 })
+      .lean();
     demos = dbDemos.length > 0 ? dbDemos.map((d: any) => ({ ...d, _id: d._id.toString() })) : fallbackDemos;
   } catch {
     demos = fallbackDemos;

@@ -15,13 +15,14 @@ export const metadata = {
   alternates: { canonical: `${SITE}/careers` },
   openGraph: { title, description, url: `${SITE}/careers`, type: 'website' },
 };
-export const dynamic = 'force-dynamic';
-
 export default async function CareersPage() {
   let jobs: any[] = [];
   try {
     await connectDB();
-    jobs = await Job.find({ active: true }).sort({ createdAt: -1 }).lean();
+    jobs = await Job.find({ active: true })
+      .select('title department location remote type experience salary slug createdAt')
+      .sort({ createdAt: -1 })
+      .lean();
   } catch {}
 
   const depts = [...new Set(jobs.map(j => j.department))];

@@ -5,8 +5,6 @@ import { Job } from '@/lib/models/Job';
 import { ApplicationForm } from './ApplicationForm';
 import { ArrowLeft, MapPin, Briefcase, Clock, IndianRupee, Sparkles } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
-
 export default async function JobPage({ params }: { params: { slug: string } }) {
   await connectDB();
   const job: any = await Job.findOne({ slug: params.slug, active: true }).lean();
