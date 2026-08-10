@@ -1,20 +1,38 @@
 'use client';
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 export function MobileMenu({
-  open, navItems, pathname, hasSession,
+  open, navItems, pathname, hasSession, onClose,
 }: {
   open: boolean;
   navItems: readonly { label: string; href: string }[];
   pathname: string | null;
   hasSession: boolean;
+  onClose: () => void;
 }) {
+  // Same Escape-to-close + focus-return pattern as the account-menu dropdown
+  // elsewhere in Header.tsx — this mobile nav panel was the one interactive
+  // overlay on the page without it.
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+        document.getElementById('mobile-menu-toggle')?.focus();
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [open, onClose]);
+
   return (
     <AnimatePresence>
       {open && (
         <motion.div
+          id="mobile-nav-menu"
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}

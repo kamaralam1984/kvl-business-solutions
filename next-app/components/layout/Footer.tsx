@@ -153,10 +153,10 @@ export function Footer({ settings }: { settings?: any }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={s.label}
-                className="w-9 h-9 rounded-xl grid place-items-center border transition-all duration-200"
-                style={{ borderColor: 'rgba(var(--border) / 0.1)', color: 'rgba(var(--text) / 0.4)' }}
+                className="w-10 h-10 rounded-xl grid place-items-center border transition-all duration-200"
+                style={{ borderColor: 'rgba(var(--border) / 0.1)', color: 'rgb(var(--text-3))' }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(200,168,112,0.5)'; (e.currentTarget as HTMLElement).style.color = '#c8a870'; (e.currentTarget as HTMLElement).style.background = 'rgba(200,168,112,0.06)'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(var(--border) / 0.1)'; (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.4)'; (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(var(--border) / 0.1)'; (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text-3))'; (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
               >
                 <s.Icon className="w-3.5 h-3.5" />
               </Link>
@@ -226,7 +226,7 @@ export function Footer({ settings }: { settings?: any }) {
       {/* Bottom bar */}
       <div className="relative z-10" style={{ borderTop: '1px solid rgba(var(--border) / 0.08)' }}>
         <div className="container py-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-[12px]" style={{ color: 'rgba(var(--text) / 0.3)' }}>
+          <p className="text-[12px]" style={{ color: 'rgb(var(--text-3))' }}>
             &copy; {new Date().getFullYear()} {brandName}. All rights reserved.
           </p>
           <VisitorCounter />
@@ -236,16 +236,16 @@ export function Footer({ settings }: { settings?: any }) {
                 <Link
                   href={item.href}
                   className="text-[12px] transition-colors duration-200"
-                  style={{ color: 'rgba(var(--text) / 0.4)' }}
+                  style={{ color: 'rgb(var(--text-3))' }}
                   onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text))'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.4)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text-3))'; }}
                 >
                   {item.label}
                 </Link>
               </li>
             ))}
           </ul>
-          <p className="text-[12px]" style={{ color: 'rgba(var(--text) / 0.3)' }}>
+          <p className="text-[12px]" style={{ color: 'rgb(var(--text-3))' }}>
             Built in Patna, India
           </p>
         </div>
@@ -268,9 +268,9 @@ function FooterCol({ title, links }: { title: string; links: { label: string; hr
               target={item.external ? '_blank' : undefined}
               rel={item.external ? 'noreferrer' : undefined}
               className="text-[13px] flex items-center gap-2 group transition-all duration-200"
-              style={{ color: 'rgba(var(--text) / 0.4)' }}
+              style={{ color: 'rgb(var(--text-3))' }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text))'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.4)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text-3))'; }}
             >
               <ArrowRight className="w-3 h-3 shrink-0 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" style={{ color: '#c8a870' }} />
               {item.label}

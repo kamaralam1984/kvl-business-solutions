@@ -37,11 +37,10 @@ export function AnnouncementBanner({ banner }: { banner: any | null }) {
       >
         {/* Shimmer sweep */}
         <div
-          className="absolute inset-0 pointer-events-none"
+          className="absolute inset-0 pointer-events-none announcement-shimmer"
           style={{
             background: 'linear-gradient(90deg, transparent 0%, rgba(200,169,110,0.12) 50%, transparent 100%)',
             backgroundSize: '200% 100%',
-            animation: 'shimmerGold 4s linear infinite',
           }}
         />
 

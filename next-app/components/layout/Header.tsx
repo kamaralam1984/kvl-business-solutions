@@ -105,9 +105,14 @@ export function Header() {
                   className="relative"
                   onMouseEnter={() => setMegaMenu(megaKey)}
                   onMouseLeave={() => setMegaMenu(null)}
+                  onFocus={() => setMegaMenu(megaKey)}
+                  onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setMegaMenu(null); }}
+                  onKeyDown={e => { if (e.key === 'Escape') setMegaMenu(null); }}
                 >
                   <Link
                     href={item.href}
+                    aria-haspopup="true"
+                    aria-expanded={megaMenu === megaKey}
                     className="relative px-4 py-2.5 text-[13px] font-medium transition-all duration-200 flex flex-col items-center"
                     style={{ color: isActive ? 'rgb(var(--text))' : 'rgb(var(--text-2))' }}
                     onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text))'; }}
@@ -217,19 +222,22 @@ export function Header() {
 
           {/* Mobile toggle */}
           <button
-            className="lg:hidden flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-200 ml-1"
+            className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-200 ml-1"
             style={{ color: 'rgb(var(--text-2))' }}
             onClick={() => setOpen(v => !v)}
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text))'; (e.currentTarget as HTMLElement).style.background = 'rgba(var(--text) / 0.04)'; }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text-2))'; (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
             aria-label="Toggle menu"
+            aria-expanded={open}
+            aria-controls="mobile-nav-menu"
+            id="mobile-menu-toggle"
           >
             {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </div>
 
-      <MobileMenu open={open} navItems={navItems} pathname={pathname} hasSession={!!session} />
+      <MobileMenu open={open} navItems={navItems} pathname={pathname} hasSession={!!session} onClose={() => setOpen(false)} />
     </header>
   );
 }
