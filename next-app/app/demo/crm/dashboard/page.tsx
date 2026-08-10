@@ -172,7 +172,7 @@ export default function CrmDemoDashboardPage() {
                   : 'text-slate-400 hover:bg-slate-800 hover:text-white'
               }`}
             >
-              <item.icon className="h-4.5 w-4.5" />
+              <item.icon className="h-[18px] w-[18px]" />
               {item.label}
             </button>
           ))}

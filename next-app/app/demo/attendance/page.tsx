@@ -41,7 +41,7 @@ export default function AttendanceDemoLanding() {
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-slate-700 grid place-items-center">
-              <Fingerprint className="w-4.5 h-4.5 text-white" />
+              <Fingerprint className="w-[18px] h-[18px] text-white" />
             </div>
             <span className="font-extrabold text-lg tracking-tight">Time<span className="text-slate-700">Track</span></span>
           </div>

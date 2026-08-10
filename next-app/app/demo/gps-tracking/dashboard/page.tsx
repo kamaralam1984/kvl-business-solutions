@@ -76,7 +76,7 @@ export default function GpsTrackingDemoDashboard() {
       <aside className="hidden lg:flex w-60 shrink-0 flex-col bg-slate-900 text-white">
         <div className="h-16 flex items-center gap-2 px-5 border-b border-white/10">
           <div className="w-8 h-8 rounded-lg bg-orange-500 grid place-items-center">
-            <Satellite className="w-4.5 h-4.5 text-white" />
+            <Satellite className="w-[18px] h-[18px] text-white" />
           </div>
           <span className="font-extrabold tracking-tight">Fleet<span className="text-orange-400">Pulse</span></span>
         </div>
@@ -157,7 +157,7 @@ export default function GpsTrackingDemoDashboard() {
               <div key={s.label} className="bg-white rounded-2xl border border-slate-100 p-5">
                 <div className="flex items-center justify-between mb-3">
                   <div className="w-9 h-9 rounded-lg bg-orange-50 grid place-items-center">
-                    <s.Icon className="w-4.5 h-4.5 text-orange-600" />
+                    <s.Icon className="w-[18px] h-[18px] text-orange-600" />
                   </div>
                   <span className={`inline-flex items-center gap-0.5 text-[11px] font-semibold ${s.up ? 'text-emerald-600' : 'text-rose-500'}`}>
                     {s.up ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />} {s.delta}

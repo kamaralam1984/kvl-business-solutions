@@ -68,7 +68,7 @@ export default function HospitalDemoDashboard() {
       <aside className="hidden lg:flex w-60 shrink-0 flex-col bg-slate-900 text-white">
         <div className="h-16 flex items-center gap-2 px-5 border-b border-white/10">
           <div className="w-8 h-8 rounded-lg bg-teal-500 grid place-items-center">
-            <HeartPulse className="w-4.5 h-4.5 text-white" />
+            <HeartPulse className="w-[18px] h-[18px] text-white" />
           </div>
           <span className="font-extrabold tracking-tight">VitalCare<span className="text-teal-400">HMS</span></span>
         </div>
@@ -149,7 +149,7 @@ export default function HospitalDemoDashboard() {
               <div key={s.label} className="bg-white rounded-2xl border border-slate-100 p-5">
                 <div className="flex items-center justify-between mb-3">
                   <div className="w-9 h-9 rounded-lg bg-teal-50 grid place-items-center">
-                    <s.Icon className="w-4.5 h-4.5 text-teal-600" />
+                    <s.Icon className="w-[18px] h-[18px] text-teal-600" />
                   </div>
                   <span className={`inline-flex items-center gap-0.5 text-[11px] font-semibold ${s.up ? 'text-emerald-600' : 'text-rose-500'}`}>
                     {s.up ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />} {s.delta}

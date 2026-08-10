@@ -113,7 +113,7 @@ export function DemoShell({ product, children, activeNav, onNavChange }: { produ
             </div>
             <div className="flex items-center gap-3 ml-auto">
               <button className="relative text-slate-400 hover:text-white">
-                <Bell className="w-4.5 h-4.5" />
+                <Bell className="w-[18px] h-[18px]" />
                 <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
               </button>
               <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-500 to-purple-700 grid place-items-center text-[10px] font-bold">D</div>

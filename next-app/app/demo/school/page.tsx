@@ -41,7 +41,7 @@ export default function SchoolDemoLanding() {
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-violet-600 grid place-items-center">
-              <GraduationCap className="w-4.5 h-4.5 text-white" />
+              <GraduationCap className="w-[18px] h-[18px] text-white" />
             </div>
             <span className="font-extrabold text-lg tracking-tight">Campus<span className="text-violet-600">360</span></span>
           </div>
