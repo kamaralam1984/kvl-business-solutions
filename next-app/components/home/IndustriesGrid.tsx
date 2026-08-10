@@ -7,14 +7,14 @@ import { useReveal, revealStyle } from '@/lib/hooks/useReveal';
 import { Hospital, School, Banknote, UtensilsCrossed, Building2, HardHat, Factory, Landmark, ArrowRight } from 'lucide-react';
 
 const industries = [
-  { Icon: Hospital,        title: 'Healthcare',   desc: 'One patient record across OPD, IPD, pharmacy and billing.', href: '/industries/hospitals', image: '/industries/healthcare.png' },
-  { Icon: School,          title: 'Education',    desc: 'Admissions, fees, attendance and exams on one platform.', href: '/industries/schools', image: '/industries/education.png' },
-  { Icon: Banknote,        title: 'Finance',      desc: 'Books and compliance kept audit-ready by design.', href: '/industries', image: '/industries/finance.png' },
-  { Icon: UtensilsCrossed, title: 'Restaurant',   desc: 'Billing, tables and delivery synced in real time.', href: '/industries/restaurant-hospitality', image: '/industries/restaurant.png' },
-  { Icon: Building2,       title: 'Real Estate',  desc: 'Leads, site visits and bookings in one pipeline.', href: '/industries/realestate', image: '/industries/real-estate.png' },
-  { Icon: HardHat,         title: 'Construction', desc: 'Materials, labor and site progress tracked live.', href: '/industries/construction', image: '/industries/construction.png' },
-  { Icon: Factory,         title: 'Manufacturing',desc: 'PLC, SCADA and IoT data unified on one dashboard.', href: '/industries/manufacturing', image: '/industries/manufacturing.png' },
-  { Icon: Landmark,        title: 'Government',   desc: 'e-Tenders, GEM listings and compliance tracked end-to-end.', href: '/industries/government', image: '/industries/government.png' },
+  { Icon: Hospital,        title: 'Healthcare',   desc: 'One patient record across OPD, IPD, pharmacy and billing.', href: '/industries/hospitals', image: '/industries/healthcare.webp' },
+  { Icon: School,          title: 'Education',    desc: 'Admissions, fees, attendance and exams on one platform.', href: '/industries/schools', image: '/industries/education.webp' },
+  { Icon: Banknote,        title: 'Finance',      desc: 'Books and compliance kept audit-ready by design.', href: '/industries', image: '/industries/finance.webp' },
+  { Icon: UtensilsCrossed, title: 'Restaurant',   desc: 'Billing, tables and delivery synced in real time.', href: '/industries/restaurant-hospitality', image: '/industries/restaurant.webp' },
+  { Icon: Building2,       title: 'Real Estate',  desc: 'Leads, site visits and bookings in one pipeline.', href: '/industries/realestate', image: '/industries/real-estate.webp' },
+  { Icon: HardHat,         title: 'Construction', desc: 'Materials, labor and site progress tracked live.', href: '/industries/construction', image: '/industries/construction.webp' },
+  { Icon: Factory,         title: 'Manufacturing',desc: 'PLC, SCADA and IoT data unified on one dashboard.', href: '/industries/manufacturing', image: '/industries/manufacturing.webp' },
+  { Icon: Landmark,        title: 'Government',   desc: 'e-Tenders, GEM listings and compliance tracked end-to-end.', href: '/industries/government', image: '/industries/government.webp' },
 ];
 
 const AUTO_MS = 4000;

@@ -232,7 +232,7 @@ export default function CrmDemoLandingPage() {
           </div>
           <div className="relative mx-auto mt-14 max-w-4xl overflow-hidden rounded-2xl shadow-2xl ring-1 ring-white/10">
             <Image
-              src="/demo/crm-dashboard-mockup.png"
+              src="/demo/crm-dashboard-mockup.webp"
               alt="PulseCRM analytics dashboard shown on a laptop screen"
               width={1500}
               height={1057}
