@@ -24,7 +24,7 @@ export function HomeFAQ() {
           <span className="eyebrow mb-4 block">Common Questions</span>
           <h2 className="heading-lg" style={{ color: 'rgb(var(--text))' }}>
             Before you ask,<br />
-            <span style={{ color: '#c8a870' }}>here&apos;s what most people want to know.</span>
+            <span style={{ color: 'rgb(var(--gold-text))' }}>here&apos;s what most people want to know.</span>
           </h2>
         </div>
 
@@ -38,15 +38,22 @@ export function HomeFAQ() {
               >
                 <button
                   onClick={() => setOpen(isOpen ? null : i)}
+                  aria-expanded={isOpen}
+                  aria-controls={`home-faq-panel-${i}`}
+                  id={`home-faq-trigger-${i}`}
                   className="w-full flex items-center justify-between gap-4 p-5 text-left"
                 >
                   <span className="font-semibold text-[14.5px]" style={{ color: 'rgb(var(--text))' }}>{item.q}</span>
                   <ChevronDown
                     className="w-4 h-4 shrink-0 transition-transform duration-200"
-                    style={{ color: '#c8a870', transform: isOpen ? 'rotate(180deg)' : 'none' }}
+                    style={{ color: 'rgb(var(--gold-text))', transform: isOpen ? 'rotate(180deg)' : 'none' }}
                   />
                 </button>
                 <div
+                  id={`home-faq-panel-${i}`}
+                  role="region"
+                  aria-labelledby={`home-faq-trigger-${i}`}
+                  aria-hidden={!isOpen}
                   className="overflow-hidden transition-all duration-300"
                   style={{ maxHeight: isOpen ? 200 : 0 }}
                 >
@@ -62,8 +69,8 @@ export function HomeFAQ() {
         <div className="text-center mt-10">
           <Link
             href="/faq"
-            className="inline-flex items-center gap-1.5 text-[13.5px] font-semibold"
-            style={{ color: '#c8a870' }}
+            className="inline-flex items-center gap-1.5 text-[13.5px] font-semibold py-2"
+            style={{ color: 'rgb(var(--gold-text))' }}
           >
             See all FAQs
             <ArrowUpRight className="w-3.5 h-3.5" />

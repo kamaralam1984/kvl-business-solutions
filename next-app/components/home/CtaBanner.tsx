@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useReveal, revealStyle } from '@/lib/hooks/useReveal';
-import { ArrowUpRight, MessageCircle, CalendarClock, CheckCircle2 } from 'lucide-react';
+import { MessageCircle, CheckCircle2 } from 'lucide-react';
 
 const WHATSAPP_NUMBER = '919942000413';
 const WHATSAPP_MESSAGE = "Hi KVL, I'd like to talk about a software project.";
@@ -52,7 +52,7 @@ export function CtaBanner({ title, desc }: { title?: string; desc?: string }) {
               {title || (
                 <>
                   Your next system.<br />
-                  <span style={{ color: '#c8a870' }}>Ready to build.</span>
+                  <span style={{ color: 'rgb(var(--gold-text))' }}>Ready to build.</span>
                 </>
               )}
             </h2>
@@ -108,17 +108,6 @@ export function CtaBanner({ title, desc }: { title?: string; desc?: string }) {
               >
                 <MessageCircle className="w-4 h-4" /> Chat on WhatsApp
               </a>
-
-              <Link
-                href="/book-demo"
-                className="inline-flex items-center gap-2.5 px-8 py-4 rounded-xl font-semibold text-[15px] transition-all duration-200"
-                style={{ color: 'rgba(var(--text) / 0.55)' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text))'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.55)'; }}
-              >
-                <CalendarClock className="w-4 h-4" /> Request Enterprise Demo
-                <ArrowUpRight className="w-3.5 h-3.5 opacity-60" />
-              </Link>
             </div>
 
             {/* Trust line */}

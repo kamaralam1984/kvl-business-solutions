@@ -3,24 +3,28 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useReveal, revealStyle } from '@/lib/hooks/useReveal';
 import { ArrowUpRight, ExternalLink } from 'lucide-react';
-import { caseStudies } from '@/lib/data/case-studies';
+import type { CaseStudy } from '@/lib/data/case-studies';
 
 const FEATURED_SLUGS = ['aapkaplot', 'restro-os', 'vidyt'];
 
-const projects = FEATURED_SLUGS
-  .map(slug => caseStudies.find(c => c.slug === slug))
-  .filter((c): c is (typeof caseStudies)[number] => Boolean(c))
-  .map(c => ({
-    name: c.name,
-    slug: c.slug,
-    url: c.url,
-    overview: c.overview,
-    tech: c.tech,
-    image: c.images.hero,
-  }));
-
-export function CaseStudies() {
+export function CaseStudies({ caseStudies }: { caseStudies: CaseStudy[] }) {
   const { ref, inView } = useReveal();
+
+  // Fetched server-side via getLiveCaseStudies() (app/page.tsx) rather than
+  // imported from the static lib/data/case-studies.ts directly, so an
+  // admin's edits to a featured case study's overview/tech/image show up
+  // here instead of the homepage silently keeping stale copy.
+  const projects = FEATURED_SLUGS
+    .map(slug => caseStudies.find(c => c.slug === slug))
+    .filter((c): c is CaseStudy => Boolean(c))
+    .map(c => ({
+      name: c.name,
+      slug: c.slug,
+      url: c.url,
+      overview: c.overview,
+      tech: c.tech,
+      image: c.images.hero,
+    }));
 
   return (
     <section className="py-28" style={{ background: 'rgb(var(--bg))' }}>
@@ -29,8 +33,8 @@ export function CaseStudies() {
         {/* Section header */}
         <div className="max-w-full mx-auto text-center mb-16 px-2">
           <span className="eyebrow mb-4 block">Live Products, Not Mockups</span>
-          <h2 className="heading-lg sm:whitespace-nowrap" style={{ color: 'rgb(var(--text))', fontSize: 'clamp(0.95rem, 1.75vw, 1.5rem)' }}>
-            Real products. Real users. <span style={{ color: '#c8a870' }}>Verifiable today, not case studies we wrote ourselves.</span>
+          <h2 className="heading-lg" style={{ color: 'rgb(var(--text))', fontSize: 'clamp(0.95rem, 1.75vw, 1.5rem)' }}>
+            Real products. Real users. <span style={{ color: 'rgb(var(--gold-text))' }}>Verifiable today, not case studies we wrote ourselves.</span>
           </h2>
         </div>
 
@@ -72,18 +76,18 @@ export function CaseStudies() {
                   <div className="flex flex-wrap gap-1.5 mb-6">
                     {p.tech.map(t => (
                       <span key={t} className="text-[10.5px] font-medium px-2 py-0.5 rounded-full"
-                        style={{ background: 'rgba(200,168,112,0.08)', color: '#a3814f', border: '1px solid rgba(200,168,112,0.2)' }}>
+                        style={{ background: 'rgba(200,168,112,0.08)', color: 'rgb(var(--gold-text))', border: '1px solid rgba(200,168,112,0.2)' }}>
                         {t}
                       </span>
                     ))}
                   </div>
 
                   <div className="mt-auto pt-5 flex items-center justify-between" style={{ borderTop: '1px solid rgba(var(--border) / 0.07)' }}>
-                    <Link href={`/projects/${p.slug}`} className="inline-flex items-center gap-1.5 text-[13px] font-semibold group/link" style={{ color: '#c8a870' }}>
+                    <Link href={`/projects/${p.slug}`} className="inline-flex items-center gap-1.5 text-[13px] font-semibold group/link py-2" style={{ color: 'rgb(var(--gold-text))' }}>
                       View Case Study
                       <ArrowUpRight className="w-4 h-4 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform duration-200" />
                     </Link>
-                    <a href={p.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[11.5px] font-medium" style={{ color: 'rgb(var(--text-3))' }}>
+                    <a href={p.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[11.5px] font-medium py-2" style={{ color: 'rgb(var(--text-3))' }}>
                       Live site <ExternalLink className="w-3 h-3" />
                     </a>
                   </div>

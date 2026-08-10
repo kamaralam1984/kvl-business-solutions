@@ -17,6 +17,11 @@
     --text-3:   114 114 110;   /* darkened from 160/160/156 for WCAG AA (4.5:1) against white cards */
     --gold:     200 168 112;
     --gold-rgb: 200, 168, 112;
+    /* #c8a870 (the --gold value above) is a decorative/background gold — used
+       as small text (eyebrows, accents) it measures ~2.2:1 against this
+       theme's light backgrounds, well under WCAG AA. --gold-text is the same
+       brand gold darkened for that specific use, same idea as --text-3 above. */
+    --gold-text:138 90  26;    /* ~5.6:1 against --bg/--bg-2 */
   }
 
   html.dark {
@@ -28,10 +33,11 @@
     --surface-2:255 255 255;
     --border:   255 255 255;
     --text:     248 248 246;
-    --text-2:   110 110 108;
+    --text-2:   132 132 130;   /* was 110/110/108 — measured ~3.5:1 against --bg-3, under WCAG AA; matches --text-3's tuning approach */
     --text-3:   124 124 122;   /* lightened from 60/60/58 for WCAG AA (4.5:1) against dark cards */
     --gold:     200 168 112;
     --gold-rgb: 200, 168, 112;
+    --gold-text:200 168 112;   /* the plain gold already contrasts fine against dark backgrounds */
   }
 
   /* Surface / border tint helpers */
@@ -99,13 +105,13 @@
   }
   .eyebrow {
     @apply text-[11px] font-bold tracking-[0.18em] uppercase inline-flex items-center gap-2;
-    color: #c8a870;
+    color: rgb(var(--gold-text));
   }
   .eyebrow-dot::before {
     content: '';
     display: inline-block;
     width: 4px; height: 4px;
-    background: #c8a870;
+    background: rgb(var(--gold-text));
     border-radius: 50%;
     animation: pulseDot 2s ease-in-out infinite;
   }
@@ -876,4 +882,19 @@
   40%  { transform: translate(-6%, -3%) scale(0.9);  opacity: 0.8; }
   70%  { transform: translate(4%, -6%)  scale(1.2);  opacity: 0.6; }
   100% { transform: translate(5%, 6%)   scale(1.05); opacity: 0.5; }
+}
+
+/* HeroShowcaseSlider (components/home/HeroShowcaseSlider.tsx) — animation only
+   applied under no-preference, matching the .loader-* pattern above, so the
+   slider's background glow/slide-in effects actually respect a user's
+   reduced-motion setting instead of running unconditionally. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-slider-glow-a { animation: vfxGlowDrift 7s ease-in-out infinite; }
+  .hero-slider-glow-b { animation: vfxGlowDriftAlt 9s ease-in-out infinite; }
+  .hero-slider-slide-in-right { animation: slideInRight 0.5s cubic-bezier(0.22,1,0.36,1) both; }
+  .hero-slider-slide-in-left  { animation: slideInLeft 0.5s cubic-bezier(0.22,1,0.36,1) both; }
+  /* components/layout/AnnouncementBanner.tsx — was an unconditional infinite
+     animation via inline style; this keeps it opt-out for reduced-motion
+     users the same way the loader/hero-slider animations already are. */
+  .announcement-shimmer { animation: shimmerGold 4s linear infinite; }
 }

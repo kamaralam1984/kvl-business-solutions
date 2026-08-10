@@ -3,6 +3,7 @@ import { ShieldCheck, Award, Sparkles, ArrowUpRight } from 'lucide-react';
 import { HeroShowcaseSlider } from './HeroShowcaseSlider';
 import { LiveRatingBadge } from './LiveRatingBadge';
 import { TrackedLink } from '@/components/analytics/TrackedLink';
+import type { Software } from '@/lib/data/software';
 
 /* ── Static data ─────────────────────────────────────── */
 const trustBadges = [
@@ -24,7 +25,7 @@ type HeroSettings = {
   heroCtaText?: string; heroCtaLink?: string; heroSecondaryCtaText?: string; heroSecondaryCtaLink?: string;
 };
 
-export function Hero({ settings }: { settings?: HeroSettings | null } = {}) {
+export function Hero({ settings, products }: { settings?: HeroSettings | null; products: Software[] }) {
   const eyebrow = settings?.heroEyebrow || 'Enterprise Software, Engineered in India';
   const title = settings?.heroTitle || 'Custom Software Development';
   const accent = settings?.heroAccent || 'Purpose-Built Software. Precision Engineered for Your Business.';
@@ -59,7 +60,7 @@ export function Hero({ settings }: { settings?: HeroSettings | null } = {}) {
         {/* Eyebrow */}
         <div className="mb-8 animate-fade-up">
           <span className="inline-flex items-center gap-3 text-[11px] tracking-[0.2em] font-semibold uppercase"
-            style={{ color: '#c8a870' }}
+            style={{ color: 'rgb(var(--gold-text))' }}
           >
             <span className="animate-line-draw" style={{ width: 24, height: 1, background: 'linear-gradient(90deg, #c8a870, transparent)', display: 'inline-block' }} />
             {eyebrow}
@@ -80,10 +81,11 @@ export function Hero({ settings }: { settings?: HeroSettings | null } = {}) {
               {title}
             </h1>
 
-            {/* Tagline */}
+            {/* Tagline — sized above the description below so the intended
+                emphasis (H1 > tagline > description) actually reads that way. */}
             <p
               className="font-semibold mb-7"
-              style={{ fontSize: 'clamp(0.85rem, 1.1vw, 1rem)', color: '#c8a870' }}
+              style={{ fontSize: 'clamp(1rem, 1.3vw, 1.15rem)', color: 'rgb(var(--gold-text))' }}
             >
               {accent}
             </p>
@@ -137,7 +139,7 @@ export function Hero({ settings }: { settings?: HeroSettings | null } = {}) {
 
           {/* ══ RIGHT COLUMN — Product showcase slider (desktop only, client island) ══ */}
           <div className="relative hidden lg:block hero-diagram-in">
-            <HeroShowcaseSlider />
+            <HeroShowcaseSlider products={products} />
           </div>
         </div>
       </div>

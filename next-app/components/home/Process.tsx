@@ -23,12 +23,12 @@ export function Process() {
           <span className="eyebrow mb-4 block">How We Work</span>
           <h2 className="heading-lg" style={{ color: 'rgb(var(--text))' }}>
             The same process, every time —<br />
-            <span style={{ color: '#c8a870' }}>nothing left to chance.</span>
+            <span style={{ color: 'rgb(var(--gold-text))' }}>nothing left to chance.</span>
           </h2>
         </div>
 
         {/* Process steps */}
-        <div ref={ref} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+        <div ref={ref} className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-5">
           {steps.map((s, i) => (
             <div key={s.num} style={revealStyle(inView, i, { staggerMs: 70, distance: 22 })}>
               <div className="card-premium h-full p-6">

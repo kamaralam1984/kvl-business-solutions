@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -27,7 +27,10 @@ export function IndustriesGrid() {
   const trackRef = useRef<HTMLDivElement>(null);
   const [trackW, setTrackW] = useState(900);
 
-  useEffect(() => {
+  // useLayoutEffect (not useEffect) so the real measured width is applied
+  // before the browser paints the first frame — otherwise cards render once
+  // at the 900px guess, then visibly snap to the correct size a moment later.
+  useLayoutEffect(() => {
     const el = trackRef.current;
     if (!el) return;
     const update = () => setTrackW(el.offsetWidth);
@@ -38,7 +41,7 @@ export function IndustriesGrid() {
   }, []);
 
   useEffect(() => {
-    if (paused) return;
+    if (paused || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const t = setInterval(() => setActive(a => (a + 1) % industries.length), AUTO_MS);
     return () => clearInterval(t);
   }, [paused]);
@@ -52,8 +55,8 @@ export function IndustriesGrid() {
       <div className="container">
         <div className="max-w-full mx-auto text-center mb-10 px-2">
           <span className="eyebrow mb-4 block">Industries</span>
-          <h2 className="heading-lg sm:whitespace-nowrap" style={{ color: 'rgb(var(--text))', fontSize: 'clamp(0.95rem, 1.75vw, 1.5rem)' }}>
-            Different sectors, different rules. <span style={{ color: '#c8a870' }}>We already know the difference.</span>
+          <h2 className="heading-lg" style={{ color: 'rgb(var(--text))', fontSize: 'clamp(0.95rem, 1.75vw, 1.5rem)' }}>
+            Different sectors, different rules. <span style={{ color: 'rgb(var(--gold-text))' }}>We already know the difference.</span>
           </h2>
         </div>
 
@@ -168,12 +171,16 @@ export function IndustriesGrid() {
                 </motion.div>
               </AnimatePresence>
 
-              {/* Progress dots */}
+              {/* Progress dots — the visual bar stays thin, but each button gets
+                  extra invisible padding so the actual tap target clears the
+                  ~40px minimum instead of being exactly 6px tall. */}
               <div className="flex gap-1.5 mt-6">
                 {industries.map((ind, i) => (
                   <button key={ind.title} aria-label={`Show ${ind.title}`} onClick={() => setActive(i)}
-                    className="h-1.5 rounded-full transition-all duration-300"
-                    style={{ width: i === active ? 22 : 6, background: i === active ? '#c8a870' : 'rgba(255,255,255,0.25)' }} />
+                    className="py-3 grid place-items-center">
+                    <span className="block h-1.5 rounded-full transition-all duration-300"
+                      style={{ width: i === active ? 22 : 6, background: i === active ? '#c8a870' : 'rgba(255,255,255,0.25)' }} />
+                  </button>
                 ))}
               </div>
             </div>

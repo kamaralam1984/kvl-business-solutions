@@ -8,7 +8,7 @@ const reasons = [
   { Icon: Layers,           title: 'Modern Engineering Stack', desc: 'Next.js, React, TypeScript, and MongoDB.' },
   { Icon: LayoutDashboard,  title: 'Working Software Suite',   desc: 'Real production software — not a prototype.' },
   { Icon: FileCheck,        title: 'Straightforward Terms',    desc: 'Fixed pricing, 30-day money-back guarantee.' },
-  { Icon: Headset,          title: 'Fast, Human Support',      desc: 'Free onboarding, response typically within 20-25 minutes.' },
+  { Icon: Headset,          title: 'Fast, Human Support',      desc: 'Free onboarding, and a 1-hour response time.' },
 ];
 
 export function Certifications() {
@@ -23,7 +23,7 @@ export function Certifications() {
           <span className="eyebrow mb-4 block">Why Businesses Trust KVL</span>
           <h2 className="heading-lg" style={{ color: 'rgb(var(--text))' }}>
             Nothing here is inflated.<br />
-            <span style={{ color: '#c8a870' }}>Every claim is verifiable.</span>
+            <span style={{ color: 'rgb(var(--gold-text))' }}>Every claim is verifiable.</span>
           </h2>
         </div>
 

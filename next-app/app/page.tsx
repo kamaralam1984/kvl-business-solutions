@@ -38,10 +38,10 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero settings={settings} />
+      <Hero settings={settings} products={products} />
       <StatsBar productCount={products.length} caseStudyCount={caseStudies.length} />
       <IndustriesGrid />
-      <CaseStudies />
+      <CaseStudies caseStudies={caseStudies} />
       <Certifications />
       <Process />
       <Testimonials />
