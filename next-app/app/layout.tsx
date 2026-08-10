@@ -16,11 +16,13 @@ import { getSiteSettings } from '@/lib/models/SiteSettings';
 import { getActiveBanner } from '@/lib/models/Banner';
 import { services } from '@/lib/data/services';
 import { Suspense } from 'react';
-import Script from 'next/script';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
-const poppins = Poppins({ subsets: ['latin'], weight: ['400','500','600','700','800','900'], variable: '--font-poppins', display: 'swap' });
+// Only 700/800/900 are ever paired with font-display site-wide (verified by
+// grep across every file using the Tailwind utility, including @apply in
+// globals.css's .heading-xl) — the other three weights were dead payload.
+const poppins = Poppins({ subsets: ['latin'], weight: ['700','800','900'], variable: '--font-poppins', display: 'swap' });
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
 
@@ -220,10 +222,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </SiteChrome>
           </ThemeProvider>
         </SessionProviderWrapper>
-        <Script
-          src={process.env.NEXT_PUBLIC_CHATBOT_WIDGET_URL || 'https://superai.kvlbusinesssolutions.com/widget.js'}
-          strategy="lazyOnload"
-        />
       </body>
     </html>
   );
