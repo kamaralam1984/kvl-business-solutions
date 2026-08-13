@@ -175,4 +175,4 @@ Change password from MongoDB or extend the `/admin/users` route.
 
 ## 📜 License
 
-Proprietary — KVL Business Solutions. All rights reserved.
+MIT — see [LICENSE](../LICENSE).
