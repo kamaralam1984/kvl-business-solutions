@@ -23,6 +23,7 @@ function CheckoutInner() {
   const [rzpReady, setRzpReady] = useState(false);
   const [rzpBlocked, setRzpBlocked] = useState(false);
   const [advanceAmount, setAdvanceAmount] = useState('');
+  const [confirming, setConfirming] = useState(false);
 
   // Payment comes first, account creation after (see /checkout/success) — a
   // guest just needs an email + phone to receive the license key and pay.
@@ -49,23 +50,37 @@ function CheckoutInner() {
   }, [product?.slug]);
 
   const amountValid = Number(advanceAmount) >= MIN_ADVANCE;
+  const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
 
   const pay = async () => {
     if (!amountValid) { setErr(`Enter an advance amount of at least ₹${MIN_ADVANCE}.`); return; }
     if (isGuest && !guestDetailsValid) { setErr('Enter a valid email and phone number first.'); return; }
     if (!rzpReady || !(window as any).Razorpay) { setErr('Payment gateway is still loading — please wait a moment and try again. If this persists, disable any ad-blocker and reload the page.'); return; }
     setLoading(true); setErr('');
-    try {
-      const res = await fetch('/api/payments/create-order', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          productSlug, hosting, amount: Number(advanceAmount),
-          ...(isGuest ? { guestEmail, guestPhone } : {}),
-        }),
-      });
-      const data = await res.json();
-      if (!data.ok) throw new Error(data.error);
 
+    // create-order can fail on a genuine network drop before any HTTP
+    // response comes back — retried once so a single dropped packet doesn't
+    // force the customer to re-fill the form and try again from scratch.
+    let data: any;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const res = await fetch('/api/payments/create-order', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productSlug, hosting, amount: Number(advanceAmount),
+            ...(isGuest ? { guestEmail, guestPhone } : {}),
+          }),
+        });
+        data = await res.json();
+        break;
+      } catch {
+        if (attempt === 1) { setErr('Could not reach the server — check your connection and try again.'); setLoading(false); return; }
+        await sleep(1000);
+      }
+    }
+    if (!data.ok) { setErr(data.error || 'Failed to start checkout'); setLoading(false); return; }
+
+    try {
       const rzp = new (window as any).Razorpay({
         key: data.keyId,
         amount: data.amount,
@@ -80,14 +95,57 @@ function CheckoutInner() {
         },
         theme: { color: '#2563eb' },
         handler: async (resp: any) => {
-          const verify = await fetch('/api/payments/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(resp) });
-          const vd = await verify.json();
-          if (!vd.ok) { setErr('Payment verification failed. Please contact support.'); return; }
-          trackEvent('purchase', { value: data.amount / 100, currency: data.currency || 'INR', transaction_id: vd.orderId, product: data.productName }, vd.orderId);
-          // Logged-in buyers go straight to their dashboard. Guests paid
-          // first — now's when we offer to turn that into an account.
-          if (session?.user?.email) router.push(`/dashboard?success=${vd.orderId}`);
-          else router.push(`/checkout/success?order=${vd.orderId}&email=${encodeURIComponent(guestEmail)}&product=${encodeURIComponent(productSlug)}`);
+          setConfirming(true);
+          const paymentId = resp.razorpay_payment_id;
+          let verified: { orderId: string } | null = null;
+          let fatalError = '';
+
+          // Razorpay only calls this handler after a real successful charge —
+          // so /verify failing here is never treated as "payment failed".
+          // Up to 3 attempts with backoff absorb a network blip right after
+          // the charge; a 400/404 response means retrying won't help (bad
+          // signature or a genuinely missing order), so we stop immediately
+          // instead of hammering it.
+          for (let attempt = 0; attempt < 3 && !verified; attempt++) {
+            try {
+              const r = await fetch('/api/payments/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(resp) });
+              const vd = await r.json();
+              if (vd.ok) { verified = { orderId: vd.orderId }; break; }
+              if (r.status === 400 || r.status === 404) { fatalError = vd.error || 'Payment verification failed'; break; }
+            } catch { /* transient network error — retry */ }
+            if (attempt < 2) await sleep(1000 * 2 ** attempt);
+          }
+
+          // /verify never came back cleanly for a non-fatal (network) reason.
+          // Fall back to polling the order's status — the payment.captured
+          // webhook confirms the same order independently of this browser,
+          // usually within a couple of seconds, so we can still land the
+          // customer on the real success page instead of a dead end.
+          if (!verified && !fatalError) {
+            for (let i = 0; i < 6 && !verified; i++) {
+              await sleep(2000);
+              try {
+                const r = await fetch(`/api/payments/status?razorpayOrderId=${encodeURIComponent(data.razorpayOrderId)}`);
+                const sd = await r.json();
+                if (sd.ok && sd.status === 'paid') verified = { orderId: sd.orderId };
+                else if (sd.ok && sd.status === 'failed') { fatalError = 'Payment was not completed.'; break; }
+              } catch { /* keep polling */ }
+            }
+          }
+
+          setConfirming(false);
+          if (verified) {
+            trackEvent('purchase', { value: data.amount / 100, currency: data.currency || 'INR', transaction_id: verified.orderId, product: data.productName }, verified.orderId);
+            // Logged-in buyers go straight to their dashboard. Guests paid
+            // first — now's when we offer to turn that into an account.
+            if (session?.user?.email) router.push(`/dashboard?success=${verified.orderId}`);
+            else router.push(`/checkout/success?order=${verified.orderId}&email=${encodeURIComponent(guestEmail)}&product=${encodeURIComponent(productSlug)}`);
+            return;
+          }
+          setLoading(false);
+          setErr(fatalError
+            ? `${fatalError} If any amount was deducted, do NOT pay again — contact support with payment ID ${paymentId} and we'll sort it out.`
+            : `Your payment likely went through, but we're having trouble confirming it here. Do NOT pay again — check your email shortly, or contact support with payment ID ${paymentId}.`);
         },
         modal: { ondismiss: () => setLoading(false) },
       });
@@ -177,8 +235,9 @@ function CheckoutInner() {
             )}
 
             <button disabled={loading || !rzpReady || !amountValid || (isGuest && !guestDetailsValid)} onClick={() => pay()} className="btn btn-primary w-full justify-center">
-              <CreditCard className="w-4 h-4" /> {loading ? 'Opening Razorpay...' : !rzpReady ? 'Loading payment gateway...' : 'Advance Payment'}
+              <CreditCard className="w-4 h-4" /> {confirming ? 'Confirming your payment...' : loading ? 'Opening Razorpay...' : !rzpReady ? 'Loading payment gateway...' : 'Advance Payment'}
             </button>
+            {confirming && <p className="text-text2 text-xs mt-2">Please don&apos;t close this tab — confirming your payment with the bank.</p>}
             {rzpBlocked && <p className="text-red-500 text-xs mt-2">Couldn&apos;t load the payment gateway — please disable any ad-blocker for this site and reload the page.</p>}
             {err && <p className="text-red-500 text-xs mt-2">{err}</p>}
             <div className="mt-4 pt-4 border-t border-tint space-y-1.5 text-[11px] text-text2">
