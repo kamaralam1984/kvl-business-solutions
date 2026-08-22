@@ -104,7 +104,7 @@ export default function DocsPage() {
 
               <div className="card-base p-6 surface-tint text-center">
                 <p className="font-semibold mb-1">Can&apos;t find what you need?</p>
-                <p className="text-text2 text-sm mb-4">Our team responds within 4 business hours.</p>
+                <p className="text-text2 text-sm mb-4">Our team responds within 1 hour.</p>
                 <Link href="/support" className="btn btn-primary">Contact Support</Link>
               </div>
             </>

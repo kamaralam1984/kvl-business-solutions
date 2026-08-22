@@ -25,7 +25,7 @@ const SiteSettingsSchema = new Schema({
   businessHours: { type: String, default: 'Mon–Sat: 9 AM – 8 PM' },
   emergencySupport: { type: String, default: '24×7 emergency support' },
   supportHours: { type: String, default: '24×7 for paid clients' },
-  averageResponseTime: { type: String, default: '~22 minutes' },
+  averageResponseTime: { type: String, default: '1 hour' },
 
   // Social links
   social: {

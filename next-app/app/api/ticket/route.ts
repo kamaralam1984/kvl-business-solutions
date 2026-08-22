@@ -37,7 +37,7 @@ export async function POST(req: Request) {
     notify(data.email, {
       type: 'ticket',
       title: `Ticket received [${data.priority.toUpperCase()}]`,
-      message: `We got your request and will respond within 4 business hours.`,
+      message: `We got your request and will respond within 1 hour.`,
       link: '/support',
     });
     fireTrigger('new_ticket', {

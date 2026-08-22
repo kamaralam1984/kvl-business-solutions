@@ -54,7 +54,7 @@ export const softwareProducts: Software[] = [
     benefits: [
       { icon: 'LayoutGrid', title: 'Room for a full site', desc: '5 pages covers home, about, services, gallery and contact — not squeezed onto one page.' },
       { icon: 'MapPin', title: 'Easy to find', desc: 'Google Maps integration means customers can navigate to you directly from the site.' },
-      { icon: 'Globe', title: 'Domain included', desc: 'Unlike the ₹999 starter plan, a domain is included — no separate purchase needed.' },
+      { icon: 'Globe', title: 'Domain included', desc: 'Unlike the Basic Plan — Starter, a domain is included — no separate purchase needed.' },
     ],
     demoNav: [{ label: 'Preview', icon: 'Globe' }],
   },

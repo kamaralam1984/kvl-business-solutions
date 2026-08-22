@@ -54,7 +54,7 @@ export function CallBackWidget() {
             <div className="flex justify-between items-center mb-3">
               <div>
                 <h4 className="font-bold text-sm">Call Me Back</h4>
-                <p className="text-[11px] text-text2">Our team will call you back within 4 hours.</p>
+                <p className="text-[11px] text-text2">Our team will call you back within 1 hour.</p>
               </div>
               <button onClick={() => setOpen(false)}><X className="w-4 h-4 text-text2" /></button>
             </div>
@@ -66,7 +66,7 @@ export function CallBackWidget() {
                 <p className="text-[11px] text-text2 mt-1">
                   {callInitiated
                     ? 'Our team will call you shortly — please keep your phone nearby.'
-                    : 'Our team has been notified and will call you back within 4 hours.'}
+                    : 'Our team has been notified and will call you back within 1 hour.'}
                 </p>
               </div>
             ) : (

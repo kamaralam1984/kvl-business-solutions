@@ -44,7 +44,7 @@ export function leadConfirmationEmail(lead: { name: string; service?: string }) 
 export function callBackEmail(data: { name: string; phone: string }) {
   return wrap('Call Me Back Requested', `<h2>📞 Call Back Requested — ${data.name}</h2>
     <p><b>Phone:</b> ${data.phone}</p>
-    <p>Customer asked for a callback via the website widget — they were promised a call back within 4 hours.</p>`);
+    <p>Customer asked for a callback via the website widget — they were promised a call back within 1 hour.</p>`);
 }
 
 export function ticketEmail(t: any) {

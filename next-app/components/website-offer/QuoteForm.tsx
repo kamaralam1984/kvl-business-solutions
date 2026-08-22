@@ -119,7 +119,7 @@ export function QuoteForm() {
 
       {callbackDone ? (
         <div className="flex items-center justify-center gap-2 text-green-600 font-bold text-sm py-2.5">
-          <CheckCircle className="w-4 h-4" /> We will call you back within 4 hours!
+          <CheckCircle className="w-4 h-4" /> We will call you back within 1 hour!
         </div>
       ) : showCallbackForm ? (
         <div className="border border-gray-200 rounded-xl p-3 space-y-2 bg-gray-50">

@@ -52,12 +52,12 @@ export function Footer({ settings }: { settings?: any }) {
 
   const company = [
     { label: 'About Us',    href: '/about' },
+    { label: 'Reviews',     href: '/reviews' },
     { label: 'Patna Office', href: '/software-development-company-patna' },
     { label: 'Global Delivery', href: '/global' },
     { label: 'Brand',       href: '/brand' },
     { label: 'Careers',     href: '/careers' },
     { label: 'Pricing',     href: '/pricing' },
-    { label: 'Book a Demo', href: '/book-demo' },
     { label: 'Mock Interview', href: '/mock-interview' },
   ];
 

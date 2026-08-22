@@ -209,7 +209,7 @@ export function Header() {
                 Login
               </Link>
               <Link
-                href="/contact"
+                href="/book-demo"
                 className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl text-[13px] font-bold transition-all duration-200 active:scale-95"
                 style={{ background: 'linear-gradient(135deg, #c8a870 0%, #d4b880 100%)', color: '#0a0a0a', boxShadow: '0 4px 20px rgba(200,168,112,0.3)' }}
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 30px rgba(200,168,112,0.45)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; }}

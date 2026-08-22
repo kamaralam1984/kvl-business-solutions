@@ -34,7 +34,7 @@ const faqs = [
   {
     cat: 'Support',
     items: [
-      { q: 'How do I get support?', a: 'Email support@kvlbusinesssolutions.com, raise a ticket from /support, or use the chatbot. We respond within 4 business hours.' },
+      { q: 'How do I get support?', a: 'Email support@kvlbusinesssolutions.com, raise a ticket from /support, or use the chatbot. We respond within 1 hour.' },
       { q: 'What is your SLA?', a: 'Critical issues: 1 hour. High: 4 hours. Medium: 1 day. Low: 3 days.' },
     ],
   },

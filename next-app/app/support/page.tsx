@@ -77,7 +77,7 @@ export default function SupportPage() {
             <h2 className="text-3xl font-bold my-3">Submit a Support Request</h2>
             <p className="text-text2">Need help with software, GPS, or any service? Submit a ticket and our team will respond within 1 hour.</p>
             <div className="mt-5 space-y-2 text-sm">
-              <div className="flex items-center gap-2"><Bolt className="w-4 h-4 text-primary" /> Average response time: 22 minutes</div>
+              <div className="flex items-center gap-2"><Bolt className="w-4 h-4 text-primary" /> Average response time: under 1 hour</div>
               <div className="flex items-center gap-2"><Shield className="w-4 h-4 text-primary" /> 99.8% issue resolution rate</div>
               <div className="flex items-center gap-2"><Clock className="w-4 h-4 text-primary" /> Available Mon–Sat 9 AM – 8 PM</div>
               <div className="flex items-center gap-2"><Headphones className="w-4 h-4 text-primary" /> 24x7 emergency line for paid clients</div>

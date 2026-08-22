@@ -66,7 +66,7 @@ export async function POST(req: Request) {
     if (process.env.ADMIN_WHATSAPP_PHONE) {
       sendCustomWhatsApp({
         phone: process.env.ADMIN_WHATSAPP_PHONE,
-        message: `🔔 *Call Me Back Request!*\n\n👤 Name: ${body.name}\n📞 Phone: ${body.phone}\n\n_Customer was promised a call back within 4 hours — call them soon._`,
+        message: `🔔 *Call Me Back Request!*\n\n👤 Name: ${body.name}\n📞 Phone: ${body.phone}\n\n_Customer was promised a call back within 1 hour — call them soon._`,
       }).catch(() => {});
     }
     fireTrigger('call_back_requested', { name: body.name, phone: body.phone, leadId: lead._id.toString() });

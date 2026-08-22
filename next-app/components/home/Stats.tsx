@@ -57,7 +57,10 @@ function StatCard({
   inView: boolean; index: number;
 }) {
   const count = useCounter(value, decimal, inView);
-  const display = decimal > 0 ? count.toFixed(decimal) : Math.floor(count).toLocaleString('en-IN');
+  // Before the section scrolls into view the count-up hasn't started yet, so
+  // `count` is still its initial 0 — show a neutral placeholder instead of a
+  // literal 0/0.0 on first paint (matches the homepage StatsBar fix).
+  const display = !inView ? '—' : decimal > 0 ? count.toFixed(decimal) : Math.floor(count).toLocaleString('en-IN');
 
   return (
     <motion.div

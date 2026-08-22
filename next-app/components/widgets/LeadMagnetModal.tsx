@@ -124,7 +124,7 @@ export function LeadMagnetModal() {
                   <copy.Icon className="w-7 h-7 text-primary" />
                 </div>
                 <h3 className="text-lg font-bold mb-1">Request received</h3>
-                <p className="text-sm text-text2">Our team will reach out within 1 business day.</p>
+                <p className="text-sm text-text2">Our team will reach out within 1 hour.</p>
               </div>
             ) : (
               <>

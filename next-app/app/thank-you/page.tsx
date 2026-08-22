@@ -15,7 +15,7 @@ export default function ThankYouPage({ searchParams }: { searchParams: { type?: 
   const steps = type === 'booking'
     ? [
         { title: 'We review your request', desc: 'Our team checks your preferred date, time and product interest.' },
-        { title: 'We confirm within 2 business hours', desc: "You'll get an email and WhatsApp with a confirmed slot and meeting link." },
+        { title: 'We confirm within 1 hour', desc: "You'll get an email and WhatsApp with a confirmed slot and meeting link." },
         { title: 'We meet and talk it through', desc: 'A 30-minute walkthrough, live Q&A, and a custom quote — no pressure.' },
       ]
     : [

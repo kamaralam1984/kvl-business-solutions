@@ -41,9 +41,12 @@ function StatTile({ Icon, value, label, inView, index, loading }: { Icon: any; v
           <Icon className="w-[18px] h-[18px]" style={{ color: '#c8a870' }} />
         </div>
         {/* Show a neutral placeholder instead of a literal "0" while the real
-            count is still loading — a hard 0 reads as a broken counter and
+            count is still loading, or before the section has scrolled into
+            view and the count-up animation has actually started — otherwise
+            the very first paint (and any screenshot/crawl that never
+            scrolls) shows a hard 0, which reads as a broken counter and
             undercuts this section's whole "every number here is real" point. */}
-        {loading ? (
+        {(loading || !inView) ? (
           <div className="font-display font-black leading-none opacity-30" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', color: 'rgb(var(--text))' }}>—</div>
         ) : (
           <div className="font-display font-black leading-none" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', color: 'rgb(var(--text))' }}>

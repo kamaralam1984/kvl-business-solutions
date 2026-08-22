@@ -75,7 +75,7 @@ export function Testimonials() {
                 See the live products above, or talk to us directly.
               </p>
               <Link
-                href="/contact"
+                href="/book-demo"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-[14px] transition-all duration-200"
                 style={{ background: '#0a0a0a', color: '#ffffff' }}
               >

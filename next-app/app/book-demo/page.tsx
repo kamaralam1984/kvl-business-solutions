@@ -115,7 +115,7 @@ export default function BookDemoPage() {
                     <CheckCircle2 className="w-10 h-10" style={{ color: '#c8a96e' }} />
                   </div>
                   <h2 className="text-3xl font-extrabold mb-3 text-text" style={{ fontFamily: 'Poppins, sans-serif' }}>Booking received!</h2>
-                  <p className="mb-7 text-sm text-text2">Our team will confirm a slot and email you within 2 business hours.</p>
+                  <p className="mb-7 text-sm text-text2">Our team will confirm a slot and email you within 1 hour.</p>
                   <a
                     href="https://wa.me/919942000413"
                     target="_blank"
@@ -268,7 +268,7 @@ export default function BookDemoPage() {
                       {state === 'sending' ? 'Booking…' : 'Request Demo'}
                     </button>
                     <p className="text-[10px] text-center text-text2">
-                      {"We'll confirm by email + WhatsApp within 2 business hours."}
+                      {"We'll confirm by email + WhatsApp within 1 hour."}
                     </p>
                   </form>
                 </div>
