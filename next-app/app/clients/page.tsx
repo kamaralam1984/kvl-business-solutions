@@ -29,12 +29,14 @@ export default async function ClientsPage() {
     ? Math.round((approvedReviews.reduce((s: number, r: any) => s + r.rating, 0) / reviewCount) * 10) / 10
     : 0;
 
+  // Attaches aggregateRating/review to the SAME Organization node the root
+  // layout already declares (matching @id), instead of redeclaring name/url
+  // with a second, partial Organization object — the redeclaration was
+  // technically a second, conflicting definition of the same entity.
   const orgJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     '@id': `${SITE}/#organization`,
-    name: 'KVL Business Solutions',
-    url: SITE,
     ...(reviewCount > 0 ? {
       aggregateRating: { '@type': 'AggregateRating', ratingValue, reviewCount },
       review: approvedReviews.slice(0, 10).map((r: any) => ({

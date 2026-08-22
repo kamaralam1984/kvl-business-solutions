@@ -170,7 +170,7 @@ const EXTRACTOR_SYSTEM = `You are a contact info extractor. From the conversatio
 Return ONLY JSON or null if not enough info.
 {"name":"...","phone":"...","email":"...","service":"...","confidence":0.9}
 - confidence: 0-1, how sure you are (only return if ≥ 0.7)
-- phone must be a valid Indian mobile number (10 digits)
+- phone must be a real mobile number (any country — include the country code if the customer mentioned one)
 - name must be a real person name
 - service: what product/service they want`;
 
@@ -193,7 +193,13 @@ export async function extractLeadFromChat(
     if (!jsonMatch) return null;
     const parsed = JSON.parse(jsonMatch[0]);
     if (!parsed.confidence || parsed.confidence < 0.7) return null;
-    if (!parsed.phone || !/[6-9]\d{9}/.test(parsed.phone.replace(/\D/g, ''))) return null;
+    // Was hardcoded to a 10-digit Indian mobile pattern, which silently
+    // dropped every non-Indian number the chatbot picked up (e.g. a UAE
+    // lead giving a +971 number) — checked generically instead, matching
+    // the loose z.string().min(7) validation already used by the actual
+    // lead-capture form routes (app/api/lead, /quote, /booking).
+    const digits = String(parsed.phone || '').replace(/\D/g, '');
+    if (digits.length < 7 || digits.length > 15) return null;
     if (!parsed.name || parsed.name.length < 2) return null;
     return parsed;
   } catch {

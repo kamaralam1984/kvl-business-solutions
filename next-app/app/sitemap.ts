@@ -27,7 +27,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getLiveCaseStudies(),
     getLiveCourses(),
     getLiveBlogPosts(),
-    Job.find({ active: true }, { slug: 1 }).lean(),
+    Job.find({ active: true }, { slug: 1, updatedAt: 1 }).lean(),
   ]);
 
   const staticPaths = [
@@ -36,7 +36,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     'voice', 'mock-interview', 'careers', 'learn', 'downloads', 'blog', 'global', 'reviews',
     'software-development-company-patna', 'site-map',
     'privacy', 'terms', 'refund-policy', 'shipping-policy',
-    'login', 'register',
   ];
 
   return [
@@ -84,7 +83,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
     ...blogPosts.map(b => ({
       url: `${site}/blog/${b.slug}`,
-      lastModified: now,
+      // Real updatedAt where the post has one instead of the request
+      // timestamp — a sitemap where every single entry claims to have
+      // changed "now" teaches crawlers to stop trusting the freshness
+      // signal on this domain at all.
+      lastModified: b.updatedAt ? new Date(b.updatedAt) : now,
       changeFrequency: 'monthly' as const,
       priority: 0.6,
     })),
@@ -102,7 +105,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
     ...jobs.map((j: any) => ({
       url: `${site}/careers/${j.slug}`,
-      lastModified: now,
+      lastModified: j.updatedAt ? new Date(j.updatedAt) : now,
       changeFrequency: 'weekly' as const,
       priority: 0.5,
     })),
