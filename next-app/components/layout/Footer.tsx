@@ -54,6 +54,7 @@ export function Footer({ settings }: { settings?: any }) {
     { label: 'About Us',    href: '/about' },
     { label: 'Reviews',     href: '/reviews' },
     { label: 'Patna Office', href: '/software-development-company-patna' },
+    { label: 'Coverage Across India', href: '/software-development-company-india' },
     { label: 'Global Delivery', href: '/global' },
     { label: 'Brand',       href: '/brand' },
     { label: 'Careers',     href: '/careers' },

@@ -3,6 +3,7 @@ import { docArticles } from '@/lib/data/docs';
 import { industries } from '@/lib/data/industries';
 import { services } from '@/lib/data/services';
 import { countryPages } from '@/lib/data/country-pages';
+import { indiaStatePages } from '@/lib/data/india-states';
 import { industryLandingPages } from '@/lib/data/industry-landing-pages';
 import { getLiveSoftwareProducts } from '@/lib/data/live-software';
 import { getLiveCaseStudies } from '@/lib/data/live-case-studies';
@@ -34,7 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '', 'about', 'services', 'software', 'industries', 'projects', 'clients',
     'website-demos', 'website-offer', 'contact', 'support', 'faq', 'pricing', 'book-demo', 'docs', 'brand',
     'voice', 'mock-interview', 'careers', 'learn', 'downloads', 'blog', 'global', 'reviews',
-    'software-development-company-patna', 'site-map',
+    'software-development-company-patna', 'software-development-company-india', 'site-map',
     'privacy', 'terms', 'refund-policy', 'shipping-policy',
   ];
 
@@ -93,6 +94,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
     ...countryPages.map(c => ({
       url: `${site}/software-development-company-${c.slug}`,
+      lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    })),
+    ...indiaStatePages.map(s => ({
+      url: `${site}/software-development-company-${s.slug}`,
       lastModified: now,
       changeFrequency: 'monthly' as const,
       priority: 0.7,
