@@ -1,5 +1,6 @@
 import { Provider, getAvailableProviders } from './providers';
 import { getCached, setCached } from './cache';
+import { fetchWithTimeout } from '../fetch-timeout';
 
 export type ChatMessage = { role: 'user' | 'assistant' | 'system'; content: string };
 
@@ -37,7 +38,7 @@ async function callProvider(p: Provider, opts: ChatOpts): Promise<string> {
       contents: sys ? [{ role: 'user', parts: [{ text: sys }] }, ...contents] : contents,
       generationConfig: { maxOutputTokens: max, temperature: temp },
     };
-    const r = await fetch(`${p.endpoint}?key=${key}`, {
+    const r = await fetchWithTimeout(`${p.endpoint}?key=${key}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
@@ -49,7 +50,7 @@ async function callProvider(p: Provider, opts: ChatOpts): Promise<string> {
 
   // Cohere
   if (p.name.startsWith('cohere')) {
-    const r = await fetch(p.endpoint, {
+    const r = await fetchWithTimeout(p.endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
       body: JSON.stringify({
@@ -67,7 +68,7 @@ async function callProvider(p: Provider, opts: ChatOpts): Promise<string> {
 
   // Anthropic
   if (p.name.startsWith('anthropic')) {
-    const r = await fetch(p.endpoint, {
+    const r = await fetchWithTimeout(p.endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -93,7 +94,7 @@ async function callProvider(p: Provider, opts: ChatOpts): Promise<string> {
     max_tokens: max,
     temperature: temp,
   };
-  const r = await fetch(p.endpoint, {
+  const r = await fetchWithTimeout(p.endpoint, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

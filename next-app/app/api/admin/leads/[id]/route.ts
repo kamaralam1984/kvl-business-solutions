@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { connectDB } from '@/lib/mongodb';
 import { Lead } from '@/lib/models/Lead';
 import { Deal } from '@/lib/models/Deal';
@@ -8,6 +9,7 @@ import { parseBudgetToValue } from '@/lib/deal-utils';
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   const g = await requireAdmin(); if (!g.ok) return g.response;
+  try {
   const data = await req.json();
   await connectDB();
   const before = await Lead.findById(params.id);
@@ -45,12 +47,19 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   // --- end additive block ---
 
   return NextResponse.json({ ok: true, lead });
+  } catch (e) {
+    return apiError(e);
+  }
 }
 
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   const g = await requireAdmin(); if (!g.ok) return g.response;
-  await connectDB();
-  const lead = await Lead.findByIdAndDelete(params.id);
-  logActivity({ action: 'lead.delete', actorEmail: g.session?.user?.email || undefined, actorRole: 'admin', target: 'Lead', targetId: lead?.email, req });
-  return NextResponse.json({ ok: true });
+  try {
+    await connectDB();
+    const lead = await Lead.findByIdAndDelete(params.id);
+    logActivity({ action: 'lead.delete', actorEmail: g.session?.user?.email || undefined, actorRole: 'admin', target: 'Lead', targetId: lead?.email, req });
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    return apiError(e);
+  }
 }

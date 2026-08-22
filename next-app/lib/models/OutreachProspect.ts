@@ -1,7 +1,7 @@
 import { Schema, models, model } from 'mongoose';
-
-export const PROSPECT_STATUSES = ['pending', 'drafted', 'sent', 'opened', 'replied', 'meeting_booked', 'bounced', 'unsubscribed'] as const;
-export type ProspectStatus = typeof PROSPECT_STATUSES[number];
+import { PROSPECT_STATUSES } from '../constants/outreach';
+export { PROSPECT_STATUSES } from '../constants/outreach';
+export type { ProspectStatus } from '../constants/outreach';
 
 // A single cold-outreach target within a campaign. Status is set manually by
 // the admin (there's no inbox/LinkedIn API integration to auto-detect opens

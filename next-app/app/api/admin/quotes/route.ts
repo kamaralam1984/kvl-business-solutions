@@ -15,13 +15,27 @@ export async function GET(req: Request) {
     if (status) filter.status = status;
     await connectDB();
     const quotes = await Quote.find(filter).sort({ createdAt: -1 }).limit(300).lean();
-    const all = await Quote.find({}).lean();
+
+    // Computed via an aggregation instead of `Quote.find({}).lean()` +
+    // in-memory filtering — same reasoning as the orders route: this ran on
+    // every admin page load and scales linearly with quote volume for no
+    // reason, when MongoDB can group/sum this server-side in one query.
+    const [agg] = await Quote.aggregate([
+      {
+        $facet: {
+          byStatus: [{ $group: { _id: '$status', count: { $sum: 1 } } }],
+          totalValue: [{ $group: { _id: null, sum: { $sum: { $divide: [{ $add: [{ $ifNull: ['$estimateLow', 0] }, { $ifNull: ['$estimateHigh', 0] }] }, 2] } } } }],
+        },
+      },
+    ]);
+    const byStatus: Record<string, number> = {};
+    for (const s of agg.byStatus) byStatus[s._id] = s.count;
     const stats = {
-      total: all.length,
-      submitted: all.filter((x: any) => x.status === 'submitted').length,
-      followUp: all.filter((x: any) => x.status === 'follow-up').length,
-      closed: all.filter((x: any) => x.status === 'closed').length,
-      totalValue: all.reduce((s: number, x: any) => s + ((x.estimateLow || 0) + (x.estimateHigh || 0)) / 2, 0),
+      total: agg.byStatus.reduce((s: number, x: any) => s + x.count, 0),
+      submitted: byStatus.submitted || 0,
+      followUp: byStatus['follow-up'] || 0,
+      closed: byStatus.closed || 0,
+      totalValue: agg.totalValue[0]?.sum || 0,
     };
     return NextResponse.json({ ok: true, quotes, stats });
   } catch (e) {

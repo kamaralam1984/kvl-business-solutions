@@ -11,7 +11,11 @@ export async function connectDB() {
   const uri = process.env.MONGODB_URI;
   if (!uri) throw new Error('Please define MONGODB_URI in .env.local');
   if (!cached.promise) {
-    cached.promise = mongoose.connect(uri, { bufferCommands: false });
+    // Mongoose's default serverSelectionTimeoutMS is 30s — during a real Mongo
+    // outage, the first request of every cache cycle would hang that long
+    // before failing. 8s still covers a normal slow-start/reconnect but fails
+    // fast enough that a visitor sees an error page instead of a frozen tab.
+    cached.promise = mongoose.connect(uri, { bufferCommands: false, serverSelectionTimeoutMS: 8000 });
   }
   try {
     cached.conn = await cached.promise;

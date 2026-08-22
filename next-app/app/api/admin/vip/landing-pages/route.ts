@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { connectDB } from '@/lib/mongodb';
 import { VipVisitor } from '@/lib/models/VipVisitor';
 import { VipSession } from '@/lib/models/VipSession';
@@ -12,6 +13,7 @@ import { requireAdmin } from '@/lib/admin-guard';
 // identified themselves via a Lead/Booking/Quote — their name/email/phone.
 export async function GET(req: Request) {
   const g = await requireAdmin(); if (!g.ok) return g.response;
+  try {
   await connectDB();
 
   const { searchParams } = new URL(req.url);
@@ -115,4 +117,7 @@ export async function GET(req: Request) {
     byChannel: byChannelRaw.map((c: any) => ({ channel: c.channel || 'direct', count: c.count })),
     recentVisitors: recent,
   });
+  } catch (e) {
+    return apiError(e);
+  }
 }

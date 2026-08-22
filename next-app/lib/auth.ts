@@ -37,8 +37,19 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   }));
 }
 
+if (!process.env.NEXTAUTH_SECRET) {
+  // A missing secret doesn't crash NextAuth — it silently signs/verifies
+  // JWTs with an unset value, which on a site that gates /admin and
+  // processes real payments is a much worse failure mode than a loud
+  // boot-time error would be.
+  throw new Error('NEXTAUTH_SECRET is not set — required for session security.');
+}
+
 export const authOptions: NextAuthOptions = {
-  session: { strategy: 'jwt' },
+  // Default is a 30-day session with no re-check — explicit 14-day maxAge
+  // bounds how long a stolen/leaked session token stays usable on a site
+  // with an admin panel and stored payment history.
+  session: { strategy: 'jwt', maxAge: 14 * 24 * 60 * 60 },
   pages: { signIn: '/login' },
   providers,
   callbacks: {

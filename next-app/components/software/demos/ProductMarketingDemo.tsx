@@ -1,18 +1,43 @@
 'use client';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import * as LucideIcons from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { X, CheckCircle2, ArrowRight, MessageCircle, Lock } from 'lucide-react';
+import {
+  X, CheckCircle2, ArrowRight, MessageCircle, Lock,
+  AlertTriangle, ArrowDownCircle, ArrowUpCircle, BadgeIndianRupee, BarChart2, Bed, BedDouble, Bell,
+  BookOpen, Boxes, Brain, Briefcase, Building2, CalendarCheck, CalendarClock, CalendarDays, CalendarOff,
+  CalendarX2, ChefHat, ClipboardCheck, ClipboardList, Clock, Cloud, Code2, Cog, CreditCard, DollarSign,
+  Eye, FileCheck, FileText, Fingerprint, FlaskConical, Fuel, GitBranch, Globe, GraduationCap, Grid3X3,
+  Handshake, HardHat, Headphones, Home, Hotel, Layers, LayoutDashboard, LayoutGrid, Map, MapPin,
+  MessageSquare, Navigation, Network, Package, PackageCheck, Pill, Receipt, Rocket, Route, Satellite,
+  ScanLine, Search, Settings, ShieldAlert, ShieldCheck, ShoppingBag, ShoppingCart, Smartphone, Sparkles,
+  Stethoscope, Target, TrendingDown, TrendingUp, Truck, Users, UtensilsCrossed, Warehouse, Wrench, Zap,
+} from 'lucide-react';
 import type { Software } from '@/lib/data/software';
 import { themeForSlug, effectsForSlug, metalGradient, goldGradient, KIT_FOREGROUND, KIT_MUTED } from '@/lib/data/theme-kits';
 import { cropVariant } from '@/lib/data/img';
 import { EffectSlider, EffectGallery } from './GalleryEffects';
 import { DemoContent } from './DemoContent';
 
-const Icons = LucideIcons as unknown as Record<string, LucideIcon>;
+// A namespace import (`import * as LucideIcons`) pulls the ENTIRE icon
+// library into this client bundle and defeats next.config.js's
+// `optimizePackageImports` tree-shaking — this was the single biggest
+// contributor to /software/[slug]/demo being the heaviest route in the app.
+// Every icon name that actually appears in lib/data/software.ts's
+// keyFeatures is imported by name above instead, so only those ~75 icons
+// (not the full ~1600-icon set) ship to the browser.
+const Icons: Record<string, LucideIcon> = {
+  AlertTriangle, ArrowDownCircle, ArrowUpCircle, BadgeIndianRupee, BarChart2, Bed, BedDouble, Bell,
+  BookOpen, Boxes, Brain, Briefcase, Building2, CalendarCheck, CalendarClock, CalendarDays, CalendarOff,
+  CalendarX2, ChefHat, ClipboardCheck, ClipboardList, Clock, Cloud, Code2, Cog, CreditCard, DollarSign,
+  Eye, FileCheck, FileText, Fingerprint, FlaskConical, Fuel, GitBranch, Globe, GraduationCap, Grid3X3,
+  Handshake, HardHat, Headphones, Home, Hotel, Layers, LayoutDashboard, LayoutGrid, Map, MapPin,
+  MessageSquare, Navigation, Network, Package, PackageCheck, Pill, Receipt, Rocket, Route, Satellite,
+  ScanLine, Search, Settings, ShieldAlert, ShieldCheck, ShoppingBag, ShoppingCart, Smartphone, Sparkles,
+  Stethoscope, Target, TrendingDown, TrendingUp, Truck, Users, UtensilsCrossed, Warehouse, Wrench, Zap,
+};
 const Icon = ({ name, className, style }: { name: string; className?: string; style?: React.CSSProperties }) => {
-  const Cmp = Icons[name] || LucideIcons.Sparkles;
+  const Cmp = Icons[name] || Sparkles;
   return <Cmp className={className} style={style} />;
 };
 

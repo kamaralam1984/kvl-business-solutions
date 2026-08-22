@@ -1,3 +1,5 @@
+import { fetchWithTimeout } from './fetch-timeout';
+
 const VAPI_API_KEY = process.env.VAPI_API_KEY || '';
 const VAPI_PHONE_NUMBER_ID = process.env.VAPI_PHONE_NUMBER_ID || '';
 const VAPI_WEBHOOK_SECRET = process.env.VAPI_WEBHOOK_SECRET || '';
@@ -84,14 +86,14 @@ export async function initiateCall(opts: VapiCallOptions): Promise<{ callId: str
     },
   };
 
-  const res = await fetch(`${BASE_URL}/call/phone`, {
+  const res = await fetchWithTimeout(`${BASE_URL}/call/phone`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${VAPI_API_KEY}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(body),
-  });
+  }, 15000);
 
   if (!res.ok) {
     const err = await res.text();

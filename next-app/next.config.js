@@ -31,8 +31,20 @@ const csp = [
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    remotePatterns: [{ protocol: 'https', hostname: '**' }],
+    // A wildcard hostname here (protocol: 'https', hostname: '**') matches
+    // GHSA-9g9p-9gw9-jx7f — on a self-hosted deploy (this VPS, shared with
+    // several other unrelated apps) it lets anyone hit /_next/image?url=
+    // with an arbitrary external URL and force this server's sharp process
+    // to fetch/re-encode it, a real DoS vector against the whole box, not
+    // just this app. Scoped to the hosts actually used for remote images
+    // (Unsplash stock photos in case-study/demo data, Cloudinary for
+    // admin-uploaded images) instead.
+    remotePatterns: [
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+      { protocol: 'https', hostname: 'res.cloudinary.com' },
+    ],
     formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 31536000,
   },
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts'],

@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Plus, Copy, Mail, ExternalLink, Trash2, HeartHandshake, ClipboardList } from 'lucide-react';
-import { PROSPECT_STATUSES } from '@/lib/models/OutreachProspect';
+import { PROSPECT_STATUSES } from '@/lib/constants/outreach';
 
 type Campaign = { _id: string; name: string; channel: 'email' | 'linkedin'; subjectTemplate: string; bodyTemplate: string };
 type Prospect = {

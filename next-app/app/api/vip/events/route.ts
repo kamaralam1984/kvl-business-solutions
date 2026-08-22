@@ -43,6 +43,7 @@ export async function POST(req: Request) {
   const limit = rateLimit(`vip-events:${data.vid}`, 120, 60_000);
   if (!limit.allowed) return NextResponse.json({ ok: false }, { status: 429 });
 
+  try {
   await connectDB();
 
   const now = new Date();
@@ -111,4 +112,11 @@ export async function POST(req: Request) {
   }
 
   return NextResponse.json({ ok: true });
+  } catch (e) {
+    // Never surface a beacon error to the visitor — this is analytics, not a
+    // user-facing action — but do log it so a real Mongo/schema issue here
+    // doesn't silently drop VIP tracking data forever.
+    console.error('[vip/events]', e);
+    return NextResponse.json({ ok: false }, { status: 200 });
+  }
 }

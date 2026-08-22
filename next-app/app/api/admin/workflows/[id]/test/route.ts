@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { apiError } from '@/lib/api-response';
 import { connectDB } from '@/lib/mongodb';
 import { Workflow } from '@/lib/models/Workflow';
 import { runWorkflows } from '@/lib/workflows/runner';
@@ -82,22 +83,26 @@ const mockContexts: Record<string, any> = {
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   const g = await requireAdmin(); if (!g.ok) return g.response;
-  await connectDB();
-  const w: any = await Workflow.findById(params.id).lean();
-  if (!w) return NextResponse.json({ ok: false, error: 'Not found' }, { status: 404 });
+  try {
+    await connectDB();
+    const w: any = await Workflow.findById(params.id).lean();
+    if (!w) return NextResponse.json({ ok: false, error: 'Not found' }, { status: 404 });
 
-  const ctx = mockContexts[w.trigger] || { name: 'Test', email: 'test@example.com' };
-  const result = await runWorkflows(w.trigger, ctx);
+    const ctx = mockContexts[w.trigger] || { name: 'Test', email: 'test@example.com' };
+    const result = await runWorkflows(w.trigger, ctx);
 
-  logActivity({
-    action: 'workflow.test',
-    actorEmail: g.session?.user?.email || undefined,
-    actorRole: 'admin',
-    target: 'Workflow',
-    targetId: params.id,
-    details: { name: w.name, trigger: w.trigger, result },
-    req,
-  });
+    logActivity({
+      action: 'workflow.test',
+      actorEmail: g.session?.user?.email || undefined,
+      actorRole: 'admin',
+      target: 'Workflow',
+      targetId: params.id,
+      details: { name: w.name, trigger: w.trigger, result },
+      req,
+    });
 
-  return NextResponse.json({ ok: true, result, mockContext: ctx });
+    return NextResponse.json({ ok: true, result, mockContext: ctx });
+  } catch (e) {
+    return apiError(e);
+  }
 }
