@@ -7,7 +7,7 @@ import { ChevronDown, ArrowUpRight } from 'lucide-react';
 // not new claims, so this stays consistent with that page.
 const FAQS = [
   { q: 'What does KVL offer?', a: 'We provide 15 enterprise software products, custom development, GPS tracking, CCTV, civil work, and industrial automation services across India.' },
-  { q: 'Do you serve small businesses?', a: 'Yes — we have plans starting from ₹15,000 designed for small and mid-sized businesses.' },
+  { q: 'Do you serve small businesses?', a: 'Yes — we have plans designed for small and mid-sized businesses. Get in touch and we\'ll recommend the right fit.' },
   { q: 'Will you sign an NDA before discussing our project?', a: 'Yes — an NDA is available on request before we go into any project detail. Just ask on your first call.' },
   { q: 'Cloud or on-premise?', a: 'Most products support both. Cloud is faster to deploy; on-premise gives you full control.' },
   { q: 'Is training included?', a: 'Yes — every license includes 2 hours of free online training plus video documentation.' },

@@ -7,11 +7,10 @@ import { PageHero } from '@/components/shared/PageHero';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { ReviewsSection } from '@/components/widgets/ReviewsSection';
 import { ViewContentTracker } from '@/components/analytics/ViewContentTracker';
-import { formatINR } from '@/lib/utils';
 import { connectDB } from '@/lib/mongodb';
 import { Review } from '@/lib/models/Review';
 import {
-  Check, Cloud, Server, ShieldCheck, Headphones, RefreshCcw, Award, Play, Zap,
+  Check, Cloud, ShieldCheck, Headphones, RefreshCcw, Award, Play, Zap,
   BadgeIndianRupee, BarChart2, Bell, BookOpen, CalendarClock, CalendarX2, ChefHat, ClipboardCheck,
   ClipboardList, Clock, CreditCard, Eye, FileCheck, FileText, Fingerprint, Fuel, GitBranch, Globe,
   Layers, LayoutGrid, MapPin, MessageSquare, Navigation, Network, PackageCheck, Receipt, Rocket,
@@ -70,7 +69,6 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
   const cloudPrice = product.price;
   const onPremPrice = Math.round(product.price * 1.5);
-  const monthlyRent = product.buyOnly ? null : product.monthlyRent;
   const related = allProducts.filter(p => p.slug !== product.slug).slice(0, 3);
 
   let ratingValue = 0;
@@ -218,8 +216,8 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
           <aside className="space-y-4">
             <div className="card-base p-6 sticky top-24">
-              <div className="text-xs uppercase tracking-wider text-text2">Starting at</div>
-              <div className="text-4xl font-extrabold text-primary my-2">{formatINR(cloudPrice)}<span className="text-base text-text2 font-normal">{product.unit}</span></div>
+              <div className="text-xs uppercase tracking-wider text-text2">Get Started</div>
+              <div className="text-lg font-bold my-2">Pay an advance to begin — we&apos;ll discuss the rest on a call.</div>
 
               <div className="space-y-3 mt-5">
                 {!product.noDemo && (
@@ -228,18 +226,8 @@ export default async function ProductPage({ params }: { params: { slug: string }
                   </Link>
                 )}
                 <Link href={`/checkout?product=${product.slug}&host=cloud`} className="btn btn-primary w-full justify-center">
-                  <Cloud className="w-4 h-4" /> {product.buyOnly ? 'Buy Now' : 'Buy Cloud'} — {formatINR(cloudPrice)}
+                  <Cloud className="w-4 h-4" /> Advance Payment
                 </Link>
-                {!product.buyOnly && (
-                  <Link href={`/checkout?product=${product.slug}&host=on-premise`} className="btn btn-ghost w-full justify-center">
-                    <Server className="w-4 h-4" /> On-Premise — {formatINR(onPremPrice)}
-                  </Link>
-                )}
-                {monthlyRent && (
-                  <Link href={`/checkout?product=${product.slug}&plan=monthly`} className="btn w-full justify-center border border-violet-500/50 text-violet-400 hover:bg-violet-500/10">
-                    <Zap className="w-4 h-4" /> Rent — {formatINR(monthlyRent)}{product.rentUnit}
-                  </Link>
-                )}
               </div>
 
               <div className="mt-5 pt-5 border-t border-tint space-y-2 text-xs text-text2">
@@ -262,7 +250,6 @@ export default async function ProductPage({ params }: { params: { slug: string }
                   <div className="text-xs text-primary font-bold uppercase">{r.tag || 'Software'}</div>
                   <div className="font-bold mt-1">{r.name}</div>
                   <div className="text-xs text-text2 mt-1 line-clamp-2">{r.description}</div>
-                  <div className="font-bold text-primary mt-3">{formatINR(r.price)}{r.unit}</div>
                 </Link>
               ))}
             </div>

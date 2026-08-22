@@ -3,12 +3,8 @@ import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
 import { softwareProducts } from '@/lib/data/software';
-import { formatINR } from '@/lib/utils';
 import { Check, Calendar, Shield, Clock, Award } from 'lucide-react';
 import { ViewContentTracker } from '@/components/analytics/ViewContentTracker';
-import { JsonLd } from '@/components/shared/JsonLd';
-
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
 
 function FadeIn({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef(null);
@@ -59,41 +55,17 @@ const planTiers = [
 ];
 
 const pricingFaqs = [
-  { q: 'Are there any hidden fees?', a: 'No. The price you see is what you pay. GST is added at checkout per government norms.' },
+  { q: 'Are there any hidden fees?', a: 'No hidden fees. GST is added at checkout per government norms.' },
   { q: 'What happens after the 1-year support period?', a: 'You can renew support at a discounted rate, or continue using the software without support.' },
   { q: 'Can I upgrade from Starter to Business later?', a: 'Yes — we offer seamless upgrades with data migration included at no extra charge.' },
-  { q: 'Do you offer EMI or installment payments?', a: 'Yes, we partner with leading banks for 0% EMI on orders above ₹10,000.' },
+  { q: 'Do you offer EMI or installment payments?', a: 'Yes, we partner with leading banks for 0% EMI on eligible orders.' },
 ];
 
 export default function PricingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [isAnnual, setIsAnnual] = useState(true);
-
-  const pricingJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: 'KVL Business Solutions — Enterprise Software Plans',
-    description: 'Fixed-price ERP, CRM and business automation software plans.',
-    url: `${SITE}/pricing`,
-    offers: planTiers.map(tier => {
-      const products = tier.products.map(slug => softwareProducts.find(p => p.slug === slug)!).filter(Boolean);
-      const total = products.reduce((s, p) => s + p.price, 0);
-      const discount = tier.name === 'Business' ? 0.15 : tier.name === 'Enterprise' ? 0.30 : 0;
-      const price = Math.round(total * (1 - discount) * (1 - 0.2));
-      return {
-        '@type': 'Offer',
-        name: `${tier.name} Plan`,
-        description: tier.desc,
-        price,
-        priceCurrency: 'INR',
-        availability: 'https://schema.org/InStock',
-      };
-    }),
-  };
 
   return (
     <div style={{ background: 'rgb(var(--bg))' }}>
-      <JsonLd data={pricingJsonLd} id="pricing-jsonld" />
       <ViewContentTracker id="pricing" name="Pricing Page" category="Pricing" />
 
       {/* Hero */}
@@ -115,7 +87,7 @@ export default function PricingPage() {
             className="text-5xl md:text-7xl font-extrabold mt-4 mb-6 leading-tight"
             style={{ color: 'rgb(var(--text))', fontFamily: 'Poppins, sans-serif' }}
           >
-            Straightforward Pricing
+            Plans Built Around Your Business
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
@@ -124,31 +96,8 @@ export default function PricingPage() {
             className="text-xl max-w-2xl mx-auto"
             style={{ color: 'rgba(var(--text) / 0.55)' }}
           >
-            Know exactly what you&apos;re paying for and what you get — no hidden fees, no surprise renewals, 30-day money-back on everything.
+            Know exactly what you get — no hidden fees, no surprise renewals, 30-day money-back on everything. Talk to us for a plan matched to your business.
           </motion.p>
-
-          {/* Annual toggle */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-            className="flex items-center justify-center gap-3 mt-8"
-          >
-            <span className="text-sm" style={{ color: isAnnual ? 'rgba(var(--text) / 0.55)' : 'rgb(var(--text))' }}>Monthly</span>
-            <button
-              onClick={() => setIsAnnual(!isAnnual)}
-              className="relative w-12 h-6 rounded-full transition-colors duration-300"
-              style={{ background: isAnnual ? '#c8a96e' : 'rgba(var(--border) / 0.2)' }}
-            >
-              <span
-                className="absolute top-1 w-4 h-4 rounded-full bg-white transition-transform duration-300"
-                style={{ transform: isAnnual ? 'translateX(26px)' : 'translateX(4px)' }}
-              />
-            </button>
-            <span className="text-sm" style={{ color: isAnnual ? 'rgb(var(--text))' : 'rgba(var(--text) / 0.55)' }}>
-              Annual <span className="text-xs px-1.5 py-0.5 rounded ml-1" style={{ background: 'rgba(200,169,110,0.15)', color: '#c8a96e' }}>Save 20%</span>
-            </span>
-          </motion.div>
         </div>
       </section>
 
@@ -159,17 +108,12 @@ export default function PricingPage() {
         <div className="container">
           <FadeIn className="text-center mb-4">
             <h2 className="text-3xl font-extrabold" style={{ color: 'rgb(var(--text))', fontFamily: 'Poppins, sans-serif' }}>Compare plans</h2>
-            <p className="mt-2 text-sm" style={{ color: 'rgba(var(--text) / 0.55)' }}>Bundle multiple products and save up to 30%.</p>
+            <p className="mt-2 text-sm" style={{ color: 'rgba(var(--text) / 0.55)' }}>Bundle multiple products and save as a package.</p>
           </FadeIn>
           <div className="grid md:grid-cols-3 gap-6 mt-12">
             {planTiers.map((tier, idx) => {
               const products = tier.products.map(slug => softwareProducts.find(p => p.slug === slug)!).filter(Boolean);
-              const total = products.reduce((s, p) => s + p.price, 0);
-              const discount = tier.name === 'Business' ? 0.15 : tier.name === 'Enterprise' ? 0.30 : 0;
-              const annualDiscount = isAnnual ? 0.2 : 0;
-              const final = Math.round(total * (1 - discount) * (1 - annualDiscount));
               const isPopular = tier.badge === 'popular';
-              const isEnterprise = tier.badge === 'gold';
               return (
                 <FadeIn key={tier.name} delay={idx * 0.1}>
                   <div
@@ -189,19 +133,7 @@ export default function PricingPage() {
                       </div>
                     )}
                     <h3 className="text-2xl font-extrabold mt-2 text-text" style={{ fontFamily: 'Poppins, sans-serif' }}>{tier.name}</h3>
-                    <p className="text-xs mt-1 mb-5 text-text2">{tier.desc}</p>
-                    <div className="mb-6">
-                      {discount > 0 && (
-                        <div className="text-sm line-through text-text3">{formatINR(Math.round(total * (1 - annualDiscount)))}</div>
-                      )}
-                      <div className="text-4xl font-extrabold text-text" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                        {formatINR(final)}
-                        <span className="text-base font-normal ml-1 text-text2">/{isAnnual ? 'year' : 'mo'}</span>
-                      </div>
-                      {discount > 0 && (
-                        <div className="text-xs font-semibold mt-1" style={{ color: '#4ade80' }}>Save {Math.round(discount * 100)}% as a bundle</div>
-                      )}
-                    </div>
+                    <p className="text-xs mt-1 mb-6 text-text2">{tier.desc}</p>
                     <div className="space-y-2 text-sm mb-5 pb-5" style={{ borderBottom: '1px solid rgba(var(--border) / 0.07)' }}>
                       <div className="text-xs uppercase font-bold mb-3 tracking-wider text-text2">Includes</div>
                       {products.map(p => (
@@ -223,7 +155,7 @@ export default function PricingPage() {
                       href="/contact"
                       className={isPopular ? 'btn-primary w-full text-center py-3 rounded-xl font-semibold' : 'btn-gold w-full text-center py-3 rounded-xl font-semibold'}
                     >
-                      Get {tier.name}
+                      Advance Payment
                     </Link>
                   </div>
                 </FadeIn>
@@ -258,49 +190,36 @@ export default function PricingPage() {
         <div className="container">
           <FadeIn className="text-center mb-10">
             <h2 className="text-3xl font-extrabold" style={{ color: 'rgb(var(--text))', fontFamily: 'Poppins, sans-serif' }}>Individual products</h2>
-            <p className="mt-2 text-sm" style={{ color: 'rgba(var(--text) / 0.55)' }}>Prefer one product at a time? Buy individually — all prices in INR, GST extra.</p>
+            <p className="mt-2 text-sm" style={{ color: 'rgba(var(--text) / 0.55)' }}>Prefer one product at a time? Buy individually, cloud or on-premise.</p>
           </FadeIn>
           <FadeIn delay={0.1}>
             <div className="card-premium overflow-x-auto">
-              <table className="w-full text-sm min-w-[720px]">
+              <table className="w-full text-sm min-w-[560px]">
                 <thead style={{ borderBottom: '1px solid rgba(var(--border) / 0.07)' }}>
                   <tr className="text-left text-xs uppercase tracking-wider text-text2">
                     <th className="p-4">Product</th>
-                    <th className="p-4 text-right">Cloud</th>
-                    <th className="p-4 text-right">On-Premise</th>
                     <th className="p-4"></th>
                   </tr>
                 </thead>
                 <tbody>
-                  {softwareProducts.map(p => {
-                    const onPrem = Math.round(p.price * 1.5);
-                    return (
-                      <tr key={p.slug} className="transition-colors" style={{ borderBottom: '1px solid rgba(var(--border) / 0.04)' }}>
-                        <td className="p-4">
-                          <div className="font-bold text-text">{p.name}</div>
-                          <div className="text-xs mt-0.5 text-text2">{p.category}</div>
-                          <ul className="mt-1.5 space-y-0.5">
-                            {p.features?.slice(0, 2).map((f: string) => (
-                              <li key={f} className="flex gap-1 items-center text-xs text-text2">
-                                <Check className="w-3 h-3 shrink-0" style={{ color: 'rgba(200,169,110,0.6)' }} /> {f}
-                              </li>
-                            ))}
-                          </ul>
-                        </td>
-                        <td className="p-4 text-right">
-                          <div className="font-bold text-base text-text">{formatINR(p.price)}</div>
-                          <div className="text-[10px] text-text2">{p.unit}</div>
-                        </td>
-                        <td className="p-4 text-right">
-                          <div className="font-bold text-text2">{formatINR(onPrem)}</div>
-                          <div className="text-[10px] text-text2">{p.unit}</div>
-                        </td>
-                        <td className="p-4 text-right">
-                          <Link href="/book-demo" className="btn-primary px-4 py-2 rounded-lg text-xs font-semibold inline-flex items-center gap-1">Demo</Link>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                  {softwareProducts.map(p => (
+                    <tr key={p.slug} className="transition-colors" style={{ borderBottom: '1px solid rgba(var(--border) / 0.04)' }}>
+                      <td className="p-4">
+                        <div className="font-bold text-text">{p.name}</div>
+                        <div className="text-xs mt-0.5 text-text2">{p.category}</div>
+                        <ul className="mt-1.5 space-y-0.5">
+                          {p.features?.slice(0, 2).map((f: string) => (
+                            <li key={f} className="flex gap-1 items-center text-xs text-text2">
+                              <Check className="w-3 h-3 shrink-0" style={{ color: 'rgba(200,169,110,0.6)' }} /> {f}
+                            </li>
+                          ))}
+                        </ul>
+                      </td>
+                      <td className="p-4 text-right">
+                        <Link href="/book-demo" className="btn-primary px-4 py-2 rounded-lg text-xs font-semibold inline-flex items-center gap-1">Demo</Link>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -310,7 +229,7 @@ export default function PricingPage() {
               <Calendar className="w-4 h-4" /> Book a free demo
             </Link>
             <Link href="/contact" className="btn-ghost px-8 py-3 rounded-xl font-semibold inline-flex items-center gap-2">
-              Need custom pricing?
+              Need a custom plan?
             </Link>
           </div>
         </div>

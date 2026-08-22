@@ -23,10 +23,6 @@ export function SoftwareCard({ product }: { product: Software }) {
   const [host, setHost] = useState<'cloud' | 'onprem'>('cloud');
   const Icon = ICON_MAP[product.icon] || Box;
   const wa = (process.env.NEXT_PUBLIC_WHATSAPP || '919942000413').replace(/\D/g, '');
-  const buyPrice = product.buyOnly
-    ? product.price
-    : mode === 'buy' ? Math.round(product.price * (host === 'onprem' ? 1.5 : 1)) : product.monthlyRent;
-  const unit = product.buyOnly ? product.unit : mode === 'buy' ? product.unit : product.rentUnit;
   const isOffer = product.tag === 'OFFER';
 
   return (
@@ -52,10 +48,7 @@ export function SoftwareCard({ product }: { product: Software }) {
         </div>
         {product.tag && (
           isOffer ? (
-            <span className="absolute top-3 left-3 badge-offer-tricolor px-2.5 py-1 rounded-full text-[10px] font-extrabold z-10 flex items-center gap-1">
-              🇮🇳 {product.tag}
-              {product.offerValidTill && <span className="opacity-80 font-semibold">· till {product.offerValidTill}</span>}
-            </span>
+            <span className="absolute top-3 left-3 bg-amber-500 text-white px-2.5 py-1 rounded-full text-[10px] font-extrabold z-10">{product.tag}</span>
           ) : (
             <span className="absolute top-3 left-3 bg-black/40 text-white px-2.5 py-1 rounded-full text-[10px] font-bold backdrop-blur z-10">{product.tag}</span>
           )
@@ -113,10 +106,9 @@ export function SoftwareCard({ product }: { product: Software }) {
           </div>
         )}
 
-        {/* Price */}
+        {/* Plan badge — price shown only after an advance payment enquiry */}
         <div className="flex items-baseline gap-1.5 py-3 border-t border-b border-dashed border-tint mb-3">
-          <span className={`text-2xl font-extrabold ${!product.buyOnly && mode === 'rent' ? 'text-violet-600' : 'text-primary'}`}>{formatINR(buyPrice)}</span>
-          <span className="text-xs text-text2">{unit}</span>
+          <span className="text-xs font-semibold text-text2">Contact us for pricing</span>
           {product.buyOnly && <span className="ml-auto text-[10px] text-amber-500 font-semibold bg-amber-500/10 px-2 py-0.5 rounded-full">Limited offer</span>}
           {!product.buyOnly && mode === 'buy' && <span className="ml-auto text-[10px] text-green-500 font-semibold bg-green-500/10 px-2 py-0.5 rounded-full">Lifetime license</span>}
           {!product.buyOnly && mode === 'rent' && <span className="ml-auto text-[10px] text-violet-500 font-semibold bg-violet-500/10 px-2 py-0.5 rounded-full">SaaS</span>}
@@ -131,7 +123,7 @@ export function SoftwareCard({ product }: { product: Software }) {
           )}
           {mode === 'buy' ? (
             <Link href={`/checkout?product=${product.slug}&host=${host}`} className="btn btn-primary flex-1 justify-center text-xs">
-              <ShoppingCart className="w-3.5 h-3.5" /> Buy Now
+              <ShoppingCart className="w-3.5 h-3.5" /> Advance Payment
             </Link>
           ) : (
             <Link href={`/checkout?product=${product.slug}&plan=monthly`} className="btn flex-1 justify-center text-xs text-white" style={{ background: 'linear-gradient(135deg,#7c3aed,#4f46e5)' }}>

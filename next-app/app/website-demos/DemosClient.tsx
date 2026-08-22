@@ -11,7 +11,6 @@ import {
   BookOpen, Leaf, Car, Wrench, Calculator, Sofa, Rocket,
 } from 'lucide-react';
 import { DEMO_CATEGORIES } from '@/lib/data/demo-categories';
-import { formatINR } from '@/lib/utils';
 
 // Every `iconName` an admin can pick from the Admin > Demos icon dropdown
 // (app/admin/demos/page.tsx ICON_OPTIONS) plus every value used by the
@@ -232,11 +231,7 @@ export function DemosClient({ demos }: { demos: Demo[] }) {
                             </span>
                           ))}
                         </div>
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <span className="text-[10px] uppercase tracking-wider text-text2">Starting from</span>
-                            <div className="font-extrabold text-lg" style={{ color: '#c8a96e' }}>{formatINR(d.startingPrice)}</div>
-                          </div>
+                        <div className="flex items-center justify-end">
                           {d.live && d.url ? (
                             <a
                               href={d.url}

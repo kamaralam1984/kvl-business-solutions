@@ -1,12 +1,13 @@
 'use client';
-import { useState } from 'react';
 import { softwareProducts } from '@/lib/data/software';
-import { DemoShell } from '@/components/software/demos/DemoShell';
-import { DemoContent } from '@/components/software/demos/DemoContent';
+import { WebsiteDemoPreview } from '@/components/software/demos/WebsiteDemoPreview';
+import { ProductMarketingDemo } from '@/components/software/demos/ProductMarketingDemo';
+
+// 1-page/multi-page website packages get a real site-preview demo instead of a product marketing page.
+const WEBSITE_DEMO_SLUGS = new Set(['independence-day-website', 'website-business-4999', 'website-growth-9999', 'website-advanced-14999']);
 
 export default function DemoPage({ params }: { params: { slug: string } }) {
   const product = softwareProducts.find(p => p.slug === params.slug);
-  const [navIndex, setNavIndex] = useState(0);
 
   if (!product) {
     return (
@@ -19,9 +20,9 @@ export default function DemoPage({ params }: { params: { slug: string } }) {
     );
   }
 
-  return (
-    <DemoShell product={product} activeNav={navIndex} onNavChange={setNavIndex}>
-      <DemoContent slug={product.slug} navIndex={navIndex} color={product.c1} />
-    </DemoShell>
-  );
+  if (WEBSITE_DEMO_SLUGS.has(product.slug)) {
+    return <WebsiteDemoPreview product={product} />;
+  }
+
+  return <ProductMarketingDemo product={product} />;
 }

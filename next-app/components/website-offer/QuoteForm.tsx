@@ -13,7 +13,7 @@ export function ThankYouCard({ name }: { name?: string }) {
       <div className="text-4xl mb-2">🎉</div>
       <div className="font-extrabold text-gray-900 mb-1">{name ? `Thanks, ${name}!` : 'Thanks!'}</div>
       <p className="text-sm text-gray-600 mb-4">Our team will call you shortly with your free quote. Meanwhile, check out our plans below.</p>
-      <a href="#pricing" className="inline-block w-full py-2.5 rounded-lg font-bold text-white text-sm" style={{ background: 'linear-gradient(90deg,#FF9933,#e07b1a)' }}>
+      <a href="#pricing" className="inline-block w-full py-2.5 rounded-lg font-bold text-white text-sm" style={{ background: 'linear-gradient(90deg,#2563eb,#1d4ed8)' }}>
         See Pricing Plans
       </a>
     </div>
@@ -52,13 +52,13 @@ export function QuoteForm() {
         body: JSON.stringify({
           name: form.name, phone: form.phone, email: form.email,
           businessType: form.websiteType,
-          service: 'Website (Independence Day Offer)',
-          source: 'independence-day-website-offer',
+          service: 'Website',
+          source: 'website-offer',
         }),
       });
       const d = await res.json().catch(() => ({}));
       if (!res.ok || !d.ok) { setError(d.error || 'Could not submit — please try again or WhatsApp us.'); setSubmitting(false); return; }
-      trackEvent('lead_submit', { source: 'independence-day-website-offer', service: 'Website (Independence Day Offer)' }, d.id);
+      trackEvent('lead_submit', { source: 'website-offer', service: 'Website' }, d.id);
       setDoneName(form.name);
     } catch {
       setError('Could not submit — please try again or WhatsApp us.');
@@ -82,12 +82,12 @@ export function QuoteForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: cbName || 'Customer', phone: cbPhone,
-          source: 'independence-day-website-offer-callback',
-          message: 'Customer requested a callback from the ₹999 Independence Day website-offer page.',
+          source: 'website-offer-callback',
+          message: 'Customer requested a callback from the website-offer page.',
         }),
       }).then(x => x.json());
       if (r.ok) {
-        trackEvent('lead_submit', { source: 'independence-day-website-offer-callback' }, r.leadId);
+        trackEvent('lead_submit', { source: 'website-offer-callback' }, r.leadId);
         setCallbackDone(true);
       } else {
         setError(r.error || 'Could not request a callback. Please try again.');
@@ -146,7 +146,7 @@ export function QuoteForm() {
           <button
             type="submit" disabled={submitting}
             className="flex-1 py-2.5 rounded-lg font-bold text-white text-sm flex items-center justify-center gap-2 disabled:opacity-60"
-            style={{ background: 'linear-gradient(90deg,#FF9933,#e07b1a)' }}
+            style={{ background: 'linear-gradient(90deg,#2563eb,#1d4ed8)' }}
           >
             {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
             {submitting ? 'Submitting...' : 'Get Free Quote'}

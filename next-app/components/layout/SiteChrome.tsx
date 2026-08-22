@@ -51,7 +51,7 @@ const CookieConsent = dynamic(() => import('@/components/widgets/CookieConsent')
 // /dashboard/* is the logged-in user area — keeps the Header for
 // navigation, but drops the marketing footer and floating
 // chat/WhatsApp/call-back widgets.
-// /get-quote and /website-offer are the two-step Independence Day ad funnel —
+// /get-quote and /website-offer are the two-step website ad funnel —
 // each ships its own self-contained header/footer matching that campaign's
 // design, so they render standalone here too (same treatment as /demo/*).
 export function SiteChrome({

@@ -11,7 +11,7 @@ const faqs = [
     items: [
       { q: 'What does KVL offer?', a: 'KVL provides 15 enterprise software products, custom development, GPS tracking, CCTV, civil work, and industrial automation services across India.' },
       { q: 'Where are you located?', a: 'Our HQ is in Patna, Bihar, India. We serve clients across India and overseas.' },
-      { q: 'Do you serve small businesses?', a: 'Yes — we have plans starting from ₹15,000 designed for small and mid-sized businesses.' },
+      { q: 'Do you serve small businesses?', a: 'Yes — we have plans designed for small and mid-sized businesses. Get in touch and we\'ll recommend the right fit.' },
       { q: 'Will you sign an NDA before discussing our project?', a: 'Yes — an NDA is available on request before we go into any project detail. Just ask on your first call.' },
     ],
   },

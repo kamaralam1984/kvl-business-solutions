@@ -3,8 +3,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Loader2, ShieldCheck, Clock, ArrowRight, Phone, CheckCircle } from 'lucide-react';
-import { IndianFlag } from '@/components/shared/IndianFlag';
-import { OfferCountdown } from '@/components/shared/OfferCountdown';
 import { LiveSocialProof } from '@/components/shared/LiveSocialProof';
 import { trackEvent } from '@/components/analytics/GoogleAnalytics';
 
@@ -12,18 +10,6 @@ import { trackEvent } from '@/components/analytics/GoogleAnalytics';
 // campaign design (always dark, regardless of the site's light/dark toggle),
 // so nothing here reads `html.dark` state; every color is spelled out.
 const INPUT_CLS = 'w-full px-4 py-3.5 rounded-xl text-sm outline-none transition-all duration-200 bg-white border border-gray-200 text-gray-900 placeholder-gray-400 focus:border-gold focus:ring-4 focus:ring-gold/10';
-
-function ChakraWatermark({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 200 200" className={className} fill="none">
-      <circle cx="100" cy="100" r="88" stroke="currentColor" strokeWidth="1.5" />
-      <circle cx="100" cy="100" r="5" fill="currentColor" />
-      {Array.from({ length: 24 }).map((_, i) => (
-        <line key={i} x1="100" y1="100" x2="100" y2="16" stroke="currentColor" strokeWidth="1.5" transform={`rotate(${i * 15} 100 100)`} />
-      ))}
-    </svg>
-  );
-}
 
 export function GetQuoteClient() {
   const router = useRouter();
@@ -54,8 +40,8 @@ export function GetQuoteClient() {
         body: JSON.stringify({
           name: form.name, phone: form.phone, email: form.email,
           businessType: form.websiteType,
-          service: 'Website (Independence Day Offer)',
-          source: 'independence-day-ads',
+          service: 'Website',
+          source: 'website-quote-ads',
         }),
       });
       const d = await res.json().catch(() => ({}));
@@ -64,7 +50,7 @@ export function GetQuoteClient() {
         setSubmitting(false);
         return;
       }
-      trackEvent('lead_submit', { source: 'independence-day-ads', service: 'Website (Independence Day Offer)' }, d.id);
+      trackEvent('lead_submit', { source: 'website-quote-ads', service: 'Website' }, d.id);
       const qs = new URLSearchParams({ lead: d.id, name: form.name });
       const utm = typeof window !== 'undefined' ? window.location.search.replace(/^\?/, '') : '';
       router.push(`/website-offer?${qs.toString()}${utm ? `&${utm}` : ''}`);
@@ -90,12 +76,12 @@ export function GetQuoteClient() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: cbName || 'Customer', phone: cbPhone,
-          source: 'independence-day-ads-callback',
-          message: 'Customer requested a callback from the ₹999 Independence Day ad landing page (/get-quote).',
+          source: 'website-quote-ads-callback',
+          message: 'Customer requested a callback from the website quote ad landing page (/get-quote).',
         }),
       }).then(x => x.json());
       if (r.ok) {
-        trackEvent('lead_submit', { source: 'independence-day-ads-callback' }, r.leadId);
+        trackEvent('lead_submit', { source: 'website-quote-ads-callback' }, r.leadId);
         setCallbackDone(true);
       } else {
         setError(r.error || 'Could not request a callback. Please try again.');
@@ -114,11 +100,8 @@ export function GetQuoteClient() {
         background: 'radial-gradient(ellipse 120% 70% at 50% -5%, rgba(200,168,112,0.16), transparent 55%), linear-gradient(165deg, #05070f 0%, #0b1230 48%, #05070f 100%)',
       }}
     >
-      {/* Thin tricolor + gold seam along the top edge */}
-      <div className="absolute top-0 left-0 right-0 h-[3px]" style={{ background: 'linear-gradient(90deg,#FF9933,#e8c890 50%,#138808)' }} />
-
-      {/* Faint rotating Ashoka Chakra watermark — national-emblem texture, not a cartoon flag */}
-      <ChakraWatermark className="absolute -top-16 -right-16 w-[340px] h-[340px] text-gold opacity-[0.07] pointer-events-none animate-spin-slow hidden sm:block" />
+      {/* Thin gold seam along the top edge */}
+      <div className="absolute top-0 left-0 right-0 h-[3px]" style={{ background: 'linear-gradient(90deg,#c8a870,#e8c890,#c8a870)' }} />
 
       {/* Dot-grid texture — spelled out explicitly (not the shared .dot-grid
           class) because this background is always dark regardless of the
@@ -135,35 +118,25 @@ export function GetQuoteClient() {
 
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4 sm:p-6 py-6 sm:py-14">
         <div className="relative z-10 w-full max-w-md animate-fade-up">
-          <div className="flex justify-center mb-4">
-            <div className="relative">
-              <div className="absolute inset-0 rounded-full blur-2xl opacity-40 scale-150" style={{ background: '#c8a870' }} />
-              <IndianFlag width={84} className="relative drop-shadow-[0_8px_24px_rgba(0,0,0,0.4)]" />
-            </div>
-          </div>
-
           <div className="text-center mb-5">
             <span className="inline-flex items-center gap-1.5 text-[10.5px] font-bold uppercase tracking-[0.14em] px-4 py-1.5 rounded-full text-gold-light border border-gold/40 bg-gold/10 mb-4">
-              15th August · Independence Day Special
+              Limited Time Offer
             </span>
             <h1 className="text-[28px] sm:text-4xl font-extrabold text-white leading-[1.12] mb-3">
-              A Professional Website,<br />Starting at{' '}
-              <span className="inline-block px-2.5 py-0.5 rounded-md bg-gradient-to-r from-gold-light to-gold text-ink font-black -rotate-1 whitespace-nowrap">₹999</span>
+              A Professional Website,<br />
+              <span className="inline-block px-2.5 py-0.5 rounded-md bg-gradient-to-r from-gold-light to-gold text-ink font-black -rotate-1 whitespace-nowrap">Built For You</span>
             </h1>
             <p className="text-white/55 text-sm max-w-sm mx-auto leading-relaxed">
               Share your details — our team calls you personally with a free quote, usually within the hour.
             </p>
-            <div className="flex justify-center mt-4">
-              <OfferCountdown dark />
-            </div>
           </div>
 
           <div className="flex justify-center mb-4">
             <LiveSocialProof path="/get-quote" dark />
           </div>
 
-          <div className="relative rounded-2xl p-[2px] shadow-glow-gold" style={{ background: 'linear-gradient(160deg,#FF9933,#e8c890 50%,#138808)' }}>
-            <form onSubmit={submit} className="rounded-[14px] p-5 sm:p-7 space-y-2.5 sm:space-y-3" style={{ background: 'linear-gradient(180deg,#fff3e2 0%,#ffffff 45%,#eafbf1 100%)' }}>
+          <div className="relative rounded-2xl p-[2px] shadow-glow-gold" style={{ background: 'linear-gradient(160deg,#c8a870,#e8c890 50%,#c8a870)' }}>
+            <form onSubmit={submit} className="rounded-[14px] p-5 sm:p-7 space-y-2.5 sm:space-y-3" style={{ background: 'linear-gradient(180deg,#fbf7ee 0%,#ffffff 45%,#fbf7ee 100%)' }}>
               {!showCallbackForm && !callbackDone && (
                 <>
                   <div>

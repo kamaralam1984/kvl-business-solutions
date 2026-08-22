@@ -71,10 +71,9 @@ export function quoteEmail(q: any) {
 export function orderEmail(o: any) {
   return wrap('Payment Confirmation', `<h2>🎉 Order ${o.orderId}</h2>
     <p>Thank you for purchasing <b>${o.productName}</b>.</p>
-    <p><b>Amount:</b> ₹${o.amount.toLocaleString('en-IN')}<br/>
-       <b>License Key:</b> <code style="background:#f1f5f9;padding:4px 8px;border-radius:4px">${o.licenseKey}</code><br/>
+    <p><b>License Key:</b> <code style="background:#f1f5f9;padding:4px 8px;border-radius:4px">${o.licenseKey}</code><br/>
        <b>Hosting:</b> ${o.hosting}</p>
-    <p>Download invoice: <a href="${SITE}/api/invoice/${o.orderId}" style="color:#1d4ed8">${SITE}/api/invoice/${o.orderId}</a></p>
+    <p>Download invoice (with full payment details): <a href="${SITE}/api/invoice/${o.orderId}" style="color:#1d4ed8">${SITE}/api/invoice/${o.orderId}</a></p>
     <p>Our installation team will reach out within 24 hours to deploy your software.</p>`);
 }
 

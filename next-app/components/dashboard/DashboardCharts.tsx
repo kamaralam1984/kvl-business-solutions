@@ -12,18 +12,12 @@ type Order = {
 
 const COLORS = ['#c8a96e', 'rgba(255,255,255,0.6)', '#4ade80', '#60a5fa', '#fbbf24', 'rgba(255,255,255,0.4)', '#f87171'];
 
-function formatINRShort(n: number) {
-  if (n >= 1_00_000) return `₹${(n / 1_00_000).toFixed(1)}L`;
-  if (n >= 1_000) return `₹${(n / 1_000).toFixed(1)}k`;
-  return `₹${n}`;
-}
-
 export function DashboardCharts({ orders }: { orders: Order[] }) {
   const paid = orders.filter(o => o.status === 'paid');
 
-  // Spend by month (last 6 months)
+  // Orders by month (last 6 months)
   const now = new Date();
-  const months: { month: string; amount: number; orders: number }[] = [];
+  const months: { month: string; orders: number }[] = [];
   for (let i = 5; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
     const label = d.toLocaleString('en-IN', { month: 'short' });
@@ -34,14 +28,13 @@ export function DashboardCharts({ orders }: { orders: Order[] }) {
     });
     months.push({
       month: label,
-      amount: inMonth.reduce((s, o) => s + o.amount, 0),
       orders: inMonth.length,
     });
   }
 
-  // Spend by product
+  // Orders by product
   const byProduct: Record<string, number> = {};
-  paid.forEach(o => { byProduct[o.productName] = (byProduct[o.productName] || 0) + o.amount; });
+  paid.forEach(o => { byProduct[o.productName] = (byProduct[o.productName] || 0) + 1; });
   const productData = Object.entries(byProduct).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value).slice(0, 6);
 
   // License expiry timeline (1 year from order date)
@@ -73,31 +66,28 @@ export function DashboardCharts({ orders }: { orders: Order[] }) {
   return (
     <div className="grid lg:grid-cols-2 gap-5 mb-8">
       <div className="p-6" style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px' }}>
-        <h3 className="font-bold mb-1 text-white">Spend (last 6 months)</h3>
+        <h3 className="font-bold mb-1 text-white">Orders (last 6 months)</h3>
         <p className="text-xs text-text2 mb-4">{paid.length} paid order{paid.length !== 1 ? 's' : ''}</p>
         <ResponsiveContainer width="100%" height={220}>
           <LineChart data={months}>
             <CartesianGrid stroke={gridColor} strokeDasharray="3 3" />
             <XAxis dataKey="month" stroke={axisColor} fontSize={11} tick={{ fill: axisColor }} />
-            <YAxis stroke={axisColor} fontSize={11} tickFormatter={formatINRShort} tick={{ fill: axisColor }} />
-            <Tooltip
-              contentStyle={tooltipStyle}
-              formatter={(v: number) => formatINRShort(v)}
-            />
-            <Line type="monotone" dataKey="amount" stroke="#c8a96e" strokeWidth={2.5} dot={{ fill: '#c8a96e', r: 4 }} activeDot={{ r: 6, fill: '#f5f5f0' }} />
+            <YAxis stroke={axisColor} fontSize={11} allowDecimals={false} tick={{ fill: axisColor }} />
+            <Tooltip contentStyle={tooltipStyle} />
+            <Line type="monotone" dataKey="orders" stroke="#c8a96e" strokeWidth={2.5} dot={{ fill: '#c8a96e', r: 4 }} activeDot={{ r: 6, fill: '#f5f5f0' }} />
           </LineChart>
         </ResponsiveContainer>
       </div>
 
       <div className="p-6" style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px' }}>
-        <h3 className="font-bold mb-1 text-white">Spend by product</h3>
+        <h3 className="font-bold mb-1 text-white">Orders by product</h3>
         <p className="text-xs text-text2 mb-4">Top {productData.length} of {Object.keys(byProduct).length}</p>
         <ResponsiveContainer width="100%" height={220}>
           <PieChart>
-            <Pie data={productData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} label={(p: any) => formatINRShort(p.value)}>
+            <Pie data={productData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} label={(p: any) => p.value}>
               {productData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
             </Pie>
-            <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => formatINRShort(v)} />
+            <Tooltip contentStyle={tooltipStyle} />
             <Legend wrapperStyle={{ fontSize: 11, color: 'rgba(148,163,184,0.7)' }} />
           </PieChart>
         </ResponsiveContainer>

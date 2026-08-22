@@ -6,8 +6,6 @@ import {
   Users, ShieldCheck, Rocket, Smartphone, Heart, Palette, Search, Zap as ZapIcon,
   MessageCircle, Headphones as HeadphonesIcon, Check, Sparkles, Phone, Mail, MapPin,
 } from 'lucide-react';
-import { IndianFlag } from '@/components/shared/IndianFlag';
-import { OfferCountdown } from '@/components/shared/OfferCountdown';
 import { LiveSocialProof } from '@/components/shared/LiveSocialProof';
 import { PortfolioCarousel } from '@/components/website-offer/PortfolioCarousel';
 import { PricingSection } from '@/components/website-offer/PricingSection';
@@ -71,7 +69,7 @@ export function WebsiteOfferClient({ plans, reviews, portfolio }: {
             ))}
           </nav>
           <a
-            href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('I want a website — Independence Day Offer')}`}
+            href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('I want a website')}`}
             target="_blank" rel="noreferrer"
             className="flex items-center gap-1.5 px-4 py-2 rounded-full text-white text-xs font-bold"
             style={{ background: '#25D366' }}
@@ -83,29 +81,23 @@ export function WebsiteOfferClient({ plans, reviews, portfolio }: {
 
       {/* Hero */}
       <section id="home" className="relative overflow-hidden" style={{ background: 'linear-gradient(160deg,#0b1a3a 0%,#122759 55%,#0b1a3a 100%)' }}>
-        <div className="absolute top-0 left-0 right-0 h-1.5" style={{ background: 'linear-gradient(90deg,#FF9933,#FFFFFF,#138808)' }} />
-        <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full opacity-20 blur-3xl" style={{ background: '#FF9933' }} />
-        <div className="absolute -bottom-20 -right-20 w-72 h-72 rounded-full opacity-20 blur-3xl" style={{ background: '#138808' }} />
+        <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full opacity-20 blur-3xl" style={{ background: '#2563eb' }} />
+        <div className="absolute -bottom-20 -right-20 w-72 h-72 rounded-full opacity-20 blur-3xl" style={{ background: '#7c3aed' }} />
 
         <div ref={heroRef} className="relative z-10 max-w-6xl mx-auto px-4 py-14 sm:py-20 grid lg:grid-cols-[1.15fr_0.85fr] gap-10 items-center">
           <div style={revealStyle(heroInView, 0)}>
             <div className="flex items-center gap-3 mb-5">
-              <IndianFlag width={70} withPole={false} />
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider px-3 py-1.5 rounded-full text-white" style={{ background: 'linear-gradient(90deg,#FF9933,#138808)' }}>
-                <Sparkles className="w-3 h-3" /> 15th August Independence Day Special Offer
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider px-3 py-1.5 rounded-full text-white" style={{ background: 'linear-gradient(90deg,#2563eb,#7c3aed)' }}>
+                <Sparkles className="w-3 h-3" /> Limited Time Offer
               </span>
             </div>
             <h1 className="text-4xl sm:text-5xl font-extrabold text-white leading-[1.08] mb-4">
               Professional Website<br />
-              <span style={{ color: '#FF9933' }}>Grow Your Business</span>
+              <span style={{ color: '#60a5fa' }}>Grow Your Business</span>
             </h1>
-            <p className="text-white/80 mb-1">Starting at only</p>
-            <div className="text-5xl font-black mb-4" style={{ color: '#FF9933' }}>
-              ₹999<span className="text-lg text-white/60 font-semibold">*</span>
+            <div className="text-2xl sm:text-3xl font-extrabold mb-4" style={{ color: '#60a5fa' }}>
+              Get Started with an Advance Payment
             </div>
-            <span className="inline-block text-[11px] font-bold uppercase tracking-wide text-white/90 border border-white/30 rounded-full px-3 py-1 mb-5">Limited Time Offer</span>
-
-            <div className="mb-5"><OfferCountdown dark /></div>
 
             <div className="flex flex-wrap gap-x-5 gap-y-2 mb-7">
               {['Modern Design', 'Mobile Friendly', 'SEO Optimized'].map(t => (
@@ -114,14 +106,13 @@ export function WebsiteOfferClient({ plans, reviews, portfolio }: {
             </div>
 
             <div className="flex flex-wrap gap-3">
-              <a href="#quote-form" className="px-6 py-3 rounded-lg font-bold text-white text-sm" style={{ background: 'linear-gradient(90deg,#FF9933,#e07b1a)' }}>
+              <a href="#quote-form" className="px-6 py-3 rounded-lg font-bold text-white text-sm" style={{ background: 'linear-gradient(90deg,#2563eb,#1d4ed8)' }}>
                 Get Free Quote →
               </a>
               <a href="#pricing" className="px-6 py-3 rounded-lg font-bold text-white text-sm border border-white/30 hover:bg-white/10">
-                Order Now
+                View Plans
               </a>
             </div>
-            <p className="text-white/50 text-xs mt-4">*Offer valid till 15th August</p>
             <div className="mt-4"><LiveSocialProof path="/website-offer" dark /></div>
           </div>
 
@@ -138,7 +129,7 @@ export function WebsiteOfferClient({ plans, reviews, portfolio }: {
         <div className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-2 sm:grid-cols-5 gap-6">
           {TRUST.map(t => (
             <div key={t.label} className="text-center">
-              <t.Icon className="w-6 h-6 mx-auto mb-1.5" style={{ color: '#138808' }} />
+              <t.Icon className="w-6 h-6 mx-auto mb-1.5" style={{ color: '#2563eb' }} />
               <div className="font-extrabold text-lg text-gray-900">{t.value}</div>
               <div className="text-[11px] text-gray-500">{t.label}</div>
             </div>
@@ -150,12 +141,12 @@ export function WebsiteOfferClient({ plans, reviews, portfolio }: {
       <section id="features" className="py-16 bg-white">
         <div ref={whyRef} className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-10">
-            <span className="text-xs font-extrabold uppercase tracking-widest" style={{ color: '#138808' }}>— Why Choose KVL Business Solutions? —</span>
+            <span className="text-xs font-extrabold uppercase tracking-widest" style={{ color: '#2563eb' }}>— Why Choose KVL Business Solutions? —</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
             {WHY.map((w, i) => (
               <div key={w.label} style={revealStyle(whyInView, i)} className="text-center">
-                <div className="w-12 h-12 rounded-xl mx-auto mb-2 grid place-items-center" style={{ background: 'linear-gradient(135deg,#FF9933,#138808)' }}>
+                <div className="w-12 h-12 rounded-xl mx-auto mb-2 grid place-items-center" style={{ background: 'linear-gradient(135deg,#2563eb,#7c3aed)' }}>
                   <w.Icon className="w-5 h-5 text-white" />
                 </div>
                 <div className="text-xs font-semibold text-gray-700">{w.label}</div>
@@ -186,15 +177,14 @@ export function WebsiteOfferClient({ plans, reviews, portfolio }: {
       </section>
 
       {/* Bottom CTA */}
-      <section className="py-14 relative overflow-hidden" style={{ background: 'linear-gradient(90deg,#FF9933,#138808)' }}>
+      <section className="py-14 relative overflow-hidden" style={{ background: 'linear-gradient(90deg,#2563eb,#7c3aed)' }}>
         <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
-          <div className="flex justify-center mb-4"><IndianFlag width={70} withPole={false} /></div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-2">This 15th August — Take a Step Towards Digital Freedom</h2>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-2">Take a Step Towards Digital Growth</h2>
           <p className="text-white/90 mb-6">Grow your business online. Book your website today!</p>
           <div className="flex flex-wrap justify-center gap-3">
-            <a href="#quote-form" className="px-6 py-3 rounded-lg font-bold text-sm bg-white" style={{ color: '#138808' }}>Get Free Quote</a>
+            <a href="#quote-form" className="px-6 py-3 rounded-lg font-bold text-sm bg-white" style={{ color: '#2563eb' }}>Get Free Quote</a>
             <a
-              href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('I want a website — Independence Day Offer')}`}
+              href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('I want a website')}`}
               target="_blank" rel="noreferrer"
               className="px-6 py-3 rounded-lg font-bold text-sm text-white border border-white/50 hover:bg-white/10 flex items-center gap-2"
             >

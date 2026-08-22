@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
 import { X, Send, Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
 import { speakNatural, cancelSpeaking } from '@/lib/voice-speak';
 
@@ -18,7 +19,7 @@ export function Chatbot() {
   const [proactiveDone, setProactiveDone] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([
     { role: 'assistant', content: 'Hi 👋 I\'m Khushi, KVL AI. How can I help you today?' },
-    { role: 'assistant', content: 'Ask me anything — pricing, demo, services, GPS tracking, or a quote. I speak your language!' },
+    { role: 'assistant', content: 'Ask me anything — pricing, demo, services, or a quote. I speak your language!' },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -134,10 +135,9 @@ export function Chatbot() {
     }
   };
 
-  const quickActions = [
-    { q: 'Show me software pricing', label: '💰 Pricing' },
-    { q: 'I want a website demo', label: '🌐 Demo' },
-    { q: 'GPS tracking info', label: '📍 GPS' },
+  const quickActions: { label: string; q?: string; href?: string }[] = [
+    { href: '/projects', label: '📁 View All Portfolio' },
+    { href: '/website-demos', label: '🌐 Demo' },
     { q: 'Get a quote', label: '📝 Quote' },
   ];
 
@@ -221,7 +221,11 @@ export function Chatbot() {
 
             <div className="px-4 py-2 flex flex-wrap gap-1.5 bg-app2 border-t border-tint">
               {quickActions.map(a => (
-                <button key={a.q} onClick={() => send(a.q)} className="text-[11px] px-2.5 py-1 rounded-full surface-tint border border-tint hover:bg-primary hover:text-white transition-all">{a.label}</button>
+                a.href ? (
+                  <Link key={a.label} href={a.href} className="text-[11px] px-2.5 py-1 rounded-full surface-tint border border-tint hover:bg-primary hover:text-white transition-all">{a.label}</Link>
+                ) : (
+                  <button key={a.label} onClick={() => send(a.q)} className="text-[11px] px-2.5 py-1 rounded-full surface-tint border border-tint hover:bg-primary hover:text-white transition-all">{a.label}</button>
+                )
               ))}
             </div>
 

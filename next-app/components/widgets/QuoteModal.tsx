@@ -2,7 +2,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowLeft, ArrowRight, Send, Globe, LaptopMinimal, Smartphone, Satellite, Sprout, Leaf, TreePine, Crown, Zap, Calendar, CalendarDays, Clock } from 'lucide-react';
-import { formatINR } from '@/lib/utils';
 import { trackEvent } from '@/components/analytics/track';
 
 const types = [
@@ -139,8 +138,8 @@ export function QuoteModal() {
                 {step === 3 && (
                   <div>
                     <div className="rounded-xl p-5 mb-3 text-white text-center" style={{ background: 'linear-gradient(135deg, #2563eb, #1d4ed8)' }}>
-                      <div className="text-xs opacity-80">Estimated investment</div>
-                      <div className="text-2xl font-black my-1">{formatINR(low)} – {formatINR(high)}</div>
+                      <div className="text-xs opacity-80">Almost there</div>
+                      <div className="text-lg font-bold my-1">We&apos;ll send your personalized quote shortly</div>
                       <div className="text-xs opacity-80">{sel.type?.label} · {sel.scope?.label} · {sel.timeline?.label}</div>
                     </div>
                     <div className="space-y-2">

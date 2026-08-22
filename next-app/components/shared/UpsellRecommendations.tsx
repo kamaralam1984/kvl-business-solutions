@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Sparkles } from 'lucide-react';
-import { formatINR } from '@/lib/utils';
 import type { Software } from '@/lib/data/software';
 
 // Shown right after a purchase (checkout/success) and on the customer
@@ -46,8 +45,7 @@ export function UpsellRecommendations({ excludeSlug, title = 'Customers also use
           >
             <div className="font-semibold text-sm mb-1">{p.name}</div>
             <div className="text-xs text-text2 mb-3 line-clamp-2">{p.description}</div>
-            <div className="flex items-center justify-between">
-              <span className="text-primary font-bold text-sm">{formatINR(p.price)}</span>
+            <div className="flex items-center justify-end">
               <span className="text-[11px] text-text2 group-hover:text-primary flex items-center gap-0.5">
                 View <ArrowRight className="w-3 h-3" />
               </span>

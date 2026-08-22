@@ -17,7 +17,7 @@ export function PortfolioCarousel({ portfolio }: { portfolio: { slug: string; na
     <section id="portfolio" className="py-20 bg-white">
       <div className="max-w-6xl mx-auto px-4" ref={ref}>
         <div className="text-center mb-8">
-          <span className="text-xs font-extrabold uppercase tracking-widest" style={{ color: '#138808' }}>— Our Recent Work —</span>
+          <span className="text-xs font-extrabold uppercase tracking-widest" style={{ color: '#2563eb' }}>— Our Recent Work —</span>
         </div>
 
         <div className="relative">
@@ -60,7 +60,7 @@ export function PortfolioCarousel({ portfolio }: { portfolio: { slug: string; na
         </div>
 
         <div className="text-center mt-8">
-          <Link href="/projects" className="inline-block px-6 py-2.5 rounded-lg text-white text-sm font-bold" style={{ background: '#138808' }}>
+          <Link href="/projects" className="inline-block px-6 py-2.5 rounded-lg text-white text-sm font-bold" style={{ background: '#2563eb' }}>
             View All Portfolio
           </Link>
         </div>

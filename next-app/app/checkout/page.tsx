@@ -1,14 +1,13 @@
 'use client';
-import { useEffect, useRef, useState, Suspense } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import Script from 'next/script';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import type { Software } from '@/lib/data/software';
-import { formatINR } from '@/lib/utils';
 import { trackEvent } from '@/components/analytics/GoogleAnalytics';
-import { Check, ShieldCheck, CreditCard, Lock, Tag, X, Loader2, Mail, Phone } from 'lucide-react';
+import { Check, ShieldCheck, CreditCard, Lock, Loader2, Mail, Phone, IndianRupee } from 'lucide-react';
 
-const GST_RATE = 18;
+const MIN_ADVANCE = 100;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function CheckoutInner() {
@@ -22,16 +21,7 @@ function CheckoutInner() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState('');
   const [rzpReady, setRzpReady] = useState(false);
-
-  const [code, setCode] = useState('');
-  const [applied, setApplied] = useState<{ code: string; discount: number } | null>(null);
-  const [couponLoading, setCouponLoading] = useState(false);
-  const [couponErr, setCouponErr] = useState('');
-  const [couponsEnabled, setCouponsEnabled] = useState(true);
-
-  useEffect(() => {
-    fetch('/api/site-features').then(r => r.json()).then(d => setCouponsEnabled(d.coupons !== false)).catch(() => {});
-  }, []);
+  const [advanceAmount, setAdvanceAmount] = useState('');
 
   // Payment comes first, account creation after (see /checkout/success) — a
   // guest just needs an email + phone to receive the license key and pay.
@@ -41,8 +31,8 @@ function CheckoutInner() {
   const isGuest = status === 'unauthenticated';
   const guestDetailsValid = EMAIL_RE.test(guestEmail) && guestPhone.replace(/\D/g, '').length >= 10;
 
-  // Live price/description — fetched instead of imported statically so an
-  // Admin → Products edit shows the same numbers the customer is charged.
+  // Live product description/features — fetched instead of imported statically
+  // so an Admin → Products edit is reflected immediately.
   useEffect(() => {
     fetch('/api/products')
       .then(r => r.json())
@@ -53,18 +43,21 @@ function CheckoutInner() {
 
   useEffect(() => {
     if (!product) return;
-    trackEvent('begin_checkout', { content_ids: [product.slug], content_name: product.name, value: product.price, currency: 'INR' });
+    trackEvent('begin_checkout', { content_ids: [product.slug], content_name: product.name, currency: 'INR' });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product?.slug]);
 
-  const pay = async (couponCodeOverride?: string) => {
+  const amountValid = Number(advanceAmount) >= MIN_ADVANCE;
+
+  const pay = async () => {
+    if (!amountValid) { setErr(`Enter an advance amount of at least ₹${MIN_ADVANCE}.`); return; }
     if (isGuest && !guestDetailsValid) { setErr('Enter a valid email and phone number first.'); return; }
     setLoading(true); setErr('');
     try {
       const res = await fetch('/api/payments/create-order', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          productSlug, hosting, couponCode: couponCodeOverride ?? applied?.code,
+          productSlug, hosting, amount: Number(advanceAmount),
           ...(isGuest ? { guestEmail, guestPhone } : {}),
         }),
       });
@@ -114,38 +107,13 @@ function CheckoutInner() {
     }
   };
 
-  // Order Now → Razorpay should open immediately for a logged-in visitor, not
-  // wait for a second "Pay Now" click. Guests can't auto-open — Razorpay needs
-  // an email/phone to prefill, so they fill the short form below first and
-  // press "Pay Now" themselves. This page still renders behind the modal
-  // (order summary, GST breakdown, coupon field) as a fallback either way.
-  const autoTriedRef = useRef(false);
-  useEffect(() => {
-    if (autoTriedRef.current) return;
-    if (status !== 'authenticated' || !product || !rzpReady) return;
-    autoTriedRef.current = true;
-    pay();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status, product, rzpReady]);
+  // Razorpay needs a known amount before it can open, and the advance amount
+  // is chosen by the customer — so unlike a fixed-price checkout, there's no
+  // amount to auto-open with on page load. Entering it and pressing "Pay" is
+  // the one required step; Razorpay opens immediately after that.
 
   if (productLoading) return <div className="container py-20 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-text2" /></div>;
   if (!product) return <div className="container py-20 text-center">Invalid product.</div>;
-  const base = Math.round(product.price * (hosting === 'on-premise' ? 1.5 : 1));
-  const subtotal = base - (applied?.discount || 0);
-  const gst = Math.round((subtotal * GST_RATE) / 100);
-  const total = subtotal + gst;
-
-  const applyCoupon = async () => {
-    setCouponErr(''); setCouponLoading(true);
-    try {
-      const r = await fetch('/api/coupon/validate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code, productSlug, hosting }) });
-      const d = await r.json();
-      if (!d.ok) throw new Error(d.error || 'Invalid coupon');
-      setApplied({ code: d.code, discount: d.discount });
-      setCode('');
-    } catch (e: any) { setCouponErr(e.message); }
-    finally { setCouponLoading(false); }
-  };
 
   return (
     <>
@@ -166,39 +134,19 @@ function CheckoutInner() {
             </ul>
           </div>
           <div className="card-base p-6">
-            <div className="space-y-2 text-sm border-b border-tint pb-3 mb-3">
-              <div className="flex justify-between"><span className="text-text2">Subtotal</span><span>{formatINR(base)}</span></div>
-              {applied && (
-                <div className="flex justify-between text-green-500">
-                  <span className="flex items-center gap-1"><Tag className="w-3 h-3" /> {applied.code}
-                    <button onClick={() => setApplied(null)} aria-label="Remove coupon" className="ml-1 hover:text-red-500"><X className="w-3 h-3" /></button>
-                  </span>
-                  <span>−{formatINR(applied.discount)}</span>
-                </div>
-              )}
-              <div className="flex justify-between text-xs"><span className="text-text2">GST ({GST_RATE}%)</span><span>{formatINR(gst)}</span></div>
+            <h3 className="font-bold mb-1">Advance Payment</h3>
+            <p className="text-text2 text-xs mb-3">Pay whatever advance amount you&apos;d like now to get started — we&apos;ll discuss the rest on a call. {hosting === 'cloud' ? '☁ Cloud' : '🖥 On-Premise'} hosting.</p>
+            <div className="relative mb-4">
+              <label htmlFor="checkout-advance-amount" className="sr-only">Advance payment amount</label>
+              <IndianRupee className="absolute left-3 top-3.5 w-4 h-4 text-text2" />
+              <input
+                id="checkout-advance-amount"
+                type="number" min={MIN_ADVANCE} step={1}
+                value={advanceAmount} onChange={e => setAdvanceAmount(e.target.value)}
+                placeholder={`Minimum ₹${MIN_ADVANCE}`}
+                className="form-control pl-9 text-lg font-bold"
+              />
             </div>
-            <div className="text-xs uppercase text-text2 tracking-wider">Total</div>
-            <div className="text-3xl font-extrabold text-primary my-1">{formatINR(total)}</div>
-            <div className="text-xs text-text2 mb-4">{product.unit} · {hosting === 'cloud' ? '☁ Cloud' : '🖥 On-Premise'}</div>
-
-            {couponsEnabled && !applied && (
-              <div className="mb-4">
-                <div className="flex gap-2">
-                  <label htmlFor="checkout-coupon" className="sr-only">Coupon code</label>
-                  <input
-                    id="checkout-coupon"
-                    type="text" value={code} onChange={e => setCode(e.target.value.toUpperCase())}
-                    placeholder="Coupon code"
-                    className="form-control text-xs font-mono uppercase flex-1"
-                  />
-                  <button onClick={applyCoupon} disabled={!code || couponLoading} className="btn btn-ghost text-xs">
-                    {couponLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Apply'}
-                  </button>
-                </div>
-                {couponErr && <p className="text-red-500 text-[11px] mt-1">{couponErr}</p>}
-              </div>
-            )}
 
             {isGuest && (
               <div className="mb-4 space-y-2">
@@ -226,8 +174,8 @@ function CheckoutInner() {
               </div>
             )}
 
-            <button disabled={loading || (isGuest && !guestDetailsValid)} onClick={() => pay()} className="btn btn-primary w-full justify-center">
-              <CreditCard className="w-4 h-4" /> {loading ? 'Opening Razorpay...' : 'Pay Now'}
+            <button disabled={loading || !amountValid || (isGuest && !guestDetailsValid)} onClick={() => pay()} className="btn btn-primary w-full justify-center">
+              <CreditCard className="w-4 h-4" /> {loading ? 'Opening Razorpay...' : 'Advance Payment'}
             </button>
             {err && <p className="text-red-500 text-xs mt-2">{err}</p>}
             <div className="mt-4 pt-4 border-t border-tint space-y-1.5 text-[11px] text-text2">

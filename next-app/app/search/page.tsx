@@ -6,7 +6,6 @@ import { Search as SearchIcon } from 'lucide-react';
 import { softwareProducts } from '@/lib/data/software';
 import { caseStudies } from '@/lib/data/case-studies';
 import { PageHero } from '@/components/shared/PageHero';
-import { formatINR } from '@/lib/utils';
 
 const pages = [
   { href: '/about', title: 'About KVL', text: 'Our story, mission, leadership team' },
@@ -67,13 +66,8 @@ function SearchView() {
                   <div className="space-y-2">
                     {productResults.map(p => (
                       <Link key={p.slug} href={`/software/${p.slug}`} className="block card-base p-4 hover:bg-primary/5 transition-all">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <div className="font-semibold">{p.name}</div>
-                            <div className="text-xs text-text2 mt-1 line-clamp-2">{p.description}</div>
-                          </div>
-                          <div className="text-primary font-bold whitespace-nowrap ml-3">{formatINR(p.price)}{p.unit}</div>
-                        </div>
+                        <div className="font-semibold">{p.name}</div>
+                        <div className="text-xs text-text2 mt-1 line-clamp-2">{p.description}</div>
                       </Link>
                     ))}
                   </div>

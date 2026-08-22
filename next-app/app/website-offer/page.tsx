@@ -5,8 +5,8 @@ import { Review } from '@/lib/models/Review';
 import { caseStudies } from '@/lib/data/case-studies';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
-const title = 'Independence Day Offer — Professional Website Starting at ₹999';
-const description = 'Independence Day special: modern, mobile-friendly, SEO-optimized websites starting at ₹999. Choose from 5 simple plans, delivered in as little as 3 days. Offer valid till 15 August.';
+const title = 'Professional Website Design — Limited Time Offer';
+const description = 'Modern, mobile-friendly, SEO-optimized websites. Choose from 5 simple plans, delivered in as little as 3 days.';
 
 export const metadata = {
   title,

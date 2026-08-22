@@ -21,7 +21,7 @@ export function TestimonialsCarousel({ reviews }: { reviews: Review[] }) {
     <section id="testimonials" className="py-20" style={{ background: '#f8f9fb' }}>
       <div className="max-w-6xl mx-auto px-4">
         <div className="text-center mb-10">
-          <span className="text-xs font-extrabold uppercase tracking-widest" style={{ color: '#138808' }}>— What Our Clients Say —</span>
+          <span className="text-xs font-extrabold uppercase tracking-widest" style={{ color: '#2563eb' }}>— What Our Clients Say —</span>
         </div>
 
         <div className="grid sm:grid-cols-3 gap-5">
@@ -48,7 +48,7 @@ export function TestimonialsCarousel({ reviews }: { reviews: Review[] }) {
                 onClick={() => setActive(i)}
                 aria-label={`Show testimonials group ${i + 1}`}
                 className="h-1.5 rounded-full transition-all"
-                style={{ width: active === i ? 20 : 6, background: active === i ? '#138808' : '#d1d5db' }}
+                style={{ width: active === i ? 20 : 6, background: active === i ? '#2563eb' : '#d1d5db' }}
               />
             ))}
           </div>

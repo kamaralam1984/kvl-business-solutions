@@ -4,7 +4,6 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { connectDB } from '@/lib/mongodb';
 import { Order } from '@/lib/models/Order';
-import { formatINR } from '@/lib/utils';
 import { ArrowLeft, Download, Copy, Cloud, Server } from 'lucide-react';
 import { OrderTimeline } from '@/components/shared/OrderTimeline';
 import { DeliveryProgress } from '@/components/shared/DeliveryProgress';
@@ -39,7 +38,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
           <span className={`text-xs font-bold px-3 py-1 rounded-full ${statusColor[order.status] || ''}`}>{order.status.toUpperCase()}</span>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-4 mb-6">
+        <div className="mb-6">
           <div className="surface-tint p-4 rounded-lg">
             <div className="text-xs text-text2 mb-1">Product</div>
             <div className="font-bold">{order.productName}</div>
@@ -47,12 +46,10 @@ export default async function OrderDetailPage({ params }: { params: { id: string
               {order.hosting === 'cloud' ? <Cloud className="w-3 h-3" /> : <Server className="w-3 h-3" />} {order.hosting}
             </div>
           </div>
-          <div className="surface-tint p-4 rounded-lg">
-            <div className="text-xs text-text2 mb-1">Amount Paid</div>
-            <div className="font-bold text-primary">{formatINR(order.amount)}</div>
-            {order.gstAmount > 0 && <div className="text-xs text-text2 mt-1">incl. {formatINR(order.gstAmount)} GST</div>}
-          </div>
         </div>
+        {order.status === 'paid' && (
+          <p className="text-xs text-text2 mb-6">Payment received — see your <a href={`/api/invoice/${order.orderId}`} target="_blank" rel="noopener" className="text-primary hover:underline">invoice</a> for the amount charged.</p>
+        )}
 
         {order.licenseKey && (
           <div className="border border-primary/30 bg-primary/5 p-4 rounded-lg mb-6">

@@ -2,7 +2,6 @@
 import Link from 'next/link';
 import type { LucideIcon } from 'lucide-react';
 import { Check, X, AlertTriangle, Phone, Globe, TrendingUp, Building2, Code2 } from 'lucide-react';
-import { formatINR } from '@/lib/utils';
 import { useReveal, revealStyle } from '@/lib/hooks/useReveal';
 import type { Software } from '@/lib/data/software';
 
@@ -37,13 +36,13 @@ export function PricingSection({ plans }: { plans: Software[] }) {
     <section id="pricing" className="py-20" style={{ background: '#f8f9fb' }}>
       <div className="max-w-6xl mx-auto px-4" ref={ref}>
         <div className="text-center mb-4">
-          <span className="text-xs font-extrabold uppercase tracking-widest" style={{ color: '#138808' }}>— Simple Pricing Plans —</span>
+          <span className="text-xs font-extrabold uppercase tracking-widest" style={{ color: '#2563eb' }}>— Simple Pricing Plans —</span>
         </div>
 
         <div className="flex items-start gap-2 max-w-2xl mx-auto mb-10 p-3 rounded-xl border" style={{ background: '#fffbeb', borderColor: '#fbbf24' }}>
           <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
           <p className="text-xs text-amber-800 font-semibold">
-            Important: the ₹999 plan does not include a domain — every other plan below includes one.
+            Important: the Basic Plan — Starter does not include a domain — every other plan below includes one.
           </p>
         </div>
 
@@ -73,9 +72,6 @@ export function PricingSection({ plans }: { plans: Software[] }) {
                       <Icon className="w-3.5 h-3.5 text-white" />
                     </span>
                     <span className="text-xs font-bold text-gray-500 uppercase tracking-wide">{p.name}</span>
-                  </div>
-                  <div className="text-2xl font-extrabold text-gray-900 mb-0.5">
-                    {formatINR(p.price)}<span className="text-xs font-medium text-gray-400">{p.unit}</span>
                   </div>
                   <span
                     className={`inline-flex items-center gap-1 self-start text-[10px] font-bold px-2 py-0.5 rounded-full mb-3 ${domainIncluded ? '' : ''}`}
@@ -111,7 +107,7 @@ export function PricingSection({ plans }: { plans: Software[] }) {
                       className="w-full py-2.5 rounded-lg text-center text-xs font-bold text-white"
                       style={{ background: `linear-gradient(90deg,${p.c1},${p.c2})` }}
                     >
-                      Order Now
+                      Advance Payment
                     </Link>
                   )}
                 </div>

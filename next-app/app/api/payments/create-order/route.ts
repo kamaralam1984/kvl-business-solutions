@@ -9,19 +9,29 @@ import { Lead } from '@/lib/models/Lead';
 import { rzp } from '@/lib/razorpay';
 import { generateOrderId } from '@/lib/license';
 import { getLiveSoftwareProduct } from '@/lib/data/live-software';
-import { Coupon, evaluateCoupon } from '@/lib/models/Coupon';
 import { fireTrigger } from '@/lib/workflows/runner';
 import { rateLimit, clientIp } from '@/lib/rate-limit';
 
 const GST_RATE = 18;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MIN_ADVANCE = 100;
+const MAX_ADVANCE = 1000000;
 
 export async function POST(req: Request) {
   try {
     if (!rzp) return NextResponse.json({ ok: false, error: 'Razorpay not configured' }, { status: 500 });
     const session = await getServerSession(authOptions);
 
-    const { productSlug, hosting = 'cloud', couponCode, guestEmail, guestPhone } = await req.json();
+    const { productSlug, hosting = 'cloud', amount: requestedAmount, guestEmail, guestPhone } = await req.json();
+
+    // Advance payment is whatever the customer chooses to pay now, not a
+    // fixed catalog price — validate it's a sane, well-formed number so
+    // Razorpay (and the invoice generated from this order) always reflects
+    // exactly what the customer typed in.
+    const advanceAmount = Math.round(Number(requestedAmount));
+    if (!Number.isFinite(advanceAmount) || advanceAmount < MIN_ADVANCE || advanceAmount > MAX_ADVANCE) {
+      return NextResponse.json({ ok: false, error: `Enter an amount between ₹${MIN_ADVANCE} and ₹${MAX_ADVANCE.toLocaleString('en-IN')}` }, { status: 400 });
+    }
 
     // Payment happens before account creation — a logged-in session is no
     // longer required, but we still need somewhere to send the license key
@@ -43,26 +53,12 @@ export async function POST(req: Request) {
     const product = await getLiveSoftwareProduct(productSlug);
     if (!product) return NextResponse.json({ ok: false, error: 'Invalid product' }, { status: 400 });
 
-    const mult = hosting === 'on-premise' ? 1.5 : 1;
-    const baseSubtotal = Math.round(product.price * mult);
-
     await connectDB();
 
-    // Apply coupon if present
-    let discount = 0;
-    let appliedCoupon: any = null;
-    if (couponCode) {
-      const coupon = await Coupon.findOne({ code: String(couponCode).toUpperCase() });
-      if (coupon) {
-        const ev = evaluateCoupon(coupon.toObject(), { amount: baseSubtotal, productSlug });
-        if (ev.ok) {
-          discount = ev.discount!;
-          appliedCoupon = coupon;
-        }
-      }
-    }
-
-    const subtotal = baseSubtotal - discount;
+    // The customer's typed advance amount is the subtotal — GST is added on
+    // top of exactly what they chose to pay, so the total charged (and the
+    // invoice generated from this order) always matches what they entered.
+    const subtotal = advanceAmount;
     const gstAmount = Math.round((subtotal * GST_RATE) / 100);
     const amount = subtotal + gstAmount;
 
@@ -117,13 +113,7 @@ export async function POST(req: Request) {
       razorpayOrderId: rzpOrder.id,
       status: 'created',
       billing,
-      couponCode: appliedCoupon?.code,
-      discount,
     });
-
-    // Coupon usage is NOT counted here — only once the payment actually
-    // succeeds (see lib/payments/mark-paid.ts), so an abandoned/failed
-    // checkout never burns a limited-use code.
 
     fireTrigger('new_order', {
       name: u?.name || matchedLead?.name || identityEmail,
@@ -144,7 +134,7 @@ export async function POST(req: Request) {
       currency: 'INR',
       keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
       productName: product.name,
-      breakdown: { baseSubtotal, discount, subtotal, gstAmount, gstRate: GST_RATE, total: amount, couponCode: appliedCoupon?.code },
+      breakdown: { subtotal, gstAmount, gstRate: GST_RATE, total: amount },
     });
   } catch (e) {
     return apiError(e);

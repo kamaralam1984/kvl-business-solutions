@@ -1,8 +1,8 @@
 import { GetQuoteClient } from './GetQuoteClient';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
-const title = 'Independence Day Offer — Website at ₹999 | Get Your Free Quote';
-const description = 'Independence Day special: a professional website starting at ₹999. Share your details and get a free quote in minutes — offer valid till 15 August.';
+const title = 'Professional Website Design | Get Your Free Quote';
+const description = 'A professional website design, built for you. Share your details and get a free quote in minutes.';
 
 export const metadata = {
   title,

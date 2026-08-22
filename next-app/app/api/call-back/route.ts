@@ -14,7 +14,7 @@ import { linkVisitorToLead } from '@/lib/vip/link';
 const schema = z.object({
   name: z.string().min(1).default('Customer'),
   phone: z.string().min(7),
-  // Lets callers (e.g. the Independence Day ad-funnel pages' own callback
+  // Lets callers (e.g. the website-offer ad-funnel pages' own callback
   // mini-form) tag the Lead with where the request actually came from,
   // instead of every callback landing in Admin → Leads as generic
   // "call-back-widget" regardless of source page.
