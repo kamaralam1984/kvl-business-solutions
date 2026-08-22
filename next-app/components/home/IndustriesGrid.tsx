@@ -47,8 +47,8 @@ export function IndustriesGrid() {
   }, [paused]);
 
   const current = industries[active];
-  const cardW = Math.min(trackW * 0.52, 460);
-  const step = trackW * 0.235;
+  const cardW = Math.min(trackW * 0.68, 700);
+  const step = trackW * 0.28;
 
   return (
     <section className="py-16" style={{ background: 'rgb(var(--bg))' }}>
@@ -102,7 +102,7 @@ export function IndustriesGrid() {
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
           >
-            <div ref={trackRef} className="relative w-full h-[300px] sm:h-[380px] lg:h-[460px]" style={{ perspective: 1600 }}>
+            <div ref={trackRef} className="relative w-full h-[320px] sm:h-[420px] lg:h-[560px]" style={{ perspective: 1600 }}>
               {industries.map((ind, i) => {
                 const offset = i - active;
                 const abs = Math.abs(offset);
@@ -136,7 +136,7 @@ export function IndustriesGrid() {
                       src={ind.image}
                       alt={`${ind.title} software overview`}
                       fill
-                      sizes="(max-width: 640px) 55vw, (max-width: 1024px) 60vw, 460px"
+                      sizes="(max-width: 640px) 70vw, (max-width: 1024px) 68vw, 700px"
                       quality={65}
                       className="object-cover"
                     />
