@@ -8,7 +8,7 @@ import {
   Monitor, Smartphone, ExternalLink, Globe, Sparkles,
   Briefcase, Building2, GraduationCap, Hospital, HardHat, Satellite, ShoppingCart, Cog, Landmark,
   UserSquare, Video, Home, Code, UtensilsCrossed, BedDouble, Dumbbell, Truck, Plane, Scale, Pill,
-  BookOpen, Leaf, Car, Wrench, Calculator, Sofa, Rocket,
+  BookOpen, Leaf, Car, Wrench, Calculator, Sofa, Rocket, Handshake, TrendingUp, Bot,
 } from 'lucide-react';
 import { DEMO_CATEGORIES } from '@/lib/data/demo-categories';
 
@@ -19,7 +19,8 @@ import { DEMO_CATEGORIES } from '@/lib/data/demo-categories';
 const ICON_MAP: Record<string, LucideIcon> = {
   Globe, Briefcase, Building2, GraduationCap, Hospital, HardHat, Satellite, ShoppingCart, Cog,
   Landmark, UserSquare, Video, Home, Smartphone, Code, UtensilsCrossed, BedDouble, Dumbbell, Truck,
-  Plane, Scale, Sparkles, Pill, BookOpen, Leaf, Car, Wrench, Calculator, Sofa, Rocket,
+  Plane, Scale, Sparkles, Pill, BookOpen, Leaf, Car, Wrench, Calculator, Sofa, Rocket, Handshake,
+  TrendingUp, Bot,
 };
 
 type Demo = {
