@@ -21,6 +21,7 @@ function CheckoutInner() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState('');
   const [rzpReady, setRzpReady] = useState(false);
+  const [rzpBlocked, setRzpBlocked] = useState(false);
   const [advanceAmount, setAdvanceAmount] = useState('');
 
   // Payment comes first, account creation after (see /checkout/success) — a
@@ -52,6 +53,7 @@ function CheckoutInner() {
   const pay = async () => {
     if (!amountValid) { setErr(`Enter an advance amount of at least ₹${MIN_ADVANCE}.`); return; }
     if (isGuest && !guestDetailsValid) { setErr('Enter a valid email and phone number first.'); return; }
+    if (!rzpReady || !(window as any).Razorpay) { setErr('Payment gateway is still loading — please wait a moment and try again. If this persists, disable any ad-blocker and reload the page.'); return; }
     setLoading(true); setErr('');
     try {
       const res = await fetch('/api/payments/create-order', {
@@ -117,7 +119,7 @@ function CheckoutInner() {
 
   return (
     <>
-      <Script src="https://checkout.razorpay.com/v1/checkout.js" onLoad={() => setRzpReady(true)} />
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" onLoad={() => setRzpReady(true)} onError={() => setRzpBlocked(true)} />
       <div className="container py-12 max-w-3xl">
         <h1 className="text-3xl font-extrabold mb-6">Checkout</h1>
         <div className="grid md:grid-cols-[2fr_1fr] gap-6">
@@ -174,9 +176,10 @@ function CheckoutInner() {
               </div>
             )}
 
-            <button disabled={loading || !amountValid || (isGuest && !guestDetailsValid)} onClick={() => pay()} className="btn btn-primary w-full justify-center">
-              <CreditCard className="w-4 h-4" /> {loading ? 'Opening Razorpay...' : 'Advance Payment'}
+            <button disabled={loading || !rzpReady || !amountValid || (isGuest && !guestDetailsValid)} onClick={() => pay()} className="btn btn-primary w-full justify-center">
+              <CreditCard className="w-4 h-4" /> {loading ? 'Opening Razorpay...' : !rzpReady ? 'Loading payment gateway...' : 'Advance Payment'}
             </button>
+            {rzpBlocked && <p className="text-red-500 text-xs mt-2">Couldn&apos;t load the payment gateway — please disable any ad-blocker for this site and reload the page.</p>}
             {err && <p className="text-red-500 text-xs mt-2">{err}</p>}
             <div className="mt-4 pt-4 border-t border-tint space-y-1.5 text-[11px] text-text2">
               <div className="flex gap-2 items-center"><ShieldCheck className="w-3.5 h-3.5 text-green-500" /> 256-bit SSL encryption</div>
