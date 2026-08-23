@@ -139,14 +139,14 @@ export function DemosClient({ demos }: { demos: Demo[] }) {
                       style={d.live ? { borderColor: 'rgba(34,197,94,0.25)' } : {}}
                     >
                       {/* Image / Preview */}
-                      <div className="h-48 relative overflow-hidden">
+                      <div className="h-48 relative overflow-hidden" style={{ background: d.image ? '#0a0a0a' : undefined }}>
                         {d.image ? (
                           <Image
                             src={d.image}
                             alt={d.name}
                             fill
                             sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            className="object-contain transition-transform duration-500 group-hover:scale-105"
                           />
                         ) : (
                           <div

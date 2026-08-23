@@ -61,13 +61,13 @@ export function ProjectFilterBar({ studies }: { studies: CaseStudy[] }) {
         <div className="grid md:grid-cols-2 gap-6">
           {filtered.map(s => (
             <Link key={s.slug} href={`/projects/${s.slug}`} className="card-premium overflow-hidden group block">
-              <div className="relative overflow-hidden aspect-[16/10]">
+              <div className="relative overflow-hidden aspect-[16/10]" style={{ background: '#0a0a0a' }}>
                 <Image
                   src={s.images.hero}
                   alt={`${s.name} preview`}
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="object-contain transition-transform duration-700 group-hover:scale-105"
                 />
                 <span className="absolute top-3 left-4 text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full"
                   style={{ background: 'rgba(34,197,94,0.12)', color: '#16a34a', border: '1px solid rgba(34,197,94,0.3)', backdropFilter: 'blur(6px)' }}>

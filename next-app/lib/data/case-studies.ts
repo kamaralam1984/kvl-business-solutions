@@ -32,7 +32,7 @@ export const caseStudies: CaseStudy[] = [
     businessCategory: 'AI SaaS · Creator Analytics',
     overview: "An AI-powered platform that scores videos before they're published, so YouTube creators can catch a weak hook or a low-CTR thumbnail before it costs them views — not after.",
     images: {
-      hero: '/projects/vidyt/desktop.png',
+      hero: '/projects/vidyt/banner.png',
       gallery: [
         { src: '/projects/vidyt/desktop.png', alt: 'VidYT dashboard on desktop', device: 'desktop' },
         { src: '/projects/vidyt/tablet.png', alt: 'VidYT interface on tablet', device: 'tablet' },
@@ -347,7 +347,7 @@ export const caseStudies: CaseStudy[] = [
     businessCategory: 'AI SaaS · Autonomous Sales Agents',
     overview: "A team of five AI agents that runs a business's revenue pipeline around the clock — qualifying leads, drafting proposals and running outreach sequences whether or not anyone is logged in.",
     images: {
-      hero: '/projects/kvl-growthos/desktop.png',
+      hero: '/projects/kvl-growthos/banner.png',
       gallery: [
         { src: '/projects/kvl-growthos/desktop.png', alt: 'KVL GrowthOS dashboard on desktop', device: 'desktop' },
         { src: '/projects/kvl-growthos/tablet.png', alt: 'KVL GrowthOS interface on tablet', device: 'tablet' },
@@ -409,7 +409,7 @@ export const caseStudies: CaseStudy[] = [
     businessCategory: 'AI SaaS · Website Chatbot',
     overview: 'A self-training AI chatbot that scans a website, builds its own knowledge base from what it finds, and goes live behind a one-line embed script — answering questions and capturing leads in every language, with no manual setup.',
     images: {
-      hero: '/projects/kvl-super-ai/desktop.png',
+      hero: '/projects/kvl-super-ai/banner.png',
       gallery: [
         { src: '/projects/kvl-super-ai/desktop.png', alt: 'KVL Super AI chatbot installer on desktop', device: 'desktop' },
         { src: '/projects/kvl-super-ai/tablet.png', alt: 'KVL Super AI interface on tablet', device: 'tablet' },
@@ -471,7 +471,7 @@ export const caseStudies: CaseStudy[] = [
     businessCategory: 'Education · School Website & CMS',
     overview: 'A premier CBSE-affiliated school website that presents admissions, academics and campus life with the polish of a real institution — built to carry admissions, faculty, gallery and events content without looking like a template.',
     images: {
-      hero: '/projects/kvl-international-school/desktop.png',
+      hero: '/projects/kvl-international-school/banner.png',
       gallery: [
         { src: '/projects/kvl-international-school/desktop.png', alt: 'KVL International School homepage on desktop', device: 'desktop' },
         { src: '/projects/kvl-international-school/tablet.png', alt: 'KVL International School interface on tablet', device: 'tablet' },
