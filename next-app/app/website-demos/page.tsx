@@ -14,6 +14,10 @@ export const metadata: Metadata = {
   openGraph: { title, description, url: `${SITE}/website-demos`, type: 'website' },
 };
 
+// Re-generated every 5 minutes so Admin → Demos edits (new entries, image
+// swaps, live-status changes) show up without a full redeploy.
+export const revalidate = 300;
+
 // Fallback demos shown if DB has no entries yet (first deploy)
 const fallbackDemos = [
   { _id: 'fb-1', name: 'VidYT', description: 'AI-powered YouTube growth platform — viral score prediction, script & thumbnail generation', url: 'https://www.vidyt.com', category: 'video', technologies: ['Next.js', 'AI', 'Production'], live: true, iconName: 'Video', c1: '#9333ea', c2: '#581c87', order: 0, active: true, startingPrice: 0, image: '/website-demos/vidyt.png' },
