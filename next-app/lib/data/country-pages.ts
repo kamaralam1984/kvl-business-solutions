@@ -5,6 +5,13 @@ export type CountryPage = {
   businessContext: string[];
   whyChooseReasons: string[];
   timezoneOverlap: string;
+  // Shown above the (shared) "Our Standard Delivery Process" section — ties
+  // the fixed 7-step process back to this location's specific context so
+  // the section reads as applied, not as identical boilerplate on every page.
+  processIntro: string;
+  // Passed to <CtaBanner desc={...}> in place of a hardcoded, identical-
+  // everywhere string — one unique closing pitch per location.
+  ctaBannerDesc: string;
   relatedServiceSlugs: string[];
   relatedIndustryLandingSlugs: string[];
   relatedCaseStudySlugs: string[];
@@ -31,6 +38,8 @@ export const countryPages: CountryPage[] = [
       'MSME (Govt. of India) registered, with an NDA signed before any technical discussion begins.',
     ],
     timezoneOverlap: "India (IST) sits 9.5–13.5 hours ahead of the continental US depending on the coast and daylight saving, so we don't pretend there's a full working-day overlap — there isn't. What works in practice is a structured async rhythm: our team works your requirements and build queue during the US night, and we hold a live overlap call in the India evening (US morning, Eastern or Central time) for standups, demos, and decisions that need a real conversation. Every task, decision, and blocker is logged in a shared tracker so nothing depends on catching someone awake at the right hour.",
+    processIntro: "The same seven-stage process runs on every engagement — for US clients, the live-demo checkpoints land in Eastern or Central morning hours, so \"weekly progress on working software\" means something you can log into, not a status deck.",
+    ctaBannerDesc: "Fixed-price, SOC 2-aware, and built by engineers you'll actually talk to — not an account manager relaying updates from a different time zone.",
     relatedServiceSlugs: ['custom-software', 'ai', 'cloud', 'erp', 'consultancy'],
     relatedIndustryLandingSlugs: ['healthcare-software-development', 'finance-banking-software-development', 'retail-software-development', 'logistics-fleet-management-software'],
     relatedCaseStudySlugs: ['vidyt', 'gravity'],
@@ -65,6 +74,8 @@ export const countryPages: CountryPage[] = [
       'One year of free post-launch support included as standard on every build.',
     ],
     timezoneOverlap: "India (IST) is 4.5–5.5 hours ahead of the UK depending on the time of year, which gives us a comfortable working overlap — our mid-afternoon aligns with your late morning, and our evening still overlaps your afternoon. That's enough real-time window for daily standups, live demos, and same-day clarification on requirements, with the rest of the day handled async through a shared tracker and written updates so nothing waits on a single meeting slot.",
+    processIntro: "The same delivery process applies to every project — for UK clients, Discovery and Design routinely fold in a paid, fixed-scope first phase, so you're validating the fit on a small build before committing to anything larger.",
+    ctaBannerDesc: "A paid discovery phase, UK GDPR-aware design from day one, and a same-day overlap window — no multi-year roadmap sold upfront.",
     relatedServiceSlugs: ['custom-software', 'ai', 'cloud', 'consultancy', 'website'],
     relatedIndustryLandingSlugs: ['finance-banking-software-development', 'real-estate-software-development', 'logistics-fleet-management-software', 'government-digital-solutions'],
     relatedCaseStudySlugs: ['vidyt', 'aapkaplot'],
@@ -99,6 +110,8 @@ export const countryPages: CountryPage[] = [
       'A year of free post-launch support included on every project, standard.',
     ],
     timezoneOverlap: "India (IST) runs 9.5–13.5 hours ahead of Canada depending on the province and daylight saving — similar to the US, so we treat the overlap the same way: async-first delivery through the India workday (Canadian night), with a live overlap call scheduled in the India evening to land on Canadian morning hours for standups and decisions. A shared tracker keeps requirements, progress, and blockers visible without relying on real-time chat.",
+    processIntro: "Every project runs through the same seven stages — for Canadian builds, Design routinely includes scoping bilingual English/French architecture and PIPEDA-aligned data handling before Development begins, not after.",
+    ctaBannerDesc: "Bilingual-ready architecture, PIPEDA-aware data handling, and a cost structure that funds a full pod for less than one senior Toronto hire.",
     relatedServiceSlugs: ['custom-software', 'erp', 'cloud', 'ai', 'android'],
     relatedIndustryLandingSlugs: ['healthcare-software-development', 'real-estate-software-development', 'government-digital-solutions', 'retail-software-development'],
     relatedCaseStudySlugs: ['aapkaplot', 'gravity'],
@@ -133,6 +146,8 @@ export const countryPages: CountryPage[] = [
       'A year of free post-launch support included as standard on every project.',
     ],
     timezoneOverlap: "India (IST) is 4.5–5.5 hours behind most of Australia depending on the state and daylight saving, which in practice means our full working day overlaps a large part of yours — an Australian morning call lands in our late morning, and by the time your day winds down, ours is still going. This is one of the easiest timezones we work across for real-time collaboration, standups, and same-day decisions, without needing to rely purely on async handoffs.",
+    processIntro: "The process itself doesn't change by geography — what does is how much of it happens in real time: Australia's overlap is close enough that most Discovery and Design conversations run as live calls instead of async handoffs.",
+    ctaBannerDesc: "Field-ready systems for mining, logistics and construction, Privacy Act-aware design, and one of the easiest timezones we work across for live collaboration.",
     relatedServiceSlugs: ['custom-software', 'erp', 'cloud', 'ai', 'consultancy'],
     relatedIndustryLandingSlugs: ['logistics-fleet-management-software', 'construction-erp-software-development', 'real-estate-software-development', 'healthcare-software-development'],
     relatedCaseStudySlugs: ['vidyt', 'aapkaplot'],
@@ -167,6 +182,8 @@ export const countryPages: CountryPage[] = [
       'A year of free post-launch support included as standard on every build.',
     ],
     timezoneOverlap: "India (IST) is only about 1.5 hours ahead of the UAE, which makes this one of the most convenient timezones we work with — your entire working day overlaps ours almost completely. Standups, live demos, and real-time decision-making are the default, not the exception, and there's no need to structure work around an overnight handoff the way we do for US or Canadian clients.",
+    processIntro: "Every engagement follows the same delivery structure — for UAE clients, VAT-compliant invoicing and FTA reporting formats get scoped into Design from the outset for any finance-adjacent build, not added after Development wraps.",
+    ctaBannerDesc: "VAT and FTA-ready systems, real estate and government procurement experience, and a working day that overlaps yours almost completely.",
     relatedServiceSlugs: ['custom-software', 'erp', 'ai', 'cloud', 'consultancy'],
     relatedIndustryLandingSlugs: ['government-digital-solutions', 'real-estate-software-development', 'finance-banking-software-development', 'retail-software-development'],
     relatedCaseStudySlugs: ['aapkaplot', 'vidyt'],
@@ -201,6 +218,8 @@ export const countryPages: CountryPage[] = [
       'Fixed-price, milestone-based contracts with weekly working demos, plus a year of free post-launch support as standard.',
     ],
     timezoneOverlap: "India (IST) is only about 1.5 hours ahead of Dubai, which makes this one of the most convenient timezones we work with — your entire working day overlaps ours almost completely. Standups, live demos and real-time decisions are the default, not something scheduled around an overnight handoff.",
+    processIntro: "The same seven stages apply here too — Design for a Dubai project typically has to account for free-zone licensing specifics (DIFC, DMCC and similar) and RERA-registered listing requirements before a single screen gets built.",
+    ctaBannerDesc: "Real estate, e-commerce and VAT-ready ERP builds, with free-zone licensing experience baked in and a near-total daily overlap.",
     relatedServiceSlugs: ['custom-software', 'erp', 'crm', 'digital-marketing', 'ai'],
     relatedIndustryLandingSlugs: ['real-estate-software-development', 'retail-software-development', 'logistics-fleet-management-software', 'finance-banking-software-development'],
     relatedCaseStudySlugs: ['aapkaplot', 'gravity'],
@@ -235,6 +254,8 @@ export const countryPages: CountryPage[] = [
       'Fixed-price, milestone-based contracts with a year of free post-launch support included as standard.',
     ],
     timezoneOverlap: "India (IST) is only about 1.5 hours ahead of Abu Dhabi, so your entire working day overlaps ours almost completely — live standups, demos and same-day decisions are the norm, not something scheduled around a time-zone gap.",
+    processIntro: "The process stays the same across every project — what shifts for Abu Dhabi engagements is Planning, which routinely stretches to cover the staged approvals and named technical points of contact that government and ADGM-regulated procurement expects.",
+    ctaBannerDesc: "Built for formal government and ADGM-regulated procurement, with audit-ready documentation and a near-total daily overlap window.",
     relatedServiceSlugs: ['custom-software', 'erp', 'consultancy', 'cloud', 'enterprise-integrations'],
     relatedIndustryLandingSlugs: ['government-digital-solutions', 'healthcare-software-development', 'finance-banking-software-development', 'manufacturing-erp-development'],
     relatedCaseStudySlugs: ['aapkaplot'],
@@ -269,6 +290,8 @@ export const countryPages: CountryPage[] = [
       'A year of free post-launch support included as standard.',
     ],
     timezoneOverlap: "India (IST) is 2.5 hours behind Singapore, which means our working day overlaps almost the entirety of yours — a Singapore morning meeting is still our morning, and by the time your evening arrives, we're still mid-afternoon. This is a comfortable, low-friction overlap for daily standups, live demos, and fast decision cycles without needing to fall back on async-only workflows.",
+    processIntro: "Every build runs through the same seven stages — for Singapore clients serving wider APAC, Design typically has to account for multi-currency handling and PDPA/MAS-aligned data residency before Development starts, not retrofitted later.",
+    ctaBannerDesc: "PDPA and MAS-aware architecture, built for APAC scale from day one, with a working overlap that supports real standups, not just async updates.",
     relatedServiceSlugs: ['custom-software', 'ai', 'cloud', 'erp', 'consultancy'],
     relatedIndustryLandingSlugs: ['finance-banking-software-development', 'logistics-fleet-management-software', 'government-digital-solutions', 'retail-software-development'],
     relatedCaseStudySlugs: ['vidyt', 'gravity'],
@@ -303,6 +326,8 @@ export const countryPages: CountryPage[] = [
       'A year of free post-launch support included as standard on every project.',
     ],
     timezoneOverlap: "India (IST) is 3.5–4.5 hours ahead of Germany depending on the time of year, which gives a solid working overlap — our afternoon aligns with your late morning and early afternoon, leaving a real-time window for standups and demos before our evening even begins. The rest of the day is handled through detailed written documentation and a shared tracker, which fits well with the process rigor German clients already expect from a development partner.",
+    processIntro: "The seven stages don't change, but German engagements lean harder on Planning and Design — detailed written specifications and structured change control before Development begins, matching the documentation rigor German buyers already expect.",
+    ctaBannerDesc: "Documentation and process rigor that matches German buyer expectations, DSGVO-aware architecture, and direct engineer access — no account-manager layer.",
     relatedServiceSlugs: ['custom-software', 'erp', 'ai', 'cloud', 'consultancy'],
     relatedIndustryLandingSlugs: ['manufacturing-erp-development', 'finance-banking-software-development', 'logistics-fleet-management-software', 'government-digital-solutions'],
     relatedCaseStudySlugs: ['vidyt', 'aapkaplot'],
@@ -337,6 +362,8 @@ export const countryPages: CountryPage[] = [
       'A year of free post-launch support included as standard on every project.',
     ],
     timezoneOverlap: "India (IST) is about 2.5 hours ahead of Saudi Arabia, which gives a comfortable, workable overlap across most of the business day — our afternoon aligns closely with your morning and early afternoon, supporting live standups and real-time decisions without needing to rely purely on overnight async handoffs.",
+    processIntro: "The process is the same for every client — Saudi engagements typically extend Planning to cover the staged approvals and audit-ready documentation that government e-services and giga-project-adjacent contracts expect.",
+    ctaBannerDesc: "Enterprise-grade delivery for Vision 2030-adjacent projects, audit-ready documentation, and a comfortable overlap window that supports live collaboration.",
     relatedServiceSlugs: ['custom-software', 'erp', 'ai', 'cloud', 'consultancy'],
     relatedIndustryLandingSlugs: ['government-digital-solutions', 'construction-erp-software-development', 'healthcare-software-development', 'real-estate-software-development'],
     relatedCaseStudySlugs: ['aapkaplot', 'vidyt'],
@@ -371,6 +398,8 @@ export const countryPages: CountryPage[] = [
       'A year of free post-launch support included as standard on every project.',
     ],
     timezoneOverlap: "India (IST) is around 2.5 hours ahead of Qatar, giving a comfortable, workable daily overlap — our afternoon overlaps your morning and early afternoon closely enough to support live standups, demos, and real-time decision-making rather than relying purely on overnight handoffs.",
+    processIntro: "The seven stages hold for every project — for Qatar, Development and Support routinely carry extra documentation so an in-house team can eventually take over day-to-day operation, in line with Qatarization staffing expectations.",
+    ctaBannerDesc: "Government-adjacent delivery discipline, thorough handover documentation for Qatarization staffing, and a comfortable daily overlap window.",
     relatedServiceSlugs: ['custom-software', 'erp', 'ai', 'cloud', 'consultancy'],
     relatedIndustryLandingSlugs: ['government-digital-solutions', 'real-estate-software-development', 'logistics-fleet-management-software', 'finance-banking-software-development'],
     relatedCaseStudySlugs: ['aapkaplot', 'gravity'],
@@ -405,6 +434,8 @@ export const countryPages: CountryPage[] = [
       'A year of free post-launch support included as standard on every project.',
     ],
     timezoneOverlap: "India (IST) is 6.5–7.5 hours behind New Zealand depending on daylight saving, so our workday runs into your afternoon and evening — a New Zealand morning still catches the tail end of our previous working day, and by New Zealand's afternoon we're deep into ours, giving a solid few hours of live overlap plus async coverage either side of it for standups, demos, and questions that don't need to wait.",
+    processIntro: "Every engagement runs through the same seven stages — for New Zealand clients, Design typically has to account for seasonal-demand and multi-location requirements up front, whether that's a hospitality group or a retailer syncing inventory across sites.",
+    ctaBannerDesc: "Hospitality and retail systems built for seasonal demand, real estate technology experience, and a workable overlap without irregular hours.",
     relatedServiceSlugs: ['custom-software', 'website', 'cloud', 'erp', 'ai'],
     relatedIndustryLandingSlugs: ['retail-software-development', 'restaurant-pos-software-development', 'real-estate-software-development', 'logistics-fleet-management-software'],
     relatedCaseStudySlugs: ['restro-os', 'aapkaplot'],

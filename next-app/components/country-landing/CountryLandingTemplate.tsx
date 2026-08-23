@@ -233,9 +233,10 @@ export function CountryLandingTemplate({ country }: { country: CountryPage }) {
       {/* Process */}
       <section className="section">
         <div className="container">
-          <div className="text-center mb-10">
+          <div className="text-center mb-10 max-w-2xl mx-auto">
             <span className="eyebrow">How We Build It</span>
             <h2 className="text-3xl md:text-4xl font-extrabold my-4">Our Standard Delivery Process</h2>
+            <p className="text-text2 text-[14.5px] leading-[1.7]">{country.processIntro}</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
             {processSteps.map(s => (
@@ -320,7 +321,7 @@ export function CountryLandingTemplate({ country }: { country: CountryPage }) {
 
       <CtaBanner
         title={`Need a Software Partner in ${country.countryName}?`}
-        desc="No local office, no middlemen — direct access to the India-based team that will actually build your system."
+        desc={country.ctaBannerDesc}
       />
     </>
   );
