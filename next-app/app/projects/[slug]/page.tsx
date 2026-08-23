@@ -9,6 +9,8 @@ import {
   Truck, ShoppingCart,
   LaptopMinimal, Smartphone, Satellite, HardHat, Cog, Bot, Video, Network,
   Cloud, Brain, Megaphone, Palette, Contact2, Webhook, Tag, Workflow, Box,
+  GitBranch, Wallet, Target, FileText, Send, CalendarClock, RefreshCw,
+  GraduationCap, Code2, Server, Newspaper, LogIn, Camera,
   type LucideIcon,
 } from 'lucide-react';
 import { type CaseStudy } from '@/lib/data/case-studies';
@@ -43,6 +45,8 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Truck, ShoppingCart,
   LaptopMinimal, Smartphone, Satellite, HardHat, Cog, Bot, Video, Network,
   Cloud, Brain, Megaphone, Palette, Contact2, Webhook, Tag, Workflow, Box,
+  GitBranch, Wallet, Target, FileText, Send, CalendarClock, RefreshCw,
+  GraduationCap, Code2, Server, Newspaper, LogIn, Camera,
 };
 
 function Icon({ name, className }: { name: string; className?: string }) {
