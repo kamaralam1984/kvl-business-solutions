@@ -95,7 +95,7 @@ export function UserMenuDropdown({
             {[
               { href: '/dashboard', label: 'Dashboard', Icon: LayoutDashboard },
               { href: '/dashboard/referrals', label: 'Referrals', Icon: Gift },
-              { href: '/settings',  label: 'Settings',  Icon: Settings },
+              { href: '/dashboard/settings', label: 'Settings', Icon: Settings },
               ...(isAdmin ? [{ href: '/admin', label: 'Admin Panel', Icon: LayoutDashboard }] : []),
             ].map(({ href, label, Icon }) => (
               <Link

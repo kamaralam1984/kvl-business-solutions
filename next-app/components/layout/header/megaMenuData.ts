@@ -12,8 +12,8 @@ export const megaMenus: Record<string, MegaMenu> = {
     },
     items: [
       { label: 'ERP Software', desc: 'Enterprise resource planning', href: '/software/erp', icon: '⬡' },
+      { label: 'CRM Software', desc: 'Pipeline, leads & follow-ups', href: '/software/crm', icon: '◻' },
       { label: 'Website Demo', desc: 'Fast, SEO-optimized sites', href: '/website-demos', icon: '◻' },
-      { label: 'School Management', desc: 'Fee, attendance, reports', href: '/software/school', icon: '◻' },
       { label: 'Hospital Management', desc: 'Patient & billing system', href: '/software/hospital', icon: '◈' },
       { label: 'Restaurant POS', desc: 'Orders, KOT, inventory', href: '/software/restaurant', icon: '◉' },
       { label: 'Hotel Management', desc: 'Booking & housekeeping', href: '/software/hotel', icon: '◎' },

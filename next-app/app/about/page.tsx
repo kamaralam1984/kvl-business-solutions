@@ -1,8 +1,9 @@
 'use client';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
-import { Stats } from '@/components/home/Stats';
+import { StatsBar } from '@/components/home/StatsBar';
+import { caseStudies } from '@/lib/data/case-studies';
 import { Target, Eye, Heart, Trophy } from 'lucide-react';
 import Link from 'next/link';
 
@@ -44,6 +45,11 @@ function FadeIn({ children, delay = 0, className = '' }: { children: React.React
 }
 
 export default function AboutPage() {
+  const [productCount, setProductCount] = useState(0);
+  useEffect(() => {
+    fetch('/api/products').then(r => r.json()).then(d => setProductCount(d.products?.length || 0)).catch(() => {});
+  }, []);
+
   return (
     <div style={{ background: 'rgb(var(--bg))' }}>
 
@@ -243,7 +249,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <Stats />
+      <StatsBar productCount={productCount} caseStudyCount={caseStudies.length} />
 
       {/* CTA */}
       <section className="section" style={{ background: 'rgb(var(--bg-3))' }}>

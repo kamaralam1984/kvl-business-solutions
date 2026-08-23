@@ -33,7 +33,7 @@ export function Hero({ settings, products }: { settings?: HeroSettings | null; p
   const ctaText = settings?.heroCtaText || 'Talk to a Solution Architect';
   const ctaLink = settings?.heroCtaLink || '/book-demo';
   const secondaryCtaText = settings?.heroSecondaryCtaText || 'See Live Case Studies';
-  const secondaryCtaLink = settings?.heroSecondaryCtaLink || '/software';
+  const secondaryCtaLink = settings?.heroSecondaryCtaLink || '/projects';
 
   return (
     <section

@@ -46,6 +46,10 @@ export function Footer({ settings }: { settings?: any }) {
     { label: 'AapKaPlot',        href: '/projects/aapkaplot' },
     { label: 'Gravity',          href: '/projects/gravity' },
     { label: 'Restro OS',        href: '/projects/restro-os' },
+    { label: 'KVL CRM',          href: '/projects/kvl-crm' },
+    { label: 'KVL GrowthOS',     href: '/projects/kvl-growthos' },
+    { label: 'KVL Super AI',     href: '/projects/kvl-super-ai' },
+    { label: 'KVL Intl. School', href: '/projects/kvl-international-school' },
     { label: 'All Projects',     href: '/projects' },
     { label: 'Website Demos',    href: '/website-demos' },
   ];
@@ -77,6 +81,7 @@ export function Footer({ settings }: { settings?: any }) {
     { label: 'Terms of Use',    href: '/terms' },
     { label: 'Refund Policy',   href: '/refund-policy' },
     { label: 'Shipping Policy', href: '/shipping-policy' },
+    { label: 'Sitemap',         href: '/site-map' },
   ];
 
   return (

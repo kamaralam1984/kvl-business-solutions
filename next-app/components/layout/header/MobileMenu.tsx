@@ -1,8 +1,10 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { megaMenus, type MegaMenuKey } from './megaMenuData';
 
 export function MobileMenu({
   open, navItems, pathname, hasSession, onClose,
@@ -13,6 +15,10 @@ export function MobileMenu({
   hasSession: boolean;
   onClose: () => void;
 }) {
+  // Which mega-menu (if any) is expanded in the mobile accordion — desktop
+  // reveals these on hover, mobile has no hover, so this is the mobile-only
+  // way to reach the sub-pages (Software & Website's product list) at all.
+  const [expanded, setExpanded] = useState<MegaMenuKey | null>(null);
   // Same Escape-to-close + focus-return pattern as the account-menu dropdown
   // elsewhere in Header.tsx — this mobile nav panel was the one interactive
   // overlay on the page without it.
@@ -46,6 +52,9 @@ export function MobileMenu({
           <nav className="container py-4 flex flex-col">
             {navItems.map((item, i) => {
               const isActive = pathname === item.href || (item.href !== '/' && pathname?.startsWith(item.href));
+              const megaKey = (item.label in megaMenus ? item.label : null) as MegaMenuKey | null;
+              const menu = megaKey ? megaMenus[megaKey] : null;
+              const isExpanded = megaKey !== null && expanded === megaKey;
               return (
                 <motion.div
                   key={item.href}
@@ -53,23 +62,75 @@ export function MobileMenu({
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.04, duration: 0.2 }}
                 >
-                  <Link
-                    href={item.href}
+                  <div
                     className={cn(
-                      'flex items-center justify-between text-[14px] font-medium transition-all duration-200 h-12 px-1 border-l-2',
+                      'flex items-center justify-between h-12 px-1 border-l-2',
                       isActive ? 'pl-3' : 'border-transparent'
                     )}
                     style={{
-                      color: isActive ? 'rgb(var(--text))' : 'rgb(var(--text-2))',
                       borderLeftColor: isActive ? '#c8a870' : undefined,
-                      borderBottom: '1px solid rgba(var(--border) / 0.05)',
+                      borderBottom: isExpanded ? 'none' : '1px solid rgba(var(--border) / 0.05)',
                     }}
-                    onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text))'; }}
-                    onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text-2))'; }}
                   >
-                    {item.label}
-                    {isActive && <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#c8a870' }} />}
-                  </Link>
+                    <Link
+                      href={item.href}
+                      onClick={onClose}
+                      className="flex-1 flex items-center gap-2 text-[14px] font-medium transition-all duration-200"
+                      style={{ color: isActive ? 'rgb(var(--text))' : 'rgb(var(--text-2))' }}
+                    >
+                      {item.label}
+                      {isActive && <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#c8a870' }} />}
+                    </Link>
+                    {menu && (
+                      <button
+                        type="button"
+                        aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${item.label} submenu`}
+                        aria-expanded={isExpanded}
+                        onClick={() => setExpanded(isExpanded ? null : megaKey)}
+                        className="flex items-center justify-center w-9 h-9 -mr-1 shrink-0"
+                        style={{ color: 'rgba(var(--text) / 0.5)' }}
+                      >
+                        <ChevronDown className={cn('w-4 h-4 transition-transform duration-200', isExpanded && 'rotate-180')} />
+                      </button>
+                    )}
+                  </div>
+
+                  <AnimatePresence>
+                    {menu && isExpanded && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                        style={{ borderBottom: '1px solid rgba(var(--border) / 0.05)' }}
+                      >
+                        <div className="flex flex-col pb-2 pl-4">
+                          {menu.featured && (
+                            <Link
+                              href={menu.featured.href}
+                              onClick={onClose}
+                              className="text-[13.5px] py-2"
+                              style={{ color: 'rgb(var(--text))', fontWeight: 600 }}
+                            >
+                              {menu.featured.title}
+                            </Link>
+                          )}
+                          {menu.items.map(sub => (
+                            <Link
+                              key={sub.href}
+                              href={sub.href}
+                              onClick={onClose}
+                              className="text-[13.5px] py-2"
+                              style={{ color: 'rgb(var(--text-2))' }}
+                            >
+                              {sub.label}
+                            </Link>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </motion.div>
               );
             })}
@@ -90,10 +151,10 @@ export function MobileMenu({
                 >
                   Login
                 </Link>
-                <Link href="/contact"
+                <Link href="/book-demo"
                   className="flex-1 flex items-center justify-center py-3 rounded-xl text-[13px] font-bold transition-all"
                   style={{ background: 'linear-gradient(135deg, #c8a870, #d4b880)', color: '#0a0a0a' }}>
-                  Book a Call
+                  Book a Strategy Call
                 </Link>
               </motion.div>
             )}
