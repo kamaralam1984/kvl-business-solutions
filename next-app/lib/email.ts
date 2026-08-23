@@ -5,10 +5,15 @@ const FROM = process.env.EMAIL_FROM || 'KVL <onboarding@resend.dev>';
 const SALES = process.env.EMAIL_TO_SALES || 'kvlbusinesssolution@gmail.com';
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
-export async function sendNotification(subject: string, html: string, to = SALES) {
+export async function sendNotification(
+  subject: string,
+  html: string,
+  to = SALES,
+  attachments?: { filename: string; content: Buffer }[]
+) {
   if (!resend) { console.log('[email skipped]', subject, '→', to); return; }
   try {
-    await resend.emails.send({ from: FROM, to, subject, html });
+    await resend.emails.send({ from: FROM, to, subject, html, ...(attachments ? { attachments } : {}) });
   } catch (e) { console.error('email error', e); }
 }
 
@@ -102,6 +107,12 @@ export function reviewRequestEmail(data: { name: string; company?: string; dealT
       <a href="${link}" style="background:#1d4ed8;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600">Leave a Review</a>
     </p>
     <p style="font-size:12px;color:#64748b">Takes 2 minutes. Your review is moderated before it goes live. Link: ${link}</p>`);
+}
+
+export function downloadPdfEmail(data: { name: string; docTitle: string }) {
+  return wrap(`Your ${data.docTitle} is attached`, `<h2>Hi ${data.name || 'there'} 👋</h2>
+    <p>Thanks for your interest in KVL Business Solutions — your <b>${data.docTitle}</b> is attached to this email as a PDF.</p>
+    <p>If you'd like to talk through anything in it, book a free strategy call at <a href="${SITE}/book-demo" style="color:#1d4ed8">kvlbusinesssolutions.com/book-demo</a>, or message us on <a href="https://wa.me/919942000413" style="color:#1d4ed8">WhatsApp</a> — we typically respond within an hour.</p>`);
 }
 
 export function resetEmail(name: string, link: string) {

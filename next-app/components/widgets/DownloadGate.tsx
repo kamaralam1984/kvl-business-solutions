@@ -37,6 +37,13 @@ export function DownloadGate({
       if (!res.ok) throw new Error();
       setUnlocked(true);
       setStatus('idle');
+      // Best-effort — the PDF is still reachable via "Open Download" below
+      // even if emailing it fails, so this never blocks unlocking.
+      fetch('/api/downloads/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: downloadType, name: form.name, email: form.email }),
+      }).catch(() => {});
     } catch { setStatus('error'); }
   };
 
@@ -47,16 +54,19 @@ export function DownloadGate({
       <p className="text-text2 text-[12.5px] leading-[1.6] mb-4">{desc}</p>
 
       {unlocked ? (
-        <a
-          href={downloadHref}
-          target="_blank"
-          rel="noreferrer"
-          onClick={() => trackEvent('download_click', { type: downloadType })}
-          className="inline-flex items-center gap-1.5 text-[13px] font-semibold"
-          style={{ color: '#c8a870' }}
-        >
-          <CheckCircle2 className="w-4 h-4" /> Open Download
-        </a>
+        <div>
+          <a
+            href={downloadHref}
+            target="_blank"
+            rel="noreferrer"
+            onClick={() => trackEvent('download_click', { type: downloadType })}
+            className="inline-flex items-center gap-1.5 text-[13px] font-semibold"
+            style={{ color: '#c8a870' }}
+          >
+            <CheckCircle2 className="w-4 h-4" /> Open Download
+          </a>
+          <p className="text-text2 text-[11px] mt-1.5">A PDF copy is also on its way to your email.</p>
+        </div>
       ) : open ? (
         <form onSubmit={submit} className="space-y-2">
           <input required placeholder="Your name" className="form-control text-xs py-2" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
