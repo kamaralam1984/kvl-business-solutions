@@ -68,13 +68,13 @@ export default async function ClientsPage() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {caseStudies.map(s => (
                 <Link key={s.slug} href={`/projects/${s.slug}`} className="card-premium overflow-hidden group block">
-                  <div className="relative overflow-hidden aspect-[4/3]">
+                  <div className="relative overflow-hidden aspect-[4/3]" style={{ background: '#0a0a0a' }}>
                     <Image
                       src={s.images.hero}
                       alt={`${s.name} preview`}
                       fill
                       sizes="(max-width: 768px) 50vw, 25vw"
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      className="object-contain transition-transform duration-700 group-hover:scale-105"
                     />
                     <span className="absolute top-3 left-3 text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full"
                       style={{ background: 'rgba(34,197,94,0.12)', color: '#16a34a', border: '1px solid rgba(34,197,94,0.3)', backdropFilter: 'blur(6px)' }}>

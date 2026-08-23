@@ -44,8 +44,8 @@ export function PortfolioCarousel({ portfolio }: { portfolio: { slug: string; na
                 style={revealStyle(inView, i)}
                 className="group shrink-0 w-[260px] snap-start rounded-xl overflow-hidden border border-gray-200 bg-white hover:shadow-lg transition-shadow"
               >
-                <div className="relative h-36 w-full">
-                  <Image src={p.image} alt={p.name} fill sizes="260px" className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div className="relative h-36 w-full" style={{ background: '#0a0a0a' }}>
+                  <Image src={p.image} alt={p.name} fill sizes="260px" className="object-contain group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white/90 grid place-items-center">
                     <ExternalLink className="w-3 h-3 text-gray-700" />
                   </div>

@@ -43,13 +43,13 @@ export function CaseStudies({ caseStudies }: { caseStudies: CaseStudy[] }) {
           {projects.map((p, i) => (
             <div key={p.name} style={revealStyle(inView, i, { staggerMs: 100, durationMs: 600, distance: 28 })}>
               <div className="card-premium h-full flex flex-col overflow-hidden group">
-                <Link href={`/projects/${p.slug}`} className="relative block overflow-hidden aspect-[16/10]">
+                <Link href={`/projects/${p.slug}`} className="relative block overflow-hidden aspect-[16/10]" style={{ background: '#0a0a0a' }}>
                   <Image
                     src={p.image}
                     alt={`${p.name} — live project built by KVL Business Solutions`}
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="object-contain transition-transform duration-700 group-hover:scale-105"
                   />
                   <span
                     className="absolute top-3 left-4 text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full"

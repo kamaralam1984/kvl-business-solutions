@@ -139,8 +139,8 @@ export function HeroShowcaseSlider({ products }: { products: Software[] }) {
         </div>
 
         {/* Screenshot */}
-        <div className="relative aspect-[16/10]">
-          <Image src={slide.image} alt={`${slide.name} — screenshot of the live product interface`} fill sizes="440px" className="object-cover" />
+        <div className="relative aspect-[16/10]" style={{ background: '#0a0a0a' }}>
+          <Image src={slide.image} alt={`${slide.name} — screenshot of the live product interface`} fill sizes="440px" className="object-contain" />
           <span
             className="absolute bottom-3 left-3 text-[10px] font-bold px-2.5 py-1 rounded-full"
             style={{ background: 'rgba(0,0,0,0.55)', color: '#fff', backdropFilter: 'blur(4px)' }}
