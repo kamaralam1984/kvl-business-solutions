@@ -1,0 +1,41 @@
+import { z } from 'zod';
+
+const seoSchema = z.object({
+  title: z.string().min(3),
+  metaDescription: z.string().min(10),
+  primaryKeyword: z.string().optional(),
+  secondaryKeywords: z.array(z.string()).default([]),
+  seoSlug: z.string().optional(),
+  canonicalUrl: z.string().optional(),
+  ogTitle: z.string().optional(),
+  ogDescription: z.string().optional(),
+  ogImage: z.string().optional(),
+  twitterTitle: z.string().optional(),
+  twitterDescription: z.string().optional(),
+  robotsIndex: z.boolean().default(true),
+  robotsFollow: z.boolean().default(true),
+  schemaType: z.string().default('Service'),
+  breadcrumbTitle: z.string().optional(),
+});
+
+export const locationPageSchema = z.object({
+  country: z.string().min(2),
+  regionType: z.enum(['state', 'union_territory', 'region', 'city']),
+  name: z.string().min(2),
+  slug: z.string().min(2).regex(/^[a-z0-9-]+$/, 'Lowercase letters, numbers and hyphens only'),
+  status: z.enum(['draft', 'published']).default('draft'),
+  h1: z.string().min(3),
+  heroTagline: z.string().min(10),
+  introContent: z.string().min(10),
+  businessContext: z.array(z.string()).default([]),
+  whyChooseReasons: z.array(z.string()).default([]),
+  industriesIntro: z.string().optional(),
+  timezoneOverlap: z.string().min(10),
+  processIntro: z.string().optional(),
+  ctaBannerDesc: z.string().min(10),
+  faq: z.array(z.object({ q: z.string(), a: z.string() })).default([]),
+  relatedServiceSlugs: z.array(z.string()).default([]),
+  relatedIndustryLandingSlugs: z.array(z.string()).default([]),
+  relatedCaseStudySlugs: z.array(z.string()).default([]),
+  seo: seoSchema,
+});

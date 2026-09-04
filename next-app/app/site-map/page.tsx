@@ -8,6 +8,7 @@ import { services } from '@/lib/data/services';
 import { blogPosts } from '@/lib/data/blog';
 import { countryPages } from '@/lib/data/country-pages';
 import { industryLandingPages } from '@/lib/data/industry-landing-pages';
+import { getLiveLocationPages } from '@/lib/data/live-locations';
 import { PageHero } from '@/components/shared/PageHero';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
@@ -37,7 +38,9 @@ function LinkGroup({ title, links }: { title: string; links: { label: string; hr
   );
 }
 
-export default function SiteMapPage() {
+export default async function SiteMapPage() {
+  const indiaLocations = await getLiveLocationPages('india');
+
   return (
     <>
       <PageHero
@@ -95,6 +98,14 @@ export default function SiteMapPage() {
               { label: 'Global Delivery Hub', href: '/global' },
               { label: 'Patna, Bihar Office', href: '/software-development-company-patna' },
               ...countryPages.map(c => ({ label: `Software Development in ${c.countryName}`, href: `/software-development-company-${c.slug}` })),
+            ]}
+          />
+
+          <LinkGroup
+            title="India — States & Union Territories"
+            links={[
+              { label: 'India Hub', href: '/india' },
+              ...indiaLocations.map(l => ({ label: l.name, href: `/india/${l.slug}` })),
             ]}
           />
 

@@ -8,7 +8,7 @@ import {
   Workflow, Briefcase, Sparkles, Bell, Search, LogOut, ChevronRight,
   TrendingUp, Zap, Shield, Gift, ExternalLink, HeartHandshake, Plug,
   HeartPulse, Download, MessageSquare, BookOpen, Layers,
-  MousePointerClick, Send, IndianRupee, Radio, Building2,
+  MousePointerClick, Send, IndianRupee, Radio, Building2, MapPin,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ThemeToggle } from '@/components/widgets/ThemeToggle';
@@ -44,6 +44,8 @@ const sections = [
       { href: '/admin/products',    label: 'Products',     Icon: Box },
       { href: '/admin/blog',        label: 'Blog',         Icon: BookOpen },
       { href: '/admin/case-studies', label: 'Case Studies', Icon: Layers },
+      { href: '/admin/location-pages', label: 'Location Pages', Icon: MapPin },
+      { href: '/admin/countries', label: 'Countries', Icon: Globe },
       { href: '/admin/downloads',   label: 'Downloads',    Icon: Download },
       { href: '/admin/courses',     label: 'Courses',      Icon: Briefcase },
       { href: '/admin/jobs',        label: 'Jobs',         Icon: Briefcase },

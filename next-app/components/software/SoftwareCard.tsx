@@ -1,10 +1,9 @@
 'use client';
-import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import type { LucideIcon } from 'lucide-react';
 import {
-  Eye, ShoppingCart, Check, Calendar, Zap, Play, Box,
+  Eye, Check, Zap, Play, Box,
   BadgeIndianRupee, Boxes, Brain, Building2, Code2, Fingerprint, Globe, GraduationCap, Handshake,
   HardHat, Hotel, Network, Receipt, Satellite, Stethoscope, TrendingUp, UtensilsCrossed, Wrench,
 } from 'lucide-react';
@@ -19,8 +18,6 @@ const ICON_MAP: Record<string, LucideIcon> = {
 };
 
 export function SoftwareCard({ product }: { product: Software }) {
-  const [mode, setMode] = useState<'buy' | 'rent'>('buy');
-  const [host, setHost] = useState<'cloud' | 'onprem'>('cloud');
   const Icon = ICON_MAP[product.icon] || Box;
   const wa = (process.env.NEXT_PUBLIC_WHATSAPP || '919942000413').replace(/\D/g, '');
   const isOffer = product.tag === 'OFFER';
@@ -74,33 +71,10 @@ export function SoftwareCard({ product }: { product: Software }) {
           ))}
         </ul>
 
-        {/* Buy / Rent Toggle */}
+        {/* Rent-only badge strip — the Buy/Rent toggle and hosting picker (both
+            tied to the now-removed Buy flow) are gone; every card just shows
+            its rent terms. */}
         {!product.buyOnly && (
-          <div className="inline-flex surface2-tint rounded-full p-1 mb-3 self-stretch">
-            <button onClick={() => setMode('buy')} className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold rounded-full transition-all ${mode === 'buy' ? 'bg-primary text-white shadow' : 'text-text2 hover:text-text'}`}>
-              <ShoppingCart className="w-3 h-3" /> Buy (Own)
-            </button>
-            <button onClick={() => setMode('rent')} className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold rounded-full transition-all ${mode === 'rent' ? 'bg-violet-600 text-white shadow' : 'text-text2 hover:text-text'}`}>
-              <Calendar className="w-3 h-3" /> Rent (Monthly)
-            </button>
-          </div>
-        )}
-
-        {/* Hosting toggle — only for Buy mode */}
-        {!product.buyOnly && mode === 'buy' && (
-          <div className="inline-flex surface2-tint rounded-full p-0.5 mb-3 self-start">
-            <button onClick={() => setHost('cloud')} className={`px-3 py-1 text-[10px] font-semibold rounded-full transition-all ${host === 'cloud' ? 'bg-sky-500 text-white' : 'text-text2'}`}>☁ Cloud</button>
-            <button onClick={() => setHost('onprem')} className={`px-3 py-1 text-[10px] font-semibold rounded-full transition-all ${host === 'onprem' ? 'bg-slate-600 text-white' : 'text-text2'}`}>🖥 On-Premise</button>
-          </div>
-        )}
-
-        {product.buyOnly && (
-          <div className="flex items-center gap-2 text-[10px] text-amber-500 font-semibold mb-2">
-            <Zap className="w-3 h-3" /> Free hosting included • No domain • One-time price
-          </div>
-        )}
-
-        {!product.buyOnly && mode === 'rent' && (
           <div className="flex items-center gap-2 text-[10px] text-violet-500 font-semibold mb-2">
             <Zap className="w-3 h-3" /> Cancel anytime • No setup fee
           </div>
@@ -110,22 +84,19 @@ export function SoftwareCard({ product }: { product: Software }) {
         <div className="flex items-baseline gap-1.5 py-3 border-t border-b border-dashed border-tint mb-3">
           <span className="text-xs font-semibold text-text2">Contact us for pricing</span>
           {product.buyOnly && <span className="ml-auto text-[10px] text-amber-500 font-semibold bg-amber-500/10 px-2 py-0.5 rounded-full">Limited offer</span>}
-          {!product.buyOnly && mode === 'buy' && <span className="ml-auto text-[10px] text-green-500 font-semibold bg-green-500/10 px-2 py-0.5 rounded-full">Lifetime license</span>}
-          {!product.buyOnly && mode === 'rent' && <span className="ml-auto text-[10px] text-violet-500 font-semibold bg-violet-500/10 px-2 py-0.5 rounded-full">SaaS</span>}
+          {!product.buyOnly && <span className="ml-auto text-[10px] text-violet-500 font-semibold bg-violet-500/10 px-2 py-0.5 rounded-full">SaaS</span>}
         </div>
 
-        {/* Actions */}
+        {/* Actions — Buy/Advance Payment removed site-wide; rent-eligible
+            products go straight to the monthly checkout, buy-only products
+            (no rent pricing to fall back to) show Demo + WhatsApp only. */}
         <div className="flex gap-2 mt-auto">
           {!product.noDemo && (
             <Link href={`/software/${product.slug}/demo`} className="btn btn-ghost flex-1 justify-center text-xs border-primary/30 text-primary hover:bg-primary hover:text-white">
               <Eye className="w-3.5 h-3.5" /> Demo
             </Link>
           )}
-          {mode === 'buy' ? (
-            <Link href={`/checkout?product=${product.slug}&host=${host}`} className="btn btn-primary flex-1 justify-center text-xs">
-              <ShoppingCart className="w-3.5 h-3.5" /> Advance Payment
-            </Link>
-          ) : (
+          {!product.buyOnly && (
             <Link href={`/checkout?product=${product.slug}&plan=monthly`} className="btn flex-1 justify-center text-xs text-white" style={{ background: 'linear-gradient(135deg,#7c3aed,#4f46e5)' }}>
               <Zap className="w-3.5 h-3.5" /> Start Now
             </Link>

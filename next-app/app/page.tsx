@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic';
 import { Hero } from '@/components/home/Hero';
 import { getLiveSoftwareProducts } from '@/lib/data/live-software';
 import { getLiveCaseStudies } from '@/lib/data/live-case-studies';
+import { getLiveLocationPages } from '@/lib/data/live-locations';
 import { getSiteSettings } from '@/lib/models/SiteSettings';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
@@ -27,13 +28,15 @@ const Certifications    = dynamic(() => import('@/components/home/Certifications
 const Process           = dynamic(() => import('@/components/home/Process').then(m => m.Process));
 const Testimonials      = dynamic(() => import('@/components/home/Testimonials').then(m => m.Testimonials));
 const HomeFAQ           = dynamic(() => import('@/components/home/HomeFAQ').then(m => m.HomeFAQ));
+const StateFinder       = dynamic(() => import('@/components/home/StateFinder').then(m => m.StateFinder));
 const CtaBanner         = dynamic(() => import('@/components/home/CtaBanner').then(m => m.CtaBanner));
 
 export default async function HomePage() {
-  const [products, caseStudies, settings] = await Promise.all([
+  const [products, caseStudies, settings, indiaLocations] = await Promise.all([
     getLiveSoftwareProducts().catch(() => []),
     getLiveCaseStudies().catch(() => []),
     getSiteSettings().catch(() => null),
+    getLiveLocationPages('india').catch(() => []),
   ]);
 
   return (
@@ -46,6 +49,7 @@ export default async function HomePage() {
       <Process />
       <Testimonials />
       <HomeFAQ />
+      <StateFinder locations={indiaLocations.map(l => ({ name: l.name, slug: l.slug }))} />
       <CtaBanner />
     </>
   );

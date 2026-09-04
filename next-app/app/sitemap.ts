@@ -9,6 +9,7 @@ import { getLiveSoftwareProducts } from '@/lib/data/live-software';
 import { getLiveCaseStudies } from '@/lib/data/live-case-studies';
 import { getLiveCourses } from '@/lib/data/live-courses';
 import { getLiveBlogPosts } from '@/lib/data/live-blog';
+import { getLiveCountries, getLiveLocationPages } from '@/lib/data/live-locations';
 import { connectDB } from '@/lib/mongodb';
 import { Job } from '@/lib/models/Job';
 
@@ -23,13 +24,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
   await connectDB();
-  const [softwareProducts, caseStudies, courses, blogPosts, jobs] = await Promise.all([
+  const [softwareProducts, caseStudies, courses, blogPosts, jobs, dbCountries] = await Promise.all([
     getLiveSoftwareProducts(),
     getLiveCaseStudies(),
     getLiveCourses(),
     getLiveBlogPosts(),
     Job.find({ active: true }, { slug: 1, updatedAt: 1 }).lean(),
+    getLiveCountries(),
   ]);
+  const dbLocations = (await Promise.all(dbCountries.map(c => getLiveLocationPages(c.slug)))).flat();
 
   const staticPaths = [
     '', 'about', 'services', 'software', 'industries', 'projects', 'clients',
@@ -101,6 +104,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...indiaStatePages.map(s => ({
       url: `${site}/software-development-company-${s.slug}`,
       lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    })),
+    // New DB-driven /{country}/{slug} location pages (e.g. /india/bihar) — kept
+    // separate from the legacy indiaStatePages block above, which points at the
+    // old /software-development-company-{slug} URLs and is intentionally untouched.
+    ...dbCountries.map(c => ({
+      url: `${site}/${c.slug}`,
+      lastModified: new Date(c.updatedAt),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    })),
+    ...dbLocations.filter(l => l.seo.robotsIndex).map(l => ({
+      url: `${site}/${l.country}/${l.slug}`,
+      lastModified: new Date(l.updatedAt),
       changeFrequency: 'monthly' as const,
       priority: 0.7,
     })),
