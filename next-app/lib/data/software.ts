@@ -32,7 +32,7 @@ export const softwareProducts: Software[] = [
     description: 'A clean, mobile-ready 1-page website for any business type (portfolio, restaurant, clinic, agency, personal, or any other niche), live in 3 days. Hosting included free for 1 year; domain not included (connect your own, or we can help you buy one separately).',
     features: ['1 Page Website', 'Mobile Responsive', 'Contact Form', 'Basic SEO', 'SSL Certificate', 'Social Media Links'],
     price: 999, monthlyRent: 149, unit: '/one-time', rentUnit: '/month',
-    tag: 'OFFER', icon: 'Globe', image: 'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=800&q=80&auto=format&fit=crop', c1: '#f97316', c2: '#c2410c',
+    tag: 'OFFER', icon: 'Globe', image: '/software/independence-day-website.png', c1: '#f97316', c2: '#c2410c',
     category: 'Website & Design',
     buyOnly: true,
     benefits: [

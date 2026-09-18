@@ -1,11 +1,9 @@
 'use client';
-import { useEffect, useMemo, useState, useTransition } from 'react';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { Search, X, Loader2, SlidersHorizontal, PackageSearch } from 'lucide-react';
-import { SoftwareCard } from '@/components/software/SoftwareCard';
-import type { Software } from '@/lib/data/software';
+import { useEffect, useState, useTransition } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { Search, X, Loader2, SlidersHorizontal } from 'lucide-react';
 
-type SortOption = 'popular' | 'newest' | 'alpha';
+export type SortOption = 'popular' | 'newest' | 'alpha';
 
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: 'popular', label: 'Popular (by customer reviews)' },
@@ -13,38 +11,43 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: 'alpha', label: 'Alphabetical (A–Z)' },
 ];
 
-export function SoftwareMarketplace({
-  products,
-  reviewCounts,
+/**
+ * Pure client-side controls for the /software filter bar. Reads its current
+ * values from props (sourced server-side from `searchParams`) instead of the
+ * useSearchParams() hook — that hook forces Next.js to bail the whole
+ * subtree out to client-only rendering, which was hiding the product grid
+ * from non-JS crawlers. Updating the URL here triggers a normal Next.js
+ * navigation, so the server component page re-renders with the new filters.
+ */
+export function SoftwareFilterBar({
+  categories,
+  q,
+  activeCategories,
+  sort,
+  totalCount,
+  filteredCount,
 }: {
-  products: Software[];
-  /** Approved-review count per product slug, from the real Review model — used as an honest "popularity" proxy since products have no popularity field. */
-  reviewCounts: Record<string, number>;
+  categories: string[];
+  q: string;
+  activeCategories: string[];
+  sort: SortOption;
+  totalCount: number;
+  filteredCount: number;
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
-  const categories = useMemo(
-    () => Array.from(new Set(products.map(p => p.category))).sort(),
-    [products]
-  );
-
-  const qParam = searchParams.get('q') || '';
-  const activeCategories = useMemo(
-    () => (searchParams.get('category') || '').split(',').filter(Boolean),
-    [searchParams]
-  );
-  const sort = (searchParams.get('sort') as SortOption) || 'popular';
-
   // Local, debounced copy for the search text input so every keystroke doesn't spam router.replace
-  const [queryInput, setQueryInput] = useState(qParam);
+  const [queryInput, setQueryInput] = useState(q);
 
-  useEffect(() => { setQueryInput(qParam); }, [qParam]);
+  useEffect(() => { setQueryInput(q); }, [q]);
 
   function updateParams(next: Record<string, string | null>) {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams();
+    if (q) params.set('q', q);
+    if (activeCategories.length) params.set('category', activeCategories.join(','));
+    if (sort !== 'popular') params.set('sort', sort);
     Object.entries(next).forEach(([key, value]) => {
       if (value === null || value === '') params.delete(key);
       else params.set(key, value);
@@ -57,7 +60,7 @@ export function SoftwareMarketplace({
   // Debounce search text -> URL
   useEffect(() => {
     const t = setTimeout(() => {
-      if (queryInput !== qParam) updateParams({ q: queryInput || null });
+      if (queryInput !== q) updateParams({ q: queryInput || null });
     }, 300);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -79,42 +82,7 @@ export function SoftwareMarketplace({
     startTransition(() => router.replace(pathname, { scroll: false }));
   }
 
-  const filtered = useMemo(() => {
-    const q = qParam.trim().toLowerCase();
-    let list = products.filter(p => {
-      if (activeCategories.length && !activeCategories.includes(p.category)) return false;
-      if (q && !p.name.toLowerCase().includes(q) && !p.description.toLowerCase().includes(q)) return false;
-      return true;
-    });
-
-    switch (sort) {
-      case 'alpha':
-        list = [...list].sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case 'newest':
-        // No real "createdAt" field on static catalog entries — honestly proxied by
-        // reversing catalog (array) order, i.e. the most-recently-added product first.
-        list = [...list].reverse();
-        break;
-      case 'popular':
-      default:
-        // No real "popularity"/view-count field — honestly proxied by approved review
-        // count from the real Review model. Ties keep catalog order (stable sort).
-        list = [...list].sort((a, b) => (reviewCounts[b.slug] || 0) - (reviewCounts[a.slug] || 0));
-    }
-    return list;
-  }, [products, qParam, activeCategories, sort, reviewCounts]);
-
-  const hasActiveFilters = Boolean(qParam || activeCategories.length || (sort !== 'popular'));
-
-  if (products.length === 0) {
-    return (
-      <div className="card-luxury p-10 text-center">
-        <PackageSearch className="w-10 h-10 text-text3 mx-auto mb-3" />
-        <p className="text-text2">No software products are available right now. Please check back soon.</p>
-      </div>
-    );
-  }
+  const hasActiveFilters = Boolean(q || activeCategories.length || sort !== 'popular');
 
   return (
     <div>
@@ -195,25 +163,8 @@ export function SoftwareMarketplace({
       {/* Results count */}
       <div className="flex items-center justify-between mb-4 text-xs text-text3">
         <p>
-          Showing <span className="text-text2 font-semibold">{filtered.length}</span> of {products.length} products
+          Showing <span className="text-text2 font-semibold">{filteredCount}</span> of {totalCount} products
         </p>
-      </div>
-
-      {/* Grid / states */}
-      <div className={isPending ? 'opacity-60 transition-opacity' : 'transition-opacity'}>
-        {filtered.length === 0 ? (
-          <div className="card-luxury p-10 text-center">
-            <PackageSearch className="w-10 h-10 text-text3 mx-auto mb-3" />
-            <p className="text-text2 mb-4">No products match your filters.</p>
-            <button type="button" onClick={clearFilters} className="btn btn-ghost text-xs mx-auto">
-              <X className="w-3.5 h-3.5" /> Clear all filters
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map(p => <SoftwareCard key={p.slug} product={p} />)}
-          </div>
-        )}
       </div>
     </div>
   );
