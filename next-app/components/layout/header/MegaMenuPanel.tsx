@@ -1,85 +1,133 @@
 'use client';
+import { useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { ArrowRight, Boxes, Handshake, Receipt, Package, MapPin, UtensilsCrossed, type LucideIcon } from 'lucide-react';
 import { megaMenus, type MegaMenuKey } from './megaMenuData';
 
+export const MENU_ICONS: Record<string, LucideIcon> = { Boxes, Handshake, Receipt, Package, MapPin, UtensilsCrossed };
+
+const EASE = [0.22, 1, 0.36, 1] as const;
+
+// One DOM for all four styles. The active style is the `data-menu-style`
+// attribute on <html> (set before first paint); globals.css (.mm-*) lays the
+// same markup out as floating / full-width / capsule-grid / side-panel.
+// Hovering or focusing an item swaps the big preview (image, tag, blurb).
 export function MegaMenuPanel({ menuKey, open }: { menuKey: MegaMenuKey; open: boolean }) {
   const menu = megaMenus[menuKey];
+  const reduce = useReducedMotion();
+  const [active, setActive] = useState(-1); // -1 = featured product
+  const glow = useRef<HTMLSpanElement>(null);
+
+  if (!menu) return null;
+  const item = active >= 0 ? menu.items[active] : null;
+  const preview = item
+    ? { key: item.href, img: item.img, title: item.label, text: item.blurb, tag: item.tag, href: item.href, c1: item.c1, c2: item.c2 }
+    : menu.featured
+      ? { key: 'featured', img: menu.featured.img, title: menu.featured.title, text: menu.featured.desc, tag: 'Featured', href: menu.featured.href, c1: '#c8a870', c2: '#8a6224' }
+      : null;
+
+  // Soft light that follows the pointer; moved with transform only.
+  const onMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (reduce || !glow.current) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    glow.current.style.transform = `translate3d(${e.clientX - r.left - 160}px, ${e.clientY - r.top - 160}px, 0)`;
+  };
+
   return (
-    <AnimatePresence>
+    <AnimatePresence onExitComplete={() => setActive(-1)}>
       {open && (
-        <motion.div
-          initial={{ opacity: 0, y: 10, scale: 0.97 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 10, scale: 0.97 }}
-          transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-          className="absolute top-full left-0 z-50 pt-2"
-          style={{ minWidth: menu.featured ? 580 : 360 }}
-        >
-          <div style={{
-            background: 'rgb(var(--bg-2))',
-            border: '1px solid rgba(var(--border) / 0.08)',
-            borderRadius: 16,
-            padding: 20,
-            boxShadow: '0 30px 60px rgba(0,0,0,0.12)',
-          }}>
-            <div className={menu.featured ? 'grid grid-cols-[200px_1fr] gap-4' : ''}>
-              {/* Featured card */}
-              {menu.featured && (
+        <div className="mm-outer" data-mega-panel>
+          <motion.div
+            className="mm-card"
+            onPointerMove={onMove}
+            initial={{ opacity: 0, y: reduce ? 0 : 14, scale: reduce ? 1 : 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: reduce ? 0 : 8, scale: reduce ? 1 : 0.99 }}
+            transition={{ duration: reduce ? 0 : 0.26, ease: EASE }}
+          >
+            <span ref={glow} className="mm-glow" aria-hidden />
+            <div className="mm-body">
+              <ul className="mm-items" role="list">
+                {menu.items.map((sub, i) => {
+                  const Icon = MENU_ICONS[sub.icon];
+                  return (
+                    <motion.li
+                      key={sub.href}
+                      initial={{ opacity: 0, x: reduce ? 0 : -12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: reduce ? 0 : 0.28, ease: EASE, delay: reduce ? 0 : 0.05 + i * 0.045 }}
+                    >
+                      <Link
+                        href={sub.href}
+                        className="mm-item"
+                        data-active={active === i}
+                        style={{ '--c1': sub.c1, '--c2': sub.c2 } as React.CSSProperties}
+                        onPointerEnter={() => setActive(i)}
+                        onFocus={() => setActive(i)}
+                      >
+                        <span className="mm-thumb" aria-hidden>
+                          <Image src={sub.img} alt="" fill sizes="200px" className="object-cover" />
+                        </span>
+                        <span className="mm-icon">{Icon && <Icon className="h-[18px] w-[18px]" aria-hidden />}</span>
+                        <span className="mm-text">
+                          <span className="mm-item-title">{sub.label}</span>
+                          <span className="mm-item-desc">{sub.desc}</span>
+                        </span>
+                        <ArrowRight className="mm-arrow h-4 w-4" aria-hidden />
+                      </Link>
+                    </motion.li>
+                  );
+                })}
+              </ul>
+
+              {preview && (
                 <Link
-                  href={menu.featured.href}
-                  className="rounded-xl overflow-hidden"
-                  style={{ background: 'rgb(var(--bg-3))', border: '1px solid rgba(var(--border) / 0.07)' }}
+                  href={preview.href}
+                  className="mm-preview"
+                  tabIndex={-1}
+                  aria-hidden
+                  style={{ '--c1': preview.c1, '--c2': preview.c2 } as React.CSSProperties}
                 >
-                  <div className="relative" style={{ width: '100%', height: 120 }}>
-                    <Image
-                      src={menu.featured.img}
-                      alt={menu.featured.title}
-                      fill
-                      sizes="200px"
-                      style={{ objectFit: 'cover', opacity: 0.85 }}
-                    />
-                  </div>
-                  <div style={{ padding: '12px 14px' }}>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: 'rgb(var(--text))', lineHeight: 1.3 }}>
-                      {menu.featured.title}
-                    </div>
-                    <div style={{ fontSize: 11, color: 'rgba(var(--text) / 0.4)', marginTop: 4 }}>
-                      {menu.featured.desc}
-                    </div>
-                  </div>
+                  <AnimatePresence initial={false}>
+                    <motion.span
+                      key={preview.key}
+                      className="mm-preview-layer"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: reduce ? 0 : 0.35, ease: EASE }}
+                    >
+                      <Image src={preview.img} alt="" fill sizes="340px" className="mm-kb object-cover" />
+                      <span className="mm-preview-shade" />
+                      {!reduce && (
+                        <motion.span
+                          className="mm-shine"
+                          initial={{ x: '-130%' }}
+                          animate={{ x: '130%' }}
+                          transition={{ duration: 0.9, ease: EASE, delay: 0.1 }}
+                        />
+                      )}
+                      <span className="mm-preview-copy">
+                        <span className="mm-tag">{preview.tag}</span>
+                        <span className="mm-preview-title">{preview.title}</span>
+                        <span className="mm-preview-text">{preview.text}</span>
+                        <span className="mm-cta">Explore <ArrowRight className="h-3.5 w-3.5" /></span>
+                      </span>
+                    </motion.span>
+                  </AnimatePresence>
                 </Link>
               )}
-
-              {/* Items grid */}
-              <div className="grid grid-cols-2 gap-1">
-                {menu.items.map(sub => (
-                  <Link
-                    key={sub.href + sub.label}
-                    href={sub.href}
-                    className="flex items-start gap-2.5 px-3 py-2.5 rounded-lg transition-all duration-150"
-                    style={{ color: 'rgba(var(--text) / 0.45)' }}
-                    onMouseEnter={e => {
-                      (e.currentTarget as HTMLElement).style.background = 'rgba(var(--text) / 0.03)';
-                      (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text))';
-                    }}
-                    onMouseLeave={e => {
-                      (e.currentTarget as HTMLElement).style.background = 'transparent';
-                      (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.45)';
-                    }}
-                  >
-                    <span style={{ fontSize: 16, color: '#c8a870', lineHeight: 1, marginTop: 1 }}>{sub.icon}</span>
-                    <div>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: 'inherit', lineHeight: 1.2 }}>{sub.label}</div>
-                      <div style={{ fontSize: 11, color: 'rgba(var(--text) / 0.35)', marginTop: 2 }}>{sub.desc}</div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
             </div>
-          </div>
-        </motion.div>
+
+            {menu.allHref && (
+              <Link href={menu.allHref} className="mm-all">
+                {menu.allLabel} <ArrowRight className="h-4 w-4" aria-hidden />
+              </Link>
+            )}
+          </motion.div>
+        </div>
       )}
     </AnimatePresence>
   );

@@ -52,8 +52,7 @@ export function AnnouncementBanner({ banner }: { banner: any | null }) {
             {banner.link && (
               <Link
                 href={banner.link}
-                className="inline-flex items-center gap-1 ml-2.5 font-semibold transition-all duration-200 group"
-                style={{ color: '#c8a870' }}
+                className="group ml-2.5 inline-flex items-center gap-1 font-semibold text-gold-text transition-colors duration-fast"
               >
                 {banner.linkText || 'Learn more'}
                 <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform duration-200" />
@@ -64,16 +63,7 @@ export function AnnouncementBanner({ banner }: { banner: any | null }) {
           {banner.dismissible && (
             <button
               onClick={dismiss}
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200"
-              style={{ color: 'rgba(var(--text) / 0.35)' }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.7)';
-                (e.currentTarget as HTMLElement).style.background = 'rgba(var(--text) / 0.06)';
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.35)';
-                (e.currentTarget as HTMLElement).style.background = 'transparent';
-              }}
+              className="absolute right-1 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full text-text3 transition-colors duration-fast hover:bg-text/5 hover:text-text focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
               aria-label="Dismiss"
             >
               <X className="w-3.5 h-3.5" />

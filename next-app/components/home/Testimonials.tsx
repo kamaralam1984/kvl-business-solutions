@@ -1,22 +1,12 @@
 'use client';
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { useReveal, revealStyle } from '@/lib/hooks/useReveal';
-import { Star, ArrowUpRight } from 'lucide-react';
+import { Star } from 'lucide-react';
+import { SectionHeading, Card, Button } from '@/components/ui';
 
-type Review = {
-  _id: string;
-  name: string;
-  company?: string;
-  rating: number;
-  title?: string;
-  message: string;
-  productSlug?: string;
-};
+type Review = { _id: string; name: string; company?: string; rating: number; message: string };
 
 export function Testimonials() {
   const [reviews, setReviews] = useState<Review[] | null>(null);
-  const { ref, inView } = useReveal();
 
   useEffect(() => {
     fetch('/api/reviews')
@@ -25,68 +15,48 @@ export function Testimonials() {
       .catch(() => setReviews([]));
   }, []);
 
-  const hasReviews = reviews && reviews.length > 0;
+  const hasReviews = !!reviews && reviews.length > 0;
 
   return (
-    <section className={hasReviews ? 'py-28' : 'py-16'} style={{ background: 'rgb(var(--bg))' }}>
+    <section className="bg-bg2 py-[var(--section-y)]">
       <div className="container">
-
-        {/* Section header */}
-        <div className={`max-w-2xl mx-auto text-center ${hasReviews ? 'mb-16' : 'mb-10'}`}>
-          <span className="eyebrow mb-4 block">Reviews</span>
-          <h2 className="heading-lg" style={{ color: 'rgb(var(--text))' }}>
-            Client reviews,<br />
-            <span style={{ color: '#c8a870' }}>verified — not written by us.</span>
-          </h2>
-        </div>
+        <SectionHeading
+          align="center"
+          eyebrow="Reviews"
+          title={<>Client reviews, <span className="text-gold-text">verified — not written by us.</span></>}
+        />
 
         {hasReviews ? (
-          <div ref={ref} className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            {reviews!.map((r, i) => (
-              <div key={r._id} style={revealStyle(inView, i, { staggerMs: 100, durationMs: 550 })}>
-                <div className="card-premium h-full p-7">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-9 h-9 rounded-full grid place-items-center font-bold text-[13px]"
-                      style={{ background: 'rgba(200,168,112,0.10)', border: '1px solid rgba(200,168,112,0.22)', color: '#c8a870' }}>
-                      {r.name[0]?.toUpperCase()}
-                    </div>
-                    <div>
-                      <div className="text-[13px] font-bold" style={{ color: 'rgb(var(--text))' }}>{r.name}</div>
-                      {r.company && <div className="text-[11.5px]" style={{ color: 'rgb(var(--text-3))' }}>{r.company}</div>}
-                    </div>
+          <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-3">
+            {reviews!.map(r => (
+              <Card key={r._id} className="p-7">
+                <div className="mb-4 flex items-center gap-3">
+                  <span className="grid h-10 w-10 place-items-center rounded-full bg-gold/15 font-display font-semibold text-gold-text">
+                    {r.name[0]?.toUpperCase()}
+                  </span>
+                  <div>
+                    <div className="text-sm font-semibold text-text">{r.name}</div>
+                    {r.company && <div className="text-xs text-text2">{r.company}</div>}
                   </div>
-                  <div className="flex gap-0.5 mb-3">
-                    {Array.from({ length: 5 }).map((_, starIdx) => (
-                      <Star key={starIdx} className="w-3.5 h-3.5" fill={starIdx < r.rating ? '#c8a870' : 'none'} style={{ color: '#c8a870' }} />
-                    ))}
-                  </div>
-                  <p className="text-[13.5px] leading-[1.7]" style={{ color: 'rgb(var(--text-2))' }}>{r.message}</p>
                 </div>
-              </div>
+                <div className="mb-3 flex gap-0.5" role="img" aria-label={`${r.rating} out of 5 stars`}>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} className="h-4 w-4 text-gold" fill={i < r.rating ? 'currentColor' : 'none'} aria-hidden />
+                  ))}
+                </div>
+                <p className="text-text2">{r.message}</p>
+              </Card>
             ))}
           </div>
         ) : (
-          <div className="max-w-2xl mx-auto text-center">
-            <div className="card-premium p-10">
-              <h3 className="font-display font-bold text-[1.3rem] mb-3" style={{ color: 'rgb(var(--text))' }}>
-                Our proof runs in production, not in quotes.
-              </h3>
-              <p className="text-[14px] leading-[1.7] mb-6" style={{ color: 'rgb(var(--text-2))' }}>
-                See the live products above, or talk to us directly.
-              </p>
-              <Link
-                href="/book-demo"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-[14px] transition-all duration-200"
-                style={{ background: '#0a0a0a', color: '#ffffff' }}
-              >
-                Talk to a Solution Architect
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </Link>
-              <p className="text-[12px] mt-6" style={{ color: 'rgb(var(--text-3))' }}>
-                Founded 2015. Every product shown above is live and checkable today — no quotes required.
-              </p>
-            </div>
-          </div>
+          reviews !== null && (
+            <Card className="mx-auto mt-10 max-w-2xl p-8 text-center sm:p-10">
+              <h3 className="font-display text-card-title text-text">Our proof runs in production, not in quotes.</h3>
+              <p className="mt-3 text-text2">See the live products above, or talk to us directly.</p>
+              <Button href="/book-demo" className="mt-6">Talk to a Solution Architect</Button>
+              <p className="mt-6 text-xs text-text2">Founded 2015. Every product shown above is live and checkable today — no quotes required.</p>
+            </Card>
+          )
         )}
       </div>
     </section>

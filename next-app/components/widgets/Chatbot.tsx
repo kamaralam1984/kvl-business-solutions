@@ -15,8 +15,6 @@ const KHUSHI_GREETING = 'Hello! 👋 I\'m Khushi, KVL Business Solutions\' AI as
 
 export function Chatbot() {
   const [open, setOpen] = useState(false);
-  const [showBubble, setShowBubble] = useState(false);
-  const [proactiveDone, setProactiveDone] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([
     { role: 'assistant', content: 'Hi 👋 I\'m Khushi, KVL AI. How can I help you today?' },
     { role: 'assistant', content: 'Ask me anything — pricing, demo, services, or a quote. I speak your language!' },
@@ -36,20 +34,15 @@ export function Chatbot() {
 
   useEffect(() => () => cancelSpeaking(), []);
 
-  // Proactive popup after 30 seconds
+  // Opens only on an explicit click (the unified contact button dispatches this event).
   useEffect(() => {
-    if (proactiveDone) return;
-    const t1 = setTimeout(() => setShowBubble(true), 30_000);
-    const t2 = setTimeout(() => {
-      if (!open) {
-        setOpen(true);
-        setShowBubble(false);
-        setMessages(m => m[0]?.content === KHUSHI_GREETING ? m : [{ role: 'assistant', content: KHUSHI_GREETING }, ...m]);
-      }
-      setProactiveDone(true);
-    }, 38_000);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
-  }, [open, proactiveDone]);
+    const onOpen = () => {
+      setOpen(true);
+      setMessages(m => m[0]?.content === KHUSHI_GREETING ? m : [{ role: 'assistant', content: KHUSHI_GREETING }, ...m]);
+    };
+    window.addEventListener('kvl:open-chat', onOpen);
+    return () => window.removeEventListener('kvl:open-chat', onOpen);
+  }, []);
 
   useEffect(() => { bodyRef.current?.scrollTo(0, 9e9); }, [messages, loading]);
 
@@ -143,42 +136,6 @@ export function Chatbot() {
 
   return (
     <>
-      {/* Proactive notification bubble */}
-      <AnimatePresence>
-        {showBubble && !open && (
-          <motion.div
-            initial={{ opacity: 0, x: 20, scale: 0.8 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: 20, scale: 0.8 }}
-            className="absolute bottom-16 right-0 bg-white dark:bg-slate-800 rounded-2xl rounded-br-sm shadow-2xl p-3 w-56 border border-tint cursor-pointer"
-            onClick={() => { setOpen(true); setShowBubble(false); setProactiveDone(true); }}
-          >
-            <div className="flex items-start gap-2">
-              <div className="w-8 h-8 rounded-full overflow-hidden relative shrink-0">
-                <Image src={ASSISTANT_AVATAR} alt={ASSISTANT_NAME} fill sizes="32px" className="object-cover" />
-              </div>
-              <div>
-                <p className="text-[12px] font-bold text-text">{ASSISTANT_NAME} - KVL AI</p>
-                <p className="text-[11px] text-text2 leading-relaxed mt-0.5">Hi! Need a free demo? I can help you in any language 🌍</p>
-              </div>
-            </div>
-            <button onClick={e => { e.stopPropagation(); setShowBubble(false); setProactiveDone(true); }}
-              aria-label="Dismiss"
-              className="absolute top-1 right-1 text-text2 hover:text-text"><X className="w-3 h-3" /></button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <button
-        onClick={() => { setOpen(o => !o); setShowBubble(false); setProactiveDone(true); }}
-        className="w-14 h-14 rounded-full overflow-hidden relative shadow-card"
-        aria-label={`${ASSISTANT_NAME} — AI Assistant`}
-      >
-        <Image src={ASSISTANT_AVATAR} alt={ASSISTANT_NAME} fill sizes="56px" className="object-cover" />
-        <span className="absolute inset-0 rounded-full border-2 border-white/70 opacity-50 animate-pulse-ring" />
-        {showBubble && <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white text-[8px] text-white font-bold grid place-items-center z-10">1</span>}
-      </button>
-
       <AnimatePresence>
         {open && (
           <motion.div

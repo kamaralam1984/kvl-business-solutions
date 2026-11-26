@@ -2,13 +2,15 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
 import { Phone, Mail, MapPin, Clock, Send, CalendarClock } from 'lucide-react';
+import { buttonStyles } from '@/components/ui';
 import { trackEvent } from '@/components/analytics/GoogleAnalytics';
 import { BUDGET_OPTIONS, TIMELINE_OPTIONS, BUSINESS_TYPE_OPTIONS, COUNTRY_OPTIONS } from '@/lib/lead-tier';
 
+const FIELD = 'w-full min-h-[44px] rounded-btn border border-line bg-card px-4 text-base text-text placeholder:text-text3 transition-shadow duration-base focus-visible:outline-none focus-visible:border-gold focus-visible:shadow-[var(--focus-ring)]';
+
 const WaIcon = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5" aria-hidden="true">
     <path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z" />
   </svg>
 );
@@ -70,100 +72,61 @@ export function ContactClient({ settings }: { settings: any }) {
   };
 
   return (
-    <section className="section" style={{ background: 'rgb(var(--bg))' }}>
+    <section className="bg-bg pb-[var(--section-y)]">
       <div className="container grid lg:grid-cols-[1fr_1.4fr] gap-10">
 
         {/* Info Cards */}
         <div className="space-y-3">
-          {items.map((it, i) => (
-            <motion.div
-              key={it.title}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.07 }}
-            >
-              <div className="card-premium p-5 flex gap-4 items-start">
-                <div
-                  className="w-10 h-10 rounded-xl grid place-items-center shrink-0"
-                  style={{ background: 'rgba(200,169,110,0.1)', border: '1px solid rgba(200,169,110,0.2)' }}
-                >
-                  <span className="text-text"><it.Icon /></span>
-                </div>
+          {items.map(it => (
+            <div key={it.title} className="flex items-start gap-4 rounded-card border border-line bg-card p-5 shadow-soft-1">
+                <div className="grid h-10 w-10 shrink-0 place-items-center rounded-btn bg-gold/15 text-gold-text"><it.Icon /></div>
                 <div>
-                  <h4 className="font-bold text-sm text-text">{it.title}</h4>
-                  <p className="text-sm whitespace-pre-line mt-0.5 text-text2">{it.text}</p>
+                  <h3 className="text-base font-semibold text-text">{it.title}</h3>
+                  <p className="mt-0.5 whitespace-pre-line text-sm text-text2">{it.text}</p>
                 </div>
               </div>
-            </motion.div>
           ))}
 
           {/* Schedule a Meeting CTA */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.35 }}
+          <Link
+            href="/book-demo"
+            className="flex items-start gap-4 rounded-card border border-gold/40 bg-card p-5 shadow-soft-1 transition-[transform,box-shadow] duration-base ease-brand hover:-translate-y-0.5 hover:shadow-soft-2 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
           >
-            <Link
-              href="/book-demo"
-              className="card-premium p-5 flex gap-4 items-start transition-all hover:scale-[1.01]"
-              style={{ borderColor: 'rgba(200,169,110,0.35)' }}
-            >
-              <div
-                className="w-10 h-10 rounded-xl grid place-items-center shrink-0"
-                style={{ background: 'rgba(200,169,110,0.1)', border: '1px solid rgba(200,169,110,0.2)' }}
-              >
-                <span className="text-text"><CalendarClock className="w-5 h-5" /></span>
-              </div>
-              <div>
-                <h4 className="font-bold text-sm text-text">Schedule a Meeting</h4>
-                <p className="text-sm mt-0.5 text-text2">Book a free strategy call at a time that works for you.</p>
-              </div>
-            </Link>
-          </motion.div>
+            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-btn bg-gold/15 text-gold-text"><CalendarClock className="h-5 w-5" aria-hidden /></div>
+            <div>
+              <h3 className="text-base font-semibold text-text">Schedule a Meeting</h3>
+              <p className="mt-0.5 text-sm text-text2">Book a free strategy call at a time that works for you.</p>
+            </div>
+          </Link>
 
           {/* WhatsApp CTA */}
-          <motion.a
+          <a
             href={`https://wa.me/${waNumber?.replace(/\D/g, '')}`}
             target="_blank"
             rel="noreferrer"
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="flex items-center gap-3 w-full px-5 py-4 rounded-xl font-semibold text-white transition-all hover:scale-[1.02]"
-            style={{ background: 'linear-gradient(135deg,#25d366,#128c7e)' }}
+            className={buttonStyles('secondary', 'lg', 'w-full justify-start rounded-card px-5 py-4')}
           >
-            <WaIcon />
+            <span className="text-[#128c7e]"><WaIcon /></span>
             Chat on WhatsApp — Instant Reply
-          </motion.a>
+          </a>
         </div>
 
         {/* Contact Form */}
-        <motion.form
-          onSubmit={submit}
-          initial={{ opacity: 0, x: 20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="card-premium p-8"
-        >
-          <h3 className="text-2xl font-bold mb-1 text-text" style={{ fontFamily: 'Poppins, sans-serif' }}>Send us a message</h3>
-          <p className="text-sm mb-6 text-text2">
+        <form onSubmit={submit} className="rounded-panel border border-line bg-card p-6 shadow-soft-2 sm:p-8">
+          <h2 className="mb-1 font-display text-card-title text-text">Send us a message</h2>
+          <p className="mb-6 text-base text-text2">
             {"Fill the form and we'll get back within"} {s.averageResponseTime || '1 hour'}.
           </p>
 
           <div className="space-y-4">
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="contact-firstName" className="block text-xs font-medium mb-1.5 text-text">First Name *</label>
+                <label htmlFor="contact-firstName" className="mb-1.5 block text-sm font-medium text-text">First Name *</label>
                 <input
                   id="contact-firstName"
                   name="firstName"
                   autoComplete="given-name"
-                  className="form-control"
-                  style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)' }}
+                  className={FIELD}
                   placeholder="John"
                   required
                   value={form.firstName}
@@ -171,13 +134,12 @@ export function ContactClient({ settings }: { settings: any }) {
                 />
               </div>
               <div>
-                <label htmlFor="contact-lastName" className="block text-xs font-medium mb-1.5 text-text">Last Name *</label>
+                <label htmlFor="contact-lastName" className="mb-1.5 block text-sm font-medium text-text">Last Name *</label>
                 <input
                   id="contact-lastName"
                   name="lastName"
                   autoComplete="family-name"
-                  className="form-control"
-                  style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)' }}
+                  className={FIELD}
                   placeholder="Doe"
                   required
                   value={form.lastName}
@@ -187,14 +149,13 @@ export function ContactClient({ settings }: { settings: any }) {
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="contact-email" className="block text-xs font-medium mb-1.5 text-text">Email *</label>
+                <label htmlFor="contact-email" className="mb-1.5 block text-sm font-medium text-text">Email *</label>
                 <input
                   id="contact-email"
                   name="email"
                   type="email"
                   autoComplete="email"
-                  className="form-control"
-                  style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)' }}
+                  className={FIELD}
                   placeholder="john@company.com"
                   required
                   value={form.email}
@@ -202,14 +163,13 @@ export function ContactClient({ settings }: { settings: any }) {
                 />
               </div>
               <div>
-                <label htmlFor="contact-phone" className="block text-xs font-medium mb-1.5 text-text">Phone *</label>
+                <label htmlFor="contact-phone" className="mb-1.5 block text-sm font-medium text-text">Phone *</label>
                 <input
                   id="contact-phone"
                   name="phone"
                   type="tel"
                   autoComplete="tel"
-                  className="form-control"
-                  style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)' }}
+                  className={FIELD}
                   placeholder="+91 98765 43210"
                   required
                   value={form.phone}
@@ -219,106 +179,99 @@ export function ContactClient({ settings }: { settings: any }) {
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="contact-companyName" className="block text-xs font-medium mb-1.5 text-text">Company Name</label>
+                <label htmlFor="contact-companyName" className="mb-1.5 block text-sm font-medium text-text">Company Name</label>
                 <input
                   id="contact-companyName"
                   name="companyName"
                   autoComplete="organization"
-                  className="form-control"
-                  style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)' }}
+                  className={FIELD}
                   placeholder="Optional"
                   value={form.companyName}
                   onChange={e => setForm({ ...form, companyName: e.target.value })}
                 />
               </div>
               <div>
-                <label htmlFor="contact-country" className="block text-xs font-medium mb-1.5 text-text">Country *</label>
+                <label htmlFor="contact-country" className="mb-1.5 block text-sm font-medium text-text">Country *</label>
                 <select
                   id="contact-country"
                   name="country"
                   autoComplete="country-name"
-                  className="form-control"
-                  style={{ borderColor: 'rgba(255,255,255,0.1)' }}
+                  className={FIELD}
                   value={form.country}
                   onChange={e => setForm({ ...form, country: e.target.value })}
                 >
                   {COUNTRY_OPTIONS.map(o => (
-                    <option key={o} style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>{o}</option>
+                    <option key={o}>{o}</option>
                   ))}
                 </select>
               </div>
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="contact-businessType" className="block text-xs font-medium mb-1.5 text-text">Business Type *</label>
+                <label htmlFor="contact-businessType" className="mb-1.5 block text-sm font-medium text-text">Business Type *</label>
                 <select
                   id="contact-businessType"
                   name="businessType"
-                  className="form-control"
-                  style={{ borderColor: 'rgba(255,255,255,0.1)' }}
+                  className={FIELD}
                   value={form.businessType}
                   onChange={e => setForm({ ...form, businessType: e.target.value })}
                 >
                   {BUSINESS_TYPE_OPTIONS.map(o => (
-                    <option key={o} style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>{o}</option>
+                    <option key={o}>{o}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label htmlFor="contact-service" className="block text-xs font-medium mb-1.5 text-text">Service Interested In</label>
+                <label htmlFor="contact-service" className="mb-1.5 block text-sm font-medium text-text">Service Interested In</label>
                 <select
                   id="contact-service"
                   name="service"
-                  className="form-control"
-                  style={{ borderColor: 'rgba(255,255,255,0.1)' }}
+                  className={FIELD}
                   value={form.service}
                   onChange={e => setForm({ ...form, service: e.target.value })}
                 >
                   {['Custom Software Development', 'Website Development', 'GPS Tracking', 'Civil / Mechanical Work', 'Industrial Automation', 'Digital Marketing', 'Other'].map(o => (
-                    <option key={o} style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>{o}</option>
+                    <option key={o}>{o}</option>
                   ))}
                 </select>
               </div>
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="contact-budget" className="block text-xs font-medium mb-1.5 text-text">Project Budget *</label>
+                <label htmlFor="contact-budget" className="mb-1.5 block text-sm font-medium text-text">Project Budget *</label>
                 <select
                   id="contact-budget"
                   name="budget"
-                  className="form-control"
-                  style={{ borderColor: 'rgba(255,255,255,0.1)' }}
+                  className={FIELD}
                   value={form.budget}
                   onChange={e => setForm({ ...form, budget: e.target.value })}
                 >
                   {BUDGET_OPTIONS.map(o => (
-                    <option key={o} style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>{o}</option>
+                    <option key={o}>{o}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label htmlFor="contact-timeline" className="block text-xs font-medium mb-1.5 text-text">Project Timeline *</label>
+                <label htmlFor="contact-timeline" className="mb-1.5 block text-sm font-medium text-text">Project Timeline *</label>
                 <select
                   id="contact-timeline"
                   name="timeline"
-                  className="form-control"
-                  style={{ borderColor: 'rgba(255,255,255,0.1)' }}
+                  className={FIELD}
                   value={form.timeline}
                   onChange={e => setForm({ ...form, timeline: e.target.value })}
                 >
                   {TIMELINE_OPTIONS.map(o => (
-                    <option key={o} style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>{o}</option>
+                    <option key={o}>{o}</option>
                   ))}
                 </select>
               </div>
             </div>
             <div>
-              <label htmlFor="contact-message" className="block text-xs font-medium mb-1.5 text-text">Message *</label>
+              <label htmlFor="contact-message" className="mb-1.5 block text-sm font-medium text-text">Message *</label>
               <textarea
                 id="contact-message"
                 name="message"
-                className="form-control resize-none"
-                style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.1)', minHeight: '120px' }}
+                className={`${FIELD} min-h-[120px] resize-y py-3`}
                 placeholder="Tell us about your project..."
                 required
                 value={form.message}
@@ -330,15 +283,15 @@ export function ContactClient({ settings }: { settings: any }) {
           <button
             type="submit"
             disabled={status === 'sending'}
-            className="btn-primary w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2 mt-5 disabled:opacity-60"
+            className={buttonStyles('primary', 'lg', 'mt-5 w-full')}
           >
             <Send className="w-4 h-4" />
             {status === 'sending' ? 'Sending...' : status === 'success' ? '✓ Sent — We will contact you soon' : 'Send Message'}
           </button>
           {status === 'error' && (
-            <p className="text-red-400 text-xs mt-2 text-center">{errorMsg}</p>
+            <p role="alert" className="mt-3 rounded-btn border border-red-500/30 bg-red-500/10 px-4 py-3 text-center text-sm text-red-500">{errorMsg}</p>
           )}
-        </motion.form>
+        </form>
 
       </div>
     </section>

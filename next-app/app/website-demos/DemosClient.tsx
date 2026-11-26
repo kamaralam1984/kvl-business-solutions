@@ -161,15 +161,17 @@ export function DemosClient({ demos }: { demos: Demo[] }) {
                         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3" style={{ background: 'rgba(0,0,0,0.75)' }}>
                           <button
                             onClick={e => { e.stopPropagation(); setView({ ...view, [d._id]: 'desktop' }); }}
-                            className="p-2 rounded-lg transition-colors"
-                            style={{ background: v === 'desktop' ? '#c8a96e' : 'rgba(255,255,255,0.15)', color: '#fff' }}
+                            aria-label="Desktop preview" aria-pressed={v === 'desktop'}
+                            className="grid h-11 w-11 place-items-center rounded-lg transition-colors"
+                            style={{ background: v === 'desktop' ? '#c8a96e' : 'rgba(255,255,255,0.15)', color: v === 'desktop' ? '#14110a' : '#fff' }}
                           >
                             <Monitor className="w-4 h-4" />
                           </button>
                           <button
                             onClick={e => { e.stopPropagation(); setView({ ...view, [d._id]: 'mobile' }); }}
-                            className="p-2 rounded-lg transition-colors"
-                            style={{ background: v === 'mobile' ? '#c8a96e' : 'rgba(255,255,255,0.15)', color: '#fff' }}
+                            aria-label="Mobile preview" aria-pressed={v === 'mobile'}
+                            className="grid h-11 w-11 place-items-center rounded-lg transition-colors"
+                            style={{ background: v === 'mobile' ? '#c8a96e' : 'rgba(255,255,255,0.15)', color: v === 'mobile' ? '#14110a' : '#fff' }}
                           >
                             <Smartphone className="w-4 h-4" />
                           </button>
@@ -178,7 +180,8 @@ export function DemosClient({ demos }: { demos: Demo[] }) {
                               href={d.url}
                               target="_blank"
                               rel="noreferrer"
-                              className="p-2 rounded-lg transition-colors"
+                              aria-label={`Open ${d.name} live`}
+                              className="grid h-11 w-11 place-items-center rounded-lg transition-colors"
                               style={{ background: 'rgba(255,255,255,0.15)', color: '#fff' }}
                               onClick={e => e.stopPropagation()}
                             >

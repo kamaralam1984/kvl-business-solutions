@@ -2,10 +2,12 @@
 import { useState } from 'react';
 import { PhoneCall, Mail, Bot, Send, ChevronDown, Bolt, Shield, Clock, Headphones } from 'lucide-react';
 import { PageHero } from '@/components/shared/PageHero';
-import { TiltCard } from '@/components/shared/TiltCard';
+import { Section, SectionHeading, Card, Panel, buttonStyles } from '@/components/ui';
 import { FileUploader, UploadedFile } from '@/components/widgets/FileUploader';
 import { useSession } from 'next-auth/react';
 import { trackEvent } from '@/components/analytics/track';
+
+const FIELD = 'w-full min-h-[44px] rounded-btn border border-line bg-card px-4 text-base text-text placeholder:text-text3 transition-shadow duration-base focus-visible:outline-none focus-visible:border-gold focus-visible:shadow-[var(--focus-ring)]';
 
 const faqs = [
   { q: 'How fast can you deploy a software or website?', a: 'Most ready-made software products go live in 24–48 hours. Custom software takes 4–12 weeks depending on scope.' },
@@ -52,92 +54,85 @@ export default function SupportPage() {
     <>
       <PageHero eyebrow="CUSTOMER SUPPORT" title="We're Here to" accent="Help — 24x7" description="Raise a ticket, browse FAQ, or chat with our AI assistant for instant help." breadcrumb="Support" />
 
-      <section className="section">
-        <div className="container grid grid-cols-2 lg:grid-cols-4 gap-5">
+      <Section>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { Icon: () => <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/></svg>, name: 'WhatsApp', desc: 'Instant chat support', btn: 'Open Chat', href: `https://wa.me/${wa}`, c1: '#25d366', c2: '#128c7e' },
-            { Icon: PhoneCall, name: 'Phone', desc: 'Call our helpline', btn: '+91 99420 00413', href: 'tel:+919942000413', c1: '#3b82f6', c2: '#1d4ed8' },
-            { Icon: Mail, name: 'Email', desc: 'Reply within 1 hour', btn: 'Email Support', href: 'mailto:support@kvlbusinesssolutions.com', c1: '#f97316', c2: '#ea580c' },
-            { Icon: Bot, name: 'AI Assistant', desc: 'Instant smart help', btn: 'Chat Now', href: '#', c1: '#8b5cf6', c2: '#6d28d9' },
+            { Icon: () => <svg viewBox="0 0 24 24" fill="currentColor" className="h-7 w-7" aria-hidden="true"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/></svg>, name: 'WhatsApp', desc: 'Instant chat support', btn: 'Open Chat', href: `https://wa.me/${wa}` },
+            { Icon: PhoneCall, name: 'Phone', desc: 'Call our helpline', btn: '+91 99420 00413', href: 'tel:+919942000413' },
+            { Icon: Mail, name: 'Email', desc: 'Reply within 1 hour', btn: 'Email Support', href: 'mailto:support@kvlbusinesssolutions.com' },
+            { Icon: Bot, name: 'AI Assistant', desc: 'Instant smart help', btn: 'Chat Now', href: '#' },
           ].map(c => (
-            <TiltCard key={c.name} className="card-base p-6 text-center">
-              <div className="w-16 h-16 mx-auto mb-3 rounded-2xl grid place-items-center text-white" style={{ background: `linear-gradient(135deg, ${c.c1}, ${c.c2})` }}><c.Icon /></div>
-              <h5 className="font-bold">{c.name}</h5>
-              <p className="text-xs text-text2 mb-3">{c.desc}</p>
-              <a href={c.href} target="_blank" rel="noreferrer" className="btn text-xs" style={{ background: `linear-gradient(135deg, ${c.c1}, ${c.c2})`, color: '#fff' }}>{c.btn}</a>
-            </TiltCard>
+            <Card key={c.name} interactive className="p-6 text-center">
+              <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-btn bg-gold/15 text-gold-text"><c.Icon /></div>
+              <h3 className="font-display text-card-title text-text">{c.name}</h3>
+              <p className="mb-4 mt-1 text-sm text-text2">{c.desc}</p>
+              <a href={c.href} target="_blank" rel="noreferrer" className={buttonStyles('secondary', 'md', 'w-full')}>{c.btn}</a>
+            </Card>
           ))}
         </div>
-      </section>
+      </Section>
 
-      <section className="section section-alt">
-        <div className="container grid lg:grid-cols-2 gap-10">
-          <div>
-            <span className="eyebrow">RAISE A TICKET</span>
-            <h2 className="text-3xl font-bold my-3">Submit a Support Request</h2>
-            <p className="text-text2">Need help with software, GPS, or any service? Submit a ticket and our team will respond within 1 hour.</p>
-            <div className="mt-5 space-y-2 text-sm">
-              <div className="flex items-center gap-2"><Bolt className="w-4 h-4 text-primary" /> Average response time: under 1 hour</div>
-              <div className="flex items-center gap-2"><Shield className="w-4 h-4 text-primary" /> 99.8% issue resolution rate</div>
-              <div className="flex items-center gap-2"><Clock className="w-4 h-4 text-primary" /> Available Mon–Sat 9 AM – 8 PM</div>
-              <div className="flex items-center gap-2"><Headphones className="w-4 h-4 text-primary" /> 24x7 emergency line for paid clients</div>
-            </div>
+      <Section tone="alt" containerClassName="grid gap-10 lg:grid-cols-2">
+        <div>
+          <SectionHeading eyebrow="RAISE A TICKET" title="Submit a Support Request" description="Need help with software, GPS, or any service? Submit a ticket and our team will respond within 1 hour." />
+          <div className="mt-6 space-y-3 text-base text-text2">
+            <div className="flex items-center gap-3"><Bolt className="h-5 w-5 text-gold-text" aria-hidden /> Average response time: under 1 hour</div>
+            <div className="flex items-center gap-3"><Shield className="h-5 w-5 text-gold-text" aria-hidden /> 99.8% issue resolution rate</div>
+            <div className="flex items-center gap-3"><Clock className="h-5 w-5 text-gold-text" aria-hidden /> Available Mon–Sat 9 AM – 8 PM</div>
+            <div className="flex items-center gap-3"><Headphones className="h-5 w-5 text-gold-text" aria-hidden /> 24x7 emergency line for paid clients</div>
           </div>
-          <form onSubmit={submit} className="card-base p-7">
-            <h3 className="font-bold text-lg mb-4">New Support Ticket</h3>
-            <div className="grid sm:grid-cols-2 gap-3 mb-3">
+        </div>
+        <Panel className="p-6 sm:p-8">
+          <form onSubmit={submit}>
+            <h3 className="mb-4 font-display text-card-title text-text">New Support Ticket</h3>
+            <div className="mb-3 grid gap-3 sm:grid-cols-2">
               <div>
                 <label htmlFor="ticket-name" className="sr-only">Name</label>
-                <input id="ticket-name" name="name" autoComplete="name" className="form-control" placeholder="Name *" required value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
+                <input id="ticket-name" name="name" autoComplete="name" className={FIELD} placeholder="Name *" required value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
               </div>
               <div>
                 <label htmlFor="ticket-email" className="sr-only">Email</label>
-                <input id="ticket-email" name="email" type="email" autoComplete="email" className="form-control" placeholder="Email *" required value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
+                <input id="ticket-email" name="email" type="email" autoComplete="email" className={FIELD} placeholder="Email *" required value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
               </div>
             </div>
             <label htmlFor="ticket-product" className="sr-only">Product</label>
-            <select id="ticket-product" name="product" className="form-control mb-3" value={form.product} onChange={e => setForm({...form, product: e.target.value})}>
+            <select id="ticket-product" name="product" className={`${FIELD} mb-3`} value={form.product} onChange={e => setForm({...form, product: e.target.value})}>
               {['ERP Software','Website','GPS Tracking','HMS','School ERP','Other'].map(o => <option key={o}>{o}</option>)}
             </select>
             <label htmlFor="ticket-priority" className="sr-only">Priority</label>
-            <select id="ticket-priority" name="priority" className="form-control mb-3" value={form.priority} onChange={e => setForm({...form, priority: e.target.value})}>
+            <select id="ticket-priority" name="priority" className={`${FIELD} mb-3`} value={form.priority} onChange={e => setForm({...form, priority: e.target.value})}>
               {['Low','Medium','High','Critical'].map(o => <option key={o}>{o}</option>)}
             </select>
             <label htmlFor="ticket-description" className="sr-only">Describe your issue</label>
-            <textarea id="ticket-description" name="description" className="form-control mb-3 min-h-[120px]" placeholder="Describe your issue *" required value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
+            <textarea id="ticket-description" name="description" className={`${FIELD} mb-3 min-h-[120px] resize-y py-3`} placeholder="Describe your issue *" required value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
             {session?.user && (
               <div className="mb-4">
-                <label className="text-xs text-text2 mb-2 block">Attachments (screenshots, PDFs — optional)</label>
+                <label className="mb-2 block text-sm text-text2">Attachments (screenshots, PDFs — optional)</label>
                 <FileUploader folder="kvl/tickets" value={attachments} onChange={setAttachments} maxSizeMB={5} />
               </div>
             )}
-            <button disabled={status === 'sending'} className="btn btn-primary w-full justify-center"><Send className="w-4 h-4" /> {status === 'sending' ? 'Submitting...' : status === 'success' ? '✓ Ticket Created' : 'Submit Ticket'}</button>
+            <button disabled={status === 'sending'} className={buttonStyles('primary', 'lg', 'w-full')}><Send className="h-4 w-4" aria-hidden /> {status === 'sending' ? 'Submitting...' : status === 'success' ? '✓ Ticket Created' : 'Submit Ticket'}</button>
             {status === 'error' && (
-              <p className="text-red-400 text-xs mt-2 text-center">{errorMsg}</p>
+              <p role="alert" className="mt-3 rounded-btn border border-red-500/30 bg-red-500/10 px-4 py-3 text-center text-sm text-red-500">{errorMsg}</p>
             )}
           </form>
-        </div>
-      </section>
+        </Panel>
+      </Section>
 
-      <section className="section">
-        <div className="container">
-          <div className="text-center mb-10">
-            <span className="eyebrow">FREQUENTLY ASKED</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold my-4">Got Questions? We&apos;ve Got Answers</h2>
-          </div>
-          <div className="max-w-3xl mx-auto space-y-3">
-            {faqs.map(f => (
-              <details key={f.q} className="card-base group">
-                <summary className="px-6 py-5 cursor-pointer font-semibold flex justify-between items-center list-none">
-                  {f.q}
-                  <ChevronDown className="w-4 h-4 text-primary group-open:rotate-180 transition-transform" />
-                </summary>
-                <div className="px-6 pb-5 text-text2 text-sm">{f.a}</div>
-              </details>
-            ))}
-          </div>
+      <Section>
+        <SectionHeading align="center" eyebrow="FREQUENTLY ASKED" title="Got Questions? We've Got Answers" />
+        <div className="mx-auto mt-10 max-w-3xl space-y-3">
+          {faqs.map(f => (
+            <details key={f.q} className="group rounded-card border border-line bg-card shadow-soft-1">
+              <summary className="flex min-h-[44px] cursor-pointer list-none items-center justify-between gap-4 rounded-card px-6 py-5 font-semibold text-text focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">
+                {f.q}
+                <ChevronDown className="h-4 w-4 shrink-0 text-gold-text transition-transform duration-base group-open:rotate-180 motion-reduce:transition-none" aria-hidden />
+              </summary>
+              <div className="px-6 pb-5 text-base text-text2">{f.a}</div>
+            </details>
+          ))}
         </div>
-      </section>
+      </Section>
     </>
   );
 }

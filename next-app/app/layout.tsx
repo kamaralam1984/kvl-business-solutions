@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, Poppins } from 'next/font/google';
+import { Inter, Poppins, Bricolage_Grotesque, JetBrains_Mono, Cinzel } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import { SiteChrome } from '@/components/layout/SiteChrome';
 import { BootLoader } from '@/components/widgets/BootLoader';
@@ -16,13 +16,30 @@ import { getSiteSettings } from '@/lib/models/SiteSettings';
 import { getActiveBanner } from '@/lib/models/Banner';
 import { services } from '@/lib/data/services';
 import { Suspense } from 'react';
+import { StudioFX } from '@/components/studio/StudioFX';
 import './globals.css';
+
+function menuStyleScript(m?: { rotate?: boolean; enabled?: number[]; locked?: number }) {
+  const enabled = (Array.isArray(m?.enabled) ? m!.enabled! : [1, 2, 3, 4]).filter(n => [1, 2, 3, 4].includes(n));
+  const cfg = { r: m?.rotate !== false, e: enabled.length ? enabled : [1], l: [1, 2, 3, 4].includes(m?.locked ?? 0) ? m!.locked : 0 };
+  return `(function(){var c=${JSON.stringify(cfg)},s=1;try{if(c.l){s=c.l}else if(!c.r){s=c.e[0]}else{var ss=+sessionStorage.getItem('kvl-menu-style');if(ss&&c.e.indexOf(ss)>-1){s=ss}else{var last=+localStorage.getItem('kvl-menu-last')||0;var p=c.e.filter(function(n){return n!==last});if(!p.length)p=c.e;s=p[Math.floor(Math.random()*p.length)];localStorage.setItem('kvl-menu-last',s);sessionStorage.setItem('kvl-menu-style',s)}}}catch(e){s=c.l||1}document.documentElement.setAttribute('data-menu-style',s)})();`;
+}
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
 // Only 700/800/900 are ever paired with font-display site-wide (verified by
 // grep across every file using the Tailwind utility, including @apply in
 // globals.css's .heading-xl) — the other three weights were dead payload.
-const poppins = Poppins({ subsets: ['latin'], weight: ['700','800','900'], variable: '--font-poppins', display: 'swap' });
+const poppins = Poppins({ subsets: ['latin'], weight: ['600','700','800','900'], variable: '--font-poppins', display: 'swap' });
+
+// "Studio" design skin fonts. Not preloaded: the browser only downloads them when the
+// Studio skin is active (the classic design never references these families).
+const bricolage = Bricolage_Grotesque({ subsets: ['latin'], variable: '--font-bricolage', display: 'swap', preload: false });
+const cinzel = Cinzel({ subsets: ['latin'], weight: ['500','600','700'], variable: '--font-cinzel', display: 'swap', preload: false });
+const jbmono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jbmono', display: 'swap', preload: false });
+
+// Picks the design skin (classic | studio) before first paint. ?design=studio|classic
+// also works as a shareable link and is remembered. Same HTML for every visitor.
+const designScript = `(function(){var d='classic';try{var q=new URLSearchParams(location.search).get('design');var v=localStorage.getItem('kvl-design');if(q==='studio'||q==='classic'){v=q;localStorage.setItem('kvl-design',q)}if(v==='studio')d='studio'}catch(e){}document.documentElement.setAttribute('data-design',d)})();`;
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
 
@@ -174,13 +191,19 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   };
 
   return (
-    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${poppins.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${poppins.variable} ${bricolage.variable} ${jbmono.variable} ${cinzel.variable}`}>
       <head>
+        {/* Picks the header menu style before first paint (no flash / hydration mismatch).
+            Config comes from admin settings and is identical for every visitor, so cached
+            HTML stays identical; the random choice happens client-side in this script. */}
+        <script dangerouslySetInnerHTML={{ __html: menuStyleScript(settings?.menuStyle) }} />
+        <script dangerouslySetInnerHTML={{ __html: designScript }} />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
       </head>
-      <body className="pb-14 md:pb-0">
+      <body>
+        <StudioFX />
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[999] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-primary focus:text-white focus:text-sm focus:font-semibold"
@@ -215,7 +238,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <ScrollDepthTracker />
         </Suspense>
         <SessionProviderWrapper>
-          <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <BootLoader />
             <SiteChrome settings={settings} banner={banner} cookieConsentEnabled={settings?.features?.cookieConsent !== false}>
               {children}

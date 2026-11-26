@@ -56,7 +56,7 @@ function ReviewForm() {
         <label className="text-xs text-text2 mb-1 block">Your rating</label>
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map(i => (
-            <button type="button" key={i} onClick={() => setForm({ ...form, rating: i })}>
+            <button type="button" key={i} aria-label={`${i} star${i > 1 ? 's' : ''}`} aria-pressed={i <= form.rating} className="grid h-11 w-11 place-items-center rounded-btn focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]" onClick={() => setForm({ ...form, rating: i })}>
               <Star className={`w-8 h-8 transition-all ${i <= form.rating ? 'text-yellow-500 fill-yellow-500' : 'text-text2 hover:text-yellow-500'}`} />
             </button>
           ))}

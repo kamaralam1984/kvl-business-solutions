@@ -3,12 +3,16 @@ import Link from 'next/link';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Menu, X, User as UserIcon, ChevronDown } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { navItems } from '@/lib/data/nav';
 import { ThemeToggle } from '@/components/widgets/ThemeToggle';
+import { DesignSwitcher } from '@/components/studio/DesignSwitcher';
+import { Roll } from '@/components/studio/Roll';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/Button';
 import { megaMenus, type MegaMenuKey } from './header/megaMenuData';
 
 // Everything below is genuinely non-critical for first paint (dropdowns,
@@ -28,6 +32,18 @@ export function Header() {
   const [megaMenu, setMegaMenu]   = useState<MegaMenuKey | null>(null);
   const userMenuRef               = useRef<HTMLDivElement>(null);
   const accountBtnRef             = useRef<HTMLButtonElement>(null);
+  const [hoverHref, setHoverHref] = useState<string | null>(null);
+  const intentTimer               = useRef<ReturnType<typeof setTimeout>>();
+  const reduce                    = useReducedMotion();
+
+  // Hover-intent: open after a short dwell, close after a short grace period so
+  // diagonal mouse moves toward the panel don't dismiss it.
+  const openMega = useCallback((k: MegaMenuKey | null, delay: number) => {
+    clearTimeout(intentTimer.current);
+    intentTimer.current = setTimeout(() => setMegaMenu(k), delay);
+  }, []);
+  useEffect(() => () => clearTimeout(intentTimer.current), []);
+  useEffect(() => { setMegaMenu(null); }, [pathname]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -60,107 +76,73 @@ export function Header() {
   useEffect(() => { setOpen(false); }, [pathname]);
 
   const isAdmin = (session?.user as any)?.role === 'admin';
+  const activeHref = navItems.find(i => pathname === i.href || (i.href !== '/' && pathname?.startsWith(i.href)))?.href ?? null;
+  const pillHref = hoverHref ?? activeHref;
 
   return (
-    <header
-      className="sticky top-0 z-50 transition-all duration-500"
-      style={{
-        background: scrolled ? 'rgba(var(--bg-2) / 0.92)' : 'rgba(var(--bg-2) / 0.5)',
-        backdropFilter: 'blur(24px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-        borderBottom: scrolled ? '1px solid rgba(var(--border) / 0.06)' : '1px solid rgba(var(--border) / 0.03)',
-        boxShadow: scrolled ? '0 1px 0 rgba(var(--border) / 0.08) inset, 0 4px 24px rgba(0,0,0,0.06)' : 'none',
-      }}
-    >
-      {/* Top gold line */}
-      <div style={{
-        position: 'absolute', top: 0, insetInline: 0, height: 1,
-        background: 'linear-gradient(90deg, transparent 0%, rgba(200,168,112,0.25) 30%, rgba(200,168,112,0.45) 50%, rgba(200,168,112,0.25) 70%, transparent 100%)',
-        opacity: scrolled ? 0.9 : 0.6,
-        transition: 'opacity 0.5s ease',
-      }} />
+    <header className="site-header sticky top-0 z-50" data-scrolled={scrolled}>
+      <div className="container flex items-center justify-between h-[68px]">
 
-      <div className="container flex items-center justify-between" style={{ height: 68 }}>
-
-        {/* Logo */}
-        <Link href="/" className="flex items-center group flex-shrink-0">
-          <span
-            className="relative rounded-lg overflow-hidden shrink-0 transition-transform duration-300 group-hover:scale-105"
-            style={{ width: 138, height: 43, boxShadow: '0 0 0 1px rgba(200,168,112,0.35), 0 2px 10px rgba(0,0,0,0.15)' }}
-          >
+        {/* Logo — dark holder keeps the current logo readable in both themes until a transparent version is supplied */}
+        <Link href="/" className="flex items-center group flex-shrink-0 rounded-btn focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]" aria-label="KVL Business Solutions — home">
+          <span className="relative rounded-lg overflow-hidden shrink-0 bg-[#080910] transition-transform duration-base group-hover:scale-105 w-[138px] h-[43px] ring-1 ring-gold/40">
             <Image src="/brand-logo.png" alt="KVL Business Solutions" fill sizes="138px" className="object-cover" priority />
           </span>
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-0">
+        {/* Desktop nav with sliding active pill */}
+        <nav aria-label="Primary" className="hidden lg:flex items-center" onMouseLeave={() => setHoverHref(null)}>
           {navItems.map((item) => {
-            const isActive = pathname === item.href || (item.href !== '/' && pathname?.startsWith(item.href));
+            const isActive = item.href === activeHref;
             const megaKey = (item.label in megaMenus ? item.label : null) as MegaMenuKey | null;
+            const pill = pillHref === item.href && (
+              <motion.span layoutId="nav-pill" className="nav-pill" aria-hidden transition={{ duration: reduce ? 0 : 0.25, ease: [0.22, 1, 0.36, 1] }} />
+            );
 
             if (megaKey) {
               return (
                 <div
                   key={item.href}
-                  className="relative"
-                  onMouseEnter={() => setMegaMenu(megaKey)}
-                  onMouseLeave={() => setMegaMenu(null)}
-                  onFocus={() => setMegaMenu(megaKey)}
-                  onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setMegaMenu(null); }}
-                  onKeyDown={e => { if (e.key === 'Escape') setMegaMenu(null); }}
+                  className="mm-anchor"
+                  onMouseEnter={() => { setHoverHref(item.href); openMega(megaKey, 120); }}
+                  onMouseLeave={() => openMega(null, 160)}
+                  onFocus={() => { clearTimeout(intentTimer.current); setMegaMenu(megaKey); }}
+                  onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget as Node)) openMega(null, 0); }}
+                  onKeyDown={e => {
+                    if (e.key === 'Escape') { clearTimeout(intentTimer.current); setMegaMenu(null); (e.currentTarget.querySelector('a.nav-link') as HTMLElement | null)?.focus(); }
+                  }}
                 >
-                  <Link
-                    href={item.href}
-                    aria-haspopup="true"
-                    aria-expanded={megaMenu === megaKey}
-                    className="relative px-4 py-2.5 text-[13px] font-medium transition-all duration-200 flex flex-col items-center"
-                    style={{ color: isActive ? 'rgb(var(--text))' : 'rgb(var(--text-2))' }}
-                    onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text))'; }}
-                    onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text-2))'; }}
-                  >
-                    <span className="flex items-center gap-1">
-                      {item.label}
-                      <ChevronDown className={cn('w-3 h-3 opacity-50 transition-transform duration-200', megaMenu === megaKey && 'rotate-180')} />
-                    </span>
-                    {isActive && (
-                      <span
-                        className="absolute bottom-0 left-1/2 -translate-x-1/2 rounded-full"
-                        style={{ width: 4, height: 4, background: '#c8a870', boxShadow: '0 0 8px rgba(200,168,112,0.5)' }}
-                      />
-                    )}
-                  </Link>
-
+                  <span className="relative inline-flex">
+                    {pill}
+                    <Link
+                      href={item.href}
+                      aria-haspopup="true"
+                      aria-expanded={megaMenu === megaKey}
+                      aria-current={isActive ? 'page' : undefined}
+                      className="nav-link"
+                    >
+                      <Roll>{item.label}</Roll>
+                      <ChevronDown className={cn('w-3 h-3 opacity-60 transition-transform duration-fast', megaMenu === megaKey && 'rotate-180')} aria-hidden />
+                    </Link>
+                  </span>
                   <MegaMenuPanel menuKey={megaKey} open={megaMenu === megaKey} />
                 </div>
               );
             }
 
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="relative px-4 py-2.5 text-[13px] font-medium transition-all duration-200 flex flex-col items-center"
-                style={{ color: isActive ? 'rgb(var(--text))' : 'rgb(var(--text-2))' }}
-                onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text))'; }}
-                onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text-2))'; }}
-              >
-                {item.label}
-                {isActive && (
-                  <span
-                    className="absolute bottom-0 left-1/2 -translate-x-1/2 rounded-full"
-                    style={{ width: 4, height: 4, background: '#c8a870', boxShadow: '0 0 8px rgba(200,168,112,0.5)' }}
-                  />
-                )}
-              </Link>
+              <span key={item.href} className="relative inline-flex" onMouseEnter={() => setHoverHref(item.href)}>
+                {pill}
+                <Link href={item.href} aria-current={isActive ? 'page' : undefined} className="nav-link"><Roll>{item.label}</Roll></Link>
+              </span>
             );
           })}
         </nav>
 
         {/* Right actions */}
         <div className="flex items-center gap-1">
-
+          <DesignSwitcher />
           <ThemeToggle />
-
           {session && <NotificationBell />}
 
           {session ? (
@@ -169,64 +151,36 @@ export function Header() {
                 ref={accountBtnRef}
                 type="button"
                 onClick={() => setUserMenu(v => !v)}
-                className="flex items-center gap-2 rounded-xl px-2 py-1.5 transition-all duration-200"
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(var(--text) / 0.04)'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+                className="flex items-center gap-2 rounded-xl px-2 py-1.5 min-h-[44px] transition-colors duration-fast hover:bg-text/5 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
                 aria-label="Account menu"
                 aria-haspopup="menu"
                 aria-expanded={userMenu}
                 aria-controls="account-menu-dropdown"
               >
-                <span
-                  className="flex items-center justify-center w-8 h-8 rounded-full overflow-hidden shrink-0"
-                  style={{ border: '1.5px solid rgba(200,168,112,0.6)', boxShadow: '0 0 12px rgba(200,168,112,0.12)' }}
-                >
+                <span className="flex items-center justify-center w-8 h-8 rounded-full overflow-hidden shrink-0 border-[1.5px] border-gold/60">
                   {session.user?.image ? (
                     <Image src={session.user.image} alt="avatar" width={32} height={32} className="w-full h-full object-cover" />
                   ) : (
-                    <span className="text-xs font-bold w-full h-full flex items-center justify-center" style={{ color: 'rgb(var(--text))', background: 'rgb(var(--bg-3))' }}>
+                    <span className="text-xs font-bold w-full h-full flex items-center justify-center text-text bg-bg3">
                       {session.user?.name?.[0]?.toUpperCase() || <UserIcon className="w-4 h-4" />}
                     </span>
                   )}
                 </span>
-                <ChevronDown
-                  className={cn('w-3 h-3 transition-transform duration-200 hidden md:block', userMenu && 'rotate-180')}
-                  style={{ color: 'rgba(var(--text) / 0.3)' }}
-                />
+                <ChevronDown className={cn('w-3 h-3 text-text/30 transition-transform duration-fast hidden md:block', userMenu && 'rotate-180')} aria-hidden />
               </button>
-
               <UserMenuDropdown session={session} isAdmin={isAdmin} open={userMenu} onClose={() => setUserMenu(false)} />
             </div>
           ) : (
             <div className="hidden md:flex items-center gap-2 ml-2">
-              <Link
-                href="/login"
-                className="px-4 py-2 text-[13px] font-medium transition-colors duration-200"
-                style={{ color: 'rgb(var(--text-2))' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text))'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text-2))'; }}
-              >
-                Login
-              </Link>
-              <Link
-                href="/book-demo"
-                className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl text-[13px] font-bold transition-all duration-200 active:scale-95"
-                style={{ background: 'linear-gradient(135deg, #c8a870 0%, #d4b880 100%)', color: '#0a0a0a', boxShadow: '0 4px 20px rgba(200,168,112,0.3)' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 30px rgba(200,168,112,0.45)'; (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 20px rgba(200,168,112,0.3)'; (e.currentTarget as HTMLElement).style.transform = ''; }}
-              >
-                Book a Strategy Call
-              </Link>
+              <Button href="/login" variant="ghost" className="text-[13px]">Login</Button>
+              <Button href="/book-demo" className="text-[13px] font-bold">Book a Strategy Call</Button>
             </div>
           )}
 
           {/* Mobile toggle */}
           <button
-            className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-200 ml-1"
-            style={{ color: 'rgb(var(--text-2))' }}
+            className="lg:hidden flex items-center justify-center w-11 h-11 rounded-xl ml-1 text-text2 transition-colors duration-fast hover:text-text hover:bg-text/5 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
             onClick={() => setOpen(v => !v)}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text))'; (e.currentTarget as HTMLElement).style.background = 'rgba(var(--text) / 0.04)'; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text-2))'; (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
             aria-label="Toggle menu"
             aria-expanded={open}
             aria-controls="mobile-nav-menu"

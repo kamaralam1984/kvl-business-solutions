@@ -13,6 +13,7 @@ import { caseStudies } from '@/lib/data/case-studies';
 import { PageHero } from '@/components/shared/PageHero';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { CtaBanner } from '@/components/home/CtaBanner';
+import { Accordion, Card, Section, SectionHeading } from '@/components/ui';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
 
@@ -329,107 +330,87 @@ export default function IndustryPage({ params }: { params: { slug: string } }) {
       />
 
       {/* Business Challenge */}
-      <section className="section">
-        <div className="container max-w-3xl">
-          <span className="eyebrow">The Business Challenge</span>
-          <h2 className="text-3xl md:text-4xl font-extrabold my-4">What Makes {industry.name} Different</h2>
-          <div className="space-y-5">
-            {detail.challenge.map((p, i) => (
-              <p key={i} className="text-text2 text-[15px] leading-[1.8]">{p}</p>
-            ))}
-          </div>
-          <div className="flex gap-1.5 flex-wrap mt-6">
-            {industry.tags.map(t => (
-              <span key={t} className="text-[11px] px-2.5 py-1 surface2-tint border border-tint rounded-full text-text2">{t}</span>
-            ))}
-          </div>
+      <Section containerClassName="container max-w-3xl">
+        <SectionHeading eyebrow="The Business Challenge" title={`What Makes ${industry.name} Different`} />
+        <div className="mt-8 space-y-5">
+          {detail.challenge.map((p, i) => (
+            <p key={i} className="text-body-lg text-text2">{p}</p>
+          ))}
         </div>
-      </section>
+        <div className="mt-6 flex flex-wrap gap-1.5">
+          {industry.tags.map(t => (
+            <span key={t} className="rounded-full border border-line bg-bg2 px-2.5 py-1 text-xs text-text2">{t}</span>
+          ))}
+        </div>
+      </Section>
 
       {/* What We Build */}
-      <section className="section section-alt">
-        <div className="container">
-          <div className="text-center mb-10 max-w-2xl mx-auto">
-            <span className="eyebrow">What We Build</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold my-4">What We Build for {industry.name}</h2>
-            {detail.softwareNote && <p className="text-text2 text-sm">{detail.softwareNote}</p>}
-          </div>
-          <div className="grid md:grid-cols-2 gap-6">
-            {products.map(p => (
-              <Link key={p.slug} href={`/software/${p.slug}`} className="card-premium p-7 block hover:shadow-card-hover transition-all">
-                <div className="flex items-center gap-4 mb-5">
-                  <div className="w-12 h-12 rounded-xl grid place-items-center text-white shrink-0" style={{ background: `linear-gradient(135deg, ${p.c1}, ${p.c2})` }}>
-                    <Icon name={p.icon} className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg">{p.name}</h3>
-                  </div>
+      <Section tone="alt">
+        <SectionHeading
+          align="center"
+          eyebrow="What We Build"
+          title={`What We Build for ${industry.name}`}
+          description={detail.softwareNote}
+        />
+        <div className="mt-12 grid gap-6 md:grid-cols-2">
+          {products.map(p => (
+            <Card key={p.slug} interactive className="group relative p-7">
+              <div className="mb-5 flex items-center gap-4">
+                <div className="grid h-12 w-12 shrink-0 place-items-center rounded-btn text-white" style={{ background: `linear-gradient(135deg, ${p.c1}, ${p.c2})` }}>
+                  <Icon name={p.icon} className="h-6 w-6" />
                 </div>
-                <p className="text-text2 text-sm mb-5">{p.description}</p>
-                <ul className="grid sm:grid-cols-2 gap-2.5 mb-5">
-                  {p.features.map(f => (
-                    <li key={f} className="flex gap-2 items-start text-[13px]">
-                      <Check className="w-4 h-4 text-green-500 shrink-0 mt-0.5" /> {f}
-                    </li>
-                  ))}
-                </ul>
-                <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
-                  View {p.name} <ArrowUpRight className="w-4 h-4" />
-                </span>
+                <h3 className="font-display text-card-title text-text">{p.name}</h3>
+              </div>
+              <p className="mb-5 text-text2">{p.description}</p>
+              <ul className="mb-5 grid gap-2.5 sm:grid-cols-2">
+                {p.features.map(f => (
+                  <li key={f} className="flex items-start gap-2 text-sm text-text">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-gold-text" aria-hidden /> {f}
+                  </li>
+                ))}
+              </ul>
+              <Link href={`/software/${p.slug}`} className="inline-flex min-h-[44px] items-center gap-1.5 rounded-btn font-semibold text-gold-text after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">
+                View {p.name} <ArrowUpRight className="h-4 w-4" aria-hidden />
               </Link>
-            ))}
-          </div>
+            </Card>
+          ))}
         </div>
-      </section>
+      </Section>
 
       {/* Proven in [Industry] */}
       {caseStudy && (
-        <section className="section">
-          <div className="container">
-            <div className="text-center mb-10 max-w-2xl mx-auto">
-              <span className="eyebrow">Proven in {industry.name}</span>
-              <h2 className="text-3xl md:text-4xl font-extrabold my-4">A Real System We Built</h2>
+        <Section>
+          <SectionHeading align="center" eyebrow={`Proven in ${industry.name}`} title="A Real System We Built" />
+          <Card interactive className="group relative mx-auto mt-12 grid max-w-4xl items-center gap-8 p-8 md:grid-cols-2 md:p-10">
+            <div>
+              <p className="eyebrow mb-2">{caseStudy.businessCategory}</p>
+              <h3 className="mb-3 font-display text-card-title text-text">{caseStudy.name}</h3>
+              <p className="mb-4 text-text2">{caseStudy.challenge.body}</p>
+              <Link href={`/projects/${caseStudy.slug}`} className="inline-flex min-h-[44px] items-center gap-1.5 rounded-btn font-semibold text-gold-text after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">
+                Read the case study <ArrowUpRight className="h-4 w-4 transition-transform duration-base group-hover:translate-x-0.5 motion-reduce:transition-none" aria-hidden />
+              </Link>
             </div>
-            <Link href={`/projects/${caseStudy.slug}`} className="card-premium p-8 md:p-10 grid md:grid-cols-2 gap-8 items-center block group max-w-4xl mx-auto">
-              <div>
-                <div className="text-[11px] font-bold tracking-widest uppercase mb-2" style={{ color: '#a3814f' }}>{caseStudy.businessCategory}</div>
-                <h3 className="text-2xl font-black mb-3">{caseStudy.name}</h3>
-                <p className="text-text2 text-sm mb-4">{caseStudy.challenge.body}</p>
-                <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
-                  Read the case study <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                </span>
-              </div>
-              <div className="relative rounded-xl overflow-hidden border border-tint" style={{ height: 220 }}>
-                <Image
-                  src={caseStudy.images.hero}
-                  alt={`${caseStudy.name} preview`}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover object-top"
-                />
-              </div>
-            </Link>
-          </div>
-        </section>
+            <div className="relative h-[220px] overflow-hidden rounded-btn border border-line">
+              <Image
+                src={caseStudy.images.hero}
+                alt={`${caseStudy.name} preview`}
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover object-top"
+              />
+            </div>
+          </Card>
+        </Section>
       )}
 
       {/* FAQ */}
-      <section className={`section ${caseStudy ? 'section-alt' : ''}`}>
-        <div className="container max-w-3xl">
-          <div className="text-center mb-10">
-            <span className="eyebrow">FAQ</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold my-4">Common Questions</h2>
-          </div>
-          <div className="space-y-5">
-            {detail.faq.map(f => (
-              <div key={f.q} className="card-base p-6">
-                <div className="font-bold text-sm mb-2">{f.q}</div>
-                <div className="text-text2 text-[13.5px] leading-[1.7]">{f.a}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <Section tone={caseStudy ? 'alt' : 'base'} containerClassName="container max-w-3xl">
+        <SectionHeading align="center" eyebrow="FAQ" title="Common Questions" />
+        <Accordion
+          className="mt-12"
+          items={detail.faq.map((f, i) => ({ id: `faq-${i}`, question: f.q, answer: f.a }))}
+        />
+      </Section>
 
       <CtaBanner title={detail.ctaTitle} desc={detail.ctaDesc} />
     </>

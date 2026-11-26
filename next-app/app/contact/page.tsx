@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { MapPin } from 'lucide-react';
 import { getSiteSettings } from '@/lib/models/SiteSettings';
+import { Section, SectionHeading } from '@/components/ui';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { ContactClient } from './ContactClient';
 
@@ -32,65 +33,51 @@ export default async function ContactPage() {
   };
 
   return (
-    <div style={{ background: 'rgb(var(--bg))' }}>
+    <div className="bg-bg">
       <JsonLd data={contactPageJsonLd} id="contact-page-jsonld" />
 
       {/* Hero */}
-      <section className="relative min-h-[55vh] flex items-center justify-center overflow-hidden" style={{ background: 'rgb(var(--bg))' }}>
-        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200,169,110,0.05) 0%, transparent 70%)' }} />
-        <div className="relative z-10 container text-center py-24">
+      <section className="relative flex items-center justify-center overflow-hidden bg-bg py-[var(--section-y)]">
+        <div className="container relative z-10 text-center">
           <span className="eyebrow">CONTACT US</span>
-          <h1
-            className="text-5xl md:text-7xl font-extrabold mt-4 mb-6 leading-tight text-text"
-            style={{ fontFamily: 'Poppins, sans-serif' }}
-          >
+          <h1 className="mx-auto mt-4 mb-6 max-w-4xl font-display text-hero text-text">
             Talk to a Solution Architect
           </h1>
-          <p className="text-xl max-w-2xl mx-auto text-text2">
+          <p className="mx-auto max-w-2xl text-body-lg text-text2">
             Tell us what you&apos;re building. We respond within 1 hour during business hours — free consultation, no obligation.
           </p>
         </div>
       </section>
 
-      <div className="divider-gold" />
-
       <ContactClient settings={settings} />
 
       {/* Map */}
-      <section className="section" style={{ background: 'rgb(var(--bg-3))' }}>
-        <div className="container">
-          <div className="text-center mb-12">
-            <span className="eyebrow">VISIT US</span>
-            <h2 className="text-4xl font-extrabold my-4 text-text" style={{ fontFamily: 'Poppins, sans-serif' }}>
-              Our Offices
-            </h2>
-            <p className="text-sm text-text2">
-              Headquartered in {settings.addressLine1 || 'Patna'} with branches across India.
-            </p>
-          </div>
-          <div className="rounded-2xl overflow-hidden h-80 relative" style={{ border: '1px solid rgba(var(--border) / 0.07)' }}>
-            <div className="absolute inset-0 z-10 pointer-events-none rounded-2xl" style={{ boxShadow: 'inset 0 0 40px rgba(0,0,0,0.4)' }} />
-            <iframe
-              src="https://www.openstreetmap.org/export/embed.html?bbox=85.0126%2C25.4941%2C85.2626%2C25.6941&layer=mapnik&marker=25.5941%2C85.1376"
-              className="w-full h-full border-0 opacity-70"
-              loading="lazy"
-              title="KVL HQ Location — Patna, Bihar"
-            />
-          </div>
-          <div className="text-center mt-5">
-            <a
-              href={GOOGLE_MAPS_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-semibold"
-              style={{ color: '#c8a870' }}
-            >
-              <MapPin className="w-4 h-4" /> View on Google Maps
-            </a>
-          </div>
+      <Section tone="alt">
+        <SectionHeading
+          align="center"
+          eyebrow="VISIT US"
+          title="Our Offices"
+          description={`Headquartered in ${settings.addressLine1 || 'Patna'} with branches across India.`}
+        />
+        <div className="relative mt-12 h-80 overflow-hidden rounded-card border border-line shadow-soft-1">
+          <iframe
+            src="https://www.openstreetmap.org/export/embed.html?bbox=85.0126%2C25.4941%2C85.2626%2C25.6941&layer=mapnik&marker=25.5941%2C85.1376"
+            className="h-full w-full border-0"
+            loading="lazy"
+            title="KVL HQ Location — Patna, Bihar"
+          />
         </div>
-      </section>
-
+        <div className="mt-5 text-center">
+          <a
+            href={GOOGLE_MAPS_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex min-h-[44px] items-center gap-2 rounded-btn px-3 text-sm font-semibold text-gold-text focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+          >
+            <MapPin className="h-4 w-4" aria-hidden /> View on Google Maps
+          </a>
+        </div>
+      </Section>
     </div>
   );
 }

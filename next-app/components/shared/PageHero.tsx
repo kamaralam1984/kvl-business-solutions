@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
-import { ParticleBackground } from './ParticleBackground';
 import { JsonLd } from './JsonLd';
+import { SplitText } from '@/components/studio/SplitText';
 
 const SITE_ROOT = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
 
@@ -39,28 +39,32 @@ export function PageHero({
   };
 
   return (
-    <section className="relative pt-20 pb-16 text-center bg-app2 border-b border-tint overflow-hidden">
+    <section className="sx-hero relative overflow-hidden bg-hero pb-[var(--section-y)] pt-28 lg:pt-36">
       <JsonLd data={breadcrumbJsonLd} id="breadcrumb-jsonld" />
-      <ParticleBackground />
-      <div className="absolute inset-0 blueprint pointer-events-none opacity-60" />
+      <div aria-hidden className="pointer-events-none absolute inset-0"
+        style={{ background: 'radial-gradient(ellipse 60% 60% at 50% 0%, rgba(200,168,112,0.14) 0%, transparent 70%)' }} />
       <div className="container relative z-10">
-        <span className="eyebrow">{eyebrow}</span>
-        <h1 className="text-4xl md:text-6xl font-black mt-4 mb-4">
-          {title} {accent && <span className="gradient-text">{accent}</span>}
-        </h1>
-        <p className="text-text2 max-w-2xl mx-auto">{description}</p>
-        <div className="inline-flex flex-wrap items-center justify-center gap-2 mt-4 text-xs text-text2">
-          <Link href="/" className="text-primary">Home</Link>
-          {path.map((item, i) => (
-            <span key={i} className="inline-flex items-center gap-2">
-              <ChevronRight className="w-3 h-3 self-center" />
-              {item.href ? (
-                <Link href={item.href} className="text-primary">{item.label}</Link>
-              ) : (
-                <span>{item.label}</span>
-              )}
-            </span>
-          ))}
+        <div className="sx-hero-in max-w-3xl">
+          <nav aria-label="Breadcrumb" className="mb-6">
+            <ol className="flex flex-wrap items-center gap-1 text-sm text-text2">
+              <li><Link href="/" className="inline-flex min-h-[44px] items-center rounded-btn hover:text-text focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">Home</Link></li>
+              {path.map((item, i) => (
+                <li key={i} className="inline-flex items-center gap-1">
+                  <ChevronRight className="h-3.5 w-3.5" aria-hidden />
+                  {item.href ? (
+                    <Link href={item.href} className="inline-flex min-h-[44px] items-center rounded-btn hover:text-text focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">{item.label}</Link>
+                  ) : (
+                    <span aria-current="page" className="text-text">{item.label}</span>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </nav>
+          <p className="eyebrow mb-4">{eyebrow}</p>
+          <h1 className="sx-split font-display text-hero text-text">
+            <SplitText>{title} {accent && <span className="text-gold-text">{accent}</span>}</SplitText>
+          </h1>
+          <p className="mt-5 text-body-lg text-text2">{description}</p>
         </div>
       </div>
     </section>

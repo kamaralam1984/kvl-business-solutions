@@ -34,13 +34,13 @@ export default function ShippingPage() {
       <p>You will receive an email with tracking details once your order is dispatched.</p>
 
       <h2>5. International shipping</h2>
-      <p>We currently ship hardware only within India. For international software licenses, email <a href="mailto:kvlbusinesssolution@gmail.com">kvlbusinesssolution@gmail.com</a>.</p>
+      <p>We currently ship hardware only within India. For international software licenses, email <a href="mailto:support@kvlbusinesssolutions.com">support@kvlbusinesssolutions.com</a>.</p>
 
       <h2>6. Damaged or wrong items</h2>
       <p>If you receive a damaged or incorrect item, raise a ticket within 48 hours of delivery. We will arrange a free replacement.</p>
 
       <h2>7. Contact</h2>
-      <p>For shipping queries: <a href="mailto:shipping@kvlbusinesssolutions.com">shipping@kvlbusinesssolutions.com</a> · +91 99420 00413</p>
+      <p>For shipping queries: <a href="mailto:support@kvlbusinesssolutions.com">support@kvlbusinesssolutions.com</a> · +91 99420 00413</p>
     </LegalLayout>
   );
 }

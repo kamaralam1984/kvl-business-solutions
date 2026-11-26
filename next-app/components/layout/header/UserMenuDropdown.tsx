@@ -104,10 +104,7 @@ export function UserMenuDropdown({
                 role="menuitem"
                 tabIndex={0}
                 onClick={onClose}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-150"
-                style={{ color: 'rgba(var(--text) / 0.5)' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'rgb(var(--text))'; (e.currentTarget as HTMLElement).style.background = 'rgba(var(--text) / 0.03)'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(var(--text) / 0.5)'; (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+                className="flex min-h-[44px] items-center gap-3 rounded-btn px-3 text-sm font-medium text-text2 transition-colors duration-fast hover:bg-text/5 hover:text-text focus-visible:bg-text/5 focus-visible:text-text focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
               >
                 <Icon className="w-4 h-4 shrink-0" />
                 {label}
@@ -121,10 +118,7 @@ export function UserMenuDropdown({
               role="menuitem"
               tabIndex={0}
               onClick={() => { onClose(); signOut(); }}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-150"
-              style={{ color: 'rgba(220,50,50,0.7)' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'rgb(200,40,40)'; (e.currentTarget as HTMLElement).style.background = 'rgba(220,50,50,0.05)'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(220,50,50,0.7)'; (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+              className="flex min-h-[44px] w-full items-center gap-3 rounded-btn px-3 text-sm font-medium text-red-500 transition-colors duration-fast hover:bg-red-500/10 focus-visible:bg-red-500/10 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
             >
               <LogOut className="w-4 h-4 shrink-0" /> Sign out
             </button>

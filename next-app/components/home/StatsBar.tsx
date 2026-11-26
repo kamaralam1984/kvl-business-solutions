@@ -1,7 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Box, Sparkles, CalendarDays, Users } from 'lucide-react';
-import { useReveal, revealStyle } from '@/lib/hooks/useReveal';
+import { useReveal } from '@/lib/hooks/useReveal';
 
 const FOUNDED_YEAR = 2015;
 
@@ -9,66 +8,39 @@ function useCounter(target: number, active: boolean) {
   const [val, setVal] = useState(0);
   useEffect(() => {
     if (!active) return;
-    const duration = 1400;
-    const step = (ts: number, t0: number) => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { setVal(target); return; }
+    const duration = 1200;
+    let raf = 0;
+    const t0 = performance.now();
+    const step = (ts: number) => {
       const p = Math.min((ts - t0) / duration, 1);
-      const e = 1 - Math.pow(1 - p, 4);
-      setVal(Math.round(e * target));
-      if (p < 1) requestAnimationFrame(t => step(t, t0));
+      setVal(Math.round((1 - Math.pow(1 - p, 4)) * target));
+      if (p < 1) raf = requestAnimationFrame(step);
     };
-    requestAnimationFrame(t => step(t, t));
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
   }, [active, target]);
   return val;
 }
 
-function StatTile({ Icon, value, label, inView, index, loading }: { Icon: any; value: number; label: string; inView: boolean; index: number; loading?: boolean }) {
-  const count = useCounter(value, inView && !loading);
+function Stat({ value, label, active, loading }: { value: number; label: string; active: boolean; loading?: boolean }) {
+  const count = useCounter(value, active && !loading);
   return (
-    <div style={revealStyle(inView, index, { staggerMs: 90, durationMs: 500, distance: 16 })}>
-      <div className="relative h-full rounded-2xl p-5 sm:p-6 text-center transition-all duration-300 group"
-        style={{ background: 'rgb(var(--bg-3))', border: '1px solid rgba(var(--border) / 0.07)' }}
-        onMouseEnter={e => {
-          (e.currentTarget as HTMLElement).style.borderColor = 'rgba(200,168,112,0.3)';
-          (e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)';
-        }}
-        onMouseLeave={e => {
-          (e.currentTarget as HTMLElement).style.borderColor = 'rgba(var(--border) / 0.07)';
-          (e.currentTarget as HTMLElement).style.transform = '';
-        }}
-      >
-        <div className="w-10 h-10 rounded-xl grid place-items-center mx-auto mb-3"
-          style={{ background: 'rgba(200,168,112,0.10)', border: '1px solid rgba(200,168,112,0.22)' }}>
-          <Icon className="w-[18px] h-[18px]" style={{ color: '#c8a870' }} />
-        </div>
-        {/* Show a neutral placeholder instead of a literal "0" while the real
-            count is still loading, or before the section has scrolled into
-            view and the count-up animation has actually started — otherwise
-            the very first paint (and any screenshot/crawl that never
-            scrolls) shows a hard 0, which reads as a broken counter and
-            undercuts this section's whole "every number here is real" point. */}
-        {(loading || !inView) ? (
-          <div className="font-display font-black leading-none opacity-30" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', color: 'rgb(var(--text))' }}>—</div>
-        ) : (
-          <div className="font-display font-black leading-none" style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', color: 'rgb(var(--text))' }}>
-            {count.toLocaleString('en-IN')}
-          </div>
-        )}
-        <div className="text-[11.5px] mt-1.5" style={{ color: 'rgb(var(--text-2))' }}>{label}</div>
-
-        <div className="absolute -bottom-6 -right-6 w-16 h-16 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(200,168,112,0.10) 0%, transparent 70%)' }} />
+    <div>
+      <div className="font-display text-[1.75rem] sm:text-[2rem] font-semibold leading-none tabular-nums text-text">
+        {loading || !active ? <span className="opacity-30">—</span> : count.toLocaleString('en-IN')}
       </div>
+      <div className="mt-2 text-sm text-text2">{label}</div>
     </div>
   );
 }
 
-// productCount/caseStudyCount come from the server (page.tsx) instead of
-// importing the catalog data files directly here — those files are large
-// enough that pulling them into a client component ships their full content
-// to the browser just to read `.length`.
+// Four clean numbers, shown inside the hero. Every value is real (catalog
+// counts, founding year, live visitor counter). Counts come from the server
+// so the client doesn't ship the whole catalog just to read `.length`.
 export function StatsBar({ productCount, caseStudyCount }: { productCount: number; caseStudyCount: number }) {
   const [visitors, setVisitors] = useState<number | null>(null);
-  const { ref, inView } = useReveal();
+  const { ref, inView } = useReveal('0px');
 
   useEffect(() => {
     fetch('/api/visitor-count').then(r => r.json()).then(d => { if (d.ok) setVisitors(d.count); }).catch(() => {});
@@ -76,29 +48,12 @@ export function StatsBar({ productCount, caseStudyCount }: { productCount: numbe
 
   const years = new Date().getFullYear() - FOUNDED_YEAR;
 
-  // Every number here is real (catalog counts, founding year, live visitor
-  // counter) — no invented client counts or ratings, matching the rest of
-  // the site's "nothing here is inflated" stance. The visitor count animates
-  // in only once it's actually loaded (starts its count-up from 0 -> real value).
-  const stats = [
-    { Icon: Box, value: productCount, label: 'Software Products' },
-    { Icon: Sparkles, value: caseStudyCount, label: 'Live Products Built' },
-    { Icon: CalendarDays, value: years, label: 'Years in Business' },
-    { Icon: Users, value: visitors ?? 0, label: 'Website Visitors', loading: visitors === null },
-  ];
-
   return (
-    <section
-      className="py-9"
-      style={{ background: 'rgb(var(--bg-2))', borderTop: '1px solid rgba(var(--border) / 0.06)', borderBottom: '1px solid rgba(var(--border) / 0.06)' }}
-    >
-      <div className="container">
-        <div ref={ref} className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-          {stats.map((s, i) => (
-            <StatTile key={s.label} {...s} inView={inView} index={i} />
-          ))}
-        </div>
-      </div>
-    </section>
+    <div ref={ref} className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-8 border-t border-line pt-8">
+      <Stat value={productCount} label="Software Products" active={inView} />
+      <Stat value={caseStudyCount} label="Live Products Built" active={inView} />
+      <Stat value={years} label="Years in Business" active={inView} />
+      <Stat value={visitors ?? 0} label="Website Visitors" active={inView} loading={visitors === null} />
+    </div>
   );
 }

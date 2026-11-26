@@ -131,7 +131,7 @@ export function QuoteForm() {
               type="button"
               onClick={requestCallback}
               disabled={callbackLoading}
-              className="flex-1 py-2.5 rounded-lg font-bold text-white text-sm flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 transition-colors disabled:opacity-60"
+              className="flex-1 py-2.5 rounded-lg font-bold text-white text-sm flex items-center justify-center gap-2 bg-emerald-700 hover:bg-emerald-800 transition-colors disabled:opacity-60 min-h-[44px]"
             >
               {callbackLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Phone className="w-4 h-4" />}
               {callbackLoading ? 'Requesting...' : 'Request Callback'}
@@ -154,7 +154,7 @@ export function QuoteForm() {
           <button
             type="button"
             onClick={() => setShowCallbackForm(true)}
-            className="flex-1 py-2.5 rounded-lg font-bold text-white text-sm flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 transition-colors"
+            className="flex-1 py-2.5 rounded-lg font-bold text-white text-sm flex items-center justify-center gap-2 bg-emerald-700 hover:bg-emerald-800 transition-colors min-h-[44px]"
           >
             <Phone className="w-4 h-4" /> Call Me Back
           </button>

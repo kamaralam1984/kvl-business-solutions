@@ -1,8 +1,11 @@
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import { Hero } from '@/components/home/Hero';
+import { StudioHomeSections } from '@/components/studio/StudioHomeSections';
 import { getLiveSoftwareProducts } from '@/lib/data/live-software';
 import { getLiveCaseStudies } from '@/lib/data/live-case-studies';
+import { caseStudies as staticCaseStudies } from '@/lib/data/case-studies';
+import { softwareProducts as staticSoftware } from '@/lib/data/software';
 import { getLiveLocationPages } from '@/lib/data/live-locations';
 import { getSiteSettings } from '@/lib/models/SiteSettings';
 
@@ -21,7 +24,6 @@ export const metadata: Metadata = {
 // code-split into its own chunk so it doesn't block initial JS parse/hydration.
 // Core Services lives on its own /services page (linked from the navbar) —
 // not duplicated here.
-const StatsBar          = dynamic(() => import('@/components/home/StatsBar').then(m => m.StatsBar));
 const IndustriesGrid    = dynamic(() => import('@/components/home/IndustriesGrid').then(m => m.IndustriesGrid));
 const CaseStudies       = dynamic(() => import('@/components/home/CaseStudies').then(m => m.CaseStudies));
 const Certifications    = dynamic(() => import('@/components/home/Certifications').then(m => m.Certifications));
@@ -33,16 +35,16 @@ const CtaBanner         = dynamic(() => import('@/components/home/CtaBanner').th
 
 export default async function HomePage() {
   const [products, caseStudies, settings, indiaLocations] = await Promise.all([
-    getLiveSoftwareProducts().catch(() => []),
-    getLiveCaseStudies().catch(() => []),
+    getLiveSoftwareProducts().catch(() => staticSoftware),
+    getLiveCaseStudies().catch(() => staticCaseStudies),
     getSiteSettings().catch(() => null),
     getLiveLocationPages('india').catch(() => []),
   ]);
 
   return (
     <>
-      <Hero settings={settings} products={products} />
-      <StatsBar productCount={products.length} caseStudyCount={caseStudies.length} />
+      <Hero settings={settings} products={products} caseStudyCount={caseStudies.length} />
+      <StudioHomeSections />
       <IndustriesGrid />
       <CaseStudies caseStudies={caseStudies} />
       <Certifications />

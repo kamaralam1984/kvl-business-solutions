@@ -1,4 +1,5 @@
 import { PageHero } from '@/components/shared/PageHero';
+import { Section } from '@/components/ui';
 import { CtaBanner } from '@/components/home/CtaBanner';
 import { ProjectFilterBar } from '@/components/projects/ProjectFilterBar';
 import { DownloadsSection } from '@/components/widgets/DownloadsSection';
@@ -21,11 +22,9 @@ export default async function ProjectsPage() {
     <>
       <PageHero eyebrow="PROJECT PORTFOLIO" title="Real Products," accent="Live in Production" description="Every project below is a real, working product you can visit today — the business challenge it solved, how we built it, and the outcome it created." breadcrumb="Projects" />
 
-      <section className="section">
-        <div className="container">
-          <ProjectFilterBar studies={caseStudies} />
-        </div>
-      </section>
+      <Section>
+        <ProjectFilterBar studies={caseStudies} />
+      </Section>
 
       <DownloadsSection />
 

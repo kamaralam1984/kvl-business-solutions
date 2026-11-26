@@ -83,6 +83,20 @@ export function ProductMarketingDemo({ product }: { product: Software }) {
           animation: kitLineShine 4s linear infinite;
         }
         @keyframes kitLineShine { to { background-position: -200% 0; } }
+
+        /* Traffic-light dots — a bold, staggered glow-pulse per dot (red, then
+           gold, then green) plus an expanding sonar ring, unmistakable at a
+           glance rather than a static decoration. */
+        .kit-dot { position: relative; display: inline-block; width: 12px; height: 12px; border-radius: 9999px; animation: kitDotGlow 1.8s ease-in-out infinite; }
+        .kit-dot::after { content: ''; position: absolute; inset: -7px; border-radius: 9999px; animation: kitDotPing 1.8s ease-in-out infinite; }
+        .kit-dot-red { background: #ff5f57; box-shadow: 0 0 10px 1px rgba(255,95,87,0.85); animation-delay: 0s; }
+        .kit-dot-red::after { background: radial-gradient(circle, rgba(255,95,87,0.75), transparent 70%); animation-delay: 0s; }
+        .kit-dot-gold { box-shadow: 0 0 10px 1px rgba(217,172,60,0.85); animation-delay: 0.3s; }
+        .kit-dot-gold::after { background: radial-gradient(circle, rgba(217,172,60,0.75), transparent 70%); animation-delay: 0.3s; }
+        .kit-dot-green { background: #28c840; box-shadow: 0 0 10px 1px rgba(40,200,64,0.85); animation-delay: 0.6s; }
+        .kit-dot-green::after { background: radial-gradient(circle, rgba(40,200,64,0.75), transparent 70%); animation-delay: 0.6s; }
+        @keyframes kitDotGlow { 0%, 60%, 100% { transform: scale(1); filter: brightness(1); } 28% { transform: scale(1.6); filter: brightness(1.6); } }
+        @keyframes kitDotPing { 0% { opacity: 0.8; transform: scale(0.6); } 70%, 100% { opacity: 0; transform: scale(2.8); } }
       `}</style>
 
       {/* Demo banner — no pricing, this is a product preview only */}
@@ -208,10 +222,10 @@ export function ProductMarketingDemo({ product }: { product: Software }) {
 
           <motion.div variants={fade} custom={0.3} initial="hidden" whileInView="show" viewport={{ once: true }} className="kit-breathe rounded-2xl shadow-2xl overflow-hidden border" style={{ background: theme.surface, borderColor: theme.border }}>
             <div className="px-4 py-2.5 flex items-center gap-3" style={{ background: theme.surfaceTint }}>
-              <div className="flex gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-400" />
-                <span className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
-                <span className="w-2.5 h-2.5 rounded-full bg-green-400" />
+              <div className="flex gap-2">
+                <span className="kit-dot kit-dot-red" />
+                <span className="kit-dot kit-dot-gold" style={{ background: gold }} />
+                <span className="kit-dot kit-dot-green" />
               </div>
               <div className="flex-1 rounded-full px-3 py-1 text-[11px] truncate" style={{ background: theme.bg, color: KIT_MUTED }}>app.{product.slug}.kvlbusiness.com/dashboard</div>
             </div>

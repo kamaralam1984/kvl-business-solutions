@@ -133,6 +133,33 @@ export default function SiteSettingsPage() {
                 </label>
               ))}
             </div>
+
+            <Section title="Header menu style" desc="Visitors get a random menu style per visit (never the same twice in a row). Links and order are identical in all styles." />
+            <div className="grid sm:grid-cols-2 gap-2">
+              <label className="flex items-center justify-between p-3 surface-tint rounded-lg cursor-pointer">
+                <span className="text-sm font-semibold">Rotate styles on each visit</span>
+                <input type="checkbox" checked={s.menuStyle?.rotate !== false} onChange={e => updateNested('menuStyle', 'rotate', e.target.checked)} className="w-4 h-4 accent-primary" />
+              </label>
+              {[1, 2, 3, 4].map(n => {
+                const en: number[] = s.menuStyle?.enabled ?? [1, 2, 3, 4];
+                return (
+                  <label key={n} className="flex items-center justify-between p-3 surface-tint rounded-lg cursor-pointer">
+                    <span className="text-sm font-semibold">{['', 'Floating mega-menu', 'Full-width', 'Capsule grid', 'Side panel'][n]}</span>
+                    <input type="checkbox" checked={en.includes(n)} onChange={e => updateNested('menuStyle', 'enabled', e.target.checked ? [...new Set([...en, n])].sort() : en.filter(x => x !== n))} className="w-4 h-4 accent-primary" />
+                  </label>
+                );
+              })}
+              <label className="flex items-center justify-between p-3 surface-tint rounded-lg sm:col-span-2">
+                <span className="text-sm font-semibold">Lock one style (overrides rotation)</span>
+                <select value={s.menuStyle?.locked || 0} onChange={e => updateNested('menuStyle', 'locked', Number(e.target.value))} className="form-control !w-auto">
+                  <option value={0}>No lock</option>
+                  <option value={1}>1 — Floating mega-menu</option>
+                  <option value={2}>2 — Full-width</option>
+                  <option value={3}>3 — Capsule grid</option>
+                  <option value={4}>4 — Side panel</option>
+                </select>
+              </label>
+            </div>
           </>
         )}
 
@@ -152,7 +179,7 @@ export default function SiteSettingsPage() {
               value={s.referralRewardDescription}
               onChange={v => update('referralRewardDescription', v)}
               textarea
-              placeholder="e.g. Contact kvlbusinesssolution@gmail.com once your referral converts to a paid client to discuss a reward."
+              placeholder="e.g. Contact info@kvlbusinesssolutions.com once your referral converts to a paid client to discuss a reward."
             />
           </>
         )}

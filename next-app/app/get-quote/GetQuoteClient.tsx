@@ -216,7 +216,7 @@ export function GetQuoteClient() {
 
           <div className="flex flex-col items-center gap-3 mt-6">
             <Image src="/brand-logo.png" alt="KVL Business Solutions" width={120} height={37} className="opacity-70" />
-            <a href="tel:+919942000413" className="text-white/45 text-xs hover:text-gold-light transition-colors flex items-center gap-1.5">
+            <a href="tel:+919942000413" className="flex min-h-[44px] items-center gap-1.5 text-xs text-white/70 transition-colors hover:text-gold-light">
               <Phone className="w-3 h-3" /> Prefer to talk now? Call +91 99420 00413
             </a>
           </div>

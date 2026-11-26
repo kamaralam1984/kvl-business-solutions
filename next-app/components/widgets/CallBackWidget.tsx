@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Phone, X, Loader2, CheckCircle } from 'lucide-react';
 import { trackEvent } from '@/components/analytics/track';
@@ -11,6 +11,14 @@ export function CallBackWidget() {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [callInitiated, setCallInitiated] = useState(false);
+
+  useEffect(() => {
+    const onOpen = () => setOpen(true);
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    window.addEventListener('kvl:open-callback', onOpen);
+    window.addEventListener('keydown', onKey);
+    return () => { window.removeEventListener('kvl:open-callback', onOpen); window.removeEventListener('keydown', onKey); };
+  }, []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,32 +39,20 @@ export function CallBackWidget() {
 
   return (
     <div className="relative">
-      {/* Floating Call Me Back button */}
-      <motion.button
-        onClick={() => setOpen(o => !o)}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-lg transition-colors"
-        aria-label="Call Me Back"
-      >
-        <Phone className="w-3.5 h-3.5" />
-        <span>Call Me Back</span>
-      </motion.button>
-
       <AnimatePresence>
         {open && (
           <motion.div
             initial={{ opacity: 0, y: 10, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.9 }}
-            className="absolute bottom-14 left-0 w-72 bg-app2 rounded-2xl shadow-2xl border border-tint p-4 z-[110]"
+            role="dialog" aria-label="Call me back" className="fixed bottom-24 right-4 z-[110] w-[calc(100vw-32px)] rounded-2xl border border-tint bg-app2 p-4 shadow-2xl sm:right-6 sm:w-72"
           >
             <div className="flex justify-between items-center mb-3">
               <div>
                 <h4 className="font-bold text-sm">Call Me Back</h4>
                 <p className="text-[11px] text-text2">Our team will call you back within 1 hour.</p>
               </div>
-              <button onClick={() => setOpen(false)}><X className="w-4 h-4 text-text2" /></button>
+              <button onClick={() => setOpen(false)} aria-label="Close" className="grid h-11 w-11 place-items-center"><X className="w-4 h-4 text-text2" /></button>
             </div>
 
             {done ? (
@@ -83,7 +79,7 @@ export function CallBackWidget() {
                   className="form-control w-full text-sm"
                 />
                 <button type="submit" disabled={loading}
-                  className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 disabled:opacity-60">
+                  className="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold min-h-[44px] py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 disabled:opacity-60">
                   {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Calling...</> : <><Phone className="w-4 h-4" />Request a Call Back</>}
                 </button>
                 <p className="text-[10px] text-text2 text-center">Free service, no charge.</p>

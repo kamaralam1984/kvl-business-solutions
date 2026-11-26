@@ -1,31 +1,30 @@
-import Link from 'next/link';
 import { ShieldCheck, Award, Sparkles, ArrowUpRight } from 'lucide-react';
+import { SplitText } from '@/components/studio/SplitText';
 import { HeroShowcaseSlider } from './HeroShowcaseSlider';
 import { LiveRatingBadge } from './LiveRatingBadge';
+import { StatsBar } from './StatsBar';
 import { TrackedLink } from '@/components/analytics/TrackedLink';
+import { buttonStyles } from '@/components/ui/Button';
 import type { Software } from '@/lib/data/software';
 
-/* ── Static data ─────────────────────────────────────── */
 const trustBadges = [
-  { Icon: ShieldCheck, label: 'NDA on Request',           color: '#10b981' },
-  { Icon: Award,       label: 'MSME Registered',          color: '#c8a870' },
-  { Icon: Sparkles,    label: 'Razorpay Verified Partner', color: '#c8a870' },
+  { Icon: ShieldCheck, label: 'NDA on Request' },
+  { Icon: Award,       label: 'MSME Registered' },
+  { Icon: Sparkles,    label: 'Razorpay Verified Partner' },
 ];
 
-/* ── Component ──────────────────────────────────────── */
-/* Server component. The H1 below is the page's LCP element; it (and the
-   rest of the left column) renders immediately with no entrance animation,
-   since animating in the LCP candidate delays its final paint until after
-   JS hydration — a large Core Web Vitals regression on throttled mobile
-   CPUs. Button hover states use Tailwind's `hover:` classes instead of JS
-   event handlers. The right-column product slider is desktop-only and is
-   the one client-hydrated island in this section. */
+/* Server component. The H1 is the LCP element and renders with no entrance
+   animation (animating the LCP candidate delays its paint until after JS
+   hydration). Hover/focus states are CSS only. The product slider on the
+   right is the one client island here, along with the stats counters. */
 type HeroSettings = {
   heroEyebrow?: string; heroTitle?: string; heroAccent?: string; heroDescription?: string;
   heroCtaText?: string; heroCtaLink?: string; heroSecondaryCtaText?: string; heroSecondaryCtaLink?: string;
 };
 
-export function Hero({ settings, products }: { settings?: HeroSettings | null; products: Software[] }) {
+export function Hero({
+  settings, products, caseStudyCount,
+}: { settings?: HeroSettings | null; products: Software[]; caseStudyCount: number }) {
   const eyebrow = settings?.heroEyebrow || 'Enterprise Software, Engineered in India';
   const title = settings?.heroTitle || 'Custom Software Development';
   const accent = settings?.heroAccent || 'Purpose-Built Software. Precision Engineered for Your Business.';
@@ -36,118 +35,53 @@ export function Hero({ settings, products }: { settings?: HeroSettings | null; p
   const secondaryCtaLink = settings?.heroSecondaryCtaLink || '/projects';
 
   return (
-    <section
-      className="relative min-h-[92svh] flex items-center overflow-hidden"
-      style={{ paddingTop: '80px', paddingBottom: '60px', background: 'rgb(var(--bg))' }}
-    >
-      {/* ── Layered Background (CSS only) ── */}
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute inset-0" style={{
-          background: 'radial-gradient(ellipse 70% 55% at 75% 35%, rgba(200,168,112,0.07) 0%, transparent 60%)',
-        }} />
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'radial-gradient(circle, rgba(var(--surface) / 0.05) 1px, transparent 1px)',
-          backgroundSize: '32px 32px',
-        }} />
-        <div className="absolute bottom-0 inset-x-0 h-32" style={{
-          background: 'linear-gradient(to top, rgb(var(--bg)) 0%, transparent 100%)',
-        }} />
-      </div>
+    <section className="relative overflow-hidden bg-hero pt-28 pb-[var(--section-y)] lg:pt-36">
+      {/* Constant brand glow — static, no animation */}
+      <div aria-hidden className="pointer-events-none absolute inset-0"
+        style={{ background: 'radial-gradient(ellipse 60% 55% at 78% 30%, rgba(200,168,112,0.16) 0%, transparent 65%)' }} />
 
-      {/* ── Main Container ────────────────────────── */}
       <div className="container relative z-10">
-
-        {/* Eyebrow */}
-        <div className="mb-8 animate-fade-up">
-          <span className="inline-flex items-center gap-3 text-[11px] tracking-[0.2em] font-semibold uppercase"
-            style={{ color: 'rgb(var(--gold-text))' }}
-          >
-            <span className="animate-line-draw" style={{ width: 24, height: 1, background: 'linear-gradient(90deg, #c8a870, transparent)', display: 'inline-block' }} />
-            {eyebrow}
-          </span>
-        </div>
-
-        {/* Two-column grid */}
-        <div className="grid lg:grid-cols-[56%_44%] gap-12 lg:gap-10 items-center">
-
-          {/* ══ LEFT COLUMN ════════════════════════ */}
+        <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
           <div>
+            <p className="eyebrow mb-5">{eyebrow}</p>
 
-            {/* Headline — the LCP element */}
-            <h1
-              className="font-sans font-black leading-[1.05] tracking-[-0.03em] mb-3"
-              style={{ fontSize: 'clamp(1.3rem, 2.8vw, 2.3rem)', color: 'rgb(var(--text))' }}
-            >
-              {title}
-            </h1>
+            <h1 className="sx-split font-display text-hero text-text"><SplitText>{title}</SplitText></h1>
 
-            {/* Tagline — sized above the description below so the intended
-                emphasis (H1 > tagline > description) actually reads that way. */}
-            <p
-              className="font-semibold mb-7"
-              style={{ fontSize: 'clamp(1rem, 1.3vw, 1.15rem)', color: 'rgb(var(--gold-text))' }}
-            >
-              {accent}
-            </p>
+            <p className="mt-4 font-display text-xl font-semibold text-gold-text">{accent}</p>
 
-            {/* Subheadline */}
-            <p
-              className="text-[17px] leading-[1.75] mb-9"
-              style={{ color: 'rgb(var(--text-2))', maxWidth: '540px' }}
-            >
-              {description}
-            </p>
+            <p className="mt-6 max-w-[540px] text-body-lg text-text2">{description}</p>
 
-            {/* CTA buttons */}
-            <div className="flex flex-wrap gap-3 mb-10">
-              <TrackedLink
-                href={ctaLink}
-                label={ctaText}
-                placement="hero-primary"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-bold text-[14px] transition-shadow duration-200 group hover:shadow-[0_10px_30px_rgba(0,0,0,0.24)]"
-                style={{ background: '#0a0a0a', color: '#ffffff', boxShadow: '0 4px 20px rgba(0,0,0,0.16)' }}
-              >
+            <div className="mt-8 flex flex-wrap gap-3">
+              <TrackedLink href={ctaLink} label={ctaText} placement="hero-primary" className={buttonStyles('primary', 'lg', 'group')}>
                 {ctaText}
-                <ArrowUpRight className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                <ArrowUpRight className="h-4 w-4 transition-transform duration-base group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden />
               </TrackedLink>
-
-              <TrackedLink
-                href={secondaryCtaLink}
-                label={secondaryCtaText}
-                placement="hero-secondary"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-[14px] transition-colors duration-200 border hover:border-[#c8a870] hover:bg-[rgba(200,168,112,0.06)]"
-                style={{ borderColor: 'rgba(var(--border) / 0.15)', color: 'rgb(var(--text))', background: 'transparent' }}
-              >
+              <TrackedLink href={secondaryCtaLink} label={secondaryCtaText} placement="hero-secondary" className={buttonStyles('secondary', 'lg')}>
                 {secondaryCtaText}
               </TrackedLink>
             </div>
 
-            {/* Trust strip */}
-            <div
-              className="flex flex-wrap gap-x-6 gap-y-3 pt-8"
-              style={{ borderTop: '1px solid rgba(var(--border) / 0.08)' }}
-            >
-              {trustBadges.map((b) => (
-                <div key={b.label} className="flex items-center gap-2 text-[13px] font-medium" style={{ color: 'rgb(var(--text-2))' }}>
-                  <b.Icon className="w-4 h-4 shrink-0" style={{ color: b.color }} />
+            <ul className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+              {trustBadges.map(b => (
+                <li key={b.label} className="flex items-center gap-2 text-sm font-medium text-text2">
+                  <b.Icon className="h-4 w-4 shrink-0 text-gold-text" aria-hidden />
                   {b.label}
-                </div>
+                </li>
               ))}
-              <LiveRatingBadge />
-            </div>
+              <li><LiveRatingBadge /></li>
+            </ul>
           </div>
 
-          {/* ══ RIGHT COLUMN — Product showcase slider (desktop only, client island) ══ */}
-          <div className="relative hidden lg:block hero-diagram-in">
+          {/* Browser-frame product slider (desktop only) */}
+          <div className="hidden lg:block">
             <HeroShowcaseSlider products={products} />
           </div>
         </div>
-      </div>
 
-      <style>{`
-        @keyframes hero-diagram-fade-in { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
-        .hero-diagram-in { animation: hero-diagram-fade-in 0.9s cubic-bezier(0.22,1,0.36,1) 0.25s both; }
-      `}</style>
+        <div className="mt-14 lg:mt-16">
+          <StatsBar productCount={products.length} caseStudyCount={caseStudyCount} />
+        </div>
+      </div>
     </section>
   );
 }

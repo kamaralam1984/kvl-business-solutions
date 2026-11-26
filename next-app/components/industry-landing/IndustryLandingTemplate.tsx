@@ -12,6 +12,7 @@ import { caseStudies } from '@/lib/data/case-studies';
 import { PageHero } from '@/components/shared/PageHero';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { CtaBanner } from '@/components/home/CtaBanner';
+import { Accordion, Button, Card, Section, SectionHeading, buttonStyles } from '@/components/ui';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
 const WA_NUMBER = (process.env.NEXT_PUBLIC_WHATSAPP || '919942000413').replace(/\D/g, '');
@@ -121,218 +122,166 @@ export function IndustryLandingTemplate({ data }: { data: IndustryLandingPage })
       />
 
       {/* Honest positioning strip */}
-      <section className="py-6 border-b border-tint bg-app2">
-        <div className="container flex items-center justify-center gap-2.5 text-center text-[13px] text-text2 flex-wrap">
-          <ShieldCheck className="w-4 h-4 shrink-0" style={{ color: '#c8a870' }} />
+      <section className="border-y border-line bg-bg2 py-6">
+        <div className="container flex flex-wrap items-center justify-center gap-2.5 text-center text-sm text-text2">
+          <ShieldCheck className="h-4 w-4 shrink-0 text-gold-text" aria-hidden />
           India-based software development company delivering custom {data.industryName.toLowerCase()} for clients worldwide — no local office, direct access to the engineers building your system.
         </div>
       </section>
 
       {/* Industry Challenges */}
-      <section className="section">
-        <div className="container max-w-3xl">
-          <span className="eyebrow">The Industry Challenge</span>
-          <h2 className="text-3xl md:text-4xl font-extrabold my-4">What Makes {data.industryName} Different</h2>
-          <div className="space-y-5">
-            {data.industryChallenges.map((p, i) => (
-              <p key={i} className="text-text2 text-[15px] leading-[1.8]">{p}</p>
-            ))}
-          </div>
+      <Section containerClassName="container max-w-3xl">
+        <SectionHeading eyebrow="The Industry Challenge" title={`What Makes ${data.industryName} Different`} />
+        <div className="mt-8 space-y-5">
+          {data.industryChallenges.map((p, i) => (
+            <p key={i} className="text-body-lg text-text2">{p}</p>
+          ))}
         </div>
-      </section>
+      </Section>
 
       {/* Business Problems */}
-      <section className="section section-alt">
-        <div className="container">
-          <div className="text-center mb-10 max-w-2xl mx-auto">
-            <span className="eyebrow">Business Problems</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold my-4">Problems We Hear Most Often</h2>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-5 max-w-4xl mx-auto">
-            {data.businessProblems.map(p => (
-              <div key={p} className="card-base p-6 flex gap-3 items-start">
-                <ArrowRight className="w-4 h-4 shrink-0 mt-1" style={{ color: '#c8a870' }} />
-                <span className="text-[14px] leading-[1.7]">{p}</span>
-              </div>
-            ))}
-          </div>
+      <Section tone="alt">
+        <SectionHeading align="center" eyebrow="Business Problems" title="Problems We Hear Most Often" />
+        <div className="mx-auto mt-12 grid max-w-4xl gap-5 sm:grid-cols-2">
+          {data.businessProblems.map(p => (
+            <Card key={p} className="flex items-start gap-3 p-6">
+              <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-gold-text" aria-hidden />
+              <span className="text-text">{p}</span>
+            </Card>
+          ))}
         </div>
-      </section>
+      </Section>
 
       {/* Our Solutions */}
-      <section className="section">
-        <div className="container">
-          <div className="text-center mb-10 max-w-2xl mx-auto">
-            <span className="eyebrow">Our Solutions</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold my-4">What We Build for {data.industryName}</h2>
-          </div>
-          <div className="grid md:grid-cols-2 gap-6">
-            {data.ourSolutions.map(s => (
-              <div key={s.title} className="card-premium p-7">
-                <h3 className="font-bold text-lg mb-2">{s.title}</h3>
-                <p className="text-text2 text-sm leading-[1.7]">{s.desc}</p>
-              </div>
-            ))}
-          </div>
+      <Section>
+        <SectionHeading align="center" eyebrow="Our Solutions" title={`What We Build for ${data.industryName}`} />
+        <div className="mt-12 grid gap-6 md:grid-cols-2">
+          {data.ourSolutions.map(s => (
+            <Card key={s.title} className="p-7">
+              <h3 className="mb-2 font-display text-card-title text-text">{s.title}</h3>
+              <p className="text-text2">{s.desc}</p>
+            </Card>
+          ))}
         </div>
-      </section>
+      </Section>
 
       {/* Core Features */}
-      <section className="section section-alt">
-        <div className="container">
-          <div className="text-center mb-10 max-w-2xl mx-auto">
-            <span className="eyebrow">Core Features</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold my-4">What&apos;s Included</h2>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-3 max-w-3xl mx-auto">
-            {data.coreFeatures.map(f => (
-              <div key={f} className="flex gap-2.5 items-start text-[14px]">
-                <Check className="w-4 h-4 text-green-500 shrink-0 mt-0.5" /> {f}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <Section tone="alt">
+        <SectionHeading align="center" eyebrow="Core Features" title="What's Included" />
+        <ul className="mx-auto mt-12 grid max-w-3xl gap-3 sm:grid-cols-2">
+          {data.coreFeatures.map(f => (
+            <li key={f} className="flex items-start gap-2.5 text-text">
+              <Check className="mt-0.5 h-4 w-4 shrink-0 text-gold-text" aria-hidden /> {f}
+            </li>
+          ))}
+        </ul>
+      </Section>
 
       {/* Benefits */}
-      <section className="section">
-        <div className="container">
-          <div className="text-center mb-10 max-w-2xl mx-auto">
-            <span className="eyebrow">Benefits</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold my-4">What Changes For Your Business</h2>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-6">
-            {data.benefits.map(b => (
-              <div key={b.title} className="card-premium p-7">
-                <h3 className="font-bold text-lg mb-2">{b.title}</h3>
-                <p className="text-text2 text-sm leading-[1.7]">{b.desc}</p>
-              </div>
-            ))}
-          </div>
+      <Section>
+        <SectionHeading align="center" eyebrow="Benefits" title="What Changes For Your Business" />
+        <div className="mt-12 grid gap-6 sm:grid-cols-2">
+          {data.benefits.map(b => (
+            <Card key={b.title} className="p-7">
+              <h3 className="mb-2 font-display text-card-title text-text">{b.title}</h3>
+              <p className="text-text2">{b.desc}</p>
+            </Card>
+          ))}
         </div>
-      </section>
+      </Section>
 
       {/* Services */}
       {relatedServices.length > 0 && (
-        <section className="section section-alt">
-          <div className="container">
-            <div className="text-center mb-10 max-w-2xl mx-auto">
-              <span className="eyebrow">Services</span>
-              <h2 className="text-3xl md:text-4xl font-extrabold my-4">Software Development Services</h2>
-            </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {relatedServices.map(s => (
-                <Link key={s.slug} href={`/services/${s.slug}`} className="card-base p-6 block hover:shadow-card-hover transition-all">
-                  <div className="w-10 h-10 rounded-xl grid place-items-center mb-4" style={{ background: `${s.color}18`, color: s.color }}>
-                    <Icon name={s.icon} className="w-5 h-5" />
-                  </div>
-                  <h3 className="font-bold text-sm mb-1.5">{s.name}</h3>
-                  <p className="text-text2 text-[12.5px] leading-[1.6] line-clamp-2">{s.description}</p>
-                </Link>
-              ))}
-            </div>
+        <Section tone="alt">
+          <SectionHeading align="center" eyebrow="Services" title="Software Development Services" />
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {relatedServices.map(s => (
+              <Card key={s.slug} interactive className="relative p-6">
+                <div className="mb-4 grid h-11 w-11 place-items-center rounded-btn" style={{ background: `${s.color}18`, color: s.color }}>
+                  <Icon name={s.icon} className="h-5 w-5" />
+                </div>
+                <h3 className="font-display text-card-title text-text">
+                  <Link href={`/services/${s.slug}`} className="rounded-btn after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">{s.name}</Link>
+                </h3>
+                <p className="mt-2 line-clamp-2 text-text2">{s.description}</p>
+              </Card>
+            ))}
           </div>
-        </section>
+        </Section>
       )}
 
       {/* Tech stack */}
-      <section className="section">
-        <div className="container text-center">
-          <span className="eyebrow">Technology</span>
-          <h2 className="text-2xl md:text-3xl font-extrabold my-4">Built With</h2>
-          <div className="flex flex-wrap gap-2.5 justify-center max-w-2xl mx-auto">
-            {TECH_STACK.map(t => (
-              <span key={t} className="text-[13px] font-medium px-3.5 py-1.5 rounded-full" style={{ background: 'rgba(200,168,112,0.08)', color: '#a3814f', border: '1px solid rgba(200,168,112,0.2)' }}>
-                {t}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
+      <Section containerClassName="container text-center">
+        <SectionHeading align="center" eyebrow="Technology" title="Built With" />
+        <ul className="mx-auto mt-8 flex max-w-2xl flex-wrap justify-center gap-2.5">
+          {TECH_STACK.map(t => (
+            <li key={t} className="rounded-full border border-line bg-card px-3.5 py-1.5 text-sm font-medium text-gold-text">{t}</li>
+          ))}
+        </ul>
+      </Section>
 
       {/* Process */}
-      <section className="section section-alt">
-        <div className="container">
-          <div className="text-center mb-10">
-            <span className="eyebrow">Development Process</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold my-4">Our Standard Delivery Process</h2>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
-            {processSteps.map(s => (
-              <div key={s.num} className="card-premium p-5">
-                <div className="w-9 h-9 rounded-full grid place-items-center mb-4 font-bold text-[12px]" style={{ background: 'rgba(200,168,112,0.1)', border: '1px solid rgba(200,168,112,0.22)', color: '#a3814f' }}>
+      <Section tone="alt">
+        <SectionHeading align="center" eyebrow="Development Process" title="Our Standard Delivery Process" />
+        <ol className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {processSteps.map(s => (
+            <li key={s.num}>
+              <Card className="h-full p-5">
+                <span className="mb-4 grid h-11 w-11 place-items-center rounded-full border border-gold bg-card font-display text-sm font-semibold text-gold-text">
                   {s.num}
-                </div>
-                <h3 className="font-bold text-sm mb-1.5">{s.title}</h3>
-                <p className="text-text2 text-[12.5px] leading-[1.6]">{s.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+                </span>
+                <h3 className="font-display text-card-title text-text">{s.title}</h3>
+                <p className="mt-1.5 text-text2">{s.desc}</p>
+              </Card>
+            </li>
+          ))}
+        </ol>
+      </Section>
 
       {/* Case study */}
       {caseStudy && (
-        <section className="section">
-          <div className="container">
-            <div className="text-center mb-10 max-w-2xl mx-auto">
-              <span className="eyebrow">Proven Work</span>
-              <h2 className="text-3xl md:text-4xl font-extrabold my-4">A Real System We&apos;ve Built</h2>
-            </div>
-            <Link href={`/projects/${caseStudy.slug}`} className="card-premium p-8 block hover:shadow-card-hover transition-all group max-w-3xl mx-auto">
-              <div className="text-[11px] font-bold tracking-widest uppercase mb-2" style={{ color: '#a3814f' }}>{caseStudy.businessCategory}</div>
-              <h3 className="text-2xl font-black mb-3">{caseStudy.name}</h3>
-              <p className="text-text2 text-sm mb-4">{caseStudy.overview}</p>
-              <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
-                Read the case study <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-              </span>
+        <Section>
+          <SectionHeading align="center" eyebrow="Proven Work" title="A Real System We've Built" />
+          <Card interactive className="group relative mx-auto mt-12 max-w-3xl p-8">
+            <p className="eyebrow mb-2">{caseStudy.businessCategory}</p>
+            <h3 className="mb-3 font-display text-card-title text-text">{caseStudy.name}</h3>
+            <p className="mb-4 text-text2">{caseStudy.overview}</p>
+            <Link href={`/projects/${caseStudy.slug}`} className="inline-flex min-h-[44px] items-center gap-1.5 rounded-btn font-semibold text-gold-text after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">
+              Read the case study <ArrowUpRight className="h-4 w-4 transition-transform duration-base group-hover:translate-x-0.5 motion-reduce:transition-none" aria-hidden />
             </Link>
-          </div>
-        </section>
+          </Card>
+        </Section>
       )}
 
       {/* FAQ */}
-      <section className={`section ${caseStudy ? 'section-alt' : ''}`}>
-        <div className="container max-w-3xl">
-          <div className="text-center mb-10">
-            <span className="eyebrow">FAQ</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold my-4">Common Questions</h2>
-          </div>
-          <div className="space-y-5">
-            {data.faq.map(f => (
-              <div key={f.q} className="card-base p-6">
-                <div className="font-bold text-sm mb-2">{f.q}</div>
-                <div className="text-text2 text-[13.5px] leading-[1.7]">{f.a}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <Section tone={caseStudy ? 'alt' : 'base'} containerClassName="container max-w-3xl">
+        <SectionHeading align="center" eyebrow="FAQ" title="Common Questions" />
+        <Accordion
+          className="mt-12"
+          items={data.faq.map((f, i) => ({ id: `faq-${i}`, question: f.q, answer: f.a }))}
+        />
+      </Section>
 
       {/* Direct CTA row */}
-      <section className="section">
-        <div className="container text-center">
-          <span className="eyebrow">Get Started</span>
-          <h2 className="text-3xl md:text-4xl font-extrabold my-4">Ready to Build Your {data.industryName} System?</h2>
-          <div className="flex flex-wrap gap-3 justify-center mt-8">
-            <Link href="/book-demo" className="btn btn-primary">
-              Get Free Project Consultation <ArrowRight className="w-4 h-4" />
-            </Link>
-            <Link href="/contact" className="btn btn-ghost">
-              Talk to a Software Expert
-            </Link>
-            <a
-              href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Hi KVL, I'm reaching out about a ${data.industryName} project.`)}`}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-[14px] text-white transition-all hover:scale-[1.02]"
-              style={{ background: 'linear-gradient(135deg,#25d366,#128c7e)' }}
-            >
-              <MessageCircle className="w-4 h-4" /> WhatsApp Us
-            </a>
-          </div>
+      <Section containerClassName="container text-center">
+        <SectionHeading align="center" eyebrow="Get Started" title={`Ready to Build Your ${data.industryName} System?`} />
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <Button href="/book-demo" size="lg">
+            Get Free Project Consultation <ArrowRight className="h-4 w-4" aria-hidden />
+          </Button>
+          <Button href="/contact" variant="secondary" size="lg">
+            Talk to a Software Expert
+          </Button>
+          <a
+            href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Hi KVL, I'm reaching out about a ${data.industryName} project.`)}`}
+            target="_blank"
+            rel="noreferrer"
+            className={buttonStyles('secondary', 'lg')}
+          >
+            <MessageCircle className="h-4 w-4" aria-hidden /> WhatsApp Us
+          </a>
         </div>
-      </section>
+      </Section>
 
       <CtaBanner
         title={`Need Software Built for ${data.industryName}?`}

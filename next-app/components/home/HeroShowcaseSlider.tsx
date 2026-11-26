@@ -1,246 +1,170 @@
 'use client';
-import { useCallback, useEffect, useState } from 'react';
-import Link from 'next/link';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import type { LucideIcon } from 'lucide-react';
-import {
-  ChevronLeft, ChevronRight,
-  Box, CheckCircle2, Globe, TrendingUp, Building2, Code2, Handshake, Receipt, Network, Boxes,
-  Satellite, GraduationCap, Stethoscope, HardHat, Wrench, BadgeIndianRupee, Fingerprint, Brain,
-  UtensilsCrossed, Hotel, Radar, BarChart3, Map, ShieldCheck, Locate, MapPin, ShieldAlert, Users,
-  CalendarCheck, Truck,
-} from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { Software } from '@/lib/data/software';
 import { caseStudies } from '@/lib/data/case-studies';
-
-// Icons reachable via the slide's `icon` field (case-study icon or a software
-// product's icon) or a case study's `keyFeatures[].icon` — every value that
-// currently appears across lib/data/case-studies.ts and lib/data/software.ts.
-const ICON_MAP: Record<string, LucideIcon> = {
-  Box, CheckCircle2, Globe, TrendingUp, Building2, Code2, Handshake, Receipt, Network, Boxes,
-  Satellite, GraduationCap, Stethoscope, HardHat, Wrench, BadgeIndianRupee, Fingerprint, Brain,
-  UtensilsCrossed, Hotel, Radar, BarChart3, Map, ShieldCheck, Locate, MapPin, ShieldAlert, Users,
-  CalendarCheck, Truck,
-};
+import { Button } from '@/components/ui/Button';
 
 const shortLabel = (name: string) =>
   name.replace(/ Software$/, '').replace(/ Management$/, '').replace(/ System$/, '');
 
-// Rotating VFX accent per slide — picked deterministically from the slide
-// index (not Math.random()) so the first-render color matches on the server
-// and client and doesn't cause a hydration mismatch.
-const GLOW_COLORS = ['#c8a870', '#10b981', '#3b82f6', '#f43f5e', '#8b5cf6', '#f59e0b'];
+type Slide = {
+  key: string; name: string; image: string; category: string; addressBar: string;
+  kind: 'live' | 'software'; detailHref: string; demoHref: string; demoExternal: boolean;
+};
 
-const liveSlides = caseStudies.map(c => ({
-  kind: 'live' as const,
+const liveSlides: Slide[] = caseStudies.map(c => ({
+  kind: 'live',
   key: c.slug,
   name: c.name,
   image: c.images.hero,
   category: c.industry,
   addressBar: c.url.replace(/^https?:\/\//, ''),
-  icon: 'Globe',
-  features: c.keyFeatures.slice(0, 3).map(f => ({ title: f.title, icon: f.icon as string | null })),
   detailHref: `/projects/${c.slug}`,
   demoHref: c.url,
   demoExternal: true,
 }));
 
-// Software slides come from the live, admin-editable catalog (fetched below) —
-// not the static file — so a price/name/image edit in Admin → Products shows
-// up here too.
-function buildSoftwareSlides(products: Software[]) {
-  return products.map(p => ({
-    kind: 'software' as const,
+// Software slides come from the live, admin-editable catalog, not the static file.
+const buildSoftwareSlides = (products: Software[]): Slide[] =>
+  products.map(p => ({
+    kind: 'software',
     key: p.slug,
     name: shortLabel(p.name),
     image: p.image,
     category: p.category,
     addressBar: `kvlbusinesssolutions.com/software/${p.slug}`,
-    icon: p.icon,
-    features: p.features.slice(0, 3).map(title => ({ title, icon: null as string | null })),
     detailHref: `/software/${p.slug}`,
     demoHref: `/software/${p.slug}/demo`,
     demoExternal: false,
   }));
-}
 
 export function HeroShowcaseSlider({ products }: { products: Software[] }) {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
   const [paused, setPaused] = useState(false);
+  const thumbs = useRef<(HTMLButtonElement | null)[]>([]);
+  const strip = useRef<HTMLDivElement>(null);
+  const startX = useRef<number | null>(null);
 
   const slides = [...liveSlides, ...buildSoftwareSlides(products)];
-  const total = slides?.length || 0;
+  const total = slides.length;
 
-  const go = useCallback((dir: 1 | -1) => { setDirection(dir); setIndex(i => (i + dir + total) % total); }, [total]);
+  const goTo = useCallback((i: number, dir?: 1 | -1) => {
+    setDirection(dir ?? (i >= index ? 1 : -1));
+    setIndex(((i % total) + total) % total);
+  }, [index, total]);
+  const step = (d: 1 | -1) => goTo(index + d, d);
 
+  // Keep the active thumbnail in view by scrolling the strip itself (never the page).
   useEffect(() => {
-    if (!total || paused || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const t = setInterval(() => { setDirection(1); setIndex(i => (i + 1) % total); }, 4500);
-    return () => clearInterval(t);
-  }, [paused, total]);
+    const el = thumbs.current[index], box = strip.current;
+    if (!el || !box) return;
+    box.scrollTo({ left: el.offsetLeft - (box.clientWidth - el.clientWidth) / 2, behavior: 'smooth' });
+  }, [index]);
 
-  if (slides.length === 0) return null;
+  if (total === 0) return null;
   const slide = slides[index];
-  const FooterIcon = ICON_MAP[slide.icon] || Box;
-  const glowA = GLOW_COLORS[index % GLOW_COLORS.length];
-  const glowB = GLOW_COLORS[(index + 3) % GLOW_COLORS.length];
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); step(1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); step(-1); }
+  };
 
   return (
     <div
-      className="relative w-full max-w-[440px] mx-auto"
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="Featured products"
+      tabIndex={0}
+      onKeyDown={onKeyDown}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
+      className="relative mx-auto w-full max-w-[520px] rounded-panel focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
     >
-      {/* VFX glow — two blurred blobs drifting behind the card, recolored per
-          slide and transitioning smoothly (CSS-only, no animation library —
-          keeps this section's JS payload small). */}
-      <div className="absolute -inset-10 pointer-events-none" aria-hidden>
-        <div
-          key={`glowA-${index}`}
-          className="absolute top-0 left-1/4 w-56 h-56 rounded-full hero-slider-glow-a"
-          style={{
-            background: glowA,
-            filter: 'blur(60px)',
-            opacity: 0.55,
-            transition: 'background 0.7s ease',
-          }}
-        />
-        <div
-          key={`glowB-${index}`}
-          className="absolute bottom-0 right-1/4 w-64 h-64 rounded-full hero-slider-glow-b"
-          style={{
-            background: glowB,
-            filter: 'blur(70px)',
-            opacity: 0.45,
-            transition: 'background 0.7s ease',
-          }}
-        />
-      </div>
-
       <div
         key={`card-${slide.key}`}
-        className={`relative rounded-3xl overflow-hidden ${direction === 1 ? 'hero-slider-slide-in-right' : 'hero-slider-slide-in-left'}`}
-        style={{
-          background: 'rgb(var(--bg-2))',
-          border: '1px solid rgba(var(--border) / 0.08)',
-          boxShadow: '0 30px 70px rgba(0,0,0,0.10)',
+        aria-live="polite"
+        style={{ touchAction: 'pan-y' }}
+        onPointerDown={e => { startX.current = e.clientX; }}
+        onPointerUp={e => {
+          if (startX.current === null) return;
+          const dx = e.clientX - startX.current;
+          startX.current = null;
+          if (Math.abs(dx) > 40) step(dx < 0 ? 1 : -1);
         }}
+        className={`overflow-hidden rounded-panel border border-line bg-card shadow-soft-3 ${direction === 1 ? 'hero-slider-slide-in-right' : 'hero-slider-slide-in-left'}`}
       >
         {/* Browser chrome */}
-        <div className="flex items-center gap-2 px-4 py-3" style={{ borderBottom: '1px solid rgba(var(--border) / 0.08)' }}>
-          <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: '#f04f4f' }} />
-          <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: '#f0b429' }} />
-          <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: '#27c93f' }} />
-          <span className="ml-2 flex-1 truncate text-[11px]" style={{ color: 'rgba(var(--text) / 0.4)' }}>{slide.addressBar}</span>
-          <span className="text-[10px] font-bold px-2 py-1 rounded-full shrink-0 whitespace-nowrap" style={{ background: 'rgba(var(--text) / 0.06)', color: 'rgba(var(--text) / 0.55)' }}>
+        <div className="flex items-center gap-2 border-b border-line px-4 py-3">
+          <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#f04f4f]" />
+          <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#f0b429]" />
+          <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#27c93f]" />
+          <span className="ml-2 flex-1 truncate text-xs text-text2">{slide.addressBar}</span>
+          <span className="shrink-0 whitespace-nowrap rounded-full bg-text/5 px-2.5 py-1 text-[11px] font-semibold text-text2">
             {slide.kind === 'live' ? 'Live Product' : '7-Day Free Trial'}
           </span>
         </div>
 
-        {/* Screenshot */}
-        <div className="relative aspect-[16/10]" style={{ background: '#0a0a0a' }}>
-          <Image src={slide.image} alt={`${slide.name} — screenshot of the live product interface`} fill sizes="440px" className="object-contain" />
-          <span
-            className="absolute bottom-3 left-3 text-[10px] font-bold px-2.5 py-1 rounded-full"
-            style={{ background: 'rgba(0,0,0,0.55)', color: '#fff', backdropFilter: 'blur(4px)' }}
-          >
-            {slide.category}
-          </span>
+        {/* Real product screenshot */}
+        <div className="relative aspect-[16/10] bg-[#0a0a0a]">
+          <Image src={slide.image} alt={`${slide.name} — screenshot of the live product interface`} fill sizes="520px" className="object-contain" priority={index === 0} />
         </div>
 
-        <div className="p-5">
-          {/* CTA buttons */}
-          <div className="flex gap-2.5 mb-5">
-            <Link
-              href={slide.detailHref}
-              className="flex-1 text-center py-2.5 rounded-xl text-[13px] font-bold"
-              style={{ background: '#0a0a0a', color: '#fff' }}
+        <div className="flex items-center justify-between gap-3 p-4">
+          <div className="min-w-0">
+            <div className="truncate font-display text-base font-semibold text-text">{slide.name}</div>
+            <div className="truncate text-xs text-text2">{slide.category}</div>
+          </div>
+          <div className="flex shrink-0 gap-2">
+            <Button href={slide.detailHref} size="md" className="!min-h-[44px] !px-4 !text-sm">Get Started</Button>
+            <Button
+              href={slide.demoHref}
+              variant="secondary"
+              className="!min-h-[44px] !px-4 !text-sm"
+              {...(slide.demoExternal ? { target: '_blank', rel: 'noreferrer' } : {})}
             >
-              Get Started
-            </Link>
-            {slide.demoExternal ? (
-              <a
-                href={slide.demoHref}
-                target="_blank"
-                rel="noreferrer"
-                className="flex-1 text-center py-2.5 rounded-xl text-[13px] font-semibold border"
-                style={{ borderColor: 'rgba(var(--border) / 0.15)', color: 'rgb(var(--text))' }}
-              >
-                View Demo
-              </a>
-            ) : (
-              <Link
-                href={slide.demoHref}
-                className="flex-1 text-center py-2.5 rounded-xl text-[13px] font-semibold border"
-                style={{ borderColor: 'rgba(var(--border) / 0.15)', color: 'rgb(var(--text))' }}
-              >
-                View Demo
-              </Link>
-            )}
+              View Demo
+            </Button>
           </div>
+        </div>
 
-          {/* Feature row */}
-          <div className="grid grid-cols-3 gap-2 mb-5">
-            {slide.features.map((f, i) => {
-              const FeatureIcon = f.icon ? (ICON_MAP[f.icon] || CheckCircle2) : CheckCircle2;
-              return (
-                <div key={i} className="rounded-xl p-2.5 text-center" style={{ background: 'rgba(var(--text) / 0.03)' }}>
-                  <FeatureIcon className="w-4 h-4 mx-auto mb-1.5" style={{ color: '#c8a870' }} />
-                  <div className="text-[10.5px] font-medium leading-tight truncate" style={{ color: 'rgb(var(--text-2))' }}>{f.title}</div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Footer */}
-          <div className="flex items-center justify-between pt-4" style={{ borderTop: '1px solid rgba(var(--border) / 0.08)' }}>
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="w-7 h-7 rounded-lg grid place-items-center shrink-0" style={{ background: 'rgba(200,168,112,0.10)' }}>
-                <FooterIcon className="w-3.5 h-3.5" style={{ color: '#c8a870' }} />
-              </span>
-              <span className="text-[13px] font-bold truncate" style={{ color: 'rgb(var(--text))' }}>{slide.name}</span>
-            </div>
-            {slide.kind === 'live' && (
-              <span className="flex items-center gap-1.5 text-[11px] font-semibold shrink-0" style={{ color: '#16a34a' }}>
-                <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'currentColor' }} /> Live website
-              </span>
-            )}
-          </div>
+        {/* Progress bar — its animationend advances the slide. */}
+        <div className="h-1 bg-text/10">
+          <div
+            key={`bar-${index}`}
+            className="kvl-progress-bar h-full bg-gold"
+            style={{ animationPlayState: paused ? 'paused' : 'running' }}
+            onAnimationEnd={() => step(1)}
+          />
         </div>
       </div>
 
       {/* Arrows */}
-      <button
-        aria-label="Previous product"
-        onClick={() => go(-1)}
-        className="absolute left-0 top-[38%] -translate-y-1/2 -translate-x-4 w-10 h-10 rounded-full grid place-items-center"
-        style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.1)', boxShadow: '0 6px 18px rgba(0,0,0,0.12)' }}
-      >
-        <ChevronLeft className="w-4 h-4" style={{ color: 'rgb(var(--text))' }} />
+      <button aria-label="Previous product" onClick={() => step(-1)}
+        className="absolute left-0 top-[38%] grid h-11 w-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-line bg-card shadow-soft-2 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">
+        <ChevronLeft className="h-4 w-4 text-text" aria-hidden />
       </button>
-      <button
-        aria-label="Next product"
-        onClick={() => go(1)}
-        className="absolute right-0 top-[38%] -translate-y-1/2 translate-x-4 w-10 h-10 rounded-full grid place-items-center"
-        style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.1)', boxShadow: '0 6px 18px rgba(0,0,0,0.12)' }}
-      >
-        <ChevronRight className="w-4 h-4" style={{ color: 'rgb(var(--text))' }} />
+      <button aria-label="Next product" onClick={() => step(1)}
+        className="absolute right-0 top-[38%] grid h-11 w-11 -translate-y-1/2 translate-x-1/2 place-items-center rounded-full border border-line bg-card shadow-soft-2 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">
+        <ChevronRight className="h-4 w-4 text-text" aria-hidden />
       </button>
 
-      {/* Dots — visual bar stays thin, button padding expands the tap target */}
-      <div className="flex flex-wrap justify-center gap-1.5 mt-5">
+      {/* Thumbnails */}
+      <div ref={strip} className="mt-4 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
         {slides.map((s, i) => (
           <button
             key={s.key}
-            aria-label={`Go to ${s.name}`}
-            onClick={() => { setDirection(i > index ? 1 : -1); setIndex(i); }}
-            className="py-2.5 px-0.5 grid place-items-center"
+            ref={el => { thumbs.current[i] = el; }}
+            aria-label={`Show ${s.name}`}
+            aria-current={i === index}
+            onClick={() => goTo(i)}
+            className={`relative h-11 w-[72px] shrink-0 overflow-hidden rounded-xl border-2 bg-[#0a0a0a] transition-[opacity,border-color] duration-base focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)] ${i === index ? 'border-gold opacity-100' : 'border-transparent opacity-60 hover:opacity-100'}`}
           >
-            <span
-              className="block rounded-full transition-all duration-300"
-              style={{ width: i === index ? 16 : 6, height: 6, background: i === index ? '#c8a870' : 'rgba(var(--text) / 0.15)' }}
-            />
+            <Image src={s.image} alt="" fill sizes="72px" className="object-cover" />
           </button>
         ))}
       </div>

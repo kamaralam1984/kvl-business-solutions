@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Search, ArrowUpRight } from 'lucide-react';
 import type { CaseStudy } from '@/lib/data/case-studies';
+import { Card, Badge, StateMessage, cn } from '@/components/ui';
 
 export function ProjectFilterBar({ studies }: { studies: CaseStudy[] }) {
   const [query, setQuery]         = useState('');
@@ -30,13 +31,14 @@ export function ProjectFilterBar({ studies }: { studies: CaseStudy[] }) {
     <>
       <div className="flex flex-col md:flex-row gap-4 md:items-center md:justify-between mb-10">
         <div className="relative w-full md:max-w-xs">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-text2" />
+          <Search aria-hidden className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text2" />
           <input
-            type="text"
+            type="search"
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder="Search projects..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm card-base focus:outline-none"
+            aria-label="Search projects"
+            className="min-h-[44px] w-full rounded-btn border border-line bg-card pl-10 pr-4 text-sm text-text placeholder:text-text3 transition-shadow duration-base focus-visible:border-gold focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
           />
         </div>
 
@@ -56,37 +58,37 @@ export function ProjectFilterBar({ studies }: { studies: CaseStudy[] }) {
       </div>
 
       {filtered.length === 0 ? (
-        <p className="text-center text-text2 py-16">No projects match those filters.</p>
+        <StateMessage title="No projects match those filters" description="Try a different industry or technology, or clear the search." />
       ) : (
         <div className="grid md:grid-cols-2 gap-6">
           {filtered.map(s => (
-            <Link key={s.slug} href={`/projects/${s.slug}`} className="card-premium overflow-hidden group block">
-              <div className="relative overflow-hidden aspect-[16/10]" style={{ background: '#0a0a0a' }}>
+            <Link key={s.slug} href={`/projects/${s.slug}`} className="group block rounded-card focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">
+             <Card interactive className="h-full overflow-hidden">
+              {/* Real product screenshot: dark frame is allowed in both themes */}
+              <div className="relative aspect-[16/10] overflow-hidden bg-[#0a0a0a]">
                 <Image
                   src={s.images.hero}
                   alt={`${s.name} preview`}
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-contain transition-transform duration-700 group-hover:scale-105"
+                  className="object-contain transition-transform duration-slow group-hover:scale-105 motion-reduce:transition-none"
                 />
-                <span className="absolute top-3 left-4 text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full"
-                  style={{ background: 'rgba(34,197,94,0.12)', color: '#16a34a', border: '1px solid rgba(34,197,94,0.3)', backdropFilter: 'blur(6px)' }}>
-                  Live
-                </span>
+                <Badge className="absolute left-4 top-3 border-green-500/30 bg-green-500/15 text-xs uppercase tracking-wider text-green-600 backdrop-blur dark:text-green-400">Live</Badge>
               </div>
               <div className="p-7">
                 <div className="flex flex-wrap gap-2 mb-3">
-                  <span className="text-[10px] font-bold tracking-widest uppercase" style={{ color: '#a3814f' }}>{s.industry}</span>
-                  <span className="text-[10px] text-text2">·</span>
-                  <span className="text-[10px] font-bold tracking-widest uppercase text-text2">{s.businessCategory}</span>
+                  <span className="text-xs font-bold uppercase tracking-widest text-gold-text">{s.industry}</span>
+                  <span aria-hidden className="text-xs text-text2">·</span>
+                  <span className="text-xs font-bold uppercase tracking-widest text-text2">{s.businessCategory}</span>
                 </div>
-                <h3 className="font-display font-bold text-lg mb-2">{s.name}</h3>
+                <h3 className="mb-2 font-display text-card-title text-text">{s.name}</h3>
                 <p className="text-text2 text-sm mb-5 line-clamp-2">{s.overview}</p>
-                <div className="flex items-center justify-between pt-4 border-t border-tint">
-                  <span className="text-[13px] font-semibold" style={{ color: '#c8a870' }}>View Case Study</span>
-                  <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200" style={{ color: '#c8a870' }} />
+                <div className="flex items-center justify-between border-t border-line pt-4">
+                  <span className="text-sm font-semibold text-gold-text">View Case Study</span>
+                  <ArrowUpRight aria-hidden className="h-4 w-4 text-gold-text transition-transform duration-base group-hover:-translate-y-0.5 group-hover:translate-x-0.5 motion-reduce:transition-none" />
                 </div>
               </div>
+             </Card>
             </Link>
           ))}
         </div>
@@ -98,11 +100,14 @@ export function ProjectFilterBar({ studies }: { studies: CaseStudy[] }) {
 function FilterChip({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
   return (
     <button
+      type="button"
       onClick={onClick}
-      className="text-xs font-semibold px-3.5 py-1.5 rounded-full border transition-colors duration-200"
-      style={active
-        ? { background: '#c8a870', borderColor: '#c8a870', color: '#0a0a0a' }
-        : { background: 'transparent', borderColor: 'rgba(var(--border) / 0.15)', color: 'rgb(var(--text-2))' }}
+      aria-pressed={active}
+      className={cn(
+        'min-h-[44px] rounded-full border px-4 text-xs font-semibold transition-colors duration-base',
+        'focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]',
+        active ? 'border-gold bg-gold text-[#080910]' : 'border-line bg-transparent text-text2 hover:border-gold hover:text-text',
+      )}
     >
       {label}
     </button>

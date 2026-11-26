@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { LucideIcon } from 'lucide-react';
 import { getLiveSoftwareProduct, getLiveSoftwareProducts } from '@/lib/data/live-software';
+import { Button, Card, Panel, Section } from '@/components/ui';
 import { PageHero } from '@/components/shared/PageHero';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { ReviewsSection } from '@/components/widgets/ReviewsSection';
@@ -124,137 +125,140 @@ export default async function ProductPage({ params }: { params: { slug: string }
       />
 
       {product.image && (
-        <section className="section pb-0">
-          <div className="container">
-            <div className="relative rounded-3xl overflow-hidden" style={{ height: 320 }}>
-              <Image
-                src={product.image}
-                alt={product.name}
-                fill
-                sizes="(min-width: 1024px) 1100px, 100vw"
-                style={{ objectFit: 'cover' }}
-                priority
-              />
-              <div
-                className="absolute inset-0"
-                style={{ background: `linear-gradient(100deg, ${product.c1}e6 0%, ${product.c2}99 42%, transparent 78%)` }}
-              />
-              <div className="absolute inset-0 flex flex-col justify-end p-7 md:p-10">
-                <div className="flex flex-wrap gap-2">
-                  {product.tag && (
-                    <span className="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full text-white" style={{ background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(6px)' }}>
-                      {product.tag}
-                    </span>
-                  )}
-                  <span className="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full text-white" style={{ background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(6px)' }}>
-                    {product.category}
+        <Section className="!pb-0">
+          <div className="relative h-80 overflow-hidden rounded-panel shadow-soft-2">
+            <Image
+              src={product.image}
+              alt={product.name}
+              fill
+              sizes="(min-width: 1024px) 1100px, 100vw"
+              className="object-cover"
+              priority
+            />
+            <div
+              className="absolute inset-0"
+              style={{ background: `linear-gradient(100deg, ${product.c1}e6 0%, ${product.c2}99 42%, transparent 78%)` }}
+            />
+            <div className="absolute inset-0 flex flex-col justify-end p-7 md:p-10">
+              <div className="flex flex-wrap gap-2">
+                {product.tag && (
+                  <span className="rounded-full bg-white/20 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white backdrop-blur-sm">
+                    {product.tag}
                   </span>
-                </div>
+                )}
+                <span className="rounded-full bg-white/20 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white backdrop-blur-sm">
+                  {product.category}
+                </span>
               </div>
             </div>
           </div>
-        </section>
+        </Section>
       )}
 
-      <section className="section">
-        <div className="container grid lg:grid-cols-[2fr_1fr] gap-8">
-          <div className="space-y-8">
-            {product.benefits.length > 0 && (
-              <div className="card-base p-7">
-                <h2 className="text-xl font-bold mb-1">Why this helps your business</h2>
-                <p className="text-text2 text-sm mb-5">Not just features — real, measurable impact on how you operate day to day.</p>
-                <div className="grid sm:grid-cols-3 gap-4">
-                  {product.benefits.map(b => {
-                    const BenefitIcon = ICON_MAP[b.icon] || Zap;
-                    return (
-                      <div key={b.title} className="p-4 rounded-xl" style={{ background: 'rgba(var(--text) / 0.03)' }}>
-                        <div
-                          className="w-9 h-9 rounded-lg grid place-items-center mb-3"
-                          style={{ background: `linear-gradient(135deg, ${product.c1}, ${product.c2})` }}
-                        >
-                          <BenefitIcon className="w-[18px] h-[18px] text-white" />
-                        </div>
-                        <div className="font-bold text-sm mb-1">{b.title}</div>
-                        <div className="text-xs text-text2 leading-relaxed">{b.desc}</div>
+      <Section containerClassName="grid gap-8 lg:grid-cols-[2fr_1fr]">
+        <div className="space-y-8">
+          {product.benefits.length > 0 && (
+            <Card className="p-7">
+              <h2 className="mb-1 font-display text-card-title text-text">Why this helps your business</h2>
+              <p className="mb-5 text-text2">Not just features — real, measurable impact on how you operate day to day.</p>
+              <div className="grid gap-4 sm:grid-cols-3">
+                {product.benefits.map(b => {
+                  const BenefitIcon = ICON_MAP[b.icon] || Zap;
+                  return (
+                    <div key={b.title} className="rounded-btn bg-bg2 p-4">
+                      <div
+                        className="mb-3 grid h-10 w-10 place-items-center rounded-btn"
+                        style={{ background: `linear-gradient(135deg, ${product.c1}, ${product.c2})` }}
+                      >
+                        <BenefitIcon className="h-5 w-5 text-white" aria-hidden />
                       </div>
-                    );
-                  })}
+                      <div className="mb-1 font-bold text-text">{b.title}</div>
+                      <div className="text-sm leading-relaxed text-text2">{b.desc}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </Card>
+          )}
+
+          <Card className="p-7">
+            <h2 className="mb-4 font-display text-card-title text-text">Key Features</h2>
+            <ul className="grid gap-3 sm:grid-cols-2">
+              {product.features.map(f => (
+                <li key={f} className="flex items-start gap-2"><Check className="mt-0.5 h-5 w-5 shrink-0 text-gold-text" aria-hidden /> <span className="text-text2">{f}</span></li>
+              ))}
+            </ul>
+          </Card>
+
+          <Card className="p-7">
+            <h2 className="mb-4 font-display text-card-title text-text">What&apos;s included</h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {[
+                { Icon: Cloud, t: 'Free installation', d: 'Our team deploys it for you within 24 hours.' },
+                { Icon: Headphones, t: '1-year support', d: 'Email, chat & phone support included.' },
+                { Icon: RefreshCcw, t: 'Free updates', d: 'Get all new features for 12 months.' },
+                { Icon: Award, t: '30-day refund', d: 'Not happy? Get a full refund.' },
+              ].map(({ Icon, t, d }) => (
+                <div key={t} className="flex gap-3">
+                  <Icon className="h-5 w-5 shrink-0 text-gold-text" aria-hidden />
+                  <div><div className="font-semibold text-text">{t}</div><div className="text-sm text-text2">{d}</div></div>
                 </div>
-              </div>
-            )}
-
-            <div className="card-base p-7">
-              <h2 className="text-xl font-bold mb-4">Key Features</h2>
-              <ul className="grid sm:grid-cols-2 gap-3">
-                {product.features.map(f => (
-                  <li key={f} className="flex gap-2 items-start"><Check className="w-5 h-5 text-green-500 shrink-0 mt-0.5" /> <span className="text-sm">{f}</span></li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="card-base p-7">
-              <h2 className="text-xl font-bold mb-4">What&apos;s included</h2>
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div className="flex gap-3"><Cloud className="w-5 h-5 text-primary shrink-0" /><div><div className="font-semibold text-sm">Free installation</div><div className="text-xs text-text2">Our team deploys it for you within 24 hours.</div></div></div>
-                <div className="flex gap-3"><Headphones className="w-5 h-5 text-primary shrink-0" /><div><div className="font-semibold text-sm">1-year support</div><div className="text-xs text-text2">Email, chat & phone support included.</div></div></div>
-                <div className="flex gap-3"><RefreshCcw className="w-5 h-5 text-primary shrink-0" /><div><div className="font-semibold text-sm">Free updates</div><div className="text-xs text-text2">Get all new features for 12 months.</div></div></div>
-                <div className="flex gap-3"><Award className="w-5 h-5 text-primary shrink-0" /><div><div className="font-semibold text-sm">30-day refund</div><div className="text-xs text-text2">Not happy? Get a full refund.</div></div></div>
-              </div>
-            </div>
-
-            <ReviewsSection productSlug={product.slug} productName={product.name} />
-
-            <div className="card-base p-7">
-              <h2 className="text-xl font-bold mb-4">Frequently asked</h2>
-              <div className="space-y-4 text-sm">
-                <div><div className="font-semibold">Is GST invoice provided?</div><div className="text-text2">Yes, you&apos;ll receive a GST-compliant invoice (18% GST) immediately after payment. Download from your dashboard.</div></div>
-                <div><div className="font-semibold">Can I cancel my subscription?</div><div className="text-text2">Yes, within 30 days for a full refund. See our refund policy.</div></div>
-                <div><div className="font-semibold">Do you offer custom features?</div><div className="text-text2">Yes — request a quote for custom modules.</div></div>
-              </div>
-            </div>
-          </div>
-
-          <aside className="space-y-4">
-            <div className="card-base p-6 sticky top-24">
-              <div className="text-xs uppercase tracking-wider text-text2">Get Started</div>
-              <div className="text-lg font-bold my-2">Pay an advance to begin — we&apos;ll discuss the rest on a call.</div>
-
-              <div className="space-y-3 mt-5">
-                {!product.noDemo && (
-                  <Link href={`/software/${product.slug}/demo`} className="btn w-full justify-center bg-gradient-to-r from-violet-600 to-blue-600 text-white hover:opacity-90">
-                    <Play className="w-4 h-4" /> Launch Live Demo
-                  </Link>
-                )}
-                <Link href={`/checkout?product=${product.slug}&host=cloud`} className="btn btn-primary w-full justify-center">
-                  <Cloud className="w-4 h-4" /> Advance Payment
-                </Link>
-              </div>
-
-              <div className="mt-5 pt-5 border-t border-tint space-y-2 text-xs text-text2">
-                <div className="flex gap-2 items-center"><ShieldCheck className="w-3.5 h-3.5 text-green-500" /> Secure Razorpay payment</div>
-                <div className="flex gap-2 items-center"><RefreshCcw className="w-3.5 h-3.5 text-green-500" /> 30-day money-back</div>
-                <div className="flex gap-2 items-center"><Headphones className="w-3.5 h-3.5 text-green-500" /> 1-year support</div>
-              </div>
-            </div>
-          </aside>
-        </div>
-      </section>
-
-      {related.length > 0 && (
-        <section className="section bg-app2">
-          <div className="container">
-            <h2 className="text-2xl font-extrabold mb-6">Related Software</h2>
-            <div className="grid md:grid-cols-3 gap-4">
-              {related.map(r => (
-                <Link key={r.slug} href={`/software/${r.slug}`} className="card-base p-5 hover:shadow-card-hover transition-all">
-                  <div className="text-xs text-primary font-bold uppercase">{r.tag || 'Software'}</div>
-                  <div className="font-bold mt-1">{r.name}</div>
-                  <div className="text-xs text-text2 mt-1 line-clamp-2">{r.description}</div>
-                </Link>
               ))}
             </div>
+          </Card>
+
+          <ReviewsSection productSlug={product.slug} productName={product.name} />
+
+          <Card className="p-7">
+            <h2 className="mb-4 font-display text-card-title text-text">Frequently asked</h2>
+            <div className="space-y-4">
+              <div><div className="font-semibold text-text">Is GST invoice provided?</div><div className="text-text2">Yes, you&apos;ll receive a GST-compliant invoice (18% GST) immediately after payment. Download from your dashboard.</div></div>
+              <div><div className="font-semibold text-text">Can I cancel my subscription?</div><div className="text-text2">Yes, within 30 days for a full refund. See our refund policy.</div></div>
+              <div><div className="font-semibold text-text">Do you offer custom features?</div><div className="text-text2">Yes — request a quote for custom modules.</div></div>
+            </div>
+          </Card>
+        </div>
+
+        <aside>
+          <Panel className="sticky top-24 p-6">
+            <div className="text-xs font-semibold uppercase tracking-wider text-text2">Get Started</div>
+            <div className="my-2 font-display text-card-title text-text">Pay an advance to begin — we&apos;ll discuss the rest on a call.</div>
+
+            <div className="mt-5 space-y-3">
+              {!product.noDemo && (
+                <Button href={`/software/${product.slug}/demo`} variant="secondary" className="w-full">
+                  <Play className="h-4 w-4" aria-hidden /> Launch Live Demo
+                </Button>
+              )}
+              <Button href={`/checkout?product=${product.slug}&host=cloud`} className="w-full">
+                <Cloud className="h-4 w-4" aria-hidden /> Advance Payment
+              </Button>
+            </div>
+
+            <div className="mt-5 space-y-2 border-t border-line pt-5 text-sm text-text2">
+              <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-gold-text" aria-hidden /> Secure Razorpay payment</div>
+              <div className="flex items-center gap-2"><RefreshCcw className="h-4 w-4 text-gold-text" aria-hidden /> 30-day money-back</div>
+              <div className="flex items-center gap-2"><Headphones className="h-4 w-4 text-gold-text" aria-hidden /> 1-year support</div>
+            </div>
+          </Panel>
+        </aside>
+      </Section>
+
+      {related.length > 0 && (
+        <Section tone="alt">
+          <h2 className="mb-6 font-display text-section text-text">Related Software</h2>
+          <div className="grid gap-4 md:grid-cols-3">
+            {related.map(r => (
+              <Link key={r.slug} href={`/software/${r.slug}`} className="block rounded-card focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">
+                <Card interactive className="h-full p-5">
+                  <div className="text-xs font-bold uppercase text-gold-text">{r.tag || 'Software'}</div>
+                  <div className="mt-1 font-bold text-text">{r.name}</div>
+                  <div className="mt-1 line-clamp-2 text-sm text-text2">{r.description}</div>
+                </Card>
+              </Link>
+            ))}
           </div>
-        </section>
+        </Section>
       )}
     </>
   );

@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { softwareProducts } from '@/lib/data/software';
 import { trackEvent } from '@/components/analytics/GoogleAnalytics';
 import { Calendar, CheckCircle2, Clock, Video, Phone, Send } from 'lucide-react';
+import { Panel, Card, buttonStyles } from '@/components/ui';
 
 const CAL_USERNAME = process.env.NEXT_PUBLIC_CAL_USERNAME || '';
 
@@ -33,7 +34,7 @@ export default function BookDemoPage() {
         <div>
           <h1 className="text-2xl font-extrabold mb-3">Demo booking is temporarily unavailable</h1>
           <p className="text-text2 max-w-md mx-auto mb-6">We&apos;re not scheduling new demo calls through this page right now — reach out directly and we&apos;ll help you from there.</p>
-          <a href="https://wa.me/919942000413" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white font-semibold" style={{ background: 'linear-gradient(135deg,#25d366,#128c7e)' }}>
+          <a href="https://wa.me/919942000413" target="_blank" rel="noreferrer" className={buttonStyles()}>
             WhatsApp us
           </a>
         </div>
@@ -102,37 +103,31 @@ export default function BookDemoPage() {
               {CAL_USERNAME ? (
                 <>
                   <Script src="https://cal.com/embed.js" />
-                  <div className="card-premium overflow-hidden rounded-2xl">
-                    <iframe src={`https://cal.com/${CAL_USERNAME}?embed=true`} className="w-full h-[600px] border-0 rounded-2xl" />
-                  </div>
+                  <Panel className="overflow-hidden">
+                    <iframe title="Book a demo" src={`https://cal.com/${CAL_USERNAME}?embed=true`} className="h-[600px] w-full border-0" />
+                  </Panel>
                 </>
               ) : state === 'success' ? (
-                <div className="card-premium p-12 text-center">
-                  <div
-                    className="w-20 h-20 rounded-full grid place-items-center mx-auto mb-5"
-                    style={{ background: 'rgba(200,169,110,0.1)', border: '1px solid rgba(200,169,110,0.3)' }}
-                  >
-                    <CheckCircle2 className="w-10 h-10" style={{ color: '#c8a96e' }} />
+                <Panel className="p-12 text-center">
+                  <div className="mx-auto mb-5 grid h-20 w-20 place-items-center rounded-full border border-gold/30 bg-gold/10">
+                    <CheckCircle2 aria-hidden className="h-10 w-10 text-gold-text" />
                   </div>
-                  <h2 className="text-3xl font-extrabold mb-3 text-text" style={{ fontFamily: 'Poppins, sans-serif' }}>Booking received!</h2>
+                  <h2 className="mb-3 font-display text-section text-text">Booking received!</h2>
                   <p className="mb-7 text-sm text-text2">Our team will confirm a slot and email you within 1 hour.</p>
                   <a
                     href="https://wa.me/919942000413"
                     target="_blank"
                     rel="noreferrer"
-                    className="btn-primary px-6 py-3 rounded-xl font-semibold inline-flex items-center gap-2"
+                    className={buttonStyles()}
                   >
                     Need it sooner? WhatsApp us
                   </a>
-                </div>
+                </Panel>
               ) : (
-                <div className="card-premium p-8">
+                <Panel className="p-8">
                   <div className="flex items-center gap-3 mb-6">
-                    <div
-                      className="w-10 h-10 rounded-xl grid place-items-center"
-                      style={{ background: 'rgba(200,169,110,0.08)', border: '1px solid rgba(200,169,110,0.2)' }}
-                    >
-                      <Calendar className="w-5 h-5" style={{ color: '#c8a96e' }} />
+                    <div className="grid h-10 w-10 place-items-center rounded-btn border border-gold/30 bg-gold/10">
+                      <Calendar aria-hidden className="h-5 w-5 text-gold-text" />
                     </div>
                     <h2 className="text-xl font-bold text-text">Schedule your demo</h2>
                   </div>
@@ -259,19 +254,19 @@ export default function BookDemoPage() {
                         onChange={e => setForm({ ...form, notes: e.target.value })}
                       />
                     </div>
-                    {err && <p id="bookdemo-error" role="alert" className="text-red-400 text-xs">{err}</p>}
+                    {err && <p id="bookdemo-error" role="alert" className="text-sm text-red-500">{err}</p>}
                     <button
                       disabled={state === 'sending'}
-                      className="btn-primary w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2 disabled:opacity-60"
+                      className={buttonStyles('primary', 'md', 'w-full')}
                     >
-                      <Send className="w-4 h-4" />
+                      <Send aria-hidden className="h-4 w-4" />
                       {state === 'sending' ? 'Booking…' : 'Request Demo'}
                     </button>
-                    <p className="text-[10px] text-center text-text2">
+                    <p className="text-center text-xs text-text2">
                       {"We'll confirm by email + WhatsApp within 1 hour."}
                     </p>
                   </form>
-                </div>
+                </Panel>
               )}
             </motion.div>
 
@@ -282,7 +277,7 @@ export default function BookDemoPage() {
               transition={{ duration: 0.6, delay: 0.15 }}
               className="space-y-5"
             >
-              <div className="card-premium p-6">
+              <Card className="p-6">
                 <div className="flex items-center gap-2 mb-5">
                   <span className="eyebrow">WHAT TO EXPECT</span>
                 </div>
@@ -294,11 +289,8 @@ export default function BookDemoPage() {
                     { Icon: Phone, label: 'No pressure', desc: '— we only sell if it fits' },
                   ].map((item, i) => (
                     <li key={i} className="flex gap-3 items-start">
-                      <div
-                        className="w-8 h-8 rounded-lg grid place-items-center shrink-0 mt-0.5"
-                        style={{ background: 'rgba(200,169,110,0.08)', border: '1px solid rgba(200,169,110,0.2)' }}
-                      >
-                        <item.Icon className="w-4 h-4" style={{ color: '#c8a96e' }} />
+                      <div className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-btn border border-gold/30 bg-gold/10">
+                        <item.Icon aria-hidden className="h-4 w-4 text-gold-text" />
                       </div>
                       <span className="text-text2">
                         <span className="font-semibold text-text">{item.label}</span> {item.desc}
@@ -306,30 +298,28 @@ export default function BookDemoPage() {
                     </li>
                   ))}
                 </ul>
-              </div>
+              </Card>
 
-              <div className="card-premium p-6">
-                <h3 className="font-bold mb-1 text-sm text-text">Prefer to talk now?</h3>
-                <p className="text-xs mb-4 text-text2">Call or WhatsApp our sales team:</p>
+              <Card className="p-6">
+                <h3 className="mb-1 text-base font-semibold text-text">Prefer to talk now?</h3>
+                <p className="mb-4 text-sm text-text2">Call or WhatsApp our sales team:</p>
                 <a
                   href="tel:+919942000413"
                   onClick={() => trackEvent('call_click', { widget: 'book-demo-sidebar' })}
-                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-medium transition-all mb-3 text-text"
-                  style={{ border: '1px solid rgba(var(--border) / 0.15)' }}
+                  className={buttonStyles('secondary', 'md', 'mb-3 w-full')}
                 >
-                  <Phone className="w-4 h-4" /> +91 99420 00413
+                  <Phone aria-hidden className="h-4 w-4" /> +91 99420 00413
                 </a>
                 <a
                   href="https://wa.me/919942000413"
                   target="_blank"
                   rel="noreferrer"
                   onClick={() => trackEvent('whatsapp_click', { widget: 'book-demo-sidebar' })}
-                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-white text-sm font-semibold transition-all hover:scale-[1.02]"
-                  style={{ background: 'linear-gradient(135deg,#25d366,#128c7e)' }}
+                  className={buttonStyles('primary', 'md', 'w-full')}
                 >
                   WhatsApp
                 </a>
-              </div>
+              </Card>
             </motion.aside>
 
           </div>

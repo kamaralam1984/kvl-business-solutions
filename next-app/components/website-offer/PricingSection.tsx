@@ -96,7 +96,7 @@ export function PricingSection({ plans }: { plans: Software[] }) {
                     <a
                       href={`https://wa.me/${(process.env.NEXT_PUBLIC_WHATSAPP || '919942000413').replace(/\D/g, '')}?text=${encodeURIComponent(`I'm interested in the ${p.name} plan`)}`}
                       target="_blank" rel="noreferrer"
-                      className="w-full py-2.5 rounded-lg text-center text-xs font-bold text-white flex items-center justify-center gap-1.5"
+                      className="flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-lg py-2.5 text-center text-xs font-bold text-white"
                       style={{ background: `linear-gradient(90deg,${p.c1},${p.c2})` }}
                     >
                       <Phone className="w-3.5 h-3.5" /> Contact Us
@@ -104,7 +104,7 @@ export function PricingSection({ plans }: { plans: Software[] }) {
                   ) : (
                     <Link
                       href={`/checkout?product=${p.slug}&host=cloud`}
-                      className="w-full py-2.5 rounded-lg text-center text-xs font-bold text-white"
+                      className="flex min-h-[44px] w-full items-center justify-center rounded-lg py-2.5 text-center text-xs font-bold text-white"
                       style={{ background: `linear-gradient(90deg,${p.c1},${p.c2})` }}
                     >
                       Advance Payment

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Clock, ArrowUpRight } from 'lucide-react';
+import { Section, StateMessage } from '@/components/ui';
 import { PageHero } from '@/components/shared/PageHero';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { CtaBanner } from '@/components/home/CtaBanner';
@@ -52,25 +53,27 @@ export default async function BlogPage() {
         breadcrumbPath={[{ label: 'Blog' }]}
       />
 
-      <section className="section">
-        <div className="container">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <Section>
+        {sorted.length === 0 ? (
+          <StateMessage title="No articles yet" description="New guides are on the way. Check back soon." />
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {sorted.map(post => (
               <Link
                 key={post.slug}
                 href={`/blog/${post.slug}`}
-                className="card-base p-6 flex flex-col hover:shadow-card-hover transition-all"
+                className="group flex flex-col rounded-card border border-line bg-card p-6 shadow-soft-1 transition-[transform,box-shadow] duration-base ease-brand hover:-translate-y-0.5 hover:shadow-soft-2 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
               >
-                <div className="flex items-center gap-3 mb-4 text-[11px] font-bold tracking-widest uppercase" style={{ color: '#a3814f' }}>
+                <div className="mb-4 flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-gold-text">
                   <span>{post.category}</span>
-                  <span className="w-1 h-1 rounded-full" style={{ background: 'currentColor' }} />
-                  <span className="inline-flex items-center gap-1 normal-case font-medium text-text2">
-                    <Clock className="w-3 h-3" /> {post.readingTimeMinutes} min read
+                  <span className="h-1 w-1 rounded-full bg-current" aria-hidden />
+                  <span className="inline-flex items-center gap-1 font-medium normal-case tracking-normal text-text2">
+                    <Clock className="h-3 w-3" aria-hidden /> {post.readingTimeMinutes} min read
                   </span>
                 </div>
-                <h2 className="font-bold text-lg mb-2.5 leading-snug">{post.title}</h2>
-                <p className="text-text2 text-[13.5px] leading-[1.7] mb-5 flex-1">{post.excerpt}</p>
-                <div className="flex items-center justify-between text-[12px] text-text2 pt-4 border-t border-tint">
+                <h2 className="mb-2.5 font-display text-card-title text-text">{post.title}</h2>
+                <p className="mb-5 flex-1 text-base text-text2">{post.excerpt}</p>
+                <div className="flex items-center justify-between border-t border-line pt-4 text-sm text-text2">
                   <span>
                     {new Date(post.publishedAt).toLocaleDateString('en-IN', {
                       day: 'numeric',
@@ -78,15 +81,15 @@ export default async function BlogPage() {
                       year: 'numeric',
                     })}
                   </span>
-                  <span className="inline-flex items-center gap-1 font-semibold" style={{ color: '#a3814f' }}>
-                    Read <ArrowUpRight className="w-3.5 h-3.5" />
+                  <span className="inline-flex items-center gap-1 font-semibold text-gold-text">
+                    Read <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
                   </span>
                 </div>
               </Link>
             ))}
           </div>
-        </div>
-      </section>
+        )}
+      </Section>
 
       <CtaBanner
         title="Have a specific question we didn't cover?"

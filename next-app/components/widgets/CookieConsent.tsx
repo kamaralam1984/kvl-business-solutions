@@ -1,4 +1,5 @@
 'use client';
+import { buttonStyles } from '@/components/ui';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Cookie, X } from 'lucide-react';
@@ -29,22 +30,22 @@ export function CookieConsent() {
   if (!show) return null;
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:bottom-6 sm:right-6 sm:max-w-md z-[100] card-base p-5 shadow-card-hover animate-in slide-in-from-bottom-4">
-      <button onClick={() => setConsent('rejected')} className="absolute top-3 right-3 text-text2 hover:text-text" aria-label="Close"><X className="w-4 h-4" /></button>
+    <div role="dialog" aria-label="Cookie consent" className="fixed bottom-4 left-4 right-4 z-[100] rounded-panel border border-line bg-card p-5 shadow-soft-3 sm:bottom-6 sm:left-6 sm:right-auto sm:max-w-md">
+      <button onClick={() => setConsent('rejected')} className="absolute right-1 top-1 grid h-11 w-11 place-items-center text-text2 hover:text-text focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]" aria-label="Close"><X className="w-4 h-4" /></button>
 
       <div className="flex gap-3">
-        <div className="w-10 h-10 rounded-full bg-primary/15 grid place-items-center shrink-0">
-          <Cookie className="w-5 h-5 text-primary" />
+        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gold/15">
+          <Cookie aria-hidden className="h-5 w-5 text-gold-text" />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-sm">We use cookies</h3>
-          <p className="text-xs text-text2 mt-1 leading-relaxed">
+          <h3 className="text-base font-semibold text-text">We use cookies</h3>
+          <p className="mt-1 text-sm leading-relaxed text-text2">
             We use essential cookies for auth and optional analytics cookies to improve our site. By accepting, you agree to our use of cookies as described in our{' '}
-            <Link href="/privacy" className="text-primary hover:underline">Privacy Policy</Link>.
+            <Link href="/privacy" className="text-gold-text underline underline-offset-2">Privacy Policy</Link>.
           </p>
           <div className="flex gap-2 mt-3">
-            <button onClick={() => setConsent('accepted')} className="btn btn-primary text-xs flex-1 justify-center">Accept all</button>
-            <button onClick={() => setConsent('rejected')} className="btn btn-ghost border border-tint text-xs flex-1 justify-center">Essential only</button>
+            <button onClick={() => setConsent('accepted')} className={buttonStyles('primary', 'md', 'flex-1 text-sm')}>Accept all</button>
+            <button onClick={() => setConsent('rejected')} className={buttonStyles('secondary', 'md', 'flex-1 text-sm')}>Essential only</button>
           </div>
         </div>
       </div>

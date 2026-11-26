@@ -2,6 +2,7 @@
 import { useEffect, useState, useTransition } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Search, X, Loader2, SlidersHorizontal } from 'lucide-react';
+import { Panel, cn } from '@/components/ui';
 
 export type SortOption = 'popular' | 'newest' | 'alpha';
 
@@ -87,26 +88,26 @@ export function SoftwareFilterBar({
   return (
     <div>
       {/* Filter bar */}
-      <div className="rounded-2xl border border-border/15 p-4 sm:p-5 mb-8" style={{ background: 'rgba(var(--text) / 0.03)', backdropFilter: 'blur(8px)' }}>
+      <Panel className="mb-8 p-4 sm:p-5">
         <div className="flex flex-col lg:flex-row gap-3 lg:items-center">
           {/* Search */}
           <div className="relative flex-1 min-w-0">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text3" />
+            <Search aria-hidden className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-text3" />
             <input
               value={queryInput}
               onChange={e => setQueryInput(e.target.value)}
               placeholder="Search by name or description…"
               aria-label="Search software"
-              className="w-full pl-10 pr-9 py-2.5 rounded-full text-sm bg-text/5 border border-border/20 text-text placeholder:text-text3 focus:outline-none focus:border-violet-400/60"
+              className="min-h-[44px] w-full rounded-full border border-line bg-card pl-10 pr-11 text-sm text-text placeholder:text-text3 transition-shadow duration-base focus-visible:border-gold focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
             />
             {queryInput && (
               <button
                 type="button"
                 aria-label="Clear search"
                 onClick={() => setQueryInput('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-text3 hover:text-text"
+                className="absolute right-1 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full text-text3 hover:text-text focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
               >
-                <X className="w-4 h-4" />
+                <X aria-hidden className="h-4 w-4" />
               </button>
             )}
           </div>
@@ -117,20 +118,20 @@ export function SoftwareFilterBar({
               value={sort}
               onChange={e => setSort(e.target.value as SortOption)}
               aria-label="Sort software products"
-              className="px-3 py-2.5 rounded-full text-xs bg-text/5 border border-border/20 text-text focus:outline-none focus:border-violet-400/60"
+              className="min-h-[44px] rounded-full border border-line bg-card px-4 text-sm text-text transition-shadow duration-base focus-visible:border-gold focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
             >
               {SORT_OPTIONS.map(o => (
-                <option key={o.value} value={o.value} style={{ background: 'rgb(var(--bg-2))', color: 'rgb(var(--text))' }}>{o.label}</option>
+                <option key={o.value} value={o.value}>{o.label}</option>
               ))}
             </select>
           </div>
 
-          {isPending && <Loader2 className="w-4 h-4 text-violet-400 animate-spin shrink-0" aria-label="Updating results" />}
+          {isPending && <Loader2 role="status" className="h-4 w-4 shrink-0 animate-spin text-gold-text motion-reduce:animate-none" aria-label="Updating results" />}
         </div>
 
         {/* Category pills */}
         <div className="flex flex-wrap items-center gap-2 mt-4">
-          <span className="text-[11px] text-text3 flex items-center gap-1 mr-1"><SlidersHorizontal className="w-3 h-3" /> Category:</span>
+          <span className="mr-1 flex items-center gap-1 text-xs text-text3"><SlidersHorizontal aria-hidden className="h-3 w-3" /> Category:</span>
           {categories.map(cat => {
             const active = activeCategories.includes(cat);
             return (
@@ -138,11 +139,11 @@ export function SoftwareFilterBar({
                 key={cat}
                 type="button"
                 onClick={() => toggleCategory(cat)}
-                className={`px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all border ${
-                  active
-                    ? 'bg-violet-600 border-violet-500 text-white'
-                    : 'bg-text/5 border-border/20 text-text2 hover:text-text hover:border-border/35'
-                }`}
+                aria-pressed={active}
+                className={cn(
+                  'min-h-[44px] rounded-full border px-4 text-xs font-semibold transition-colors duration-base focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]',
+                  active ? 'border-gold bg-gold text-[#080910]' : 'border-line bg-transparent text-text2 hover:border-gold hover:text-text',
+                )}
               >
                 {cat}
               </button>
@@ -152,16 +153,16 @@ export function SoftwareFilterBar({
             <button
               type="button"
               onClick={clearFilters}
-              className="ml-auto text-[11px] font-semibold text-text2 hover:text-text flex items-center gap-1"
+              className="ml-auto flex min-h-[44px] items-center gap-1 text-xs font-semibold text-text2 hover:text-text focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
             >
-              <X className="w-3 h-3" /> Clear filters
+              <X aria-hidden className="h-3 w-3" /> Clear filters
             </button>
           )}
         </div>
-      </div>
+      </Panel>
 
       {/* Results count */}
-      <div className="flex items-center justify-between mb-4 text-xs text-text3">
+      <div className="mb-4 flex items-center justify-between text-sm text-text3">
         <p>
           Showing <span className="text-text2 font-semibold">{filteredCount}</span> of {totalCount} products
         </p>

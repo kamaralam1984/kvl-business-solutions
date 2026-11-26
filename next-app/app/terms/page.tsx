@@ -51,7 +51,7 @@ export default function TermsPage() {
       <p>We may update these terms; material changes will be emailed 30 days in advance.</p>
 
       <h2>11. Contact</h2>
-      <p>Email <a href="mailto:legal@kvlbusinesssolutions.com">legal@kvlbusinesssolutions.com</a> for any questions.</p>
+      <p>Email <a href="mailto:info@kvlbusinesssolutions.com">info@kvlbusinesssolutions.com</a> for any questions.</p>
     </LegalLayout>
   );
 }

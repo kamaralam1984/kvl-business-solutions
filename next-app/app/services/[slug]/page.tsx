@@ -15,6 +15,7 @@ import { caseStudies } from '@/lib/data/case-studies';
 import { PageHero } from '@/components/shared/PageHero';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { CtaBanner } from '@/components/home/CtaBanner';
+import { Button, Card, Panel, Section, SectionHeading } from '@/components/ui';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
 
@@ -107,131 +108,119 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
       />
 
       {/* What This Includes */}
-      <section className="section">
-        <div className="container grid lg:grid-cols-[2fr_1fr] gap-8">
-          <div className="card-base p-7">
-            <span className="eyebrow">Scope</span>
-            <h2 className="text-2xl md:text-3xl font-extrabold my-3">What This Includes</h2>
-            <ul className="grid sm:grid-cols-2 gap-3 mt-5">
-              {detail.includes.map(item => (
-                <li key={item} className="flex gap-2.5 items-start">
-                  <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" style={{ color: '#c8a870' }} />
-                  <span className="text-sm text-text2">{item}</span>
-                </li>
-              ))}
-            </ul>
+      <Section containerClassName="container grid gap-8 lg:grid-cols-[2fr_1fr]">
+        <Panel className="p-7 sm:p-9">
+          <SectionHeading eyebrow="Scope" title="What This Includes" />
+          <ul className="mt-8 grid gap-4 sm:grid-cols-2">
+            {detail.includes.map(item => (
+              <li key={item} className="flex items-start gap-2.5">
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-gold-text" aria-hidden />
+                <span className="text-text2">{item}</span>
+              </li>
+            ))}
+          </ul>
+        </Panel>
+
+        <Card className="self-start p-6">
+          <div className="mb-4 grid h-12 w-12 place-items-center rounded-btn" style={{ background: `${service.color}18`, color: service.color }}>
+            <Icon name={service.icon} className="h-6 w-6" />
           </div>
-
-          <aside className="card-premium p-6 self-start" style={{ borderColor: `${service.color}33` }}>
-            <div className="w-12 h-12 rounded-xl grid place-items-center mb-4" style={{ background: `${service.color}18`, color: service.color }}>
-              <Icon name={service.icon} className="w-6 h-6" />
-            </div>
-            <h3 className="font-bold mb-2">{service.name}</h3>
-            <p className="text-text2 text-sm mb-5">{service.description}</p>
-            {relatedSoftware.length > 0 && (
-              <div className="space-y-2 mb-5">
-                <div className="text-[11px] font-bold tracking-widest uppercase text-text2">Related Software</div>
-                {relatedSoftware.map(p => (
-                  <Link key={p.slug} href={`/software/${p.slug}`} className="flex items-center justify-between text-sm font-semibold hover:text-primary transition-colors">
-                    {p.name} <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                ))}
-              </div>
-            )}
-            <Link href="/contact" className="btn btn-primary w-full justify-center">Talk to a Solution Architect</Link>
-          </aside>
-        </div>
-      </section>
-
-      {/* Industries We've Built This For */}
-      {relatedIndustries.length > 0 && (
-        <section className="section section-alt">
-          <div className="container">
-            <div className="text-center mb-10">
-              <span className="eyebrow">Where This Fits</span>
-              <h2 className="text-3xl md:text-4xl font-extrabold my-4">Industries We&apos;ve Built This For</h2>
-            </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {relatedIndustries.map(ind => (
-                <Link key={ind.slug} href={`/industries/${ind.slug}`} className="card-base p-6 hover:shadow-card-hover transition-all">
-                  <div className="w-11 h-11 rounded-xl grid place-items-center mb-4 text-white" style={{ background: `linear-gradient(135deg, ${ind.c1}, ${ind.c2})` }}>
-                    <Icon name={ind.icon} className="w-5 h-5" />
-                  </div>
-                  <h3 className="font-bold text-sm mb-1.5">{ind.name}</h3>
-                  <p className="text-text2 text-[12.5px] leading-[1.6] line-clamp-2">{ind.desc}</p>
+          <h2 className="font-display text-card-title text-text">{service.name}</h2>
+          <p className="mb-5 mt-2 text-text2">{service.description}</p>
+          {relatedSoftware.length > 0 && (
+            <div className="mb-5">
+              <h3 className="eyebrow mb-2">Related Software</h3>
+              {relatedSoftware.map(p => (
+                <Link key={p.slug} href={`/software/${p.slug}`} className="flex min-h-[44px] items-center justify-between rounded-btn font-semibold text-text transition-colors duration-base hover:text-gold-text focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">
+                  {p.name} <ArrowRight className="h-4 w-4" aria-hidden />
                 </Link>
               ))}
             </div>
+          )}
+          <Button href="/contact" className="w-full">Talk to a Solution Architect</Button>
+        </Card>
+      </Section>
+
+      {/* Industries We've Built This For */}
+      {relatedIndustries.length > 0 && (
+        <Section tone="alt">
+          <SectionHeading align="center" eyebrow="Where This Fits" title="Industries We've Built This For" />
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {relatedIndustries.map(ind => (
+              <Card key={ind.slug} interactive className="relative p-6">
+                <div className="mb-4 grid h-11 w-11 place-items-center rounded-btn text-white" style={{ background: `linear-gradient(135deg, ${ind.c1}, ${ind.c2})` }}>
+                  <Icon name={ind.icon} className="h-5 w-5" />
+                </div>
+                <h3 className="font-display text-card-title text-text">
+                  <Link href={`/industries/${ind.slug}`} className="rounded-btn after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">{ind.name}</Link>
+                </h3>
+                <p className="mt-2 line-clamp-2 text-text2">{ind.desc}</p>
+              </Card>
+            ))}
           </div>
-        </section>
+        </Section>
       )}
 
       {/* See It In Action */}
       {relatedCaseStudies.length > 0 && (
-        <section className="section">
-          <div className="container">
-            <div className="text-center mb-10">
-              <span className="eyebrow">Real Work</span>
-              <h2 className="text-3xl md:text-4xl font-extrabold my-4">See It In Action</h2>
-            </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
-              {relatedCaseStudies.map(c => (
-                <Link key={c.slug} href={`/projects/${c.slug}`} className="card-premium p-6 group block">
-                  <span className="text-[10px] font-bold tracking-widest uppercase mb-2 block" style={{ color: '#a3814f' }}>{c.industry}</span>
-                  <h3 className="font-bold text-sm mb-1.5 flex items-center gap-1.5">
-                    {c.name} <ExternalLink className="w-3.5 h-3.5 opacity-50 group-hover:opacity-100 transition-opacity" />
-                  </h3>
-                  <p className="text-text2 text-[12.5px] leading-[1.6] line-clamp-3">{c.tagline}</p>
-                </Link>
-              ))}
-            </div>
+        <Section>
+          <SectionHeading align="center" eyebrow="Real Work" title="See It In Action" />
+          <div className="mx-auto mt-12 grid max-w-4xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {relatedCaseStudies.map(c => (
+              <Card key={c.slug} interactive className="group relative p-6">
+                <span className="eyebrow mb-2 block">{c.industry}</span>
+                <h3 className="flex items-center gap-1.5 font-display text-card-title text-text">
+                  <Link href={`/projects/${c.slug}`} className="inline-flex min-h-[44px] items-center rounded-btn after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">{c.name}</Link>
+                  <ExternalLink className="h-4 w-4 shrink-0 text-text3 transition-colors duration-base group-hover:text-gold-text" aria-hidden />
+                </h3>
+                <p className="mt-2 line-clamp-3 text-text2">{c.tagline}</p>
+              </Card>
+            ))}
           </div>
-        </section>
+        </Section>
       )}
 
       {/* Our Process */}
-      <section className="section section-alt">
-        <div className="container">
-          <div className="text-center mb-10">
-            <span className="eyebrow">How We Work</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold my-4">Our Standard Delivery Process</h2>
-            <p className="text-text2 max-w-xl mx-auto">The same process we run on every engagement — including {service.name.toLowerCase()}.</p>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
-            {processSteps.map(s => (
-              <div key={s.num} className="card-premium p-5">
-                <div className="w-9 h-9 rounded-full grid place-items-center mb-4 font-bold text-[12px]" style={{ background: 'rgba(200,168,112,0.1)', border: '1px solid rgba(200,168,112,0.22)', color: '#a3814f' }}>
+      <Section tone="alt">
+        <SectionHeading
+          align="center"
+          eyebrow="How We Work"
+          title="Our Standard Delivery Process"
+          description={`The same process we run on every engagement — including ${service.name.toLowerCase()}.`}
+        />
+        <ol className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {processSteps.map(s => (
+            <li key={s.num}>
+              <Card className="h-full p-5">
+                <span className="mb-4 grid h-11 w-11 place-items-center rounded-full border border-gold bg-card font-display text-sm font-semibold text-gold-text">
                   {s.num}
-                </div>
-                <h3 className="font-bold text-sm mb-1.5">{s.title}</h3>
-                <p className="text-text2 text-[12.5px] leading-[1.6]">{s.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+                </span>
+                <h3 className="font-display text-card-title text-text">{s.title}</h3>
+                <p className="mt-1.5 text-text2">{s.desc}</p>
+              </Card>
+            </li>
+          ))}
+        </ol>
+      </Section>
 
       {/* Other Services */}
       {otherServices.length > 0 && (
-        <section className="section">
-          <div className="container">
-            <div className="text-center mb-10">
-              <span className="eyebrow">More Services</span>
-              <h2 className="text-2xl md:text-3xl font-extrabold my-4">Other Ways We Can Help</h2>
-            </div>
-            <div className="grid sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
-              {otherServices.map(s => (
-                <Link key={s.slug} href={`/services/${s.slug}`} className="card-base p-6 hover:shadow-card-hover transition-all">
-                  <div className="w-10 h-10 rounded-xl grid place-items-center mb-4" style={{ background: `${s.color}18`, color: s.color }}>
-                    <Icon name={s.icon} className="w-5 h-5" />
-                  </div>
-                  <h3 className="font-bold text-sm mb-1.5">{s.name}</h3>
-                  <p className="text-text2 text-[12.5px] leading-[1.6] line-clamp-2">{s.description}</p>
-                </Link>
-              ))}
-            </div>
+        <Section>
+          <SectionHeading align="center" eyebrow="More Services" title="Other Ways We Can Help" />
+          <div className="mx-auto mt-12 grid max-w-4xl gap-5 sm:grid-cols-3">
+            {otherServices.map(s => (
+              <Card key={s.slug} interactive className="relative p-6">
+                <div className="mb-4 grid h-11 w-11 place-items-center rounded-btn" style={{ background: `${s.color}18`, color: s.color }}>
+                  <Icon name={s.icon} className="h-5 w-5" />
+                </div>
+                <h3 className="font-display text-card-title text-text">
+                  <Link href={`/services/${s.slug}`} className="rounded-btn after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">{s.name}</Link>
+                </h3>
+                <p className="mt-2 line-clamp-2 text-text2">{s.description}</p>
+              </Card>
+            ))}
           </div>
-        </section>
+        </Section>
       )}
 
       <CtaBanner

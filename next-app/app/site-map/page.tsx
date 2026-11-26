@@ -39,7 +39,7 @@ function LinkGroup({ title, links }: { title: string; links: { label: string; hr
 }
 
 export default async function SiteMapPage() {
-  const indiaLocations = await getLiveLocationPages('india');
+  const indiaLocations = await getLiveLocationPages('india').catch(() => []);
 
   return (
     <>

@@ -1,5 +1,5 @@
-import Link from 'next/link';
 import { CheckCircle2, Calendar, FileText, Briefcase, BookOpen, ArrowRight } from 'lucide-react';
+import { Card, Panel, Button } from '@/components/ui';
 
 export const metadata = {
   title: 'Thank You — KVL Business Solutions',
@@ -28,14 +28,11 @@ export default function ThankYouPage({ searchParams }: { searchParams: { type?: 
     <>
       <section className="relative pt-24 pb-16 text-center bg-app2 border-b border-tint overflow-hidden">
         <div className="container relative z-10">
-          <div
-            className="w-16 h-16 rounded-full grid place-items-center mx-auto mb-6"
-            style={{ background: 'rgba(200,168,112,0.1)', border: '1px solid rgba(200,168,112,0.3)' }}
-          >
-            <CheckCircle2 className="w-8 h-8" style={{ color: '#c8a870' }} />
+          <div className="mx-auto mb-6 grid h-16 w-16 place-items-center rounded-full border border-gold/30 bg-gold/10">
+            <CheckCircle2 aria-hidden className="h-8 w-8 text-gold-text" />
           </div>
           <span className="eyebrow">Thank You</span>
-          <h1 className="text-4xl md:text-5xl font-black mt-4 mb-4">
+          <h1 className="mb-4 mt-4 font-display text-hero text-text">
             {type === 'booking' ? "Your demo request is in." : "We've got your message."}
           </h1>
           <p className="text-text2 max-w-xl mx-auto">
@@ -50,74 +47,70 @@ export default function ThankYouPage({ searchParams }: { searchParams: { type?: 
         <div className="container max-w-3xl">
           <div className="text-center mb-10">
             <span className="eyebrow">What Happens Next</span>
-            <h2 className="text-2xl md:text-3xl font-extrabold my-4">Three Simple Steps</h2>
+            <h2 className="my-4 font-display text-section text-text">Three Simple Steps</h2>
           </div>
           <div className="grid sm:grid-cols-3 gap-5 mb-14">
             {steps.map((s, i) => (
-              <div key={s.title} className="card-base p-6">
-                <div
-                  className="w-8 h-8 rounded-full grid place-items-center mb-4 font-bold text-[12px]"
-                  style={{ background: 'rgba(200,168,112,0.1)', border: '1px solid rgba(200,168,112,0.22)', color: '#a3814f' }}
-                >
+              <Card key={s.title} className="p-6">
+                <div className="mb-4 grid h-9 w-9 place-items-center rounded-full border border-gold/30 bg-gold/10 text-sm font-bold text-gold-text">
                   {i + 1}
                 </div>
-                <h3 className="font-bold text-sm mb-1.5">{s.title}</h3>
-                <p className="text-text2 text-[13px] leading-[1.6]">{s.desc}</p>
-              </div>
+                <h3 className="mb-1.5 text-base font-semibold text-text">{s.title}</h3>
+                <p className="text-sm leading-relaxed text-text2">{s.desc}</p>
+              </Card>
             ))}
           </div>
 
-          <div className="card-premium p-8 text-center mb-14">
-            <Calendar className="w-8 h-8 mx-auto mb-3" style={{ color: '#c8a870' }} />
+          <Panel className="mb-14 p-8 text-center">
+            <Calendar aria-hidden className="mx-auto mb-3 h-8 w-8 text-gold-text" />
             {type === 'booking' ? (
               <>
-                <h3 className="font-bold text-lg mb-2">Need to change your slot?</h3>
+                <h3 className="mb-2 font-display text-card-title text-text">Need to change your slot?</h3>
                 <p className="text-text2 text-sm mb-5">Message us on WhatsApp and we&apos;ll adjust it — no need to fill the form again.</p>
               </>
             ) : (
               <>
-                <h3 className="font-bold text-lg mb-2">Don&apos;t want to wait?</h3>
+                <h3 className="mb-2 font-display text-card-title text-text">Don&apos;t want to wait?</h3>
                 <p className="text-text2 text-sm mb-5">Book a free strategy call directly and pick a time that works for you.</p>
               </>
             )}
             <div className="flex flex-wrap gap-3 justify-center">
               {type !== 'booking' && (
-                <Link href="/book-demo" className="btn btn-primary">
-                  Book a Free Strategy Call <ArrowRight className="w-4 h-4" />
-                </Link>
+                <Button href="/book-demo">
+                  Book a Free Strategy Call <ArrowRight className="h-4 w-4" aria-hidden />
+                </Button>
               )}
-              <a
+              <Button
                 href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('Hi KVL, following up on my request.')}`}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-[14px] text-white transition-all hover:scale-[1.02]"
-                style={{ background: 'linear-gradient(135deg,#25d366,#128c7e)' }}
+                variant="secondary"
               >
                 Chat on WhatsApp
-              </a>
+              </Button>
             </div>
-          </div>
+          </Panel>
 
           <div className="text-center mb-8">
             <span className="eyebrow">While You Wait</span>
-            <h2 className="text-2xl md:text-3xl font-extrabold my-4">Download More About Us</h2>
+            <h2 className="my-4 font-display text-section text-text">Download More About Us</h2>
           </div>
           <div className="grid sm:grid-cols-3 gap-5">
-            <a href="/api/downloads/company-profile" target="_blank" rel="noreferrer" className="card-base p-6 hover:shadow-card-hover transition-all block">
-              <FileText className="w-6 h-6 mb-3" style={{ color: '#a3814f' }} />
-              <h3 className="font-bold text-sm mb-1.5">Company Profile</h3>
-              <p className="text-text2 text-[12.5px] leading-[1.6]">Who we are, what we do, and how we work.</p>
-            </a>
-            <a href="/api/downloads/portfolio" target="_blank" rel="noreferrer" className="card-base p-6 hover:shadow-card-hover transition-all block">
-              <Briefcase className="w-6 h-6 mb-3" style={{ color: '#a3814f' }} />
-              <h3 className="font-bold text-sm mb-1.5">Portfolio</h3>
-              <p className="text-text2 text-[12.5px] leading-[1.6]">Real, live projects we&apos;ve built — with outcomes.</p>
-            </a>
-            <a href="/api/downloads/service-brochure" target="_blank" rel="noreferrer" className="card-base p-6 hover:shadow-card-hover transition-all block">
-              <BookOpen className="w-6 h-6 mb-3" style={{ color: '#a3814f' }} />
-              <h3 className="font-bold text-sm mb-1.5">Service Brochure</h3>
-              <p className="text-text2 text-[12.5px] leading-[1.6]">Every service we offer, in one place.</p>
-            </a>
+            <a href="/api/downloads/company-profile" target="_blank" rel="noreferrer" className="block rounded-card focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"><Card interactive className="h-full p-6">
+              <FileText aria-hidden className="mb-3 h-6 w-6 text-gold-text" />
+              <h3 className="mb-1.5 text-base font-semibold text-text">Company Profile</h3>
+              <p className="text-sm leading-relaxed text-text2">Who we are, what we do, and how we work.</p>
+            </Card></a>
+            <a href="/api/downloads/portfolio" target="_blank" rel="noreferrer" className="block rounded-card focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"><Card interactive className="h-full p-6">
+              <Briefcase aria-hidden className="mb-3 h-6 w-6 text-gold-text" />
+              <h3 className="mb-1.5 text-base font-semibold text-text">Portfolio</h3>
+              <p className="text-sm leading-relaxed text-text2">Real, live projects we&apos;ve built — with outcomes.</p>
+            </Card></a>
+            <a href="/api/downloads/service-brochure" target="_blank" rel="noreferrer" className="block rounded-card focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"><Card interactive className="h-full p-6">
+              <BookOpen aria-hidden className="mb-3 h-6 w-6 text-gold-text" />
+              <h3 className="mb-1.5 text-base font-semibold text-text">Service Brochure</h3>
+              <p className="text-sm leading-relaxed text-text2">Every service we offer, in one place.</p>
+            </Card></a>
           </div>
         </div>
       </section>

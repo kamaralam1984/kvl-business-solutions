@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Download, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { trackEvent } from '@/components/analytics/GoogleAnalytics';
+import { Card, Input, Button } from '@/components/ui';
 
 export function DownloadGate({
   icon: Icon,
@@ -48,10 +49,10 @@ export function DownloadGate({
   };
 
   return (
-    <div className="card-base p-6">
-      <Icon className="w-6 h-6 mb-3" style={{ color: '#a3814f' }} />
-      <h3 className="font-bold text-sm mb-1.5">{title}</h3>
-      <p className="text-text2 text-[12.5px] leading-[1.6] mb-4">{desc}</p>
+    <Card className="p-6">
+      <Icon aria-hidden className="mb-3 h-6 w-6 text-gold-text" />
+      <h3 className="mb-1.5 font-display text-card-title text-text">{title}</h3>
+      <p className="mb-4 text-sm leading-relaxed text-text2">{desc}</p>
 
       {unlocked ? (
         <div>
@@ -60,28 +61,27 @@ export function DownloadGate({
             target="_blank"
             rel="noreferrer"
             onClick={() => trackEvent('download_click', { type: downloadType })}
-            className="inline-flex items-center gap-1.5 text-[13px] font-semibold"
-            style={{ color: '#c8a870' }}
+            className="inline-flex min-h-[44px] items-center gap-1.5 rounded-btn text-sm font-semibold text-gold-text focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
           >
-            <CheckCircle2 className="w-4 h-4" /> Open Download
+            <CheckCircle2 aria-hidden className="h-4 w-4" /> Open Download
           </a>
-          <p className="text-text2 text-[11px] mt-1.5">A PDF copy is also on its way to your email.</p>
+          <p className="mt-1.5 text-xs text-text2">A PDF copy is also on its way to your email.</p>
         </div>
       ) : open ? (
-        <form onSubmit={submit} className="space-y-2">
-          <input required placeholder="Your name" className="form-control text-xs py-2" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
-          <input required type="email" placeholder="Email" className="form-control text-xs py-2" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
-          <input required placeholder="Phone" className="form-control text-xs py-2" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
-          <button type="submit" disabled={status === 'sending'} className="btn btn-primary w-full justify-center text-xs py-2 disabled:opacity-60">
+        <form onSubmit={submit} className="space-y-2.5">
+          <Input required aria-label="Your name" placeholder="Your name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
+          <Input required type="email" aria-label="Email" placeholder="Email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+          <Input required aria-label="Phone" placeholder="Phone" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
+          <Button type="submit" disabled={status === 'sending'} className="w-full">
             {status === 'sending' ? 'Please wait…' : 'Get Download Link'}
-          </button>
-          {status === 'error' && <p className="text-red-500 text-[11px]">Something went wrong — try again.</p>}
+          </Button>
+          {status === 'error' && <p role="alert" className="text-sm text-red-500">Something went wrong — try again.</p>}
         </form>
       ) : (
-        <button onClick={() => setOpen(true)} className="inline-flex items-center gap-1.5 text-[13px] font-semibold" style={{ color: '#c8a870' }}>
-          <Download className="w-4 h-4" /> Download <ArrowRight className="w-3.5 h-3.5" />
-        </button>
+        <Button variant="secondary" onClick={() => setOpen(true)}>
+          <Download aria-hidden className="h-4 w-4" /> Download <ArrowRight aria-hidden className="h-4 w-4" />
+        </Button>
       )}
-    </div>
+    </Card>
   );
 }

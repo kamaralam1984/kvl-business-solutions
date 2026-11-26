@@ -54,7 +54,7 @@ export default function PrivacyPage() {
       <p>Passwords are hashed with bcrypt. All data is transmitted over TLS 1.2+. We follow industry best practices.</p>
 
       <h2>8. Contact</h2>
-      <p>For privacy questions, email <a href="mailto:privacy@kvlbusinesssolutions.com">privacy@kvlbusinesssolutions.com</a> or write to KVL Business Solutions, Patna, Sultanganj, Bihar, India.</p>
+      <p>For privacy questions, email <a href="mailto:info@kvlbusinesssolutions.com">info@kvlbusinesssolutions.com</a> or write to KVL Business Solutions, Patna, Sultanganj, Bihar, India.</p>
     </LegalLayout>
   );
 }

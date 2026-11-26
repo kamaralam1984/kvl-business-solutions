@@ -45,7 +45,7 @@ const WHY = [
 
 const WA_NUMBER = (process.env.NEXT_PUBLIC_WHATSAPP || '919942000413').replace(/\D/g, '');
 const PHONE = '+91 99420 00413';
-const EMAIL = 'info@kvlbusinesssolutions.com';
+const EMAIL = 'sales@kvlbusinesssolutions.com';
 
 export function WebsiteOfferClient({ plans, reviews, portfolio }: {
   plans: Software[];
@@ -60,7 +60,7 @@ export function WebsiteOfferClient({ plans, reviews, portfolio }: {
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="#home" className="flex items-center gap-2 shrink-0">
+          <Link href="#home" className="flex min-h-[44px] items-center gap-2 shrink-0">
             <Image src="/brand-logo.png" alt="KVL Business Solutions" width={130} height={40} className="h-9 w-auto object-contain" />
           </Link>
           <nav className="hidden lg:flex items-center gap-6">
@@ -71,8 +71,8 @@ export function WebsiteOfferClient({ plans, reviews, portfolio }: {
           <a
             href={`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('I want a website')}`}
             target="_blank" rel="noreferrer"
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full text-white text-xs font-bold"
-            style={{ background: '#25D366' }}
+            className="flex min-h-[44px] items-center gap-1.5 px-4 py-2 rounded-full text-white text-xs font-bold"
+            style={{ background: '#0f7a6e' }}
           >
             <MessageCircle className="w-3.5 h-3.5" /> WhatsApp Us
           </a>

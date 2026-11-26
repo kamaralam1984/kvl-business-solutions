@@ -1,99 +1,75 @@
 'use client';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useReveal, revealStyle } from '@/lib/hooks/useReveal';
-import { ArrowUpRight, ExternalLink } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
+import { SectionHeading, Card, Badge, cn } from '@/components/ui';
 import type { CaseStudy } from '@/lib/data/case-studies';
 
-const FEATURED_SLUGS = ['aapkaplot', 'restro-os', 'vidyt'];
+// First segment of "AI SaaS · Sales & Revenue CRM" → "AI SaaS", used as the filter tab.
+const categoryOf = (c: CaseStudy) => c.businessCategory.split('·')[0].trim().replace(/ Management Platform$/, '');
 
+// Fetched server-side (app/page.tsx) so admin edits show up here. Every live
+// project is shown, not a curated subset.
 export function CaseStudies({ caseStudies }: { caseStudies: CaseStudy[] }) {
-  const { ref, inView } = useReveal();
-
-  // Fetched server-side via getLiveCaseStudies() (app/page.tsx) rather than
-  // imported from the static lib/data/case-studies.ts directly, so an
-  // admin's edits to a featured case study's overview/tech/image show up
-  // here instead of the homepage silently keeping stale copy.
-  const projects = FEATURED_SLUGS
-    .map(slug => caseStudies.find(c => c.slug === slug))
-    .filter((c): c is CaseStudy => Boolean(c))
-    .map(c => ({
-      name: c.name,
-      slug: c.slug,
-      url: c.url,
-      overview: c.overview,
-      tech: c.tech,
-      image: c.images.hero,
-    }));
+  const [filter, setFilter] = useState('All');
+  const categories = useMemo(() => ['All', ...Array.from(new Set(caseStudies.map(categoryOf)))], [caseStudies]);
+  const shown = filter === 'All' ? caseStudies : caseStudies.filter(c => categoryOf(c) === filter);
 
   return (
-    <section className="py-28" style={{ background: 'rgb(var(--bg))' }}>
+    <section className="bg-bg py-[var(--section-y)]">
       <div className="container">
+        <SectionHeading
+          eyebrow="Live Products, Not Mockups"
+          title={<>Real products. Real users. <span className="text-gold-text">Verifiable today, not case studies we wrote ourselves.</span></>}
+        />
 
-        {/* Section header */}
-        <div className="max-w-full mx-auto text-center mb-16 px-2">
-          <span className="eyebrow mb-4 block">Live Products, Not Mockups</span>
-          <h2 className="heading-lg" style={{ color: 'rgb(var(--text))', fontSize: 'clamp(0.95rem, 1.75vw, 1.5rem)' }}>
-            Real products. Real users. <span style={{ color: 'rgb(var(--gold-text))' }}>Verifiable today, not case studies we wrote ourselves.</span>
-          </h2>
+        <div role="group" aria-label="Filter by category" className="mt-8 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
+          {categories.map(cat => (
+            <button
+              key={cat}
+              aria-pressed={filter === cat}
+              onClick={() => setFilter(cat)}
+              className={cn(
+                'min-h-[44px] shrink-0 rounded-full border px-5 text-sm font-semibold transition-colors duration-base focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]',
+                filter === cat ? 'border-gold bg-gold text-[#080910]' : 'border-line bg-card text-text2 hover:text-text',
+              )}
+            >
+              {cat}
+            </button>
+          ))}
         </div>
 
-        {/* Project cards */}
-        <div ref={ref} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((p, i) => (
-            <div key={p.name} style={revealStyle(inView, i, { staggerMs: 100, durationMs: 600, distance: 28 })}>
-              <div className="card-premium h-full flex flex-col overflow-hidden group">
-                <Link href={`/projects/${p.slug}`} className="relative block overflow-hidden aspect-[16/10]" style={{ background: '#0a0a0a' }}>
-                  <Image
-                    src={p.image}
-                    alt={`${p.name} — live project built by KVL Business Solutions`}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-contain transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <span
-                    className="absolute top-3 left-4 text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full"
-                    style={{
-                      background: 'rgba(34,197,94,0.12)',
-                      color: '#16a34a',
-                      border: '1px solid rgba(34,197,94,0.3)',
-                      backdropFilter: 'blur(6px)',
-                    }}
-                  >
-                    Live
-                  </span>
-                </Link>
-
-                <div className="p-7 flex flex-col flex-1">
-                  <Link href={`/projects/${p.slug}`}>
-                    <h3 className="font-display font-bold text-[1.1rem] mb-4 hover:underline" style={{ color: 'rgb(var(--text))' }}>
-                      {p.name}
-                    </h3>
-                  </Link>
-
-                  <p className="text-[13.5px] leading-[1.65] mb-4" style={{ color: 'rgb(var(--text-2))' }}>{p.overview}</p>
-
-                  <div className="flex flex-wrap gap-1.5 mb-6">
-                    {p.tech.map(t => (
-                      <span key={t} className="text-[10.5px] font-medium px-2 py-0.5 rounded-full"
-                        style={{ background: 'rgba(200,168,112,0.08)', color: 'rgb(var(--gold-text))', border: '1px solid rgba(200,168,112,0.2)' }}>
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="mt-auto pt-5 flex items-center justify-between" style={{ borderTop: '1px solid rgba(var(--border) / 0.07)' }}>
-                    <Link href={`/projects/${p.slug}`} className="inline-flex items-center gap-1.5 text-[13px] font-semibold group/link py-2" style={{ color: 'rgb(var(--gold-text))' }}>
-                      View Case Study
-                      <ArrowUpRight className="w-4 h-4 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform duration-200" />
-                    </Link>
-                    <a href={p.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[11.5px] font-medium py-2" style={{ color: 'rgb(var(--text-3))' }}>
-                      Live site <ExternalLink className="w-3 h-3" />
-                    </a>
-                  </div>
+        {/* Bento: first two cards are wide, the rest sit three across */}
+        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-6">
+          {shown.map((c, i) => (
+            <Card
+              key={c.slug}
+              interactive
+              className={cn('group flex flex-col overflow-hidden', i < 2 ? 'lg:col-span-3' : 'lg:col-span-2')}
+            >
+              <Link href={`/projects/${c.slug}`} className="relative block aspect-[16/10] overflow-hidden bg-[#0a0a0a] focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">
+                <Image
+                  src={c.images.hero}
+                  alt={`${c.name} — live project built by KVL Business Solutions`}
+                  fill
+                  sizes={i < 2 ? '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 45vw' : '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 30vw'}
+                  className="object-cover object-top transition-transform duration-slow ease-brand group-hover:scale-[1.03]"
+                />
+              </Link>
+              <div className="flex flex-1 items-center justify-between gap-3 p-5">
+                <div className="min-w-0">
+                  <h3 className="truncate font-display text-card-title text-text">{c.name}</h3>
+                  <Badge className="mt-2">{categoryOf(c)}</Badge>
                 </div>
+                <Link
+                  href={`/projects/${c.slug}`}
+                  className="inline-flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-btn text-sm font-semibold text-gold-text focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
+                >
+                  View Case Study <ArrowUpRight className="h-4 w-4" aria-hidden />
+                </Link>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       </div>

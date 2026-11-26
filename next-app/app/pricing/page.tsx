@@ -1,20 +1,9 @@
-'use client';
-import { useRef, useState } from 'react';
-import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
 import { softwareProducts } from '@/lib/data/software';
 import { Check, Calendar, Shield, Clock, Award } from 'lucide-react';
 import { ViewContentTracker } from '@/components/analytics/ViewContentTracker';
-
-function FadeIn({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
-  return (
-    <motion.div ref={ref} initial={{ opacity: 0, y: 28 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.55, delay }} className={className}>
-      {children}
-    </motion.div>
-  );
-}
+import { PageHero } from '@/components/shared/PageHero';
+import { Accordion, Badge, Button, Card, Section, SectionHeading, cn } from '@/components/ui';
 
 const universalFeatures = [
   'Free installation & setup',
@@ -62,261 +51,152 @@ const pricingFaqs = [
 ];
 
 export default function PricingPage() {
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
-
   return (
-    <div style={{ background: 'rgb(var(--bg))' }}>
+    <div className="bg-bg">
       <ViewContentTracker id="pricing" name="Pricing Page" category="Pricing" />
 
-      {/* Hero */}
-      <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden" style={{ background: 'rgb(var(--bg))' }}>
-        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200,169,110,0.05) 0%, transparent 70%)' }} />
-        <div className="relative z-10 container text-center py-28">
-          <motion.span
-            initial={{ opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="eyebrow"
-          >
-            TRANSPARENT PRICING
-          </motion.span>
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.1 }}
-            className="text-5xl md:text-7xl font-extrabold mt-4 mb-6 leading-tight"
-            style={{ color: 'rgb(var(--text))', fontFamily: 'Poppins, sans-serif' }}
-          >
-            Plans Built Around Your Business
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="text-xl max-w-2xl mx-auto"
-            style={{ color: 'rgba(var(--text) / 0.55)' }}
-          >
-            Know exactly what you get — no hidden fees, no surprise renewals, 30-day money-back on everything. Talk to us for a plan matched to your business.
-          </motion.p>
-        </div>
-      </section>
-
-      <div className="divider-gold" />
+      <PageHero
+        eyebrow="TRANSPARENT PRICING"
+        title="Plans Built Around Your Business"
+        description="Know exactly what you get — no hidden fees, no surprise renewals, 30-day money-back on everything. Talk to us for a plan matched to your business."
+        breadcrumb="Pricing"
+      />
 
       {/* Plan Tiers */}
-      <section className="section" style={{ background: 'rgb(var(--bg))' }}>
-        <div className="container">
-          <FadeIn className="text-center mb-4">
-            <h2 className="text-3xl font-extrabold" style={{ color: 'rgb(var(--text))', fontFamily: 'Poppins, sans-serif' }}>Compare plans</h2>
-            <p className="mt-2 text-sm" style={{ color: 'rgba(var(--text) / 0.55)' }}>Bundle multiple products and save as a package.</p>
-          </FadeIn>
-          <div className="grid md:grid-cols-3 gap-6 mt-12">
-            {planTiers.map((tier, idx) => {
-              const products = tier.products.map(slug => softwareProducts.find(p => p.slug === slug)!).filter(Boolean);
-              const isPopular = tier.badge === 'popular';
-              return (
-                <FadeIn key={tier.name} delay={idx * 0.1}>
-                  <div
-                    className="card-premium p-7 relative flex flex-col h-full"
-                    style={isPopular ? { borderColor: 'rgba(200,169,110,0.4)', boxShadow: '0 0 40px -10px rgba(200,169,110,0.15)' } : {}}
-                  >
-                    {tier.tag && (
-                      <div
-                        className={`absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-[11px] font-bold${isPopular ? '' : ' text-text'}`}
-                        style={{
-                          background: isPopular ? 'rgba(200,169,110,0.15)' : 'rgba(var(--border) / 0.07)',
-                          border: isPopular ? '1px solid rgba(200,169,110,0.4)' : '1px solid rgba(var(--border) / 0.15)',
-                          color: isPopular ? '#c8a96e' : undefined,
-                        }}
-                      >
-                        {tier.tag}
-                      </div>
-                    )}
-                    <h3 className="text-2xl font-extrabold mt-2 text-text" style={{ fontFamily: 'Poppins, sans-serif' }}>{tier.name}</h3>
-                    <p className="text-xs mt-1 mb-6 text-text2">{tier.desc}</p>
-                    <div className="space-y-2 text-sm mb-5 pb-5" style={{ borderBottom: '1px solid rgba(var(--border) / 0.07)' }}>
-                      <div className="text-xs uppercase font-bold mb-3 tracking-wider text-text2">Includes</div>
-                      {products.map(p => (
-                        <div key={p.slug} className="flex gap-2 items-center">
-                          <Check className="w-4 h-4 shrink-0" style={{ color: '#c8a96e' }} />
-                          <span className="text-text">{p.name}</span>
-                        </div>
-                      ))}
+      <Section>
+        <SectionHeading align="center" title="Compare plans" description="Bundle multiple products and save as a package." />
+        <div className="mt-14 grid gap-6 md:grid-cols-3">
+          {planTiers.map(tier => {
+            const products = tier.products.map(slug => softwareProducts.find(p => p.slug === slug)!).filter(Boolean);
+            const isPopular = tier.badge === 'popular';
+            return (
+              <Card
+                key={tier.name}
+                className={cn('relative flex h-full flex-col p-7', isPopular && 'border-gold shadow-soft-3')}
+              >
+                {tier.tag && (
+                  <Badge className="absolute -top-3.5 left-1/2 -translate-x-1/2 uppercase tracking-wide">{tier.tag}</Badge>
+                )}
+                <h3 className="mt-2 font-display text-card-title text-text">{tier.name}</h3>
+                <p className="mb-6 mt-2 text-sm text-text2">{tier.desc}</p>
+                <div className="mb-5 space-y-2 border-b border-line pb-5 text-sm">
+                  <div className="mb-3 text-xs font-bold uppercase tracking-wider text-text2">Includes</div>
+                  {products.map(p => (
+                    <div key={p.slug} className="flex items-center gap-2">
+                      <Check className="h-4 w-4 shrink-0 text-gold-text" aria-hidden />
+                      <span className="text-text">{p.name}</span>
                     </div>
-                    <div className="space-y-2 text-sm mb-6 flex-1">
-                      {tier.extras.map(e => (
-                        <div key={e} className="flex gap-2 items-center text-text2">
-                          <span className="text-xs shrink-0" style={{ color: '#c8a96e' }}>✓</span>
-                          <span>{e}</span>
-                        </div>
-                      ))}
+                  ))}
+                </div>
+                <div className="mb-6 flex-1 space-y-2 text-sm">
+                  {tier.extras.map(e => (
+                    <div key={e} className="flex items-center gap-2 text-text2">
+                      <Check className="h-3.5 w-3.5 shrink-0 text-gold-text" aria-hidden />
+                      <span>{e}</span>
                     </div>
-                    <Link
-                      href="/contact"
-                      className={isPopular ? 'btn-primary w-full text-center py-3 rounded-xl font-semibold' : 'btn-gold w-full text-center py-3 rounded-xl font-semibold'}
-                    >
-                      Advance Payment
-                    </Link>
-                  </div>
-                </FadeIn>
-              );
-            })}
-          </div>
+                  ))}
+                </div>
+                <Button href="/contact" variant={isPopular ? 'primary' : 'secondary'} className="w-full">
+                  Advance Payment
+                </Button>
+              </Card>
+            );
+          })}
         </div>
-      </section>
+      </Section>
 
       {/* Universal Features */}
-      <section className="section" style={{ background: 'rgb(var(--bg-3))' }}>
-        <div className="container">
-          <FadeIn className="text-center mb-12">
-            <span className="eyebrow">INCLUDED IN EVERY PLAN</span>
-            <h2 className="text-3xl font-extrabold my-3" style={{ color: 'rgb(var(--text))', fontFamily: 'Poppins, sans-serif' }}>All plans include</h2>
-          </FadeIn>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
-            {universalFeatures.map((f, i) => (
-              <FadeIn key={f} delay={i * 0.04}>
-                <div className="card-premium flex items-center gap-3 px-4 py-3">
-                  <Check className="w-4 h-4 shrink-0" style={{ color: '#c8a96e' }} />
-                  <span className="text-sm text-text">{f}</span>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
+      <Section tone="alt">
+        <SectionHeading align="center" eyebrow="INCLUDED IN EVERY PLAN" title="All plans include" />
+        <div className="mx-auto mt-12 grid max-w-4xl gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {universalFeatures.map(f => (
+            <Card key={f} className="flex items-center gap-3 px-4 py-3">
+              <Check className="h-4 w-4 shrink-0 text-gold-text" aria-hidden />
+              <span className="text-sm text-text">{f}</span>
+            </Card>
+          ))}
         </div>
-      </section>
+      </Section>
 
       {/* Individual Products Table */}
-      <section className="section" style={{ background: 'rgb(var(--bg))' }}>
-        <div className="container">
-          <FadeIn className="text-center mb-10">
-            <h2 className="text-3xl font-extrabold" style={{ color: 'rgb(var(--text))', fontFamily: 'Poppins, sans-serif' }}>Individual products</h2>
-            <p className="mt-2 text-sm" style={{ color: 'rgba(var(--text) / 0.55)' }}>Prefer one product at a time? Buy individually, cloud or on-premise.</p>
-          </FadeIn>
-          <FadeIn delay={0.1}>
-            <div className="card-premium overflow-x-auto">
-              <table className="w-full text-sm min-w-[560px]">
-                <thead style={{ borderBottom: '1px solid rgba(var(--border) / 0.07)' }}>
-                  <tr className="text-left text-xs uppercase tracking-wider text-text2">
-                    <th className="p-4">Product</th>
-                    <th className="p-4"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {softwareProducts.map(p => (
-                    <tr key={p.slug} className="transition-colors" style={{ borderBottom: '1px solid rgba(var(--border) / 0.04)' }}>
-                      <td className="p-4">
-                        <div className="font-bold text-text">{p.name}</div>
-                        <div className="text-xs mt-0.5 text-text2">{p.category}</div>
-                        <ul className="mt-1.5 space-y-0.5">
-                          {p.features?.slice(0, 2).map((f: string) => (
-                            <li key={f} className="flex gap-1 items-center text-xs text-text2">
-                              <Check className="w-3 h-3 shrink-0" style={{ color: 'rgba(200,169,110,0.6)' }} /> {f}
-                            </li>
-                          ))}
-                        </ul>
-                      </td>
-                      <td className="p-4 text-right">
-                        <Link href="/book-demo" className="btn-primary px-4 py-2 rounded-lg text-xs font-semibold inline-flex items-center gap-1">Demo</Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </FadeIn>
-          <div className="text-center mt-10">
-            <Link href="/book-demo" className="btn-primary px-8 py-3 rounded-xl font-semibold inline-flex items-center gap-2 mr-3">
-              <Calendar className="w-4 h-4" /> Book a free demo
-            </Link>
-            <Link href="/contact" className="btn-ghost px-8 py-3 rounded-xl font-semibold inline-flex items-center gap-2">
-              Need a custom plan?
-            </Link>
-          </div>
+      <Section>
+        <SectionHeading align="center" title="Individual products" description="Prefer one product at a time? Buy individually, cloud or on-premise." />
+        <Card className="relative mt-10 overflow-x-auto">
+          <table className="w-full min-w-[560px] text-sm">
+            <caption className="sr-only">Individual software products</caption>
+            <thead className="border-b border-line">
+              <tr className="text-left text-xs uppercase tracking-wider text-text2">
+                <th scope="col" className="p-4">Product</th>
+                <th scope="col" className="p-4"><span className="sr-only">Action</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              {softwareProducts.map(p => (
+                <tr key={p.slug} className="border-b border-line last:border-0 transition-colors hover:bg-bg2">
+                  <td className="p-4">
+                    <div className="font-bold text-text">{p.name}</div>
+                    <div className="mt-0.5 text-xs text-text2">{p.category}</div>
+                    <ul className="mt-1.5 space-y-0.5">
+                      {p.features?.slice(0, 2).map((f: string) => (
+                        <li key={f} className="flex items-center gap-1.5 text-xs text-text2">
+                          <Check className="h-3 w-3 shrink-0 text-gold-text" aria-hidden /> {f}
+                        </li>
+                      ))}
+                    </ul>
+                  </td>
+                  <td className="p-4 text-right">
+                    <Button href="/book-demo" className="px-4 text-sm">Demo</Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Card>
+        <div className="mt-10 flex flex-wrap justify-center gap-3">
+          <Button href="/book-demo" size="lg"><Calendar className="h-4 w-4" aria-hidden /> Book a free demo</Button>
+          <Button href="/contact" variant="secondary" size="lg">Need a custom plan?</Button>
         </div>
-      </section>
+      </Section>
 
       {/* FAQ */}
-      <section className="section" style={{ background: 'rgb(var(--bg-3))' }}>
-        <div className="container max-w-3xl">
-          <FadeIn className="text-center mb-12">
-            <span className="eyebrow">PRICING FAQ</span>
-            <h2 className="text-3xl font-extrabold my-3" style={{ color: 'rgb(var(--text))', fontFamily: 'Poppins, sans-serif' }}>
-              Frequently Asked Questions
-            </h2>
-          </FadeIn>
-          <div className="space-y-4">
-            {pricingFaqs.map((faq, i) => (
-              <FadeIn key={i} delay={i * 0.06}>
-                <div className="card-premium overflow-hidden">
-                  <button
-                    className="w-full flex items-center justify-between p-5 text-left"
-                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  >
-                    <span className="font-semibold text-sm text-text">{faq.q}</span>
-                    <span
-                      className="text-2xl leading-none ml-3 shrink-0 transition-transform duration-300 font-light"
-                      style={{ color: '#c8a96e', transform: openFaq === i ? 'rotate(45deg)' : 'rotate(0deg)' }}
-                    >+</span>
-                  </button>
-                  <motion.div
-                    initial={false}
-                    animate={{ height: openFaq === i ? 'auto' : 0, opacity: openFaq === i ? 1 : 0 }}
-                    transition={{ duration: 0.3 }}
-                    style={{ overflow: 'hidden' }}
-                  >
-                    <p className="px-5 pb-5 text-sm leading-relaxed text-text2">{faq.a}</p>
-                  </motion.div>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
+      <Section tone="alt" containerClassName="max-w-3xl">
+        <SectionHeading align="center" eyebrow="PRICING FAQ" title="Frequently Asked Questions" />
+        <Accordion
+          className="mt-12"
+          items={pricingFaqs.map((f, i) => ({ id: `faq-${i}`, question: f.q, answer: <p className="leading-relaxed">{f.a}</p> }))}
+        />
+      </Section>
 
       {/* Trust Indicators */}
-      <section className="py-20" style={{ background: 'rgb(var(--bg))' }}>
-        <div className="container">
-          <div className="grid sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
-            {[
-              { Icon: Shield, title: '30-Day Money-Back', desc: 'Not satisfied? Full refund, no questions asked.' },
-              { Icon: Clock, title: '1-Hour Response', desc: 'Our support team replies within 60 minutes during business hours.' },
-              { Icon: Award, title: 'MSME Registered', desc: 'Govt. of India registered, with an NDA available on request.' },
-            ].map((t, i) => (
-              <FadeIn key={t.title} delay={i * 0.1}>
-                <div className="card-premium p-6 text-center">
-                  <div className="w-10 h-10 rounded-xl grid place-items-center mx-auto mb-4" style={{ background: 'rgba(200,169,110,0.08)', border: '1px solid rgba(200,169,110,0.2)' }}>
-                    <t.Icon className="w-5 h-5" style={{ color: '#c8a96e' }} />
-                  </div>
-                  <h4 className="font-bold mb-2 text-sm text-text">{t.title}</h4>
-                  <p className="text-sm text-text2">{t.desc}</p>
-                </div>
-              </FadeIn>
-            ))}
-          </div>
+      <Section>
+        <div className="mx-auto grid max-w-3xl gap-6 sm:grid-cols-3">
+          {[
+            { Icon: Shield, title: '30-Day Money-Back', desc: 'Not satisfied? Full refund, no questions asked.' },
+            { Icon: Clock, title: '1-Hour Response', desc: 'Our support team replies within 60 minutes during business hours.' },
+            { Icon: Award, title: 'MSME Registered', desc: 'Govt. of India registered, with an NDA available on request.' },
+          ].map(t => (
+            <Card key={t.title} className="p-6 text-center">
+              <div className="mx-auto mb-4 grid h-11 w-11 place-items-center rounded-btn border border-line bg-bg2">
+                <t.Icon className="h-5 w-5 text-gold-text" aria-hidden />
+              </div>
+              <h3 className="mb-2 font-display text-base font-bold text-text">{t.title}</h3>
+              <p className="text-sm text-text2">{t.desc}</p>
+            </Card>
+          ))}
         </div>
-      </section>
+      </Section>
 
       {/* CTA Banner */}
-      <section className="section" style={{ background: 'rgb(var(--bg-3))' }}>
-        <div className="relative z-10 container text-center">
-          <FadeIn>
-            <span className="eyebrow">NEED HELP CHOOSING?</span>
-            <h2 className="text-4xl font-extrabold my-4" style={{ color: 'rgb(var(--text))', fontFamily: 'Poppins, sans-serif' }}>
-              Still not sure which plan fits?
-            </h2>
-            <p className="mb-7 max-w-xl mx-auto text-sm" style={{ color: 'rgba(var(--text) / 0.55)' }}>
-              Talk to a solution architect for a bundle recommendation matched to your business size and industry — a free 30-minute consultation, no obligation.
-            </p>
-            <Link href="/contact" className="btn-primary px-8 py-3 rounded-xl font-semibold inline-flex items-center gap-2">
-              Talk to a Solution Architect
-            </Link>
-            <Link href="/downloads" className="inline-block mt-6 text-sm underline" style={{ color: 'rgba(var(--text) / 0.55)' }}>
-              Download our Service Brochure & Company Profile
-            </Link>
-          </FadeIn>
+      <Section tone="alt" containerClassName="text-center">
+        <SectionHeading align="center" eyebrow="NEED HELP CHOOSING?" title="Still not sure which plan fits?"
+          description="Talk to a solution architect for a bundle recommendation matched to your business size and industry — a free 30-minute consultation, no obligation." />
+        <div className="mt-8">
+          <Button href="/contact" size="lg">Talk to a Solution Architect</Button>
         </div>
-      </section>
-
+        <Link href="/downloads" className="mt-6 inline-flex min-h-[44px] items-center rounded-btn text-sm text-text2 underline hover:text-text focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">
+          Download our Service Brochure & Company Profile
+        </Link>
+      </Section>
     </div>
   );
 }

@@ -1,10 +1,8 @@
-'use client';
-import { useState } from 'react';
 import Link from 'next/link';
-import { ChevronDown, ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
+import { SectionHeading, Accordion } from '@/components/ui';
 
-// A representative subset of the full FAQ list at /faq — same real answers,
-// not new claims, so this stays consistent with that page.
+// A representative subset of the full FAQ at /faq — same real answers, not new claims.
 const FAQS = [
   { q: 'What does KVL offer?', a: 'We provide 15 enterprise software products, custom development, GPS tracking, CCTV, civil work, and industrial automation services across India.' },
   { q: 'Do you serve small businesses?', a: 'Yes — we have plans designed for small and mid-sized businesses. Get in touch and we\'ll recommend the right fit.' },
@@ -15,67 +13,19 @@ const FAQS = [
 ];
 
 export function HomeFAQ() {
-  const [open, setOpen] = useState<number | null>(0);
-
   return (
-    <section className="py-28" style={{ background: 'rgb(var(--bg-2))' }}>
-      <div className="container">
-        <div className="max-w-2xl mx-auto text-center mb-14">
-          <span className="eyebrow mb-4 block">Common Questions</span>
-          <h2 className="heading-lg" style={{ color: 'rgb(var(--text))' }}>
-            Before you ask,<br />
-            <span style={{ color: 'rgb(var(--gold-text))' }}>here&apos;s what most people want to know.</span>
-          </h2>
-        </div>
-
-        <div className="max-w-2xl mx-auto space-y-3">
-          {FAQS.map((item, i) => {
-            const isOpen = open === i;
-            return (
-              <div
-                key={item.q}
-                className="rounded-2xl overflow-hidden card-premium"
-              >
-                <button
-                  onClick={() => setOpen(isOpen ? null : i)}
-                  aria-expanded={isOpen}
-                  aria-controls={`home-faq-panel-${i}`}
-                  id={`home-faq-trigger-${i}`}
-                  className="w-full flex items-center justify-between gap-4 p-5 text-left"
-                >
-                  <span className="font-semibold text-[14.5px]" style={{ color: 'rgb(var(--text))' }}>{item.q}</span>
-                  <ChevronDown
-                    className="w-4 h-4 shrink-0 transition-transform duration-200"
-                    style={{ color: 'rgb(var(--gold-text))', transform: isOpen ? 'rotate(180deg)' : 'none' }}
-                  />
-                </button>
-                <div
-                  id={`home-faq-panel-${i}`}
-                  role="region"
-                  aria-labelledby={`home-faq-trigger-${i}`}
-                  aria-hidden={!isOpen}
-                  className="overflow-hidden transition-all duration-300"
-                  style={{ maxHeight: isOpen ? 200 : 0 }}
-                >
-                  <p className="px-5 pb-5 text-[13.5px] leading-[1.7]" style={{ color: 'rgb(var(--text-2))' }}>
-                    {item.a}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="text-center mt-10">
-          <Link
-            href="/faq"
-            className="inline-flex items-center gap-1.5 text-[13.5px] font-semibold py-2"
-            style={{ color: 'rgb(var(--gold-text))' }}
-          >
-            See all FAQs
-            <ArrowUpRight className="w-3.5 h-3.5" />
+    <section className="bg-bg py-[var(--section-y)]">
+      <div className="container grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+        <div>
+          <SectionHeading
+            eyebrow="Common Questions"
+            title={<>Before you ask, <span className="text-gold-text">here&apos;s what most people want to know.</span></>}
+          />
+          <Link href="/faq" className="mt-6 inline-flex min-h-[44px] items-center gap-1.5 rounded-btn font-semibold text-gold-text focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">
+            See all FAQs <ArrowUpRight className="h-4 w-4" aria-hidden />
           </Link>
         </div>
+        <Accordion items={FAQS.map((f, i) => ({ id: `faq-${i}`, question: f.q, answer: f.a }))} />
       </div>
     </section>
   );

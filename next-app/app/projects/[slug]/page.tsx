@@ -10,7 +10,7 @@ import {
   LaptopMinimal, Smartphone, Satellite, HardHat, Cog, Bot, Video, Network,
   Cloud, Brain, Megaphone, Palette, Contact2, Webhook, Tag, Workflow, Box,
   GitBranch, Wallet, Target, FileText, Send, CalendarClock, RefreshCw,
-  GraduationCap, Code2, Server, Newspaper, LogIn, Camera,
+  GraduationCap, Code2, Server, Newspaper, LogIn, Camera, Moon, Hand,
   type LucideIcon,
 } from 'lucide-react';
 import { type CaseStudy } from '@/lib/data/case-studies';
@@ -18,7 +18,7 @@ import { getLiveCaseStudy, getLiveCaseStudies } from '@/lib/data/live-case-studi
 import { services } from '@/lib/data/services';
 import { industries } from '@/lib/data/industries';
 import { JsonLd } from '@/components/shared/JsonLd';
-import { ParticleBackground } from '@/components/shared/ParticleBackground';
+import { Badge, Button, buttonStyles, Card, Section, SectionHeading } from '@/components/ui';
 import { CtaBanner } from '@/components/home/CtaBanner';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
@@ -46,7 +46,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   LaptopMinimal, Smartphone, Satellite, HardHat, Cog, Bot, Video, Network,
   Cloud, Brain, Megaphone, Palette, Contact2, Webhook, Tag, Workflow, Box,
   GitBranch, Wallet, Target, FileText, Send, CalendarClock, RefreshCw,
-  GraduationCap, Code2, Server, Newspaper, LogIn, Camera,
+  GraduationCap, Code2, Server, Newspaper, LogIn, Camera, Moon, Hand,
 };
 
 function Icon({ name, className }: { name: string; className?: string }) {
@@ -148,59 +148,52 @@ export default async function CaseStudyPage({ params }: { params: { slug: string
       <JsonLd data={faqJsonLd} id={`case-study-${study.slug}-faq-jsonld`} />
 
       {/* SECTION 1 — Hero */}
-      <section className="relative pt-20 pb-16 bg-app2 border-b border-tint overflow-hidden">
-        <ParticleBackground />
-        <div className="absolute inset-0 blueprint pointer-events-none opacity-60" />
-        <div className="container relative z-10">
-          <div className="inline-flex gap-2 mb-6 text-xs text-text2">
-            <Link href="/" className="text-primary">Home</Link>
-            <ChevronRight className="w-3 h-3 self-center" />
-            <Link href="/projects" className="text-primary">Projects</Link>
-            <ChevronRight className="w-3 h-3 self-center" />
-            <span>{study.name}</span>
-          </div>
+      <section className="border-b border-line bg-bg2 pb-[var(--section-y)] pt-16 sm:pt-20">
+        <div className="container">
+          <nav aria-label="Breadcrumb" className="mb-4 flex flex-wrap items-center gap-2 text-sm text-text2">
+            <Link href="/" className="inline-flex min-h-[44px] items-center rounded text-gold-text hover:underline focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">Home</Link>
+            <ChevronRight className="h-3.5 w-3.5" aria-hidden />
+            <Link href="/projects" className="inline-flex min-h-[44px] items-center rounded text-gold-text hover:underline focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">Projects</Link>
+            <ChevronRight className="h-3.5 w-3.5" aria-hidden />
+            <span aria-current="page">{study.name}</span>
+          </nav>
 
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid items-center gap-12 lg:grid-cols-2">
             <div>
-              <div className="flex flex-wrap gap-2 mb-5">
-                <span className="text-[11px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-full" style={{ background: 'rgba(200,168,112,0.1)', color: '#a3814f', border: '1px solid rgba(200,168,112,0.25)' }}>
-                  {study.industry}
-                </span>
-                <span className="text-[11px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-full border border-tint text-text2">
-                  {study.businessCategory}
-                </span>
+              <div className="mb-5 flex flex-wrap gap-2">
+                <Badge className="uppercase tracking-wider">{study.industry}</Badge>
+                <Badge className="uppercase tracking-wider !text-text2">{study.businessCategory}</Badge>
                 {relatedIndustry && (
                   <Link
                     href={`/industries/${relatedIndustry.slug}`}
-                    className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-full border border-primary/30 text-primary hover:bg-primary hover:text-white transition-all"
+                    className="inline-flex min-h-[44px] items-center gap-1.5 rounded-full border border-line bg-card px-3 py-1 text-xs font-semibold uppercase tracking-wider text-gold-text transition-shadow duration-base hover:shadow-soft-1 focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]"
                   >
-                    <Compass className="w-3 h-3" /> {relatedIndustry.name}
+                    <Compass className="h-3.5 w-3.5" aria-hidden /> {relatedIndustry.name}
                   </Link>
                 )}
               </div>
-              <h1 className="text-4xl md:text-5xl font-black mb-4 leading-tight">{study.name}</h1>
-              <p className="text-lg text-text2 mb-3">{study.tagline}</p>
-              <p className="text-text2 max-w-xl mb-8">{study.overview}</p>
+              <h1 className="mb-4 font-display text-hero text-text">{study.name}</h1>
+              <p className="mb-3 text-body-lg text-text">{study.tagline}</p>
+              <p className="mb-8 max-w-xl text-body-lg text-text2">{study.overview}</p>
               <div className="flex flex-wrap gap-3">
-                <a href={study.url} target="_blank" rel="noreferrer" className="btn btn-primary">
-                  Visit Live Site <ExternalLink className="w-4 h-4" />
+                <a href={study.url} target="_blank" rel="noreferrer" className={buttonStyles('primary', 'lg')}>
+                  Visit Live Site <ExternalLink className="h-4 w-4" aria-hidden />
                 </a>
-                <Link href="/contact" className="btn btn-ghost">
-                  Need Something Similar? <ArrowUpRight className="w-4 h-4" />
-                </Link>
+                <Button href="/contact" variant="secondary" size="lg">
+                  Need Something Similar? <ArrowUpRight className="h-4 w-4" aria-hidden />
+                </Button>
               </div>
             </div>
 
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-tint">
-              <span className="absolute top-3 left-3 z-10 text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full" style={{ background: 'rgba(34,197,94,0.12)', color: '#16a34a', border: '1px solid rgba(34,197,94,0.3)', backdropFilter: 'blur(6px)' }}>
-                Live Product
-              </span>
+            <div className="relative overflow-hidden rounded-card border border-line shadow-soft-3">
+              <Badge className="absolute left-3 top-3 z-10 uppercase tracking-wider">Live Product</Badge>
               <Image
                 src={study.images.hero}
                 alt={`${study.name} dashboard on desktop`}
                 width={1440}
                 height={900}
-                className="w-full h-auto"
+                sizes="(min-width: 1024px) 560px, 100vw"
+                className="h-auto w-full"
                 priority
               />
             </div>
@@ -209,224 +202,174 @@ export default async function CaseStudyPage({ params }: { params: { slug: string
       </section>
 
       {/* SECTION 2 — Business Challenge */}
-      <section className="section">
-        <div className="container max-w-3xl">
-          <span className="eyebrow">The Business Challenge</span>
-          <h2 className="text-3xl md:text-4xl font-extrabold my-4">{study.challenge.headline}</h2>
-          <p className="text-text2 text-[15px] leading-[1.8]">{study.challenge.body}</p>
-        </div>
-      </section>
+      <Section containerClassName="max-w-3xl">
+        <SectionHeading eyebrow="The Business Challenge" title={study.challenge.headline} />
+        <p className="mt-4 text-body-lg text-text2">{study.challenge.body}</p>
+      </Section>
 
       {/* SECTION 3 — Business Goals */}
-      <section className="section section-alt">
-        <div className="container">
-          <div className="text-center mb-10">
-            <span className="eyebrow">Business Goals</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold my-4">What the Project Needed to Achieve</h2>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
-            {study.goals.map(g => (
-              <div key={g} className="flex gap-3 items-start card-base p-5">
-                <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" style={{ color: '#c8a870' }} />
-                <span className="text-sm">{g}</span>
-              </div>
-            ))}
-          </div>
+      <Section tone="alt">
+        <SectionHeading align="center" eyebrow="Business Goals" title="What the Project Needed to Achieve" className="mb-10" />
+        <div className="mx-auto grid max-w-3xl gap-4 sm:grid-cols-2">
+          {study.goals.map(g => (
+            <Card key={g} className="flex items-start gap-3 p-5">
+              <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-gold-text" aria-hidden />
+              <span className="text-text">{g}</span>
+            </Card>
+          ))}
         </div>
-      </section>
+      </Section>
 
       {/* SECTION 4 — Our Solution */}
-      <section className="section">
-        <div className="container">
-          <div className="max-w-3xl mb-10">
-            <span className="eyebrow">Our Solution</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold my-4">{study.solution.headline}</h2>
-            <p className="text-text2 text-[15px] leading-[1.8]">{study.solution.body}</p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {study.solution.pillars.map(p => (
-              <div key={p.title} className="card-premium p-6">
-                <h3 className="font-bold text-sm mb-2">{p.title}</h3>
-                <p className="text-text2 text-[13px] leading-[1.6]">{p.desc}</p>
-              </div>
-            ))}
-          </div>
+      <Section>
+        <SectionHeading eyebrow="Our Solution" title={study.solution.headline} description={study.solution.body} className="mb-10" />
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {study.solution.pillars.map(p => (
+            <Card key={p.title} className="p-6">
+              <h3 className="mb-2 font-display text-card-title text-text">{p.title}</h3>
+              <p className="text-text2">{p.desc}</p>
+            </Card>
+          ))}
         </div>
-      </section>
+      </Section>
 
       {/* SECTION 5 — Key Features */}
-      <section className="section section-alt">
-        <div className="container">
-          <div className="text-center mb-10">
-            <span className="eyebrow">Key Features</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold my-4">What {study.name} Does</h2>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {study.keyFeatures.map(f => (
-              <div key={f.title} className="card-base p-6">
-                <div className="w-10 h-10 rounded-xl grid place-items-center mb-4" style={{ background: 'rgba(200,168,112,0.1)', color: '#a3814f' }}>
-                  <Icon name={f.icon} className="w-5 h-5" />
-                </div>
-                <h3 className="font-bold text-sm mb-2">{f.title}</h3>
-                <p className="text-text2 text-[13px] leading-[1.6]">{f.desc}</p>
+      <Section tone="alt">
+        <SectionHeading align="center" eyebrow="Key Features" title={`What ${study.name} Does`} className="mb-10" />
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {study.keyFeatures.map(f => (
+            <Card key={f.title} className="p-6">
+              <div className="mb-4 grid h-11 w-11 place-items-center rounded-btn bg-gold/15 text-gold-text">
+                <Icon name={f.icon} className="h-5 w-5" />
               </div>
-            ))}
-          </div>
+              <h3 className="mb-2 font-display text-card-title text-text">{f.title}</h3>
+              <p className="text-text2">{f.desc}</p>
+            </Card>
+          ))}
         </div>
-      </section>
+      </Section>
 
       {/* SECTION 6 — Technology */}
-      <section className="section">
-        <div className="container text-center">
-          <span className="eyebrow">Technology</span>
-          <h2 className="text-2xl md:text-3xl font-extrabold my-4">Built With</h2>
-          <div className="flex flex-wrap gap-2.5 justify-center max-w-lg mx-auto">
-            {study.tech.map(t => (
-              <span key={t} className="text-[13px] font-medium px-3.5 py-1.5 rounded-full" style={{ background: 'rgba(200,168,112,0.08)', color: '#a3814f', border: '1px solid rgba(200,168,112,0.2)' }}>
-                {t}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
+      <Section>
+        <SectionHeading align="center" eyebrow="Technology" title="Built With" className="mb-8" />
+        <ul className="mx-auto flex max-w-lg flex-wrap justify-center gap-2.5">
+          {study.tech.map(t => (
+            <li key={t}><Badge className="px-3.5 py-1.5 text-sm font-medium">{t}</Badge></li>
+          ))}
+        </ul>
+      </Section>
 
       {/* SECTION 7 — Development Process */}
-      <section className="section section-alt">
-        <div className="container">
-          <div className="text-center mb-10">
-            <span className="eyebrow">How We Built It</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold my-4">Our Standard Delivery Process</h2>
-            <p className="text-text2 max-w-xl mx-auto">The same process we run on every engagement — including this one.</p>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
-            {processSteps.map(s => (
-              <div key={s.num} className="card-premium p-5">
-                <div className="w-9 h-9 rounded-full grid place-items-center mb-4 font-bold text-[12px]" style={{ background: 'rgba(200,168,112,0.1)', border: '1px solid rgba(200,168,112,0.22)', color: '#a3814f' }}>
-                  {s.num}
-                </div>
-                <h3 className="font-bold text-sm mb-1.5">{s.title}</h3>
-                <p className="text-text2 text-[12.5px] leading-[1.6]">{s.desc}</p>
+      <Section tone="alt">
+        <SectionHeading align="center" eyebrow="How We Built It" title="Our Standard Delivery Process" description="The same process we run on every engagement — including this one." className="mb-10" />
+        <div className="grid grid-cols-2 gap-5 sm:grid-cols-4">
+          {processSteps.map(s => (
+            <Card key={s.num} className="p-5">
+              <div className="mb-4 grid h-10 w-10 place-items-center rounded-full bg-gold/15 text-sm font-bold text-gold-text">
+                {s.num}
               </div>
-            ))}
-          </div>
+              <h3 className="mb-1.5 font-display text-card-title text-text">{s.title}</h3>
+              <p className="text-text2">{s.desc}</p>
+            </Card>
+          ))}
         </div>
-      </section>
+      </Section>
 
       {/* SECTION 8 — Business Benefits */}
-      <section className="section">
-        <div className="container">
-          <div className="text-center mb-10">
-            <span className="eyebrow">Business Benefits</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold my-4">What This Changes</h2>
-          </div>
-          <div className="grid sm:grid-cols-2 gap-5 max-w-4xl mx-auto">
-            {study.benefits.map(b => (
-              <div key={b.title} className="card-base p-6">
-                <h3 className="font-bold text-sm mb-2">{b.title}</h3>
-                <p className="text-text2 text-[13px] leading-[1.6]">{b.desc}</p>
-              </div>
-            ))}
-          </div>
+      <Section>
+        <SectionHeading align="center" eyebrow="Business Benefits" title="What This Changes" className="mb-10" />
+        <div className="mx-auto grid max-w-4xl gap-5 sm:grid-cols-2">
+          {study.benefits.map(b => (
+            <Card key={b.title} className="p-6">
+              <h3 className="mb-2 font-display text-card-title text-text">{b.title}</h3>
+              <p className="text-text2">{b.desc}</p>
+            </Card>
+          ))}
         </div>
-      </section>
+      </Section>
 
       {/* SECTION 9 — Gallery */}
-      <section className="section section-alt">
-        <div className="container">
-          <div className="text-center mb-10">
-            <span className="eyebrow">Gallery</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold my-4">See It In Action</h2>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6 items-start">
-            {study.images.gallery.map(g => (
-              <div key={g.device} className="card-base overflow-hidden">
-                <Image
-                  src={g.src}
-                  alt={g.alt}
-                  width={g.device === 'desktop' ? 1440 : g.device === 'tablet' ? 834 : 390}
-                  height={g.device === 'desktop' ? 900 : g.device === 'tablet' ? 1112 : 844}
-                  className="w-full h-auto"
-                  loading="lazy"
-                />
-                <div className="p-3 text-center text-[11px] font-bold tracking-widest uppercase text-text2">{g.device}</div>
-              </div>
-            ))}
-          </div>
+      <Section tone="alt">
+        <SectionHeading align="center" eyebrow="Gallery" title="See It In Action" className="mb-10" />
+        <div className="grid items-start gap-6 md:grid-cols-3">
+          {study.images.gallery.map(g => (
+            <Card key={g.device} className="overflow-hidden">
+              <Image
+                src={g.src}
+                alt={g.alt}
+                width={g.device === 'desktop' ? 1440 : g.device === 'tablet' ? 834 : 390}
+                height={g.device === 'desktop' ? 900 : g.device === 'tablet' ? 1112 : 844}
+                sizes="(min-width: 768px) 33vw, 100vw"
+                className="h-auto w-full"
+                loading="lazy"
+              />
+              <div className="p-3 text-center text-xs font-bold uppercase tracking-wider text-text2">{g.device}</div>
+            </Card>
+          ))}
         </div>
-      </section>
+      </Section>
 
       {/* SECTION 10 — Related Services */}
       {relatedServices.length > 0 && (
-        <section className="section">
-          <div className="container">
-            <div className="text-center mb-10">
-              <span className="eyebrow">Related Services</span>
-              <h2 className="text-3xl md:text-4xl font-extrabold my-4">Need Something Like This?</h2>
-            </div>
-            <div className="grid sm:grid-cols-3 gap-5 max-w-3xl mx-auto">
-              {relatedServices.map(s => (
-                <Link key={s.slug} href={`/services/${s.slug}`} className="card-base p-6 hover:shadow-card-hover transition-all">
-                  <div className="w-10 h-10 rounded-xl grid place-items-center mb-4" style={{ background: `${s.color}18`, color: s.color }}>
-                    <Icon name={s.icon} className="w-5 h-5" />
+        <Section>
+          <SectionHeading align="center" eyebrow="Related Services" title="Need Something Like This?" className="mb-10" />
+          <div className="mx-auto grid max-w-3xl gap-5 sm:grid-cols-3">
+            {relatedServices.map(s => (
+              <Link key={s.slug} href={`/services/${s.slug}`} className="block rounded-card focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">
+                <Card interactive className="h-full p-6">
+                  <div className="mb-4 grid h-11 w-11 place-items-center rounded-btn bg-gold/15 text-gold-text">
+                    <Icon name={s.icon} className="h-5 w-5" />
                   </div>
-                  <h3 className="font-bold text-sm mb-1.5">{s.name}</h3>
-                  <p className="text-text2 text-[12.5px] leading-[1.6] line-clamp-2">{s.description}</p>
-                </Link>
-              ))}
-            </div>
+                  <h3 className="mb-1.5 font-display text-card-title text-text">{s.name}</h3>
+                  <p className="line-clamp-2 text-text2">{s.description}</p>
+                </Card>
+              </Link>
+            ))}
           </div>
-        </section>
+        </Section>
       )}
 
       {/* SECTION 11 — Related Projects */}
       {related.length > 0 && (
-        <section className="section section-alt">
-          <div className="container">
-            <div className="text-center mb-10">
-              <span className="eyebrow">More Real Projects</span>
-              <h2 className="text-3xl md:text-4xl font-extrabold my-4">Other Live Products We&apos;ve Built</h2>
-            </div>
-            <div className="grid sm:grid-cols-3 gap-6">
-              {related.map(r => (
-                <Link key={r.slug} href={`/projects/${r.slug}`} className="card-premium overflow-hidden group block">
-                  <div className="relative overflow-hidden aspect-[16/10]">
+        <Section tone="alt">
+          <SectionHeading align="center" eyebrow="More Real Projects" title="Other Live Products We've Built" className="mb-10" />
+          <div className="grid gap-6 sm:grid-cols-3">
+            {related.map(r => (
+              <Link key={r.slug} href={`/projects/${r.slug}`} className="group block rounded-card focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">
+                <Card interactive className="h-full overflow-hidden">
+                  <div className="relative aspect-[16/10] overflow-hidden">
                     <Image
                       src={r.images.hero}
                       alt={`${r.name} preview`}
                       fill
                       sizes="(max-width: 640px) 100vw, 33vw"
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      className="object-cover transition-transform duration-slow ease-brand motion-reduce:transition-none group-hover:scale-105"
                     />
                   </div>
                   <div className="p-5">
-                    <div className="text-[10px] font-bold tracking-widest uppercase mb-1" style={{ color: '#a3814f' }}>{r.industry}</div>
-                    <h3 className="font-bold text-sm mb-1.5">{r.name}</h3>
-                    <p className="text-text2 text-[12.5px] leading-[1.6] line-clamp-2">{r.overview}</p>
+                    <div className="mb-1 text-xs font-bold uppercase tracking-wider text-gold-text">{r.industry}</div>
+                    <h3 className="mb-1.5 font-display text-card-title text-text">{r.name}</h3>
+                    <p className="line-clamp-2 text-text2">{r.overview}</p>
                   </div>
-                </Link>
-              ))}
-            </div>
+                </Card>
+              </Link>
+            ))}
           </div>
-        </section>
+        </Section>
       )}
 
       {/* FAQ (feeds FAQPage schema above) */}
-      <section className="section">
-        <div className="container max-w-3xl">
-          <div className="text-center mb-10">
-            <span className="eyebrow">FAQ</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold my-4">Common Questions</h2>
-          </div>
-          <div className="space-y-5">
-            {study.faq.map(f => (
-              <div key={f.q} className="card-base p-6">
-                <div className="font-bold text-sm mb-2">{f.q}</div>
-                <div className="text-text2 text-[13.5px] leading-[1.7]">{f.a}</div>
-              </div>
-            ))}
-          </div>
+      <Section containerClassName="max-w-3xl">
+        <SectionHeading align="center" eyebrow="FAQ" title="Common Questions" className="mb-10" />
+        <div className="space-y-5">
+          {study.faq.map(f => (
+            <Card key={f.q} className="p-6">
+              <div className="mb-2 font-bold text-text">{f.q}</div>
+              <div className="leading-relaxed text-text2">{f.a}</div>
+            </Card>
+          ))}
         </div>
-      </section>
+      </Section>
 
       {/* SECTION 12 — Final CTA */}
       <CtaBanner

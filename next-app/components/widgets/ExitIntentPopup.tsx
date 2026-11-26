@@ -15,28 +15,41 @@ export function ExitIntentPopup() {
 
   useEffect(() => {
     if (dismissed) return;
-    // Don't show if already shown this session
-    if (sessionStorage.getItem('exit-popup-shown')) return;
+    // At most once per visitor per week. If storage is blocked, fall back to once per page load.
+    const KEY = 'kvl-exit-popup-at';
+    const WEEK = 7 * 24 * 60 * 60 * 1000;
+    let fired = false;
+    try { const last = Number(localStorage.getItem(KEY) || 0); if (last && Date.now() - last < WEEK) return; } catch { /* storage blocked */ }
 
-    const handleMouseLeave = (e: MouseEvent) => {
-      if (e.clientY <= 10 && !dismissed) {
-        setShow(true);
-        sessionStorage.setItem('exit-popup-shown', '1');
-      }
+    // Never pop over content while the visitor is scrolling.
+    let lastScroll = 0;
+    const onScroll = () => { lastScroll = Date.now(); };
+    const isScrolling = () => Date.now() - lastScroll < 1500;
+
+    const fire = () => {
+      if (fired) return;
+      fired = true;
+      setShow(true);
+      try { localStorage.setItem(KEY, String(Date.now())); } catch { /* storage blocked */ }
     };
 
-    // Also show on mobile after 45 seconds (no mouse leave on mobile)
+    const handleMouseLeave = (e: MouseEvent) => {
+      if (e.clientY <= 10 && !isScrolling()) fire();
+    };
+
+    // Touch devices have no mouse-leave: show once after 45s, waiting until scrolling stops.
+    let poll: ReturnType<typeof setInterval> | undefined;
     const mobileTimer = setTimeout(() => {
-      if (!dismissed && !sessionStorage.getItem('exit-popup-shown')) {
-        setShow(true);
-        sessionStorage.setItem('exit-popup-shown', '1');
-      }
+      poll = setInterval(() => { if (!isScrolling()) { fire(); clearInterval(poll); } }, 1000);
     }, 45_000);
 
+    window.addEventListener('scroll', onScroll, { passive: true });
     document.addEventListener('mouseleave', handleMouseLeave);
     return () => {
+      window.removeEventListener('scroll', onScroll);
       document.removeEventListener('mouseleave', handleMouseLeave);
       clearTimeout(mobileTimer);
+      if (poll) clearInterval(poll);
     };
   }, [dismissed]);
 
