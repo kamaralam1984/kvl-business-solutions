@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { hostedProductCount } from '@/lib/data/hosted-products';
 import Image from 'next/image';
 import { StatsBar } from '@/components/home/StatsBar';
 import { caseStudies } from '@/lib/data/case-studies';
@@ -152,7 +153,7 @@ export default function AboutPage() {
         </div>
       </Section>
 
-      <StatsBar productCount={productCount} caseStudyCount={caseStudies.length} />
+      <StatsBar productCount={productCount} caseStudyCount={hostedProductCount} />
 
       {/* CTA */}
       <Section tone="alt" containerClassName="text-center">

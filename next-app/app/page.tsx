@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { hostedProductCount } from '@/lib/data/hosted-products';
 import dynamic from 'next/dynamic';
 import { Hero } from '@/components/home/Hero';
 import { StudioHomeSections } from '@/components/studio/StudioHomeSections';
@@ -43,7 +44,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero settings={settings} products={products} caseStudyCount={caseStudies.length} />
+      <Hero settings={settings} products={products} caseStudyCount={hostedProductCount} />
       <StudioHomeSections />
       <IndustriesGrid />
       <CaseStudies caseStudies={caseStudies} />
