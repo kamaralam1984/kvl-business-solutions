@@ -2,6 +2,7 @@ import { PageHero } from '@/components/shared/PageHero';
 import { Section } from '@/components/ui';
 import { CtaBanner } from '@/components/home/CtaBanner';
 import { ProjectFilterBar } from '@/components/projects/ProjectFilterBar';
+import { AllLiveProducts } from '@/components/projects/AllLiveProducts';
 import { DownloadsSection } from '@/components/widgets/DownloadsSection';
 import { getLiveCaseStudies } from '@/lib/data/live-case-studies';
 
@@ -24,6 +25,10 @@ export default async function ProjectsPage() {
 
       <Section>
         <ProjectFilterBar studies={caseStudies} />
+      </Section>
+
+      <Section>
+        <AllLiveProducts />
       </Section>
 
       <DownloadsSection />
