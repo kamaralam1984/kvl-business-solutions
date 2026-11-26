@@ -1,3 +1,4 @@
+import { moreCaseStudies } from './case-studies-more';
 export type CaseStudy = {
   slug: string;
   name: string;
@@ -588,4 +589,5 @@ export const caseStudies: CaseStudy[] = [
       description: 'How KVL Business Solutions built Body Tracker, a privacy-first computer vision platform that turns a webcam into live posture, attention and wellness dashboards.',
     },
   },
+  ...moreCaseStudies,
 ];
