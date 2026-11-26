@@ -26,6 +26,7 @@ export function GoogleAnalytics({ gaId }: { gaId: string }) {
     <>
       <Script src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} strategy="lazyOnload" />
       <Script id="ga-init" strategy="lazyOnload">{`
+        (function(){
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         window.gtag = gtag;
@@ -40,6 +41,7 @@ export function GoogleAnalytics({ gaId }: { gaId: string }) {
           gtag('consent', 'update', { 'ad_storage': 'granted', 'analytics_storage': 'granted' });
         }
         gtag('config', '${gaId}', { send_page_view: false });
+        })();
       `}</Script>
     </>
   );

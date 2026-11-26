@@ -16,6 +16,7 @@ export function GoogleAdsConversion({ adsId }: { adsId: string }) {
     <>
       <Script src={`https://www.googletagmanager.com/gtag/js?id=${adsId}`} strategy="lazyOnload" />
       <Script id="google-ads-init" strategy="lazyOnload">{`
+        (function(){
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         window.gtag = window.gtag || gtag;
@@ -24,6 +25,7 @@ export function GoogleAdsConversion({ adsId }: { adsId: string }) {
         if (consent && consent[1] === 'accepted') {
           window.gtag('config', '${adsId}');
         }
+        })();
       `}</Script>
     </>
   );
