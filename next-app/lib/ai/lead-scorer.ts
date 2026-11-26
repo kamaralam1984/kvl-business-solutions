@@ -149,7 +149,7 @@ export async function scoreLeadAsync(leadId: string, data: LeadData) {
     if (scoreFields.intent === 'hot') {
       fireTrigger('hot_lead', {
         name: data.name,
-        email: (process.env.EMAIL_TO_SALES || 'kvlbusinesssolution@gmail.com').toLowerCase(),
+        email: (process.env.EMAIL_TO_SALES || 'sales@kvlbusinesssolutions.com').toLowerCase(),
         phone: process.env.ADMIN_WHATSAPP_PHONE || '',
         contactName: data.name,
         contactEmail: data.email,

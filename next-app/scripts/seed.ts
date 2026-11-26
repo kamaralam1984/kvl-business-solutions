@@ -13,7 +13,7 @@ async function main() {
   console.log('Connected.');
 
   // Admin user
-  const email = (process.env.ADMIN_EMAIL || 'admin@kvlsolutions.in').toLowerCase();
+  const email = (process.env.ADMIN_EMAIL || 'kamar@kvlbusinesssolutions.com').toLowerCase();
   const pass = process.env.ADMIN_PASSWORD || 'ChangeMe!2026';
   const existing = await User.findOne({ email });
   if (existing) {

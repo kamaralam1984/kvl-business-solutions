@@ -50,8 +50,15 @@ const TTL = 30_000;
 export async function getLiveCaseStudies(): Promise<CaseStudyType[]> {
   if (cache && Date.now() - cache.ts < TTL) return cache.data;
 
-  await connectDB();
-  const dbStudies = await CaseStudy.find({}).lean();
+  let dbStudies: any[];
+  try {
+    await connectDB();
+    dbStudies = await CaseStudy.find({}).lean();
+  } catch (e) {
+    // DB unreachable: serve the static catalog instead of crashing the page.
+    console.error('getLiveCaseStudies: falling back to static catalog', (e as Error)?.message);
+    return caseStudies;
+  }
   const dbBySlug = new Map(dbStudies.map((d: any) => [d.slug, toFullShape(d)]));
 
   const merged = caseStudies.map(c => dbBySlug.get(c.slug) || c);
@@ -63,8 +70,12 @@ export async function getLiveCaseStudies(): Promise<CaseStudyType[]> {
 }
 
 export async function getLiveCaseStudy(slug: string): Promise<CaseStudyType | null> {
-  await connectDB();
-  const db = await CaseStudy.findOne({ slug }).lean();
-  if (db) return toFullShape(db);
+  try {
+    await connectDB();
+    const db = await CaseStudy.findOne({ slug }).lean();
+    if (db) return toFullShape(db);
+  } catch (e) {
+    console.error('getLiveCaseStudy: falling back to static catalog', (e as Error)?.message);
+  }
   return caseStudies.find(c => c.slug === slug) || null;
 }

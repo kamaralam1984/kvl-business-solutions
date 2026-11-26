@@ -17,8 +17,15 @@ const TTL = 30_000;
 export async function getLiveBlogPosts(): Promise<BlogPostType[]> {
   if (cache && Date.now() - cache.ts < TTL) return cache.data;
 
-  await connectDB();
-  const dbPosts = await BlogPost.find({}).lean();
+  let dbPosts: any[];
+  try {
+    await connectDB();
+    dbPosts = await BlogPost.find({}).lean();
+  } catch (e) {
+    // DB unreachable: serve the hand-written posts instead of crashing the page.
+    console.error('getLiveBlogPosts: falling back to static posts', (e as Error)?.message);
+    return blogPosts;
+  }
   const dbBySlug = new Map(dbPosts.map((d: any) => [d.slug, toPlain(d)]));
 
   const merged = blogPosts.map(p => dbBySlug.get(p.slug) || p);
@@ -30,8 +37,12 @@ export async function getLiveBlogPosts(): Promise<BlogPostType[]> {
 }
 
 export async function getLiveBlogPost(slug: string): Promise<BlogPostType | null> {
-  await connectDB();
-  const db = await BlogPost.findOne({ slug }).lean();
-  if (db) return toPlain(db);
+  try {
+    await connectDB();
+    const db = await BlogPost.findOne({ slug }).lean();
+    if (db) return toPlain(db);
+  } catch (e) {
+    console.error('getLiveBlogPost: falling back to static posts', (e as Error)?.message);
+  }
   return blogPosts.find(p => p.slug === slug) || null;
 }

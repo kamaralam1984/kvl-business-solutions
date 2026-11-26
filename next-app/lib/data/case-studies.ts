@@ -524,4 +524,68 @@ export const caseStudies: CaseStudy[] = [
       description: 'How KVL Business Solutions built a premier CBSE school website with admissions, academics, faculty and campus-life content.',
     },
   },
+  {
+    slug: 'body-tracker',
+    name: 'Body Tracker',
+    url: 'https://bodytracker.kvlbusinesssolutions.com',
+    tagline: 'Real-Time Body, Face & Hand Tracking — Straight From The Browser',
+    industry: 'Health & Wellness',
+    businessCategory: 'Computer Vision SaaS · Browser-Based Wellness & Attention Tracking',
+    overview: 'A browser-based computer vision platform that turns a laptop or phone camera into live posture, attention, wellness and gesture-tracking dashboards — with a session PDF report and a developer SDK for teams who want to build the same tracking into their own product.',
+    images: {
+      hero: '/projects/body-tracker/desktop.png',
+      gallery: [
+        { src: '/projects/body-tracker/desktop.png', alt: 'Body Tracker live face, hand and pose tracking on desktop', device: 'desktop' },
+        { src: '/projects/body-tracker/tablet.png', alt: 'Body Tracker interface on tablet', device: 'tablet' },
+        { src: '/projects/body-tracker/mobile.png', alt: 'Body Tracker interface on mobile', device: 'mobile' },
+      ],
+    },
+    challenge: {
+      headline: 'Tracking posture, attention or fatigue meant buying hardware nobody wanted to wear',
+      body: "Gyms, clinics, schools and remote teams all wanted the same signal — how someone was actually sitting, moving or focusing — but the only real options were wearables, dedicated sensors, or a person watching a video call. Every option meant hardware to buy, software to install, or video that had to leave the device and land on someone else's server.",
+    },
+    goals: [
+      'Turn a laptop or phone webcam already owned into a tracking device — nothing to buy or install',
+      "Keep every frame of video on the user's own device and never upload or store it",
+      'Score posture, attention and fatigue live, not in a report the next day',
+      'Let other products build on the same tracking pipeline instead of only offering a closed dashboard',
+    ],
+    solution: {
+      headline: 'One browser tab, real MediaPipe tracking, numbers you can trust',
+      body: "Body Tracker runs Google MediaPipe's face, hand and pose models entirely inside the browser, turning a webcam into a live posture score, attention score and fatigue/drowsiness score with no video ever leaving the device. Every session can be exported as a full PDF report, and the same pipeline also ships as a JavaScript SDK and React hooks so another product can build the tracking in directly, rather than only viewing it on Body Tracker's own dashboard.",
+      pillars: [
+        { title: 'Business Process', desc: 'Replaces wearables and dedicated sensors with tracking that runs on hardware people already own.' },
+        { title: 'User Experience', desc: 'One click enables the camera, with live overlays and scores appearing instantly — no signup required to try it.' },
+        { title: 'Automation', desc: 'Blink, gaze, posture, gesture and rep-counting all score themselves live from the camera feed, with no manual review.' },
+        { title: 'Scalability', desc: 'A JavaScript SDK and React hooks let the same tracking pipeline power fitness, healthcare, education or corporate-wellness products beyond Body Tracker itself.' },
+      ],
+    },
+    keyFeatures: [
+      { icon: 'Radar', title: 'Real-Time Face, Hand & Pose Tracking', desc: 'Tracks face landmarks, hand position and full-body pose live, frame by frame, through the browser camera.' },
+      { icon: 'TrendingUp', title: 'Posture & Attention Scoring', desc: 'Head and neck angle, blink rate and gaze direction turn into a live posture score and attention score.' },
+      { icon: 'ShieldCheck', title: 'Runs Entirely In The Browser', desc: 'Video is processed on-device and never leaves the browser — no upload, no storage, no server ever sees the camera feed.' },
+      { icon: 'Moon', title: 'Wellness & Fatigue Detection', desc: 'Eye-closure and blink patterns become a fatigue score and microsleep count, flagging drowsiness as it happens.' },
+      { icon: 'Hand', title: 'Hand Gesture Recognition', desc: 'Recognizes gestures like wave, pinch, point and thumbs-up, and counts repeat-motion exercise reps from pose data.' },
+      { icon: 'Users', title: 'Multi-Person Tracking', desc: 'Tracks more than one person in frame at once, extending the same pipeline beyond a single user.' },
+      { icon: 'BarChart3', title: 'Live Dashboards & PDF Reports', desc: 'Every score renders live, session by session, with a full PDF analytics report exportable at the end.' },
+      { icon: 'Code2', title: 'Developer SDK & React Hooks', desc: 'The same tracking pipeline ships as a JavaScript SDK and React hooks, so another product can build directly on it.' },
+    ],
+    tech: ['Next.js', 'TypeScript', 'Google MediaPipe', 'Computer Vision'],
+    benefits: [
+      { title: 'No hardware to buy or wear', desc: 'Any laptop or phone webcam a member, employee, patient or student already has is enough — no wearables, sensors or dedicated cameras.' },
+      { title: 'Privacy built in, not bolted on', desc: 'Video never leaves the browser, so there is nothing to stream, store or leak on a server.' },
+      { title: 'Feedback the moment it happens', desc: 'Posture, attention and fatigue scores update live as someone moves, instead of showing up in a report the next day.' },
+      { title: 'A pipeline other products can build on', desc: "The JavaScript SDK and React hooks mean the same tracking can become a feature inside someone else's product, not just a standalone dashboard." },
+    ],
+    relatedServiceSlugs: ['ai', 'custom-software'],
+    faq: [
+      { q: 'Is Body Tracker a real, live product?', a: 'Yes. Body Tracker is live in production at bodytracker.kvlbusinesssolutions.com, running real face, hand and pose tracking through Google MediaPipe in the browser today.' },
+      { q: "What was KVL's role in building Body Tracker?", a: 'KVL designed and engineered the platform end-to-end — the in-browser tracking pipeline, the live scoring dashboards, session PDF reports, and the developer SDK.' },
+      { q: 'Can KVL build a computer-vision feature like this into my product?', a: 'Yes. If your business needs camera-based tracking, scoring or automation, this is the kind of computer-vision system we build — talk to us about your use case.' },
+    ],
+    seo: {
+      title: 'Body Tracker Case Study — Browser-Based Face, Hand & Pose Tracking Built by KVL Business Solutions',
+      description: 'How KVL Business Solutions built Body Tracker, a privacy-first computer vision platform that turns a webcam into live posture, attention and wellness dashboards.',
+    },
+  },
 ];

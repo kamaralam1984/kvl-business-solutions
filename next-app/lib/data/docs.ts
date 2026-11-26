@@ -95,7 +95,7 @@ Every paid order has a downloadable GST invoice. Go to:
 Add your **GSTIN** in **/dashboard/settings** BEFORE making the purchase. We cannot edit invoices after they're generated.
 
 ## Need a correction?
-Contact billing@kvlbusinesssolutions.com within 7 days. We can issue a credit note + revised invoice.`,
+Contact support@kvlbusinesssolutions.com within 7 days. We can issue a credit note + revised invoice.`,
   },
   {
     slug: 'refund-policy',
@@ -108,7 +108,7 @@ Contact billing@kvlbusinesssolutions.com within 7 days. We can issue a credit no
 Any software product can be refunded within **30 days** of purchase. No questions asked.
 
 ## How to request
-1. Email **billing@kvlbusinesssolutions.com** with your order ID, OR
+1. Email **support@kvlbusinesssolutions.com** with your order ID, OR
 2. Raise a ticket from **/support**
 
 ## Processing time

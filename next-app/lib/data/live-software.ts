@@ -42,8 +42,15 @@ const TTL = 30_000;
 export async function getLiveSoftwareProducts(): Promise<Software[]> {
   if (cache && Date.now() - cache.ts < TTL) return cache.data;
 
-  await connectDB();
-  const dbProducts = await Product.find({}).lean();
+  let dbProducts: any[];
+  try {
+    await connectDB();
+    dbProducts = await Product.find({}).lean();
+  } catch (e) {
+    // DB unreachable: serve the static catalog instead of crashing the page.
+    console.error('getLiveSoftwareProducts: falling back to static catalog', (e as Error)?.message);
+    return softwareProducts;
+  }
   const dbBySlug = new Map(dbProducts.map((d: any) => [d.slug, d]));
 
   const merged: Software[] = [];
@@ -64,7 +71,12 @@ export async function getLiveSoftwareProducts(): Promise<Software[]> {
 
 export async function getLiveSoftwareProduct(slug: string): Promise<Software | null> {
   const staticP = softwareProducts.find(p => p.slug === slug);
-  await connectDB();
-  const db = await Product.findOne({ slug }).lean();
-  return mergeOne(staticP, db);
+  try {
+    await connectDB();
+    const db = await Product.findOne({ slug }).lean();
+    return mergeOne(staticP, db);
+  } catch (e) {
+    console.error('getLiveSoftwareProduct: falling back to static catalog', (e as Error)?.message);
+    return staticP ?? null;
+  }
 }

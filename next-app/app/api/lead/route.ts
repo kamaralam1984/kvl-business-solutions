@@ -65,7 +65,7 @@ export async function POST(req: Request) {
     // Reliability matters more than tidiness here, so this failing must never
     // fail lead capture itself.
     try {
-      const ownerEmail = (process.env.EMAIL_TO_SALES || 'kvlbusinesssolution@gmail.com').toLowerCase();
+      const ownerEmail = (process.env.EMAIL_TO_SALES || 'sales@kvlbusinesssolutions.com').toLowerCase();
       const deal = await Deal.create({
         ownerEmail,
         title: `${data.name}${data.service ? ' — ' + data.service : ''}`,

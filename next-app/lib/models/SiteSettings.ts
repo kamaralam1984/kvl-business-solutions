@@ -13,7 +13,7 @@ const SiteSettingsSchema = new Schema({
   phone2: { type: String, default: '' },
   email: { type: String, default: 'info@kvlbusinesssolutions.com' },
   supportEmail: { type: String, default: 'support@kvlbusinesssolutions.com' },
-  salesEmail: { type: String, default: 'kvlbusinesssolution@gmail.com' },
+  salesEmail: { type: String, default: 'sales@kvlbusinesssolutions.com' },
   whatsapp: { type: String, default: '919942000413' },
   whatsappSupportText: { type: String, default: '24×7 support' },
   addressLine1: { type: String, default: 'Patna, Sultanganj, Bihar, India' },
@@ -59,6 +59,14 @@ const SiteSettingsSchema = new Schema({
     coupons: { type: Boolean, default: true },
     bookings: { type: Boolean, default: true },
     cookieConsent: { type: Boolean, default: true },
+  },
+
+  // Header menu style rotation (4 styles). rotate=false uses the first enabled
+  // style; locked (1-4) forces one style for everyone.
+  menuStyle: {
+    rotate: { type: Boolean, default: true },
+    enabled: { type: [Number], default: [1, 2, 3, 4] },
+    locked: { type: Number, default: 0 },
   },
 
   // SEO
