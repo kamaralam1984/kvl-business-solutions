@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ChevronRight, ShieldCheck, Award, Sparkles, ArrowUpRight } from 'lucide-react';
+import { buttonStyles } from '@/components/ui/Button';
 import { HeroShowcaseSlider } from '@/components/home/HeroShowcaseSlider';
 import { LiveRatingBadge } from '@/components/home/LiveRatingBadge';
 import { JsonLd } from '@/components/shared/JsonLd';
@@ -8,9 +9,9 @@ import type { Software } from '@/lib/data/software';
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
 
 const trustBadges = [
-  { Icon: ShieldCheck, label: 'NDA on Request',            color: '#10b981' },
-  { Icon: Award,       label: 'MSME Registered',           color: '#c8a870' },
-  { Icon: Sparkles,    label: 'Razorpay Verified Partner', color: '#c8a870' },
+  { Icon: ShieldCheck, label: 'NDA on Request' },
+  { Icon: Award,       label: 'MSME Registered' },
+  { Icon: Sparkles,    label: 'Razorpay Verified Partner' },
 ];
 
 type BreadcrumbItem = { label: string; href?: string };
@@ -46,99 +47,61 @@ export function LocationHero({
   };
 
   return (
-    <section
-      className="relative overflow-hidden"
-      style={{ paddingTop: '48px', paddingBottom: '60px', background: 'rgb(var(--bg))' }}
-    >
+    <section className="relative overflow-hidden bg-hero pb-[var(--section-y)] pt-28 lg:pt-32">
       <JsonLd data={breadcrumbJsonLd} id="location-hero-breadcrumb-jsonld" />
 
-      {/* Layered background — matches the homepage hero */}
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute inset-0" style={{
-          background: 'radial-gradient(ellipse 70% 55% at 75% 35%, rgba(200,168,112,0.07) 0%, transparent 60%)',
-        }} />
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'radial-gradient(circle, rgba(var(--surface) / 0.05) 1px, transparent 1px)',
-          backgroundSize: '32px 32px',
-        }} />
-        <div className="absolute bottom-0 inset-x-0 h-32" style={{
-          background: 'linear-gradient(to top, rgb(var(--bg)) 0%, transparent 100%)',
-        }} />
-      </div>
+      {/* Static brand glow, no animation */}
+      <div aria-hidden className="pointer-events-none absolute inset-0"
+        style={{ background: 'radial-gradient(ellipse 60% 55% at 78% 30%, rgba(200,168,112,0.16) 0%, transparent 65%)' }} />
 
       <div className="container relative z-10">
-
-        {/* Breadcrumb */}
-        <div className="inline-flex flex-wrap items-center gap-2 mb-5 text-xs" style={{ color: 'rgb(var(--text-2))' }}>
-          <Link href="/" className="text-primary">Home</Link>
+        <nav aria-label="Breadcrumb" className="mb-5 flex flex-wrap items-center gap-2 text-sm text-text2">
+          <Link href="/" className="inline-flex min-h-[44px] items-center rounded-btn text-gold-text focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">Home</Link>
           {breadcrumbPath.map((item, i) => (
             <span key={i} className="inline-flex items-center gap-2">
-              <ChevronRight className="w-3 h-3 self-center" />
-              {item.href ? <Link href={item.href} className="text-primary">{item.label}</Link> : <span>{item.label}</span>}
+              <ChevronRight className="h-3.5 w-3.5 self-center" aria-hidden />
+              {item.href
+                ? <Link href={item.href} className="inline-flex min-h-[44px] items-center rounded-btn text-gold-text focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">{item.label}</Link>
+                : <span>{item.label}</span>}
             </span>
           ))}
-        </div>
+        </nav>
 
-        {/* Eyebrow */}
-        <div className="mb-6 animate-fade-up">
-          <span className="inline-flex items-center gap-3 text-[11px] tracking-[0.2em] font-semibold uppercase" style={{ color: 'rgb(var(--gold-text))' }}>
-            <span className="animate-line-draw" style={{ width: 24, height: 1, background: 'linear-gradient(90deg, #c8a870, transparent)', display: 'inline-block' }} />
-            {eyebrow}
-          </span>
-        </div>
-
-        <div className="grid lg:grid-cols-[56%_44%] gap-12 lg:gap-10 items-center">
-
-          {/* Left column */}
+        <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
           <div>
-            <h1 className="font-sans font-black leading-[1.05] tracking-[-0.03em] mb-5" style={{ fontSize: 'clamp(1.5rem, 3.2vw, 2.6rem)', color: 'rgb(var(--text))' }}>
-              {title}
-            </h1>
+            <p className="eyebrow mb-5">{eyebrow}</p>
 
-            <p className="text-[17px] leading-[1.75] mb-9" style={{ color: 'rgb(var(--text-2))', maxWidth: '560px' }}>
-              {description}
-            </p>
+            <h1 className="font-display text-hero text-text">{title}</h1>
 
-            <div className="flex flex-wrap gap-3 mb-10">
-              <Link
-                href={ctaPrimary.href}
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-bold text-[14px] transition-shadow duration-200 group hover:shadow-[0_10px_30px_rgba(0,0,0,0.24)]"
-                style={{ background: '#0a0a0a', color: '#ffffff', boxShadow: '0 4px 20px rgba(0,0,0,0.16)' }}
-              >
+            <p className="mt-6 max-w-[560px] text-body-lg text-text2">{description}</p>
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link href={ctaPrimary.href} className={buttonStyles('primary', 'lg', 'group')}>
                 {ctaPrimary.text}
-                <ArrowUpRight className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                <ArrowUpRight className="h-4 w-4 transition-transform duration-base group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden />
               </Link>
-              <Link
-                href={ctaSecondary.href}
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-[14px] transition-colors duration-200 border hover:border-[#c8a870] hover:bg-[rgba(200,168,112,0.06)]"
-                style={{ borderColor: 'rgba(var(--border) / 0.15)', color: 'rgb(var(--text))', background: 'transparent' }}
-              >
+              <Link href={ctaSecondary.href} className={buttonStyles('secondary', 'lg')}>
                 {ctaSecondary.text}
               </Link>
             </div>
 
-            <div className="flex flex-wrap gap-x-6 gap-y-3 pt-8" style={{ borderTop: '1px solid rgba(var(--border) / 0.08)' }}>
+            <ul className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-line pt-8">
               {trustBadges.map(b => (
-                <div key={b.label} className="flex items-center gap-2 text-[13px] font-medium" style={{ color: 'rgb(var(--text-2))' }}>
-                  <b.Icon className="w-4 h-4 shrink-0" style={{ color: b.color }} />
+                <li key={b.label} className="flex items-center gap-2 text-sm font-medium text-text2">
+                  <b.Icon className="h-4 w-4 shrink-0 text-gold-text" aria-hidden />
                   {b.label}
-                </div>
+                </li>
               ))}
-              <LiveRatingBadge />
-            </div>
+              <li><LiveRatingBadge /></li>
+            </ul>
           </div>
 
-          {/* Right column — product showcase slider (desktop only) */}
-          <div className="relative hidden lg:block hero-diagram-in">
+          {/* Product showcase slider (desktop only) */}
+          <div className="relative hidden lg:block">
             <HeroShowcaseSlider products={products} />
           </div>
         </div>
       </div>
-
-      <style>{`
-        @keyframes hero-diagram-fade-in { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
-        .hero-diagram-in { animation: hero-diagram-fade-in 0.9s cubic-bezier(0.22,1,0.36,1) 0.25s both; }
-      `}</style>
     </section>
   );
 }

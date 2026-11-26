@@ -8,6 +8,18 @@ import { countrySchema } from '@/lib/validation/countries';
 
 const updateSchema = countrySchema.partial();
 
+export async function GET(req: Request, { params }: { params: { id: string } }) {
+  const g = await requireAdmin(); if (!g.ok) return g.response;
+  try {
+    await connectDB();
+    const country = await Country.findById(params.id).lean();
+    if (!country) return NextResponse.json({ ok: false, error: 'Not found' }, { status: 404 });
+    return NextResponse.json({ ok: true, country });
+  } catch (e) {
+    return apiError(e);
+  }
+}
+
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
   const g = await requireAdmin(); if (!g.ok) return g.response;
   try {

@@ -2,11 +2,16 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { ArrowUpRight, MapPin, Landmark, ShieldCheck } from 'lucide-react';
+import { Card, Section, SectionHeading, StateMessage } from '@/components/ui';
+import { StripNote, iconTile } from '@/components/location-landing/shared';
 import { CtaBanner } from '@/components/home/CtaBanner';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { LocationHero } from '@/components/location-landing/LocationHero';
+import { CountryPageTemplate, buildCountryMetadata } from '@/components/location-landing/CountryPageTemplate';
 import { getLiveCountries, getLiveCountry, getLiveLocationPages } from '@/lib/data/live-locations';
 import { getLiveSoftwareProducts } from '@/lib/data/live-software';
+import { connectDB } from '@/lib/mongodb';
+import { Review } from '@/lib/models/Review';
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
 
@@ -20,6 +25,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: { country: string } }): Promise<Metadata> {
   const country = await getLiveCountry(params.country);
   if (!country) return {};
+  if (country.pageType === 'standalone') return buildCountryMetadata(country);
   const url = `${SITE}/${country.slug}`;
   return {
     title: country.seo.title,
@@ -32,6 +38,22 @@ export async function generateMetadata({ params }: { params: { country: string }
 export default async function CountryHubPage({ params }: { params: { country: string } }) {
   const country = await getLiveCountry(params.country);
   if (!country) notFound();
+
+  if (country.pageType === 'standalone') {
+    const [products, allCountries, reviews] = await Promise.all([
+      getLiveSoftwareProducts().catch(() => []),
+      getLiveCountries().catch(() => []),
+      (async () => {
+        try {
+          await connectDB();
+          const docs = await Review.find({ approved: true }).sort({ featured: -1, rating: -1, createdAt: -1 }).limit(9).lean();
+          return docs.map((r: any) => ({ name: r.name, company: r.company || '', rating: r.rating, title: r.title || '', message: r.message }));
+        } catch { return []; }
+      })(),
+    ]);
+    const otherCountries = allCountries.filter(c => c.slug !== country.slug && c.pageType === 'standalone').slice(0, 10);
+    return <CountryPageTemplate country={country} products={products} reviews={reviews} otherCountries={otherCountries} />;
+  }
 
   const [locations, products] = await Promise.all([
     getLiveLocationPages(country.slug),
@@ -60,20 +82,22 @@ export default async function CountryHubPage({ params }: { params: { country: st
 
   const Group = ({ title, items }: { title: string; items: typeof locations }) => items.length === 0 ? null : (
     <div className="mb-12">
-      <h3 className="text-xl font-extrabold mb-5 flex items-center gap-2">
-        <Landmark className="w-5 h-5" style={{ color: '#a3814f' }} /> {title}
+      <h3 className="mb-5 flex items-center gap-2 font-display text-card-title text-text">
+        <Landmark className="h-5 w-5 text-gold-text" aria-hidden /> {title}
       </h3>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {items.map(l => (
-          <Link key={l.slug} href={`/${country.slug}/${l.slug}`} className="card-premium p-6 block hover:shadow-card-hover transition-all group">
-            <div className="w-10 h-10 rounded-xl grid place-items-center mb-4" style={{ background: 'rgba(200,168,112,0.1)', border: '1px solid rgba(200,168,112,0.22)' }}>
-              <MapPin className="w-4.5 h-4.5" style={{ color: '#a3814f' }} />
-            </div>
-            <h3 className="font-bold text-base mb-1.5">{l.name}</h3>
-            <p className="text-text2 text-[12.5px] leading-[1.6] line-clamp-2">{l.heroTagline}</p>
-            <span className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary mt-3">
-              Explore <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </span>
+          <Link key={l.slug} href={`/${country.slug}/${l.slug}`} className="group rounded-card focus-visible:outline-none focus-visible:shadow-[var(--focus-ring)]">
+            <Card interactive className="h-full p-6">
+              <div className={iconTile}>
+                <MapPin className="h-5 w-5" aria-hidden />
+              </div>
+              <h4 className="mb-1.5 font-display text-lg font-semibold text-text">{l.name}</h4>
+              <p className="line-clamp-2 text-sm leading-relaxed text-text2">{l.heroTagline}</p>
+              <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-gold-text">
+                Explore <ArrowUpRight className="h-4 w-4 transition-transform duration-base group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden />
+              </span>
+            </Card>
           </Link>
         ))}
       </div>
@@ -95,27 +119,17 @@ export default async function CountryHubPage({ params }: { params: { country: st
         ctaSecondary={{ text: 'Talk to a Software Expert', href: '/contact' }}
       />
 
-      <section className="py-6 border-b border-tint bg-app2">
-        <div className="container flex items-center justify-center gap-2.5 text-center text-[13px] text-text2 flex-wrap">
-          <ShieldCheck className="w-4 h-4 shrink-0" style={{ color: '#c8a870' }} />
-          {country.intro}
-        </div>
-      </section>
+      <StripNote icon={<ShieldCheck className="h-4 w-4" aria-hidden />}>{country.intro}</StripNote>
 
-      <section className="section">
-        <div className="container">
-          <div className="text-center mb-10 max-w-2xl mx-auto">
-            <span className="eyebrow">Coverage</span>
-            <h2 className="text-3xl md:text-4xl font-extrabold my-4">Software Development Services Across {country.name}</h2>
-          </div>
-          <Group title="States" items={states} />
-          <Group title="Union Territories" items={uts} />
-          <Group title="Locations" items={others} />
-          {locations.length === 0 && (
-            <p className="text-center text-text2 text-sm">Location pages for {country.name} are being added — check back soon.</p>
-          )}
-        </div>
-      </section>
+      <Section>
+        <SectionHeading align="center" eyebrow="Coverage" title={`Software Development Services Across ${country.name}`} className="mb-10" />
+        <Group title="States" items={states} />
+        <Group title="Union Territories" items={uts} />
+        <Group title="Locations" items={others} />
+        {locations.length === 0 && (
+          <StateMessage title="Coming soon" description={`Location pages for ${country.name} are being added — check back soon.`} />
+        )}
+      </Section>
 
       <CtaBanner
         title={`Need a Software Partner in ${country.name}?`}

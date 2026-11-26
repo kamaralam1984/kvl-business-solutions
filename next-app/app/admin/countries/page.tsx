@@ -1,25 +1,20 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { Plus, Trash2, Edit3, X, CheckCircle2, CircleDashed } from 'lucide-react';
-import { Modal } from '@/components/shared/Modal';
+import { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
+import { Plus, Trash2, Edit3, Search, Globe2, CheckCircle2, CircleDashed, ExternalLink } from 'lucide-react';
 
 type Country = {
-  _id?: string; slug: string; name: string; heroTitle: string; heroDescription: string;
-  intro: string; status: 'draft' | 'published';
-  seo: { title: string; description: string; ogImage?: string };
-};
-
-const empty: Country = {
-  slug: '', name: '', heroTitle: '', heroDescription: '', intro: '', status: 'draft',
-  seo: { title: '', description: '', ogImage: '' },
+  _id: string; slug: string; name: string; status: 'draft' | 'published';
+  pageType: 'hub' | 'standalone'; updatedAt: string;
 };
 
 export default function AdminCountriesPage() {
   const [countries, setCountries] = useState<Country[]>([]);
-  const [editing, setEditing] = useState<Country | null>(null);
-  const [isNew, setIsNew] = useState(false);
-  const [msg, setMsg] = useState('');
   const [loadError, setLoadError] = useState(false);
+  const [q, setQ] = useState('');
+  const [typeFilter, setTypeFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [msg, setMsg] = useState('');
 
   const load = () => {
     setLoadError(false);
@@ -29,52 +24,71 @@ export default function AdminCountriesPage() {
   };
   useEffect(() => { load(); }, []);
 
-  const save = async () => {
-    if (!editing) return;
-    const url = isNew ? '/api/admin/countries' : `/api/admin/countries/${editing._id}`;
-    const method = isNew ? 'POST' : 'PUT';
-    const r = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(editing) });
-    const d = await r.json();
-    if (d.ok) { setEditing(null); setIsNew(false); setMsg('✓ Saved'); load(); }
-    else setMsg(`Error: ${d.error}`);
-  };
+  const filtered = useMemo(() => countries.filter(c => {
+    if (typeFilter !== 'all' && c.pageType !== typeFilter) return false;
+    if (statusFilter !== 'all' && c.status !== statusFilter) return false;
+    if (q && !c.name.toLowerCase().includes(q.toLowerCase()) && !c.slug.toLowerCase().includes(q.toLowerCase())) return false;
+    return true;
+  }), [countries, q, typeFilter, statusFilter]);
 
-  const del = async (id?: string) => {
-    if (!id || !confirm('Delete this country? Its location pages will remain but the hub page will 404.')) return;
+  const del = async (id: string) => {
+    if (!confirm('Delete this country page? This cannot be undone.')) return;
     await fetch(`/api/admin/countries/${id}`, { method: 'DELETE' });
     load();
   };
 
   const toggleStatus = async (c: Country) => {
     const status = c.status === 'published' ? 'draft' : 'published';
-    await fetch(`/api/admin/countries/${c._id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) });
-    load();
+    const r = await fetch(`/api/admin/countries/${c._id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) });
+    const d = await r.json();
+    if (d.ok) load(); else setMsg(`Error: ${d.error}`);
   };
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-6xl">
       <div className="flex justify-between items-end mb-4">
         <div>
           <h1 className="text-2xl font-extrabold" style={{ color: 'rgb(var(--text))' }}>Countries ({countries.length})</h1>
           <p className="text-[12.5px] mt-1" style={{ color: 'rgba(var(--text) / 0.35)' }}>
-            The hub page at /{'{country}'} — e.g. /india. Add a new country here, then create its states/UTs under Location Pages.
+            Pages served at /{'{slug}'} — e.g. /india (hub of states) or /usa (standalone full page). Content, keywords and SEO are fully editable per country.
           </p>
         </div>
-        <button onClick={() => { setEditing(empty); setIsNew(true); }} className="btn btn-primary"><Plus className="w-4 h-4" /> New Country</button>
+        <Link href="/admin/countries/new" className="btn btn-primary"><Plus className="w-4 h-4" /> New Country</Link>
       </div>
 
       {msg && <div className="text-xs mb-3" style={{ color: 'rgba(var(--text) / 0.5)' }}>{msg}</div>}
 
+      <div className="flex flex-wrap gap-2 mb-4">
+        <div className="relative flex-1 min-w-[200px]">
+          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'rgba(var(--text) / 0.3)' }} />
+          <input className="form-control pl-8 w-full" placeholder="Search by name or slug…" value={q} onChange={e => setQ(e.target.value)} />
+        </div>
+        <select className="form-control" value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
+          <option value="all">All page types</option>
+          <option value="standalone">Standalone</option>
+          <option value="hub">Hub</option>
+        </select>
+        <select className="form-control" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+          <option value="all">All statuses</option>
+          <option value="published">Published</option>
+          <option value="draft">Draft</option>
+        </select>
+      </div>
+
       <div className="card-base overflow-hidden kpi-enter" style={{ background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)', border: '1px solid rgba(var(--border) / 0.06)' }}>
         <table className="w-full text-sm">
           <thead className="text-left text-xs uppercase" style={{ color: 'rgba(var(--text) / 0.35)', borderBottom: '1px solid rgba(var(--border) / 0.06)' }}>
-            <tr><th className="p-3">Name</th><th className="p-3">Slug</th><th className="p-3">Status</th><th className="p-3"></th></tr>
+            <tr>
+              <th className="p-3">Name</th><th className="p-3">Slug</th><th className="p-3">Page Type</th>
+              <th className="p-3">Status</th><th className="p-3">Updated</th><th className="p-3"></th>
+            </tr>
           </thead>
           <tbody>
-            {countries.map(c => (
+            {filtered.map(c => (
               <tr key={c._id} className="transition-colors duration-150 hover:bg-surface/[0.025]" style={{ borderBottom: '1px solid rgba(var(--border) / 0.05)' }}>
                 <td className="p-3 font-semibold" style={{ color: 'rgb(var(--text))' }}>{c.name}</td>
                 <td className="p-3 font-mono text-xs" style={{ color: 'rgba(var(--text) / 0.4)' }}>/{c.slug}</td>
+                <td className="p-3 capitalize" style={{ color: 'rgba(var(--text) / 0.5)' }}>{c.pageType}</td>
                 <td className="p-3">
                   <button
                     onClick={() => toggleStatus(c)}
@@ -87,46 +101,26 @@ export default function AdminCountriesPage() {
                     {c.status === 'published' ? 'Published' : 'Draft'}
                   </button>
                 </td>
-                <td className="p-3 text-right">
-                  <button onClick={() => { setEditing(c); setIsNew(false); }} aria-label="Edit country" className="p-1" style={{ color: 'rgba(var(--text) / 0.4)' }}><Edit3 className="w-4 h-4" /></button>
-                  <button onClick={() => del(c._id)} aria-label="Delete country" className="p-1" style={{ color: 'rgba(var(--text) / 0.4)' }}><Trash2 className="w-4 h-4" /></button>
+                <td className="p-3" style={{ color: 'rgba(var(--text) / 0.4)' }}>{c.updatedAt ? new Date(c.updatedAt).toLocaleDateString() : '—'}</td>
+                <td className="p-3 text-right whitespace-nowrap">
+                  {c.status === 'published' && (
+                    <Link href={`/${c.slug}`} target="_blank" aria-label="View live" className="p-1 inline-block" style={{ color: 'rgba(var(--text) / 0.4)' }}><ExternalLink className="w-4 h-4" /></Link>
+                  )}
+                  <Link href={`/admin/countries/${c._id}/edit`} aria-label="Edit" className="p-1 inline-block" style={{ color: 'rgba(var(--text) / 0.4)' }}><Edit3 className="w-4 h-4" /></Link>
+                  <button onClick={() => del(c._id)} aria-label="Delete" className="p-1" style={{ color: 'rgba(var(--text) / 0.4)' }}><Trash2 className="w-4 h-4" /></button>
                 </td>
               </tr>
             ))}
-            {loadError && <tr><td colSpan={4} className="p-8 text-center" style={{ color: 'rgba(var(--text) / 0.3)' }}>Failed to load — check your connection and try refreshing.</td></tr>}
-            {!loadError && countries.length === 0 && <tr><td colSpan={4} className="p-8 text-center" style={{ color: 'rgba(var(--text) / 0.3)' }}>No countries yet.</td></tr>}
+            {loadError && <tr><td colSpan={6} className="p-8 text-center" style={{ color: 'rgba(var(--text) / 0.3)' }}>Failed to load — check your connection and try refreshing.</td></tr>}
+            {!loadError && filtered.length === 0 && (
+              <tr><td colSpan={6} className="p-8 text-center" style={{ color: 'rgba(var(--text) / 0.3)' }}>
+                <Globe2 className="w-5 h-5 mx-auto mb-2 opacity-40" />
+                {countries.length === 0 ? 'No countries yet — create your first one.' : 'No countries match these filters.'}
+              </td></tr>
+            )}
           </tbody>
         </table>
       </div>
-
-      {editing && (
-        <Modal
-          onClose={() => setEditing(null)}
-          containerClassName="fixed inset-0 z-50 grid place-items-center p-4 bg-black/60 backdrop-blur"
-          className="p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto rounded-2xl"
-          style={{ background: 'rgb(var(--bg-2))', border: '1px solid rgba(var(--border) / 0.08)' }}
-        >
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-extrabold" style={{ color: 'rgb(var(--text))' }}>{isNew ? 'New Country' : 'Edit Country'}</h2>
-            <button onClick={() => setEditing(null)} style={{ color: 'rgba(var(--text) / 0.5)' }}><X className="w-5 h-5" /></button>
-          </div>
-          <div className="space-y-3">
-            <input className="form-control" placeholder="Slug (e.g. india, uk)" value={editing.slug} onChange={e => setEditing({ ...editing, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-') })} disabled={!isNew} />
-            <input className="form-control" placeholder="Name (e.g. India)" value={editing.name} onChange={e => setEditing({ ...editing, name: e.target.value })} />
-            <input className="form-control" placeholder="Hero Title" value={editing.heroTitle} onChange={e => setEditing({ ...editing, heroTitle: e.target.value })} />
-            <textarea className="form-control" rows={2} placeholder="Hero Description" value={editing.heroDescription} onChange={e => setEditing({ ...editing, heroDescription: e.target.value })} />
-            <textarea className="form-control" rows={2} placeholder="Intro (positioning strip under hero)" value={editing.intro} onChange={e => setEditing({ ...editing, intro: e.target.value })} />
-            <select className="form-control" value={editing.status} onChange={e => setEditing({ ...editing, status: e.target.value as Country['status'] })}>
-              <option value="draft">Draft</option>
-              <option value="published">Published</option>
-            </select>
-            <input className="form-control" placeholder="SEO Title" value={editing.seo.title} onChange={e => setEditing({ ...editing, seo: { ...editing.seo, title: e.target.value } })} />
-            <textarea className="form-control" rows={2} placeholder="SEO Description" value={editing.seo.description} onChange={e => setEditing({ ...editing, seo: { ...editing.seo, description: e.target.value } })} />
-            <input className="form-control" placeholder="OG Image URL (optional)" value={editing.seo.ogImage || ''} onChange={e => setEditing({ ...editing, seo: { ...editing.seo, ogImage: e.target.value } })} />
-            <button onClick={save} className="btn btn-primary w-full justify-center">Save Country</button>
-          </div>
-        </Modal>
-      )}
     </div>
   );
 }
