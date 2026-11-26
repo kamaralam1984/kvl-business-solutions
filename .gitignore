@@ -57,3 +57,6 @@ coverage/
 tsx-*/
 .cache/
 .tmp/
+
+# Local documentation PDFs
+/docs/
