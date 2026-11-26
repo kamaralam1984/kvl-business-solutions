@@ -37,9 +37,9 @@ const bricolage = Bricolage_Grotesque({ subsets: ['latin'], variable: '--font-br
 const cinzel = Cinzel({ subsets: ['latin'], weight: ['500','600','700'], variable: '--font-cinzel', display: 'swap', preload: false });
 const jbmono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jbmono', display: 'swap', preload: false });
 
-// Picks the design skin (classic | studio) before first paint. ?design=studio|classic
+// Picks the design skin (studio is the default; classic | studio) before first paint. ?design=studio|classic
 // also works as a shareable link and is remembered. Same HTML for every visitor.
-const designScript = `(function(){var d='classic';try{var q=new URLSearchParams(location.search).get('design');var v=localStorage.getItem('kvl-design');if(q==='studio'||q==='classic'){v=q;localStorage.setItem('kvl-design',q)}if(v==='studio')d='studio'}catch(e){}document.documentElement.setAttribute('data-design',d)})();`;
+const designScript = `(function(){var d='studio';try{var q=new URLSearchParams(location.search).get('design');var v=localStorage.getItem('kvl-design');if(q==='studio'||q==='classic'){v=q;localStorage.setItem('kvl-design',q)}if(v==='classic')d='classic'}catch(e){}document.documentElement.setAttribute('data-design',d)})();`;
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
 
