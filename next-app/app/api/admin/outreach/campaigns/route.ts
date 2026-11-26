@@ -13,7 +13,10 @@ const schema = z.object({
   subjectTemplate: z.string().optional().default(''),
   bodyTemplate: z.string().min(10),
   status: z.enum(['draft', 'active', 'paused']).optional().default('draft'),
-});
+  // autoSend only makes sense for email (no LinkedIn send/reply API exists)
+  autoSend: z.boolean().optional().default(false),
+  dailySendLimit: z.number().int().min(1).max(100).optional().default(15),
+}).refine(d => !d.autoSend || d.channel === 'email', { message: 'Auto-send is only supported for email campaigns', path: ['autoSend'] });
 
 export async function GET() {
   const g = await requireAdmin(); if (!g.ok) return g.response;

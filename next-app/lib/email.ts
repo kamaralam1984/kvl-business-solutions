@@ -2,7 +2,7 @@ import { Resend } from 'resend';
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 const FROM = process.env.EMAIL_FROM || 'KVL <onboarding@resend.dev>';
-const SALES = process.env.EMAIL_TO_SALES || 'kvlbusinesssolution@gmail.com';
+const SALES = process.env.EMAIL_TO_SALES || 'sales@kvlbusinesssolutions.com';
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
 export async function sendNotification(
@@ -15,6 +15,35 @@ export async function sendNotification(
   try {
     await resend.emails.send({ from: FROM, to, subject, html, ...(attachments ? { attachments } : {}) });
   } catch (e) { console.error('email error', e); }
+}
+
+// Like sendNotification, but for the auto-outreach cron: needs a custom
+// reply-to (a monitored inbox, not the noreply FROM address) so a prospect's
+// reply is actually collectible, and returns success/failure instead of
+// swallowing errors — the caller needs to know whether to mark a prospect
+// as contacted.
+export async function sendCustomEmail(opts: {
+  to: string;
+  subject: string;
+  html: string;
+  replyTo?: string;
+  attachments?: { filename: string; content: Buffer }[];
+}): Promise<{ ok: boolean; error?: string }> {
+  if (!resend) { console.log('[email skipped]', opts.subject, '→', opts.to); return { ok: false, error: 'Resend not configured' }; }
+  try {
+    await resend.emails.send({
+      from: FROM,
+      to: opts.to,
+      subject: opts.subject,
+      html: opts.html,
+      ...(opts.replyTo ? { replyTo: opts.replyTo } : {}),
+      ...(opts.attachments ? { attachments: opts.attachments } : {}),
+    });
+    return { ok: true };
+  } catch (e: any) {
+    console.error('email error', e);
+    return { ok: false, error: e?.message || 'Send failed' };
+  }
 }
 
 const wrap = (title: string, body: string) => `
@@ -113,6 +142,33 @@ export function downloadPdfEmail(data: { name: string; docTitle: string }) {
   return wrap(`Your ${data.docTitle} is attached`, `<h2>Hi ${data.name || 'there'} 👋</h2>
     <p>Thanks for your interest in KVL Business Solutions — your <b>${data.docTitle}</b> is attached to this email as a PDF.</p>
     <p>If you'd like to talk through anything in it, book a free strategy call at <a href="${SITE}/book-demo" style="color:#1d4ed8">kvlbusinesssolutions.com/book-demo</a>, or message us on <a href="https://wa.me/919942000413" style="color:#1d4ed8">WhatsApp</a> — we typically respond within an hour.</p>`);
+}
+
+// Sent to the owner (SALES inbox) when the AI outreach negotiator judges a
+// cold-outreach prospect ready to buy — includes the full conversation
+// transcript so the owner can pick up the thread without digging through
+// the shared inbox first.
+export function outreachReadyEmail(data: {
+  name: string; company?: string; email?: string;
+  readySummary: string;
+  conversation: { role: 'assistant' | 'prospect'; body: string; at: Date }[];
+  campaignId: string;
+}) {
+  const transcript = data.conversation.map(m =>
+    `<p style="margin:0 0 10px;padding:10px 12px;border-radius:8px;background:${m.role === 'assistant' ? '#eff6ff' : '#f1f5f9'}">
+      <b>${m.role === 'assistant' ? 'KVL AI' : data.name}:</b><br/>${m.body.replace(/\n/g, '<br/>')}
+    </p>`
+  ).join('');
+  return wrap('🔥 Outreach Prospect Ready to Close', `
+    <h2>${data.name}${data.company ? ` — ${data.company}` : ''}</h2>
+    <p><b>Email:</b> ${data.email || '—'}</p>
+    <p style="background:#fef3c7;padding:12px;border-radius:8px"><b>Why they're ready:</b> ${data.readySummary}</p>
+    <p style="text-align:center;margin:20px 0">
+      <a href="${SITE}/admin/outreach/${data.campaignId}" style="background:#1d4ed8;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600">Open in Outreach CRM</a>
+    </p>
+    <h3 style="margin-top:24px">Full conversation</h3>
+    ${transcript}
+  `);
 }
 
 export function resetEmail(name: string, link: string) {

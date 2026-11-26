@@ -19,6 +19,14 @@
     {
       "path": "/api/cron/vip-lead-scoring",
       "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/outreach-send",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/outreach-check-replies",
+      "schedule": "0 */2 * * *"
     }
   ]
 }

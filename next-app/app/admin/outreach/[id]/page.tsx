@@ -1,13 +1,15 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Plus, Copy, Mail, ExternalLink, Trash2, HeartHandshake, ClipboardList } from 'lucide-react';
+import { ArrowLeft, Plus, Copy, Mail, ExternalLink, Trash2, HeartHandshake, ClipboardList, MessageCircle } from 'lucide-react';
 import { PROSPECT_STATUSES } from '@/lib/constants/outreach';
 
-type Campaign = { _id: string; name: string; channel: 'email' | 'linkedin'; subjectTemplate: string; bodyTemplate: string };
+type Campaign = { _id: string; name: string; channel: 'email' | 'linkedin'; subjectTemplate: string; bodyTemplate: string; autoSend: boolean };
+type ConversationEntry = { role: 'assistant' | 'prospect'; body: string; at: string };
 type Prospect = {
   _id: string; name: string; email?: string; linkedinUrl?: string; company?: string;
   status: string; notes?: string; convertedDealId?: string; lastContactedAt?: string;
+  conversation?: ConversationEntry[];
 };
 
 // Fills {{name}} / {{company}} in a template — the only "generation" this
@@ -25,6 +27,7 @@ export default function CampaignDetailPage() {
   const [bulkOpen, setBulkOpen] = useState(false);
   const [bulkText, setBulkText] = useState('');
   const [openDraftId, setOpenDraftId] = useState<string | null>(null);
+  const [openConvoId, setOpenConvoId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
 
@@ -105,8 +108,14 @@ export default function CampaignDetailPage() {
       <div>
         <h1 className="font-display font-black text-[1.6rem] tracking-tight" style={{ color: 'rgb(var(--text))' }}>{campaign.name}</h1>
         <div className="flex gap-4 text-[12.5px] mt-2" style={{ color: 'rgba(var(--text) / 0.4)' }}>
-          <span>{total} prospects</span><span>{sent} contacted</span><span>{replied} replied</span><span>{replyRate}% reply rate — real, manually tracked</span>
+          <span>{total} prospects</span><span>{sent} contacted</span><span>{replied} replied</span>
+          <span>{replyRate}% reply rate{campaign.autoSend ? '' : ' — real, manually tracked'}</span>
         </div>
+        {campaign.autoSend && (
+          <p className="text-[11px] mt-2 px-2 py-1 rounded-md inline-block" style={{ background: 'rgba(59,130,246,0.1)', color: '#60a5fa' }}>
+            Auto-send is ON — AI sends the first pitch, replies, and negotiates on its own. New prospects added here go out on the next outreach-send run.
+          </p>
+        )}
       </div>
 
       <div className="flex justify-end">
@@ -143,9 +152,15 @@ export default function CampaignDetailPage() {
                   </select>
                 </td>
                 <td className="p-3">
-                  <button onClick={() => setOpenDraftId(openDraftId === p._id ? null : p._id)} className="text-[11px] flex items-center gap-1" style={{ color: 'rgba(var(--text) / 0.5)' }}>
-                    <ClipboardList className="w-3.5 h-3.5" /> {openDraftId === p._id ? 'Hide' : 'Generate draft'}
-                  </button>
+                  {p.conversation && p.conversation.length > 0 ? (
+                    <button onClick={() => setOpenConvoId(openConvoId === p._id ? null : p._id)} className="text-[11px] flex items-center gap-1" style={{ color: 'rgba(var(--text) / 0.5)' }}>
+                      <MessageCircle className="w-3.5 h-3.5" /> {openConvoId === p._id ? 'Hide' : `Conversation (${p.conversation.length})`}
+                    </button>
+                  ) : (
+                    <button onClick={() => setOpenDraftId(openDraftId === p._id ? null : p._id)} className="text-[11px] flex items-center gap-1" style={{ color: 'rgba(var(--text) / 0.5)' }}>
+                      <ClipboardList className="w-3.5 h-3.5" /> {openDraftId === p._id ? 'Hide' : 'Generate draft'}
+                    </button>
+                  )}
                 </td>
                 <td className="p-3 text-right whitespace-nowrap">
                   {!p.convertedDealId ? (
@@ -161,6 +176,20 @@ export default function CampaignDetailPage() {
           </tbody>
         </table>
       </div>
+
+      {prospects.filter(p => p._id === openConvoId).map(p => (
+        <div key={p._id} className="rounded-2xl p-5 space-y-3" style={{ background: 'linear-gradient(135deg, rgb(var(--bg-2)) 0%, rgb(var(--bg-3)) 100%)', border: '1px solid rgba(var(--border) / 0.06)' }}>
+          <h3 className="font-bold" style={{ color: 'rgb(var(--text))' }}>Conversation with {p.name}</h3>
+          {(p.conversation || []).map((m, i) => (
+            <div key={i} className="p-3 rounded-lg" style={{ background: m.role === 'assistant' ? 'rgba(59,130,246,0.08)' : 'rgba(var(--surface) / 0.05)' }}>
+              <div className="text-[10.5px] font-bold mb-1" style={{ color: m.role === 'assistant' ? '#60a5fa' : 'rgba(var(--text) / 0.5)' }}>
+                {m.role === 'assistant' ? 'KVL AI' : p.name} · {new Date(m.at).toLocaleString()}
+              </div>
+              <div className="text-[13px] whitespace-pre-wrap" style={{ color: 'rgba(var(--text) / 0.8)' }}>{m.body}</div>
+            </div>
+          ))}
+        </div>
+      ))}
 
       {prospects.filter(p => p._id === openDraftId).map(p => {
         const subject = fillTemplate(campaign.subjectTemplate, p);

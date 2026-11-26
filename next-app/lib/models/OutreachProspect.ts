@@ -18,6 +18,24 @@ const OutreachProspectSchema = new Schema({
   notes: String,
   lastContactedAt: Date,
   convertedDealId: { type: Schema.Types.ObjectId, ref: 'Deal' },
+
+  // Subject line of the initial AI pitch (autoSend only) — reused as
+  // "Re: {pitchSubject}" for AI negotiation replies so the thread stays
+  // recognizable in the prospect's inbox.
+  pitchSubject: String,
+
+  // Full auto-outreach transcript (only populated for autoSend campaigns) —
+  // 'assistant' is KVL's AI (initial pitch + every negotiation reply),
+  // 'prospect' is a reply pulled in from the shared inbox via IMAP.
+  conversation: [{
+    role: { type: String, enum: ['assistant', 'prospect'] },
+    body: String,
+    at: { type: Date, default: Date.now },
+  }],
+  // Set once the AI negotiator judges this prospect ready to buy and the
+  // owner has been emailed — guards against notifying the owner twice for
+  // the same prospect across repeated reply-check cron runs.
+  readyNotifiedAt: Date,
 }, { timestamps: true });
 
 OutreachProspectSchema.index({ campaignId: 1, status: 1 });

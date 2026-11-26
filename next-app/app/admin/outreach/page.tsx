@@ -7,15 +7,16 @@ import { Modal } from '@/components/shared/Modal';
 type Campaign = {
   _id: string; name: string; channel: 'email' | 'linkedin';
   subjectTemplate: string; bodyTemplate: string; status: string;
+  autoSend: boolean; dailySendLimit: number;
   statusCounts: Record<string, number>;
 };
 
-const empty = { name: '', channel: 'email' as const, subjectTemplate: '', bodyTemplate: '' };
+const empty = { name: '', channel: 'email' as const, subjectTemplate: '', bodyTemplate: '', autoSend: false, dailySendLimit: 15 };
 
 export default function OutreachCampaignsPage() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [creating, setCreating] = useState<typeof empty | null>(null);
-  const [editing, setEditing] = useState<Pick<Campaign, '_id' | 'name' | 'channel' | 'subjectTemplate' | 'bodyTemplate' | 'status'> | null>(null);
+  const [editing, setEditing] = useState<Pick<Campaign, '_id' | 'name' | 'channel' | 'subjectTemplate' | 'bodyTemplate' | 'status' | 'autoSend' | 'dailySendLimit'> | null>(null);
   const [saving, setSaving] = useState(false);
   const [loadError, setLoadError] = useState(false);
 
@@ -48,7 +49,7 @@ export default function OutreachCampaignsPage() {
         body: JSON.stringify({
           name: editing.name, channel: editing.channel,
           subjectTemplate: editing.subjectTemplate, bodyTemplate: editing.bodyTemplate,
-          status: editing.status,
+          status: editing.status, autoSend: editing.autoSend, dailySendLimit: editing.dailySendLimit,
         }),
       });
       const d = await r.json();
@@ -69,7 +70,7 @@ export default function OutreachCampaignsPage() {
         <div>
           <h1 className="font-display font-black text-[1.8rem] tracking-tight leading-none" style={{ color: 'rgb(var(--text))' }}>Outreach CRM</h1>
           <p className="text-[13px] mt-2" style={{ color: 'rgba(var(--text) / 0.3)' }}>
-            Drafts only — nothing sends automatically. Generate a draft, review it, then send from your own inbox or LinkedIn.
+            Default: drafts only — generate, review, send yourself. Turn on <b>Auto-send</b> on a campaign to have AI write, send, and negotiate cold emails automatically — that&apos;s real unsolicited email leaving without per-message review, so only point it at lists you&apos;re sure you&apos;re allowed to contact.
           </p>
         </div>
         <button onClick={() => setCreating(empty)} className="btn btn-primary"><Plus className="w-4 h-4" /> New Campaign</button>
@@ -89,9 +90,16 @@ export default function OutreachCampaignsPage() {
                     {c.channel === 'email' ? <Mail className="w-4 h-4 text-primary" /> : <Linkedin className="w-4 h-4 text-primary" />}
                     <h3 className="font-bold" style={{ color: 'rgb(var(--text))' }}>{c.name}</h3>
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: c.status === 'active' ? 'rgba(34,197,94,0.15)' : 'rgba(var(--surface) / 0.08)', color: c.status === 'active' ? '#4ade80' : 'rgba(var(--text) / 0.5)' }}>
-                    {c.status.toUpperCase()}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    {c.autoSend && (
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(59,130,246,0.15)', color: '#60a5fa' }} title="AI sends, replies, and negotiates automatically">
+                        AUTO
+                      </span>
+                    )}
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: c.status === 'active' ? 'rgba(34,197,94,0.15)' : 'rgba(var(--surface) / 0.08)', color: c.status === 'active' ? '#4ade80' : 'rgba(var(--text) / 0.5)' }}>
+                      {c.status.toUpperCase()}
+                    </span>
+                  </div>
                 </div>
                 <div className="flex items-center gap-4 text-[12px] mt-3" style={{ color: 'rgba(var(--text) / 0.5)' }}>
                   <span>{total} prospects</span>
@@ -101,7 +109,7 @@ export default function OutreachCampaignsPage() {
               </Link>
               <div className="absolute top-5 right-5 flex items-center gap-3">
                 <button
-                  onClick={() => setEditing({ _id: c._id, name: c.name, channel: c.channel, subjectTemplate: c.subjectTemplate, bodyTemplate: c.bodyTemplate, status: c.status })}
+                  onClick={() => setEditing({ _id: c._id, name: c.name, channel: c.channel, subjectTemplate: c.subjectTemplate, bodyTemplate: c.bodyTemplate, status: c.status, autoSend: c.autoSend, dailySendLimit: c.dailySendLimit })}
                   aria-label="Edit campaign"
                   style={{ color: 'rgba(var(--text) / 0.35)' }}
                   className="hover:text-primary transition-colors"
@@ -148,6 +156,20 @@ export default function OutreachCampaignsPage() {
                 <input className="form-control" placeholder="Subject template (use {{name}}, {{company}})" value={creating.subjectTemplate} onChange={e => setCreating({ ...creating, subjectTemplate: e.target.value })} />
               )}
               <textarea className="form-control" rows={6} placeholder="Message template — use {{name}} and {{company}} as placeholders" value={creating.bodyTemplate} onChange={e => setCreating({ ...creating, bodyTemplate: e.target.value })} />
+              {creating.channel === 'email' && (
+                <div className="rounded-lg p-3" style={{ background: 'rgba(var(--surface) / 0.04)', border: '1px solid rgba(var(--border) / 0.06)' }}>
+                  <label className="flex items-center gap-2 text-[13px] font-semibold" style={{ color: 'rgb(var(--text))' }}>
+                    <input type="checkbox" checked={creating.autoSend} onChange={e => setCreating({ ...creating, autoSend: e.target.checked })} />
+                    Auto-send (AI writes, sends, replies & negotiates — no per-message review)
+                  </label>
+                  {creating.autoSend && (
+                    <div className="mt-2 flex items-center gap-2 text-[12px]" style={{ color: 'rgba(var(--text) / 0.5)' }}>
+                      Max per day:
+                      <input type="number" min={1} max={100} className="form-control py-1 w-20" value={creating.dailySendLimit} onChange={e => setCreating({ ...creating, dailySendLimit: Number(e.target.value) || 15 })} />
+                    </div>
+                  )}
+                </div>
+              )}
               <button onClick={save} disabled={saving || !creating.name || !creating.bodyTemplate} className="btn btn-primary w-full justify-center">
                 <Send className="w-4 h-4" /> {saving ? 'Creating...' : 'Create Campaign'}
               </button>
@@ -181,6 +203,20 @@ export default function OutreachCampaignsPage() {
                 <input className="form-control" placeholder="Subject template (use {{name}}, {{company}})" value={editing.subjectTemplate} onChange={e => setEditing({ ...editing, subjectTemplate: e.target.value })} />
               )}
               <textarea className="form-control" rows={6} placeholder="Message template — use {{name}} and {{company}} as placeholders" value={editing.bodyTemplate} onChange={e => setEditing({ ...editing, bodyTemplate: e.target.value })} />
+              {editing.channel === 'email' && (
+                <div className="rounded-lg p-3" style={{ background: 'rgba(var(--surface) / 0.04)', border: '1px solid rgba(var(--border) / 0.06)' }}>
+                  <label className="flex items-center gap-2 text-[13px] font-semibold" style={{ color: 'rgb(var(--text))' }}>
+                    <input type="checkbox" checked={editing.autoSend} onChange={e => setEditing({ ...editing, autoSend: e.target.checked })} />
+                    Auto-send (AI writes, sends, replies & negotiates — no per-message review)
+                  </label>
+                  {editing.autoSend && (
+                    <div className="mt-2 flex items-center gap-2 text-[12px]" style={{ color: 'rgba(var(--text) / 0.5)' }}>
+                      Max per day:
+                      <input type="number" min={1} max={100} className="form-control py-1 w-20" value={editing.dailySendLimit} onChange={e => setEditing({ ...editing, dailySendLimit: Number(e.target.value) || 15 })} />
+                    </div>
+                  )}
+                </div>
+              )}
               <button onClick={saveEdit} disabled={saving || !editing.name || !editing.bodyTemplate} className="btn btn-primary w-full justify-center">
                 <Send className="w-4 h-4" /> {saving ? 'Saving...' : 'Save Changes'}
               </button>

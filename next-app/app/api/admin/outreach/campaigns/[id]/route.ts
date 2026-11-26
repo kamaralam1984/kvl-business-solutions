@@ -13,6 +13,8 @@ const updateSchema = z.object({
   subjectTemplate: z.string().optional(),
   bodyTemplate: z.string().min(10).optional(),
   status: z.enum(['draft', 'active', 'paused']).optional(),
+  autoSend: z.boolean().optional(),
+  dailySendLimit: z.number().int().min(1).max(100).optional(),
 });
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
