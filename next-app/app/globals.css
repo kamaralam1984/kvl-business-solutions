@@ -984,7 +984,7 @@ html[data-menu-style="4"] .mm-preview-text { display: none; }
 html[data-menu-style="4"] .mm-item { min-height: 48px; padding: 6px 10px; }
 
 /* Mobile drawer — one layout, only its entry animation varies per style */
-.m-drawer { position: fixed; z-index: 99; inset: 68px 0 0 0; display: flex; flex-direction: column; background: rgb(var(--bg)); border-top: 1px solid rgb(var(--line)); animation: drawerSlide var(--dur-slow) var(--ease) both; }
+.m-drawer { position: fixed; z-index: 99; inset: var(--drawer-top, 68px) 0 0 0; display: flex; flex-direction: column; background: rgb(var(--bg)); border-top: 1px solid rgb(var(--line)); animation: drawerSlide var(--dur-slow) var(--ease) both; }
 html[data-menu-style="2"] .m-drawer { animation-name: drawerDrop; }
 html[data-menu-style="3"] .m-drawer { animation-name: drawerScale; }
 html[data-menu-style="4"] .m-drawer { animation-name: drawerLeft; }

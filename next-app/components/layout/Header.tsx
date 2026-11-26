@@ -44,6 +44,18 @@ export function Header() {
   }, []);
   useEffect(() => () => clearTimeout(intentTimer.current), []);
   useEffect(() => { setMegaMenu(null); }, [pathname]);
+  // the mobile drawer starts exactly under the header, even when the promo bar pushes the header down
+  useEffect(() => {
+    if (!open) return;
+    const place = () => {
+      const h = document.querySelector('header.site-header');
+      if (h) document.documentElement.style.setProperty('--drawer-top', `${Math.max(0, Math.round(h.getBoundingClientRect().bottom))}px`);
+    };
+    place();
+    window.addEventListener('scroll', place, { passive: true });
+    window.addEventListener('resize', place);
+    return () => { window.removeEventListener('scroll', place); window.removeEventListener('resize', place); document.documentElement.style.removeProperty('--drawer-top'); };
+  }, [open]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);

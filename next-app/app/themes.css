@@ -492,3 +492,16 @@ html[data-fx]:not([data-theme="studio"]) .from-gold-light.to-gold.text-ink { col
 
 /* cookie banner: always a solid card so it never shows page content through it, and it never jumps on hover */
 html[data-theme] [role="dialog"][aria-label="Cookie consent"] { background-color: rgb(var(--card)) !important; backdrop-filter: none !important; transform: none !important; }
+
+/* ── phones: buttons never clip or break their label ── */
+@media (max-width: 640px) {
+  .m-drawer .rounded-btn.justify-center { white-space: normal; text-align: center; line-height: 1.2; padding-inline: 10px; min-width: 0; }
+  [role="dialog"][aria-label="Cookie consent"] .rounded-btn { white-space: nowrap; }
+  html[data-theme="terminal"] .bg-gold::before { content: none; }
+  html[data-theme="brutal"] .rounded-btn.justify-center { padding-inline: 12px; }
+}
+
+/* the hover "text roll" wrapper is nowrap; on phones let long button labels wrap instead of being clipped */
+@media (max-width: 640px) {
+  html[data-fx] .m-drawer .sx-roll, html[data-fx] .m-drawer .sx-roll-in { white-space: normal; text-align: center; }
+}

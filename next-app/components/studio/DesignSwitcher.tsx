@@ -21,6 +21,7 @@ export function DesignSwitcher() {
   const [theme, setThemeState] = useState<ThemeId>(DEFAULT_THEME);
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [phoneTop, setPhoneTop] = useState<number | null>(null);
   const box = useRef<HTMLDivElement>(null);
   const { setTheme: setTone } = useTheme();
 
@@ -74,7 +75,11 @@ export function DesignSwitcher() {
     <div ref={box} className="relative">
       <button
         type="button"
-        onClick={() => setOpen(o => !o)}
+        onClick={e => {
+          // on phones the list is a full-width sheet right under the header (never clipped by the screen edge)
+          setPhoneTop(window.innerWidth < 640 ? Math.round(e.currentTarget.getBoundingClientRect().bottom + 8) : null);
+          setOpen(o => !o);
+        }}
         aria-haspopup="true"
         aria-expanded={open}
         aria-label={`Change site theme (current: ${current.label})`}
@@ -84,7 +89,7 @@ export function DesignSwitcher() {
         <Palette className="h-4 w-4" aria-hidden />
       </button>
       {open && (
-        <div role="menu" aria-label="Site themes" className="theme-pop absolute right-0 top-12 z-[300] w-[min(92vw,21rem)] rounded-[18px] border border-line p-2 shadow-soft-3" style={{ background: `rgb(var(--footer))` }}>
+        <div role="menu" aria-label="Site themes" className="theme-pop absolute right-0 top-12 z-[300] w-[min(92vw,21rem)] rounded-[18px] border border-line p-2 shadow-soft-3" style={phoneTop === null ? { background: 'rgb(var(--card))' } : { background: 'rgb(var(--card))', position: 'fixed', left: 12, right: 12, top: phoneTop, width: 'auto' }}>
           <p className="px-2 pb-1 pt-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-text3">Choose a theme</p>
           <ul className="grid max-h-[70vh] gap-1 overflow-y-auto">
             {THEMES.map(t => (
