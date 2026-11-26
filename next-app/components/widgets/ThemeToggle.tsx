@@ -7,12 +7,12 @@ export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
-  if (!mounted) return <div className="w-10 h-10" />;
+  if (!mounted) return <div className="w-10 h-10 tone-toggle" />;
 
   return (
     <button
       onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-      className="w-10 h-10 rounded-full border border-tint surface-tint grid place-items-center transition-all hover:rotate-12 hover:border-primary"
+      className="tone-toggle w-10 h-10 rounded-full border border-tint surface-tint grid place-items-center transition-all hover:rotate-12 hover:border-primary"
       aria-label="Toggle theme"
     >
       {resolvedTheme === 'dark' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}

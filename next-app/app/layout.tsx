@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, Poppins, Bricolage_Grotesque, JetBrains_Mono, Cinzel } from 'next/font/google';
+import { Inter, Poppins, Bricolage_Grotesque, JetBrains_Mono, Cinzel, Space_Grotesk, Space_Mono, Plus_Jakarta_Sans, Fraunces, DM_Sans, DM_Serif_Display, Outfit } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import { SiteChrome } from '@/components/layout/SiteChrome';
 import { BootLoader } from '@/components/widgets/BootLoader';
@@ -18,6 +18,8 @@ import { services } from '@/lib/data/services';
 import { Suspense } from 'react';
 import { StudioFX } from '@/components/studio/StudioFX';
 import './globals.css';
+import './themes.css';
+import { THEME_IDS, THEMES } from '@/lib/themes';
 
 function menuStyleScript(m?: { rotate?: boolean; enabled?: number[]; locked?: number }) {
   const enabled = (Array.isArray(m?.enabled) ? m!.enabled! : [1, 2, 3, 4]).filter(n => [1, 2, 3, 4].includes(n));
@@ -34,12 +36,21 @@ const poppins = Poppins({ subsets: ['latin'], weight: ['600','700','800','900'],
 // "Studio" design skin fonts. Not preloaded: the browser only downloads them when the
 // Studio skin is active (the classic design never references these families).
 const bricolage = Bricolage_Grotesque({ subsets: ['latin'], variable: '--font-bricolage', display: 'swap', preload: false });
+// Fonts for the extra themes (not preloaded; only fetched when a theme actually uses them).
+const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-spacegrotesk', display: 'swap', preload: false });
+const spaceMono = Space_Mono({ subsets: ['latin'], weight: ['400','700'], variable: '--font-spacemono', display: 'swap', preload: false });
+const jakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-jakarta', display: 'swap', preload: false });
+const fraunces = Fraunces({ subsets: ['latin'], variable: '--font-fraunces', display: 'swap', preload: false });
+const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-dmsans', display: 'swap', preload: false });
+const dmSerif = DM_Serif_Display({ subsets: ['latin'], weight: '400', variable: '--font-dmserif', display: 'swap', preload: false });
+const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit', display: 'swap', preload: false });
 const cinzel = Cinzel({ subsets: ['latin'], weight: ['500','600','700'], variable: '--font-cinzel', display: 'swap', preload: false });
 const jbmono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jbmono', display: 'swap', preload: false });
 
-// Picks the design skin (studio is the default; classic | studio) before first paint. ?design=studio|classic
-// also works as a shareable link and is remembered. Same HTML for every visitor.
-const designScript = `(function(){var d='studio';try{var q=new URLSearchParams(location.search).get('design');var v=localStorage.getItem('kvl-design');if(q==='studio'||q==='classic'){v=q;localStorage.setItem('kvl-design',q)}if(v==='classic')d='classic'}catch(e){}document.documentElement.setAttribute('data-design',d)})();`;
+// Picks the theme (studio is the default) before first paint. ?theme=<id> (or legacy ?design=) is a shareable
+// link and is remembered. Themes that lock a tone (dark/light) also set next-themes' "theme" key so no flash.
+// Same HTML for every visitor.
+const themeScript = `(function(){var T=${JSON.stringify(THEME_IDS)},L=${JSON.stringify(Object.fromEntries(THEMES.filter(t => t.tone !== 'both').map(t => [t.id, t.tone])))},t='studio';try{var q=new URLSearchParams(location.search),p=q.get('theme')||q.get('design'),v=localStorage.getItem('kvl-theme')||localStorage.getItem('kvl-design');if(p&&T.indexOf(p)>-1){v=p;localStorage.setItem('kvl-theme',p)}if(v&&T.indexOf(v)>-1)t=v;if(L[t]){if(!localStorage.getItem('kvl-tone-pref'))localStorage.setItem('kvl-tone-pref',localStorage.getItem('theme')||'system');localStorage.setItem('theme',L[t]);document.documentElement.classList.toggle('dark',L[t]==='dark')}}catch(e){}var h=document.documentElement;h.setAttribute('data-theme',t);h.setAttribute('data-design',t==='studio'?'studio':'classic');if(t!=='classic')h.setAttribute('data-fx','1');if(L[t])h.setAttribute('data-tone-lock',L[t])})();`;
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://kvlbusinesssolutions.com';
 
@@ -191,13 +202,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   };
 
   return (
-    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${poppins.variable} ${bricolage.variable} ${jbmono.variable} ${cinzel.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${poppins.variable} ${bricolage.variable} ${jbmono.variable} ${cinzel.variable} ${spaceGrotesk.variable} ${spaceMono.variable} ${jakarta.variable} ${fraunces.variable} ${dmSans.variable} ${dmSerif.variable} ${outfit.variable}`}>
       <head>
         {/* Picks the header menu style before first paint (no flash / hydration mismatch).
             Config comes from admin settings and is identical for every visitor, so cached
             HTML stays identical; the random choice happens client-side in this script. */}
         <script dangerouslySetInnerHTML={{ __html: menuStyleScript(settings?.menuStyle) }} />
-        <script dangerouslySetInnerHTML={{ __html: designScript }} />
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />

@@ -1,7 +1,6 @@
 'use client';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { readDesign } from './DesignSwitcher';
 
 const REVEAL = 'main h3, main h1:not(.sx-split), main h2:not(.sx-split), main .eyebrow, main .rounded-card, main .rounded-panel';
 
@@ -15,7 +14,7 @@ export function StudioFX() {
   const first = useRef(true);
 
   useEffect(() => {
-    const sync = () => setOn(readDesign() === 'studio');
+    const sync = () => setOn(document.documentElement.hasAttribute('data-fx'));
     sync();
     window.addEventListener('kvl:design', sync);
     return () => window.removeEventListener('kvl:design', sync);

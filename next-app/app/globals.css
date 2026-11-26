@@ -1009,7 +1009,7 @@ html[data-menu-style="4"] .m-drawer { animation-name: drawerLeft; }
    Classic is untouched: everything below is scoped to html[data-design="studio"].
 ════════════════════════════════════════════════════════════════════ */
 .sx-only { display: none; }
-html[data-design="studio"] .sx-only { display: block; }
+html[data-fx] .sx-only { display: block; }
 
 html[data-design="studio"] {
   /* ROSE-MAROON & GOLD (light theme) — satin rose-maroon, glossy highlights, gold metallic accents, cream text */
@@ -1073,9 +1073,9 @@ html[data-design="studio"] ::selection { background: rgb(var(--gold)); color: #0
 html.dark .sx-grain { mix-blend-mode: screen; opacity: 0.06; }
 
 /* scroll-in reveal (transform + opacity only) */
-html[data-design="studio"] .sx-rv { opacity: 0; transform: translateY(32px); }
-html[data-design="studio"] .sx-rv.sx-in { opacity: 1; transform: none; transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
-@media (prefers-reduced-motion: reduce) { html[data-design="studio"] .sx-rv { opacity: 1; transform: none; } }
+html[data-fx] .sx-rv { opacity: 0; transform: translateY(32px); }
+html[data-fx] .sx-rv.sx-in { opacity: 1; transform: none; transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
+@media (prefers-reduced-motion: reduce) { html[data-fx] .sx-rv { opacity: 1; transform: none; } }
 
 /* ── home: marquee ── */
 .sx-marquee { overflow: hidden; background: rgb(var(--gold)); color: #0a0a0b; border-block: 1px solid rgb(var(--text)); }
@@ -1133,7 +1133,7 @@ html[data-design="studio"] .text-gold { color: rgb(var(--gold-text)); }
 html[data-design="studio"] .bg-gold.text-\[\#080910\] { color: #0a0a0b; }
 
 /* ════════════ STUDIO — shared page layout (applies to every public page) ════════════ */
-html[data-design="studio"] .sx-hide { display: none; }
+html[data-fx] .sx-hide { display: none; }
 html[data-design="studio"] main { counter-reset: sxsec; }
 
 /* page hero: huge left-aligned title, mono breadcrumb, description pushed to a second column */
@@ -1192,11 +1192,11 @@ html[data-design="studio"] .sx-mark { display: block; width: min(100%, 1100px); 
 /* ════════════ STUDIO — text effects & colour pairing ════════════
    Palette rule: text is only ever ink-on-paper or paper-on-ink. Lime is a highlighter
    (light mode) or the single accent text colour (dark mode). No violet/gold text. */
-html[data-design="studio"] .sx-w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 0.04em 0.14em; margin: 0 -0.04em -0.14em; }
-html[data-design="studio"] .sx-wi { display: inline-block; will-change: transform; }
-html[data-design="studio"] .sx-split .sx-wi { transform: translateY(112%); }
-html[data-design="studio"] .sx-split.sx-in .sx-wi { transform: none; transition: transform 0.95s var(--ease) calc(var(--i) * 60ms); }
-@media (prefers-reduced-motion: reduce) { html[data-design="studio"] .sx-split .sx-wi { transform: none; } }
+html[data-fx] .sx-w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 0.04em 0.14em; margin: 0 -0.04em -0.14em; }
+html[data-fx] .sx-wi { display: inline-block; will-change: transform; }
+html[data-fx] .sx-split .sx-wi { transform: translateY(112%); }
+html[data-fx] .sx-split.sx-in .sx-wi { transform: none; transition: transform 0.95s var(--ease) calc(var(--i) * 60ms); }
+@media (prefers-reduced-motion: reduce) { html[data-fx] .sx-split .sx-wi { transform: none; } }
 
 /* accent words inside headings: lime highlighter in light mode, lime text in dark mode */
 html[data-design="studio"] h1 .text-gold-text, html[data-design="studio"] h2 .text-gold-text {
@@ -1204,13 +1204,13 @@ html[data-design="studio"] h1 .text-gold-text, html[data-design="studio"] h2 .te
 }
 
 /* hover text roll (links, nav, buttons) */
-html[data-design="studio"] .sx-roll { display: inline-block; position: relative; overflow: hidden; vertical-align: top; line-height: 1.25; }
-html[data-design="studio"] .sx-roll-in { display: inline-block; position: relative; white-space: nowrap; transition: transform 0.5s var(--ease); }
-html[data-design="studio"] .sx-roll-in::after { content: attr(data-t) / ""; position: absolute; left: 0; top: 100%; }
-html[data-design="studio"] .nav-link:hover .sx-roll-in, html[data-design="studio"] .nav-link:focus-visible .sx-roll-in,
-html[data-design="studio"] .rounded-btn:hover .sx-roll-in, html[data-design="studio"] .rounded-btn:focus-visible .sx-roll-in,
-html[data-design="studio"] .mm-all:hover .sx-roll-in { transform: translateY(-100%); }
-@media (prefers-reduced-motion: reduce) { html[data-design="studio"] .sx-roll-in { transition: none; } }
+html[data-fx] .sx-roll { display: inline-block; position: relative; overflow: hidden; vertical-align: top; line-height: 1.25; }
+html[data-fx] .sx-roll-in { display: inline-block; position: relative; white-space: nowrap; transition: transform 0.5s var(--ease); }
+html[data-fx] .sx-roll-in::after { content: attr(data-t) / ""; position: absolute; left: 0; top: 100%; }
+html[data-fx] .nav-link:hover .sx-roll-in, html[data-fx] .nav-link:focus-visible .sx-roll-in,
+html[data-fx] .rounded-btn:hover .sx-roll-in, html[data-fx] .rounded-btn:focus-visible .sx-roll-in,
+html[data-fx] .mm-all:hover .sx-roll-in { transform: translateY(-100%); }
+@media (prefers-reduced-motion: reduce) { html[data-fx] .sx-roll-in { transition: none; } }
 
 /* statement: words light up as you scroll (opacity only) */
 .sx-lit { opacity: clamp(0.16, calc(var(--p, 0) * (var(--n) + 4) - var(--i)), 1); transition: opacity 0.25s linear; }
@@ -1222,11 +1222,11 @@ html[data-design="studio"] .mm-all:hover .sx-roll-in { transform: translateY(-10
 /* ════════════ STUDIO — image effects ════════════
    Large content images wipe in from the bottom (clip-path) while easing down from a
    slight zoom, then zoom slowly on hover. Transform / clip only; off for reduced motion. */
-html[data-design="studio"] .sx-img { clip-path: inset(0 0 100% 0); transform: scale(1.14); }
-html[data-design="studio"] .sx-img.sx-in { clip-path: inset(0 0 0 0); transform: scale(1); transition: clip-path 1.1s cubic-bezier(0.76, 0, 0.24, 1), transform 1.4s var(--ease); }
-html[data-design="studio"] a:hover .sx-img.sx-in, html[data-design="studio"] a:focus-visible .sx-img.sx-in,
-html[data-design="studio"] .group:hover .sx-img.sx-in { transform: scale(1.07); transition: transform 1.1s var(--ease); }
-@media (prefers-reduced-motion: reduce) { html[data-design="studio"] .sx-img { clip-path: none; transform: none; } }
+html[data-fx] .sx-img { clip-path: inset(0 0 100% 0); transform: scale(1.14); }
+html[data-fx] .sx-img.sx-in { clip-path: inset(0 0 0 0); transform: scale(1); transition: clip-path 1.1s cubic-bezier(0.76, 0, 0.24, 1), transform 1.4s var(--ease); }
+html[data-fx] a:hover .sx-img.sx-in, html[data-fx] a:focus-visible .sx-img.sx-in,
+html[data-fx] .group:hover .sx-img.sx-in { transform: scale(1.07); transition: transform 1.1s var(--ease); }
+@media (prefers-reduced-motion: reduce) { html[data-fx] .sx-img { clip-path: none; transform: none; } }
 
 
 /* ════════════ STUDIO — premium metallic finish (gold + silver) ════════════ */
@@ -1248,13 +1248,13 @@ html.dark[data-design="studio"] .site-header { border-bottom-color: rgb(var(--si
 
 /* dark mode: accent words = animated silver→gold sheen */
 html[data-design="studio"] h1 .text-gold-text, html[data-design="studio"] h2 .text-gold-text { color: #e6c470; }
-html[data-design="studio"] h1 .text-gold-text .sx-wi, html[data-design="studio"] h2 .text-gold-text .sx-wi,
+html[data-fx] h1 .text-gold-text .sx-wi, html[data-fx] h2 .text-gold-text .sx-wi,
 .sx-hl {
   background-image: linear-gradient(100deg, #dfe2e8 0%, #f6e7b4 28%, #d4af37 52%, #f3f4f6 76%, #e6c470 100%); background-size: 240% 100%;
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; animation: sxSheen 7s linear infinite alternate;
 }
 @keyframes sxSheen { from { background-position: 0% 50%; } to { background-position: 100% 50%; } }
-@media (prefers-reduced-motion: reduce) { html[data-design="studio"] .text-gold-text .sx-wi, .sx-hl, .sx-marquee { animation: none; } }
+@media (prefers-reduced-motion: reduce) { html[data-fx] .text-gold-text .sx-wi, .sx-hl, .sx-marquee { animation: none; } }
 
 /* marquee: polished gold bar with a silver rule */
 .sx-marquee { background-image: linear-gradient(100deg, #b8902a 0%, #f3df9e 25%, #d4af37 50%, #f6ecc8 75%, #b8902a 100%); background-size: 220% 100%; animation: sxSheen 9s linear infinite alternate; border-block: 1px solid rgb(var(--silver)); }
