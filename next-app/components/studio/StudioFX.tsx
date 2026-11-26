@@ -6,11 +6,10 @@ import { readDesign } from './DesignSwitcher';
 const REVEAL = 'main h3, main h1:not(.sx-split), main h2:not(.sx-split), main .eyebrow, main .rounded-card, main .rounded-panel';
 
 // Everything that only exists in the Studio design: grain, scroll progress bar,
-// pointer-follow ring, and scroll-in reveals. Renders nothing in Classic.
+// and scroll-in reveals. Renders nothing in Classic.
 export function StudioFX() {
   const [on, setOn] = useState(false);
   const pathname = usePathname();
-  const ring = useRef<HTMLDivElement>(null);
   const bar = useRef<HTMLDivElement>(null);
   const wipe = useRef<HTMLDivElement>(null);
   const first = useRef(true);
@@ -33,35 +32,17 @@ export function StudioFX() {
     el.classList.add('sx-wipe-run');
   }, [pathname, on]);
 
-  // scroll progress + cursor ring (transform only)
+  // scroll progress bar (transform only)
   useEffect(() => {
     if (!on) return;
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const fine = window.matchMedia('(pointer: fine)').matches;
-    let raf = 0, tx = -100, ty = -100, x = -100, y = -100, big = false;
     const onScroll = () => {
       const h = document.documentElement.scrollHeight - innerHeight;
       if (bar.current) bar.current.style.transform = `scaleX(${h > 0 ? Math.min(1, scrollY / h) : 0})`;
     };
-    const onMove = (e: PointerEvent) => {
-      tx = e.clientX; ty = e.clientY;
-      big = !!(e.target as Element | null)?.closest?.('a, button, [role="button"], input, select, textarea, summary');
-    };
-    const loop = () => {
-      x += (tx - x) * 0.22; y += (ty - y) * 0.22;
-      if (ring.current) ring.current.style.transform = `translate3d(${x - 18}px, ${y - 18}px, 0) scale(${big ? 1.9 : 1})`;
-      raf = requestAnimationFrame(loop);
-    };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
-    if (fine && !reduce) {
-      window.addEventListener('pointermove', onMove, { passive: true });
-      raf = requestAnimationFrame(loop);
-    }
     return () => {
       window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('pointermove', onMove);
-      cancelAnimationFrame(raf);
     };
   }, [on]);
 
@@ -138,7 +119,6 @@ export function StudioFX() {
   return (
     <>
       <div ref={bar} className="sx-progress" aria-hidden />
-      <div ref={ring} className="sx-ring" aria-hidden />
       <div className="sx-grain" aria-hidden />
       <div ref={wipe} className="sx-wipe" aria-hidden />
     </>

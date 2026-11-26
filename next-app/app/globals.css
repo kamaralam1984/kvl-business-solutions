@@ -1068,8 +1068,6 @@ html[data-design="studio"] a:not([class]) { text-decoration: underline; text-und
 /* ── page furniture ── */
 html[data-design="studio"] ::selection { background: rgb(var(--gold)); color: #0a0a0b; }
 .sx-progress { position: fixed; z-index: 200; left: 0; top: 0; height: 3px; width: 100%; background: rgb(var(--gold)); transform-origin: left; transform: scaleX(0); pointer-events: none; }
-.sx-ring { position: fixed; z-index: 210; left: 0; top: 0; width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid #fff; mix-blend-mode: difference; pointer-events: none; transition: transform 0s; will-change: transform; }
-@media (pointer: coarse), (prefers-reduced-motion: reduce) { .sx-ring { display: none; } }
 .sx-grain { position: fixed; inset: 0; z-index: 190; pointer-events: none; opacity: 0.05; mix-blend-mode: screen;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 html.dark .sx-grain { mix-blend-mode: screen; opacity: 0.06; }
@@ -1172,9 +1170,15 @@ html[data-design="studio"] .rounded-card.hover\:-translate-y-0\.5:hover {
 }
 
 /* footer: ink band with a giant wordmark */
-html[data-design="studio"] .sx-footer { position: relative; overflow: hidden; background: #0a0a0c; border-top: 0; padding-bottom: clamp(5rem, 16vw, 15rem);
+html[data-design="studio"] .sx-footer { position: relative; overflow: hidden; background: #0a0a0c; border-top: 0; padding-bottom: clamp(1.5rem, 4vw, 3rem);
   --text: 242 240 234; --text-2: 168 166 160; --text-3: 148 146 140; --line: 42 42 48; --gold-text: 230 196 112; --card: 19 19 22; --bg: 10 10 12; --bg-2: 20 20 24; }
-html[data-design="studio"] .sx-footer::after { content: "KVL"; position: absolute; left: 50%; bottom: -0.16em; transform: translateX(-50%); font-family: var(--font-bricolage), sans-serif; font-weight: 700; font-size: clamp(8rem, 30vw, 30rem); line-height: 0.8; letter-spacing: -0.06em; color: rgb(200 205 214 / 0.09); pointer-events: none; user-select: none; }
+html[data-design="studio"] .sx-mark { display: block; width: min(100%, 1100px); margin: clamp(1rem, 3vw, 2.5rem) auto 0; padding: 0 1.5rem; pointer-events: none; user-select: none; }
+.sx-mark svg { display: block; width: 100%; height: auto; overflow: visible; }
+.sx-mark text { font-family: var(--font-bricolage), sans-serif; font-weight: 700; font-size: 270px; fill: none; stroke-linejoin: round; }
+.sx-mark-base { stroke: rgb(200 168 112 / 0.28); stroke-width: 1.5; }
+.sx-mark-run { stroke: url(#sx-gold-run); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 190 1210; filter: drop-shadow(0 0 6px rgb(230 196 112 / 0.7)); animation: sx-mark-run 5s linear infinite; }
+@keyframes sx-mark-run { to { stroke-dashoffset: -1400; } }
+@media (prefers-reduced-motion: reduce) { .sx-mark-run { animation: none; stroke-dasharray: none; stroke-opacity: 0.6; } }
 
 /* page-transition wipe */
 .sx-wipe { position: fixed; inset: 0; z-index: 300; pointer-events: none; background: linear-gradient(115deg, #b8902a, #f3df9e 45%, #d4af37 70%, #f6ecc8); transform: translateY(-101%); }

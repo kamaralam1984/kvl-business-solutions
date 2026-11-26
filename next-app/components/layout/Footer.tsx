@@ -173,6 +173,19 @@ export function Footer({ settings }: { settings?: any }) {
           <VisitorCounter />
         </div>
       </div>
+      <div className="sx-only sx-mark" aria-hidden>
+        <svg viewBox="0 0 720 250" preserveAspectRatio="xMidYMid meet" focusable="false">
+          <defs>
+            <linearGradient id="sx-gold-run" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stopColor="#b8902a" />
+              <stop offset="0.5" stopColor="#f6e7a6" />
+              <stop offset="1" stopColor="#d4af37" />
+            </linearGradient>
+          </defs>
+          <text className="sx-mark-base" x="360" y="212" textAnchor="middle" textLength="660" lengthAdjust="spacingAndGlyphs">KVL</text>
+          <text className="sx-mark-run" x="360" y="212" textAnchor="middle" textLength="660" lengthAdjust="spacingAndGlyphs">KVL</text>
+        </svg>
+      </div>
     </footer>
   );
 }
