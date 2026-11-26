@@ -480,3 +480,12 @@ html[data-fx]:not([data-theme="studio"]) .from-gold-light.to-gold.text-ink { col
 @media (min-width: 1024px) and (max-width: 1299px) {
   html[data-theme="brutal"] .site-header a[href="/login"], html[data-theme="terminal"] .site-header a[href="/login"] { display: none; }
 }
+
+/* long mono words / hard shadows must never push a card past the screen on phones */
+@media (max-width: 640px) {
+  html[data-theme="brutal"] main .rounded-card, html[data-theme="brutal"] main .rounded-panel,
+  html[data-theme="terminal"] main .rounded-card, html[data-theme="terminal"] main .rounded-panel { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+  html[data-theme="brutal"] .rounded-card, html[data-theme="brutal"] .rounded-panel { box-shadow: 4px 4px 0 #0a0a0a; }
+  html[data-theme="brutal"] body, html[data-theme="terminal"] body { overflow-wrap: break-word; }
+  html[data-theme="brutal"] main ul, html[data-theme="terminal"] main ul { min-width: 0; }
+}
