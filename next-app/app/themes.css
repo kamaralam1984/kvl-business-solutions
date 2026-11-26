@@ -489,3 +489,6 @@ html[data-fx]:not([data-theme="studio"]) .from-gold-light.to-gold.text-ink { col
   html[data-theme="brutal"] body, html[data-theme="terminal"] body { overflow-wrap: break-word; }
   html[data-theme="brutal"] main ul, html[data-theme="terminal"] main ul { min-width: 0; }
 }
+
+/* cookie banner: always a solid card so it never shows page content through it, and it never jumps on hover */
+html[data-theme] [role="dialog"][aria-label="Cookie consent"] { background-color: rgb(var(--card)) !important; backdrop-filter: none !important; transform: none !important; }
